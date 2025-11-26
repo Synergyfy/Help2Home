@@ -41,7 +41,7 @@ export default function FadeIn({
         <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: true, amount: 0.1 }}
             variants={variants}
             className={`${className} ${fullWidth ? 'w-full' : ''}`}
         >

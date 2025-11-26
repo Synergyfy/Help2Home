@@ -1,10 +1,24 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    // Check for auth session on mount and listen for changes
+    useEffect(() => {
+        const checkAuth = () => {
+            const session = localStorage.getItem('user_session');
+            setIsLoggedIn(!!session);
+        };
+
+        checkAuth();
+
+        window.addEventListener('auth-change', checkAuth);
+        return () => window.removeEventListener('auth-change', checkAuth);
+    }, []);
 
     return (
         <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100">
@@ -16,7 +30,17 @@ export default function Header() {
 
                 {/* Desktop Nav */}
                 <nav className="hidden lg:flex items-center gap-8 text-sm font-medium text-gray-600" aria-label="Main navigation">
-                    <Link href="/browse" className="hover:text-brand-green transition-colors">Browse</Link>
+                    {/* Browse Dropdown */}
+                    <div className="relative group">
+                        <button className="flex items-center gap-1 hover:text-brand-green transition-colors py-4">
+                            Browse
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-180 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
+                        </button>
+                        <div className="absolute top-full left-0 w-48 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
+                            <Link href="/dashboard/tenant/marketplace" className="block px-4 py-3 hover:bg-gray-50 hover:text-brand-green transition-colors">Marketplace</Link>
+                            <Link href="/browse/properties" className="block px-4 py-3 hover:bg-gray-50 hover:text-brand-green transition-colors">All Properties</Link>
+                        </div>
+                    </div>
                     <Link href="/list-property" className="hover:text-brand-green transition-colors">List your property</Link>
                     <Link href="/about" className="hover:text-brand-green transition-colors">About Us</Link>
 
@@ -29,8 +53,8 @@ export default function Header() {
                         <div className="absolute top-full right-0 w-48 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
                             <Link href="/how-it-works" className="block px-4 py-3 hover:bg-gray-50 hover:text-brand-green transition-colors">Overview</Link>
                             <Link href="/how-it-works/tenants" className="block px-4 py-3 hover:bg-gray-50 hover:text-brand-green transition-colors">For Tenants</Link>
-                            <Link href="/list-property" className="block px-4 py-3 hover:bg-gray-50 hover:text-brand-green transition-colors">For Landlords</Link>
-                            <Link href="#" className="block px-4 py-3 hover:bg-gray-50 hover:text-brand-green transition-colors">For Investors</Link>
+                            <Link href="/how-it-works/landlords" className="block px-4 py-3 hover:bg-gray-50 hover:text-brand-green transition-colors">For Landlords</Link>
+                            <Link href="/how-it-works/investors" className="block px-4 py-3 hover:bg-gray-50 hover:text-brand-green transition-colors">For Investors</Link>
                         </div>
                     </div>
                 </nav>
@@ -45,10 +69,24 @@ export default function Header() {
                     {/* Language/Currency Placeholder */}
                     <div className="text-xs text-gray-500 font-medium">EN / NGN</div>
 
-                    <Link href="/signin" className="text-sm font-medium text-gray-600 hover:text-brand-green">Sign In</Link>
-                    <Link href="/signup" className="bg-brand-green text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-green-600 transition-colors shadow-sm">
-                        Sign Up
-                    </Link>
+                    {!isLoggedIn ? (
+                        <>
+                            <Link href="/signin" className="text-sm font-medium text-gray-600 hover:text-brand-green">Sign In</Link>
+                            <Link href="/signup" className="bg-brand-green text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-green-600 transition-colors shadow-sm">
+                                Sign Up
+                            </Link>
+                        </>
+                    ) : (
+                        <Link href="/dashboard/tenant/profile" className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-brand-green">
+                            <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden border border-gray-300">
+                                {/* Placeholder for user avatar */}
+                                <svg className="w-full h-full text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                            </div>
+                            <span>My Account</span>
+                        </Link>
+                    )}
                 </div>
 
                 {/* Mobile Actions */}
@@ -82,15 +120,31 @@ export default function Header() {
                         <p className="text-xs font-bold text-gray-400 uppercase mb-2">How It Works</p>
                         <Link href="/how-it-works" className="block text-gray-600 hover:text-brand-green py-2 pl-4">Overview</Link>
                         <Link href="/how-it-works/tenants" className="block text-gray-600 hover:text-brand-green py-2 pl-4">For Tenants</Link>
-                        <Link href="/list-property" className="block text-gray-600 hover:text-brand-green py-2 pl-4">For Landlords</Link>
-                        <Link href="#" className="block text-gray-600 hover:text-brand-green py-2 pl-4">For Investors</Link>
+                        <Link href="/how-it-works/landlords" className="block text-gray-600 hover:text-brand-green py-2 pl-4">For Landlords</Link>
+                        <Link href="/how-it-works/investors" className="block text-gray-600 hover:text-brand-green py-2 pl-4">For Investors</Link>
                     </div>
 
-                    <hr className="border-gray-100" />
-                    <Link href="/signin" className="text-gray-600 hover:text-brand-green py-2">Sign In</Link>
-                    <Link href="/signup" className="bg-brand-green text-white px-6 py-3 rounded-full text-center font-medium hover:bg-green-600">
-                        Sign Up
-                    </Link>
+                    {!isLoggedIn ? (
+                        <>
+                            <hr className="border-gray-100" />
+                            <Link href="/signin" className="text-gray-600 hover:text-brand-green py-2">Sign In</Link>
+                            <Link href="/signup" className="bg-brand-green text-white px-6 py-3 rounded-full text-center font-medium hover:bg-green-600">
+                                Sign Up
+                            </Link>
+                        </>
+                    ) : (
+                        <>
+                            <hr className="border-gray-100" />
+                            <Link href="/dashboard/tenant/profile" className="flex items-center gap-2 text-gray-600 hover:text-brand-green py-2">
+                                <div className="w-6 h-6 rounded-full bg-gray-200 overflow-hidden border border-gray-300">
+                                    <svg className="w-full h-full text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                </div>
+                                <span>My Account</span>
+                            </Link>
+                        </>
+                    )}
                 </div>
             )}
         </header>

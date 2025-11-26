@@ -1,22 +1,12 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand-green: #16a34a;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --brand-green: #00C853;
-  --brand-purple: #6200EA;
-}
-
-@theme {
-  --color-brand-green: var(--brand-green);
-  --color-brand-purple: var(--brand-purple);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {

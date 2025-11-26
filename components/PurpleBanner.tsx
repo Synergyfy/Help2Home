@@ -6,12 +6,12 @@ export default function PurpleBanner() {
     return (
         <section className="py-20 px-4 md:px-0">
             <div className="container mx-auto">
-                <div className="bg-brand-purple rounded-[2.5rem] overflow-hidden relative flex flex-col md:flex-row items-center shadow-2xl">
+                <div className="bg-gradient-to-r from-brand-purple to-blue-900 rounded-[2.5rem] overflow-hidden relative flex flex-col md:flex-row items-center shadow-2xl">
 
                     {/* Image Section (Left) */}
                     <div className="w-full md:w-1/2 h-64 md:h-auto relative min-h-[400px]">
-                        <img src="/assets/Rectangle 1301.png" alt="Luxury life" className="absolute inset-0 w-full h-full object-cover" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-brand-purple/50 md:hidden"></div>
+                        <img src="/assets/Rectangle 1301.png" alt="Luxury life" className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-50" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-brand-purple/90 md:hidden"></div>
                     </div>
 
                     {/* Content Section (Right) */}
@@ -19,16 +19,16 @@ export default function PurpleBanner() {
                         <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">
                             Sign up with us and live that luxury life that you desire
                         </h2>
-                        <p className="text-purple-100 mb-8 leading-relaxed text-sm md:text-base">
+                        <p className="text-white/90 mb-8 leading-relaxed text-sm md:text-base font-medium">
                             Any day works to book your perfect apartment. We make it easy to find the home you love without the financial stress. Pay monthly, live better.
                         </p>
-                        <Link href="/signup" className="inline-block bg-brand-green text-white px-8 py-3 rounded-md font-medium hover:bg-green-600 transition-colors shadow-lg">
+                        <Link href="/signup" className="inline-block bg-brand-green text-white px-8 py-3 rounded-md font-medium hover:bg-green-600 transition-colors shadow-lg border border-white/20">
                             Get Started
                         </Link>
                     </div>
 
                     {/* Decorative Curve (Desktop) */}
-                    <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-24 bg-brand-purple -translate-x-1/2 skew-x-12 origin-bottom"></div>
+                    <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-24 bg-white/5 -translate-x-1/2 skew-x-12 origin-bottom backdrop-blur-sm"></div>
                 </div>
             </div>
         </section>
