@@ -12,7 +12,6 @@ export default function TenantSignUpPage() {
         lastName: '',
         email: '',
         phone: '',
-        phone: '',
         address: '',
         state: '',
         password: '',
