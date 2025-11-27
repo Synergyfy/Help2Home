@@ -61,14 +61,14 @@ export default function HeroSearch() {
     }, []);
 
     return (
-        <section className="relative bg-white py-12 md:py-20 overflow-hidden">
-            <div className="container mx-auto px-6 md:px-12">
-                <div className="flex flex-col md:flex-row items-start gap-12 mb-12">
+        <section className="relative bg-white py-8 md:py-12 lg:py-20 overflow-hidden">
+            <div className="container mx-auto px-4 sm:px-6 md:px-12">
+                <div className="flex flex-col md:flex-row items-start gap-8 md:gap-12 mb-8 md:mb-12">
 
                     {/* Text Content (Left) */}
-                    <div className="flex-1 max-w-xl z-10 flex flex-col min-h-[auto] md:min-h-[500px] pt-4 relative">
+                    <div className="flex-1 w-full md:max-w-xl z-10 flex flex-col md:min-h-[500px] relative">
                         {/* Slideshow Wrapper */}
-                        <div className="relative w-full h-full">
+                        <div className="relative w-full">
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={currentSlide}
@@ -76,13 +76,13 @@ export default function HeroSearch() {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
                                     transition={{ duration: 0.5 }}
-                                    className="absolute top-0 left-0 w-full flex flex-col justify-start"
+                                    className="w-full flex flex-col justify-start"
                                 >
                                     <motion.span
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: 0.2 }}
-                                        className="inline-block w-fit py-1 px-3 rounded-full bg-brand-green/10 text-brand-green text-sm font-bold mb-4"
+                                        className="inline-block w-fit py-1 px-3 rounded-full bg-brand-green/10 text-brand-green text-sm font-bold mb-3 md:mb-4"
                                     >
                                         For {slides[currentSlide].role}s
                                     </motion.span>
@@ -90,7 +90,7 @@ export default function HeroSearch() {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.3 }}
-                                        className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6 min-h-[120px] flex items-center"
+                                        className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 leading-tight mb-4 md:mb-6"
                                     >
                                         <span>{slides[currentSlide].headline}</span>
                                     </motion.h1>
@@ -98,7 +98,7 @@ export default function HeroSearch() {
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         transition={{ delay: 0.4 }}
-                                        className="text-lg text-gray-600 mb-8 leading-relaxed min-h-[84px]"
+                                        className="text-base md:text-lg text-gray-600 mb-6 md:mb-8 leading-relaxed"
                                     >
                                         {slides[currentSlide].subhead}
                                     </motion.p>
@@ -107,9 +107,9 @@ export default function HeroSearch() {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.5 }}
-                                        className="flex flex-col sm:flex-row gap-4"
+                                        className="flex flex-col sm:flex-row gap-4 mb-8 md:mb-0"
                                     >
-                                        <button className="bg-brand-green text-white px-8 py-3 rounded-md font-medium hover:bg-green-600 transition-colors shadow-lg text-lg transform hover:scale-105 active:scale-95 duration-200">
+                                        <button className="bg-brand-green text-white px-6 md:px-8 py-3 rounded-md font-medium hover:bg-green-600 transition-colors shadow-lg text-base md:text-lg transform hover:scale-105 active:scale-95 duration-200">
                                             {slides[currentSlide].cta}
                                         </button>
                                     </motion.div>
@@ -118,7 +118,7 @@ export default function HeroSearch() {
                         </div>
 
                         {/* Slide Indicators */}
-                        <div className="flex gap-2 absolute bottom-4 left-0 z-20">
+                        <div className="flex gap-2 mt-4 md:mt-8">
                             {slides.map((_, index) => (
                                 <button
                                     key={index}
@@ -132,15 +132,15 @@ export default function HeroSearch() {
                     </div>
 
                     {/* Image Content (Right) */}
-                    <div className="flex-1 relative w-full max-w-lg">
+                    <div className="flex-1 relative w-full md:max-w-lg mt-8 md:mt-0">
                         {/* Abstract Shape Background */}
                         <motion.div
                             animate={{ rotate: [3, 6, 3] }}
                             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute top-0 right-0 w-full h-full bg-blue-50 rounded-[3rem] scale-90 -z-10"
+                            className="absolute top-0 right-0 w-full h-full bg-blue-50 rounded-[2rem] md:rounded-[3rem] scale-90 -z-10"
                         ></motion.div>
 
-                        <div className="relative rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white aspect-[4/3]">
+                        <div className="relative rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white aspect-[4/3]">
                             <AnimatePresence mode="wait">
                                 <motion.img
                                     key={currentSlide}
