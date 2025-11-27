@@ -43,8 +43,8 @@ export default function RoleCards() {
                     </div>
                 </FadeIn>
 
-                {/* Grid on desktop, horizontal scroll on mobile */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 overflow-x-auto pb-4 snap-x">
+                {/* Grid on desktop, vertical stack on mobile */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {roles.map((role, index) => (
                         <FadeIn
                             key={role.title}
@@ -52,7 +52,7 @@ export default function RoleCards() {
                             direction="up"
                             className="h-full"
                         >
-                            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all flex flex-col items-start min-w-[260px] snap-center group h-full">
+                            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all flex flex-col items-start h-full">
                                 <div className="mb-4 p-3 bg-brand-green/10 text-brand-green rounded-lg group-hover:bg-brand-green group-hover:text-white transition-colors">
                                     {role.icon}
                                 </div>

@@ -66,7 +66,7 @@ export default function HeroSearch() {
                 <div className="flex flex-col md:flex-row items-start gap-12 mb-12">
 
                     {/* Text Content (Left) */}
-                    <div className="flex-1 max-w-xl z-10 flex flex-col min-h-[500px] pt-4 relative">
+                    <div className="flex-1 max-w-xl z-10 flex flex-col min-h-[auto] md:min-h-[500px] pt-4 relative">
                         {/* Slideshow Wrapper */}
                         <div className="relative w-full h-full">
                             <AnimatePresence mode="wait">

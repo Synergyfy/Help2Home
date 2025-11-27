@@ -109,33 +109,41 @@ export default function Header() {
                 </div>
             </div>
 
+            {/* Mobile Menu Overlay */}
+            {isMenuOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                    onClick={() => setIsMenuOpen(false)}
+                />
+            )}
+
             {/* Mobile Menu */}
             {isMenuOpen && (
-                <div className="lg:hidden absolute top-full left-0 w-full bg-white border-t shadow-lg p-4 flex flex-col gap-4 z-50">
-                    <Link href="/browse" className="text-gray-600 hover:text-brand-green py-2">Browse</Link>
-                    <Link href="/list-property" className="text-gray-600 hover:text-brand-green py-2">List your property</Link>
-                    <Link href="/about" className="text-gray-600 hover:text-brand-green py-2">About Us</Link>
+                <div className="lg:hidden absolute top-full left-0 w-full bg-white border-t shadow-lg p-4 flex flex-col gap-4 z-50 max-h-[80vh] overflow-y-auto">
+                    <Link href="/browse" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>Browse</Link>
+                    <Link href="/list-property" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>List your property</Link>
+                    <Link href="/about" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>About Us</Link>
 
                     <div className="border-t border-gray-100 pt-2">
                         <p className="text-xs font-bold text-gray-400 uppercase mb-2">How It Works</p>
-                        <Link href="/how-it-works" className="block text-gray-600 hover:text-brand-green py-2 pl-4">Overview</Link>
-                        <Link href="/how-it-works/tenants" className="block text-gray-600 hover:text-brand-green py-2 pl-4">For Tenants</Link>
-                        <Link href="/how-it-works/landlords" className="block text-gray-600 hover:text-brand-green py-2 pl-4">For Landlords</Link>
-                        <Link href="/how-it-works/investors" className="block text-gray-600 hover:text-brand-green py-2 pl-4">For Investors</Link>
+                        <Link href="/how-it-works" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>Overview</Link>
+                        <Link href="/how-it-works/tenants" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>For Tenants</Link>
+                        <Link href="/how-it-works/landlords" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>For Landlords</Link>
+                        <Link href="/how-it-works/investors" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>For Investors</Link>
                     </div>
 
                     {!isLoggedIn ? (
                         <>
                             <hr className="border-gray-100" />
-                            <Link href="/signin" className="text-gray-600 hover:text-brand-green py-2">Sign In</Link>
-                            <Link href="/signup" className="bg-brand-green text-white px-6 py-3 rounded-full text-center font-medium hover:bg-green-600">
+                            <Link href="/signin" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
+                            <Link href="/signup" className="bg-brand-green text-white px-6 py-3 rounded-full text-center font-medium hover:bg-green-600" onClick={() => setIsMenuOpen(false)}>
                                 Sign Up
                             </Link>
                         </>
                     ) : (
                         <>
                             <hr className="border-gray-100" />
-                            <Link href="/dashboard/tenant/profile" className="flex items-center gap-2 text-gray-600 hover:text-brand-green py-2">
+                            <Link href="/dashboard/tenant/profile" className="flex items-center gap-2 text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>
                                 <div className="w-6 h-6 rounded-full bg-gray-200 overflow-hidden border border-gray-300">
                                     <svg className="w-full h-full text-gray-400" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />

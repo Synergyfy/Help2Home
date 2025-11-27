@@ -6,7 +6,12 @@ import { usePathname } from 'next/navigation';
 
 
 
-export default function DashboardSidebar() {
+interface DashboardSidebarProps {
+    isOpen?: boolean;
+    onClose?: () => void;
+}
+
+export default function DashboardSidebar({ isOpen = false, onClose }: DashboardSidebarProps) {
     const pathname = usePathname();
 
     // Determine role from pathname to avoid flickering
@@ -228,22 +233,29 @@ export default function DashboardSidebar() {
     }
 
     return (
-        <aside className="w-56 bg-[#00853E] text-white min-h-screen flex flex-col fixed left-0 top-0 z-40 rounded-tr-[30px] rounded-tl-[30px]">
+        <aside className={`w-56 bg-[#00853E] text-white min-h-screen flex flex-col fixed left-0 top-0 z-40 rounded-tr-[30px] rounded-tl-[30px] transition-transform duration-300 ease-in-out md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
             {/* Logo Area */}
-            <div className="p-8">
+            <div className="p-8 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-2">
                     <span className="text-2xl font-bold">Help2Home</span>
                 </Link>
+                {/* Mobile Close Button */}
+                <button onClick={onClose} className="md:hidden text-white hover:bg-white/10 p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 px-6 space-y-4">
+            <nav className="flex-1 px-6 space-y-4 overflow-y-auto">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href;
                     return (
                         <Link
                             key={item.href}
                             href={item.href}
+                            onClick={onClose} // Close sidebar on navigation on mobile
                             className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
                                 ? 'bg-white text-[#00853E] font-bold shadow-md'
                                 : 'text-white/90 hover:bg-white/10 hover:text-white'
