@@ -25,17 +25,17 @@ export default function PaymentTimeline({
     totalCount
 }: PaymentTimelineProps) {
     return (
-        <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 mb-8">
+        <div className="bg-white rounded-2xl p-4 md:p-8 shadow-sm border border-gray-100 mb-8">
             <div className="mb-8">
                 <h3 className="text-xl font-bold text-gray-900">{title}</h3>
                 <p className="text-gray-500">{companyName}</p>
             </div>
 
-            <div className="relative mb-12">
+            <div className="relative mb-12 overflow-x-auto pb-4">
                 {/* Progress Line */}
                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -translate-y-1/2 z-0"></div>
 
-                <div className="relative z-10 flex justify-between items-center">
+                <div className="relative z-10 flex justify-between items-center min-w-[600px] md:min-w-0">
                     {items.map((item) => (
                         <div key={item.id} className="flex flex-col items-center">
                             <div
@@ -59,8 +59,8 @@ export default function PaymentTimeline({
                 </div>
             </div>
 
-            <div className="flex items-center justify-between">
-                <div className="flex gap-8">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
                     <div className="flex items-center gap-2">
                         <div className="w-5 h-5 rounded-full border-2 border-[#00853E] flex items-center justify-center">
                             <div className="w-3 h-3 bg-[#00853E] rounded-full"></div>
@@ -79,7 +79,7 @@ export default function PaymentTimeline({
                     </div>
                 </div>
 
-                <button className="bg-[#00853E] text-white font-bold px-6 py-2.5 rounded-lg hover:bg-[#006c32] transition-colors">
+                <button className="w-full md:w-auto bg-[#00853E] text-white font-bold px-6 py-2.5 rounded-lg hover:bg-[#006c32] transition-colors">
                     Continue Payment
                 </button>
             </div>

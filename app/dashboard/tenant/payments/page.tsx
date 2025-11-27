@@ -23,7 +23,7 @@ export default function PaymentsPage() {
     ];
 
     return (
-        <div className="p-8 max-w-5xl mx-auto">
+        <div className="p-4 md:p-8 max-w-5xl mx-auto">
             <PaymentTimeline
                 title="Havic HV G-92 Gamepad"
                 companyName="Name of the company"
@@ -41,7 +41,7 @@ export default function PaymentsPage() {
             />
 
             {/* Verified Customer Promo */}
-            <div className="mt-12 bg-gray-50 rounded-2xl p-8 text-center max-w-2xl mx-auto">
+            <div className="mt-12 bg-gray-50 rounded-2xl p-6 md:p-8 text-center max-w-2xl mx-auto">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Become a Verified Customer</h3>
                 <p className="text-gray-600 mb-6">
                     Click here and become a verified customer giving you the opportunity to benefit from our Pay4Me
