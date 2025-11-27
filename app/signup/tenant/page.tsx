@@ -12,7 +12,6 @@ export default function TenantSignUpPage() {
         lastName: '',
         email: '',
         phone: '',
-        phone: '',
         address: '',
         state: '',
         password: '',
@@ -44,7 +43,6 @@ export default function TenantSignUpPage() {
         // Dispatch auth change event
         window.dispatchEvent(new Event('auth-change'));
 
-        // Simulate successful sign up and redirect
         // Simulate successful sign up and redirect
         router.push('/dashboard/tenant/profile');
     };
