@@ -33,7 +33,7 @@ const steps = [
     },
     {
         title: "Pay Later",
-        description: "Repay the balance over 3–10 months.",
+        description: "Repay the balance over 1–10 months.",
         icon: (
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
         )
@@ -46,8 +46,8 @@ export default function ProcessInfographic() {
             <div className="container mx-auto px-6 md:px-12">
                 <FadeIn>
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-4">Simple 5-Step Process</h2>
-                        <p className="text-gray-600 max-w-2xl mx-auto">From application to moving in, we make it seamless.</p>
+                        <h2 className="text-3xl font-bold text-gray-900 mb-4">How It Works for Tenants</h2>
+                        <p className="text-gray-600 max-w-2xl mx-auto">From application to moving in, we make it seamless in 5 simple steps.</p>
                     </div>
                 </FadeIn>
 

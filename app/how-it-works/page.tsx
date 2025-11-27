@@ -1,7 +1,6 @@
 import HowItWorksHero from '@/components/HowItWorksHero';
 import ProcessInfographic from '@/components/ProcessInfographic';
 import RoleFlowTabs from '@/components/RoleFlowTabs';
-import RentCalculator from '@/components/RentCalculator';
 import HowItWorksFAQs from '@/components/HowItWorksFAQs';
 import { Metadata } from 'next';
 
@@ -16,7 +15,6 @@ export default function HowItWorksPage() {
             <HowItWorksHero />
             <ProcessInfographic />
             <RoleFlowTabs />
-            <RentCalculator />
             <HowItWorksFAQs />
         </main>
     );

@@ -23,21 +23,19 @@ export default function HelpCenterPage() {
     return (
         <main className="min-h-screen bg-white">
             {/* Hero Section */}
-            <section className="bg-brand-dark text-white pt-24 pb-20 relative overflow-hidden">
+            <section className="bg-gray-900 text-white pt-24 pb-20 relative overflow-hidden">
                 {/* Decorative circles */}
                 <div className="absolute top-0 left-0 w-64 h-64 bg-brand-green/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
                 <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-purple/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
 
                 <div className="container mx-auto px-6 md:px-12 relative z-10 text-center">
-                    <FadeIn>
-                        <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                            How can we help you?
-                        </h1>
-                        <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
-                            Search our knowledge base or browse categories to find the answers you need.
-                        </p>
-                        <HelpCenterSearch />
-                    </FadeIn>
+                    <h1 className="text-4xl md:text-5xl font-bold mb-6">
+                        How can we help you?
+                    </h1>
+                    <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                        Search our knowledge base or browse categories to find the answers you need.
+                    </p>
+                    <HelpCenterSearch />
                 </div>
             </section>
 

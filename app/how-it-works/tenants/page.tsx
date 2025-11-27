@@ -1,6 +1,7 @@
 import TenantSteps from '@/components/TenantSteps';
 import TenantTimeline from '@/components/TenantTimeline';
 import TenantCallouts from '@/components/TenantCallouts';
+import RentCalculator from '@/components/RentCalculator';
 import HowItWorksFAQs from '@/components/HowItWorksFAQs';
 import FadeIn from '@/components/FadeIn';
 import Link from 'next/link';
@@ -53,6 +54,7 @@ export default function TenantHowItWorksPage() {
             <TenantSteps />
             <TenantTimeline />
             <TenantCallouts />
+            <RentCalculator />
 
             {/* CTA Section */}
             <section className="py-20 bg-gradient-to-br from-brand-green/5 to-brand-purple/5">

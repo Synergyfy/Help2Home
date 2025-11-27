@@ -9,24 +9,30 @@ export default function HowItWorksHero() {
             <div className="container mx-auto px-6 md:px-12 text-center">
                 <FadeIn>
                     <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                        Rent now. Pay later.<br />
-                        <span className="text-brand-green">Simple, fast and trusted.</span>
+                        How Help2Home Works for <span className="text-brand-green">Everyone</span>
                     </h1>
-                    <p className="text-lg md:text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-                        Pay 50% upfront, move in today. Our banking partners pay landlords immediately — you repay the rest over 3–10 months.
+                    <p className="text-lg md:text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
+                        Whether you're a tenant looking for flexible rent payments, a landlord wanting guaranteed income,
+                        or an investor seeking attractive returns — Help2Home makes real estate simple and profitable.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <a
-                            href="#calculator"
-                            className="bg-brand-green text-white px-8 py-4 rounded-full font-bold hover:bg-green-600 transition-colors shadow-lg shadow-green-200 w-full sm:w-auto"
-                        >
-                            Calculate Repayment
-                        </a>
                         <Link
                             href="/how-it-works/tenants"
-                            className="bg-white text-gray-900 border border-gray-200 px-8 py-4 rounded-full font-bold hover:border-brand-green hover:text-brand-green transition-colors w-full sm:w-auto"
+                            className="bg-brand-green text-white px-8 py-4 rounded-full font-bold hover:bg-green-600 transition-colors shadow-lg shadow-green-200 w-full sm:w-auto"
                         >
                             For Tenants
+                        </Link>
+                        <Link
+                            href="/how-it-works/landlords"
+                            className="bg-white text-gray-900 border-2 border-brand-green px-8 py-4 rounded-full font-bold hover:bg-brand-green hover:text-white transition-colors w-full sm:w-auto"
+                        >
+                            For Landlords
+                        </Link>
+                        <Link
+                            href="/how-it-works/investors"
+                            className="bg-white text-gray-900 border border-gray-200 px-8 py-4 rounded-full font-bold hover:border-brand-green hover:text-brand-green transition-colors w-full sm:w-auto"
+                        >
+                            For Investors
                         </Link>
                     </div>
                 </FadeIn>

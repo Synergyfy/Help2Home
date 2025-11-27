@@ -30,7 +30,7 @@ export default function FadeIn({
             y: 0,
             x: 0,
             transition: {
-                duration: 0.8,
+                duration: 0.6,
                 ease: "easeOut",
                 delay: delay
             }
@@ -40,8 +40,7 @@ export default function FadeIn({
     return (
         <motion.div
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            animate="visible"
             variants={variants}
             className={`${className} ${fullWidth ? 'w-full' : ''}`}
         >

@@ -10,8 +10,8 @@ export default function PurpleBanner() {
 
                     {/* Image Section (Left) */}
                     <div className="w-full md:w-1/2 h-64 md:h-auto relative min-h-[400px]">
-                        <img src="/assets/Rectangle 1301.png" alt="Luxury life" className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-50" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-brand-purple/90 md:hidden"></div>
+                        <img src="/assets/Rectangle 1301.png" alt="Luxury life" className="absolute inset-0 w-full h-full object-cover opacity-80" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-brand-purple/30 to-brand-purple/70"></div>
                     </div>
 
                     {/* Content Section (Right) */}
