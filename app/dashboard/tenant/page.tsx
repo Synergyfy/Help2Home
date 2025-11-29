@@ -1,234 +1,226 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import FadeIn from '@/components/FadeIn';
+import {
+    SummaryCard,
+    RepaymentProgress,
+    ApplicationsFeed,
+    QuickLinksGrid,
+    EducationPreview
+} from '@/components/dashboard/DashboardWidgets';
 
 export default function TenantDashboard() {
-    // Mock data - replace with API calls later
-    const stats = {
-        ongoingApplications: 1,
-        approvedHomes: 0,
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Mock Data State
+    const [stats, setStats] = useState({
+        ongoingApplications: 2,
+        approvedHomes: 1,
         nextRepayment: {
-            amount: 150000,
-            dueDate: '2025-12-01',
+            amount: 45200,
+            dueDate: 'Mar 3, 2026',
         },
-        repaymentProgress: 45, // percentage
-    };
+        unreadMessages: 3,
+        repaymentProgress: 40,
+    });
 
-    const recentApplications = [
-        {
-            id: 1,
-            property: 'Modern 2-Bedroom Apartment',
-            location: 'Lekki Phase 1, Lagos',
-            status: 'Under Review',
-            date: '2025-11-20',
-            image: '/images/apartment-1.jpg', // Placeholder
-        },
-    ];
+    const [recentApplications, setRecentApplications] = useState<any[]>([]);
+    const [educationArticle, setEducationArticle] = useState<any>(null);
 
-    const educationArticle = {
-        title: 'Understanding Rent Financing',
-        category: 'Financial Literacy',
-        readTime: '5 min read',
-        image: '/images/education-1.jpg', // Placeholder
-    };
+    useEffect(() => {
+        // Simulate API fetch
+        const fetchData = async () => {
+            await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5s delay
+
+            setRecentApplications([
+                {
+                    id: 'A-000123',
+                    propertyTitle: 'Modern 2-Bedroom Apartment in Lekki',
+                    propertyImage: '/images/apartment-1.jpg',
+                    status: 'Under Review',
+                    statusMessage: 'We are verifying your documents.',
+                    updatedAt: '2 days ago',
+                },
+                {
+                    id: 'A-000124',
+                    propertyTitle: 'Cozy Studio in Yaba',
+                    propertyImage: '/images/apartment-2.jpg',
+                    status: 'Submitted',
+                    statusMessage: 'Application sent — under initial review.',
+                    updatedAt: '5 days ago',
+                }
+            ]);
+
+            setEducationArticle({
+                title: 'Understanding Rent Financing',
+                category: 'Financial Literacy',
+                readTime: '3 min read',
+                image: '/images/education-1.jpg',
+            });
+
+            setIsLoading(false);
+        };
+
+        fetchData();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <div className="space-y-8 pb-12 animate-pulse">
+                {/* Header Skeleton */}
+                <div className="h-8 bg-gray-200 rounded w-1/3 mb-8"></div>
+
+                {/* Summary Cards Skeleton */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    {[...Array(4)].map((_, i) => (
+                        <div key={i} className="h-40 bg-gray-200 rounded-2xl"></div>
+                    ))}
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2 space-y-8">
+                        <div className="h-48 bg-gray-200 rounded-2xl"></div>
+                        <div className="h-96 bg-gray-200 rounded-2xl"></div>
+                    </div>
+                    <div className="space-y-8">
+                        <div className="h-64 bg-gray-200 rounded-2xl"></div>
+                        <div className="h-48 bg-gray-200 rounded-2xl"></div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="space-y-8 pb-12">
+        <div className="space-y-8 pb-24 md:pb-12">
             <FadeIn>
-                <div className="flex items-center justify-between mb-8">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Welcome back, Tenant!</h1>
-                        <p className="text-gray-500 mt-1">Here's what's happening with your housing journey.</p>
-                    </div>
-                    <Link
-                        href="/dashboard/tenant/marketplace"
-                        className="bg-[#00853E] text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-[#006c32] transition-colors shadow-sm"
-                    >
-                        Browse Properties
-                    </Link>
+                {/* Page Title & Breadcrumb */}
+                <div className="mb-8">
+                    <nav className="text-sm text-gray-500 mb-1">Home / Dashboard</nav>
+                    <h1 className="text-2xl font-bold text-gray-900">Dashboard — Home</h1>
                 </div>
 
                 {/* Hero Summary Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    {/* Ongoing Applications */}
-                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                            </div>
-                            <span className="text-2xl font-bold text-gray-900">{stats.ongoingApplications}</span>
-                        </div>
-                        <h3 className="text-gray-500 font-medium">Ongoing Applications</h3>
-                        <Link href="/dashboard/tenant/applications" className="text-[#00853E] text-sm font-semibold mt-2 inline-block hover:underline">
-                            View details &rarr;
-                        </Link>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    {/* Card 1: Ongoing Applications */}
+                    <SummaryCard
+                        title="Ongoing applications"
+                        value={stats.ongoingApplications}
+                        subtext="Applications in progress"
+                        ctaText="View all"
+                        ctaLink="/dashboard/tenant/applications"
+                        tooltip="Applications currently under review or awaiting bank action"
+                        icon={
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        }
+                        isEmpty={stats.ongoingApplications === 0}
+                        emptyText="No active applications — start one now."
+                        emptyCtaText="Browse properties"
+                        emptyCtaLink="/dashboard/tenant/marketplace"
+                        variant="blue"
+                    />
 
-                    {/* Approved Homes */}
-                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-[#00853E]">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                </svg>
-                            </div>
-                            <span className="text-2xl font-bold text-gray-900">{stats.approvedHomes}</span>
-                        </div>
-                        <h3 className="text-gray-500 font-medium">Approved Homes</h3>
-                        <Link href="/dashboard/tenant/marketplace" className="text-[#00853E] text-sm font-semibold mt-2 inline-block hover:underline">
-                            Find a home &rarr;
-                        </Link>
-                    </div>
+                    {/* Card 2: Approved Homes */}
+                    <SummaryCard
+                        title="Approved homes"
+                        value={stats.approvedHomes}
+                        subtext="Homes ready for move-in"
+                        ctaText="View approved"
+                        ctaLink="/dashboard/tenant/applications" // Or a specific filter
+                        tooltip="Homes where your application has been approved"
+                        icon={
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                        }
+                        isEmpty={stats.approvedHomes === 0}
+                        emptyText="0 — No approved homes yet. Keep applying!"
+                        variant="green"
+                    />
 
-                    {/* Next Repayment */}
-                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                            <div className="text-right">
-                                <span className="block text-xs text-gray-500">Due: {stats.nextRepayment.dueDate}</span>
-                                <span className="text-xl font-bold text-gray-900">₦{stats.nextRepayment.amount.toLocaleString()}</span>
-                            </div>
-                        </div>
-                        <h3 className="text-gray-500 font-medium">Next Repayment</h3>
-                        <button className="text-[#00853E] text-sm font-semibold mt-2 hover:underline">
-                            Pay Now &rarr;
-                        </button>
-                    </div>
+                    {/* Card 3: Next Repayment */}
+                    <SummaryCard
+                        title="Next repayment due"
+                        value={`₦ ${stats.nextRepayment.amount.toLocaleString()}`}
+                        subtext={`Due ${stats.nextRepayment.dueDate}`}
+                        ctaText="Pay Now"
+                        ctaLink="/dashboard/tenant/payments"
+                        tooltip="Pay your next scheduled installment to avoid penalties"
+                        icon={
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        }
+                        isEmpty={stats.nextRepayment.amount === 0}
+                        emptyText="No upcoming repayments"
+                        emptyCtaText="View payments"
+                        emptyCtaLink="/dashboard/tenant/payments"
+                        variant="orange"
+                    />
+
+                    {/* Card 4: Unread Messages */}
+                    <SummaryCard
+                        title="Unread messages"
+                        value={stats.unreadMessages}
+                        subtext="Messages from landlords or support"
+                        ctaText="Open messages"
+                        ctaLink="/dashboard/tenant/support" // Or messages page if it existed
+                        tooltip="New messages may include requests or important updates"
+                        icon={
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                        }
+                        isEmpty={stats.unreadMessages === 0}
+                        emptyText="You're all caught up — no unread messages!"
+                        variant="purple"
+                    />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Main Content Column */}
                     <div className="lg:col-span-2 space-y-8">
                         {/* Repayment Progress */}
-                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                            <h3 className="text-lg font-bold text-gray-900 mb-6">Repayment Progress</h3>
-                            <div className="relative pt-1">
-                                <div className="flex mb-2 items-center justify-between">
-                                    <div>
-                                        <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-[#00853E] bg-green-100">
-                                            On Track
-                                        </span>
-                                    </div>
-                                    <div className="text-right">
-                                        <span className="text-xs font-semibold inline-block text-[#00853E]">
-                                            {stats.repaymentProgress}%
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-green-100">
-                                    <div style={{ width: `${stats.repaymentProgress}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-[#00853E]"></div>
-                                </div>
-                                <p className="text-sm text-gray-500">You have paid 45% of your total rent for this year. Keep it up!</p>
-                            </div>
-                        </div>
+                        <RepaymentProgress
+                            percentage={stats.repaymentProgress}
+                            nextDueDate={stats.nextRepayment.dueDate}
+                            nextAmount={`₦ ${stats.nextRepayment.amount.toLocaleString()}`}
+                        />
 
-                        {/* Recent Applications */}
-                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                            <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-lg font-bold text-gray-900">Recent Applications</h3>
-                                <Link href="/dashboard/tenant/applications" className="text-sm text-[#00853E] font-medium hover:underline">
-                                    View All
-                                </Link>
-                            </div>
-
-                            {recentApplications.length > 0 ? (
-                                <div className="space-y-4">
-                                    {recentApplications.map((app) => (
-                                        <div key={app.id} className="flex items-center gap-4 p-4 rounded-xl border border-gray-50 hover:bg-gray-50 transition-colors">
-                                            <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                                                {/* <img src={app.image} alt={app.property} className="w-full h-full object-cover" /> */}
-                                                <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500 text-xs">Img</div>
-                                            </div>
-                                            <div className="flex-1">
-                                                <h4 className="font-semibold text-gray-900">{app.property}</h4>
-                                                <p className="text-sm text-gray-500">{app.location}</p>
-                                            </div>
-                                            <div className="text-right">
-                                                <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                    {app.status}
-                                                </span>
-                                                <p className="text-xs text-gray-400 mt-1">{app.date}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="text-center py-8">
-                                    <p className="text-gray-500">No recent applications.</p>
-                                    <Link href="/dashboard/tenant/marketplace" className="text-[#00853E] font-medium mt-2 inline-block">
-                                        Start browsing &rarr;
-                                    </Link>
-                                </div>
-                            )}
-                        </div>
+                        {/* Applications Feed */}
+                        <ApplicationsFeed applications={recentApplications} />
                     </div>
 
                     {/* Sidebar Column */}
                     <div className="space-y-8">
                         {/* Quick Links */}
-                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                            <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
-                            <div className="grid grid-cols-2 gap-4">
-                                <Link href="/dashboard/tenant/marketplace" className="p-4 rounded-xl bg-gray-50 hover:bg-green-50 hover:text-[#00853E] transition-colors text-center group">
-                                    <div className="w-10 h-10 mx-auto bg-white rounded-full shadow-sm flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-600 group-hover:text-[#00853E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                        </svg>
-                                    </div>
-                                    <span className="text-sm font-medium">Browse</span>
-                                </Link>
-                                <Link href="/dashboard/tenant/applications" className="p-4 rounded-xl bg-gray-50 hover:bg-green-50 hover:text-[#00853E] transition-colors text-center group">
-                                    <div className="w-10 h-10 mx-auto bg-white rounded-full shadow-sm flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-600 group-hover:text-[#00853E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                    </div>
-                                    <span className="text-sm font-medium">Applications</span>
-                                </Link>
-                                <Link href="/dashboard/tenant/payments" className="p-4 rounded-xl bg-gray-50 hover:bg-green-50 hover:text-[#00853E] transition-colors text-center group">
-                                    <div className="w-10 h-10 mx-auto bg-white rounded-full shadow-sm flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-600 group-hover:text-[#00853E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                                        </svg>
-                                    </div>
-                                    <span className="text-sm font-medium">Payments</span>
-                                </Link>
-                                <Link href="/dashboard/tenant/support" className="p-4 rounded-xl bg-gray-50 hover:bg-green-50 hover:text-[#00853E] transition-colors text-center group">
-                                    <div className="w-10 h-10 mx-auto bg-white rounded-full shadow-sm flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-600 group-hover:text-[#00853E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                                        </svg>
-                                    </div>
-                                    <span className="text-sm font-medium">Support</span>
-                                </Link>
-                            </div>
-                        </div>
+                        <QuickLinksGrid />
 
                         {/* Education Hub Preview */}
-                        <div className="bg-[#00853E] p-6 rounded-2xl shadow-sm text-white relative overflow-hidden">
-                            <div className="relative z-10">
-                                <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-white/20 text-white mb-3">
-                                    {educationArticle.category}
-                                </span>
-                                <h3 className="text-lg font-bold mb-2">{educationArticle.title}</h3>
-                                <p className="text-white/80 text-sm mb-4">{educationArticle.readTime}</p>
-                                <button className="bg-white text-[#00853E] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors">
-                                    Learn More
-                                </button>
-                            </div>
-                            {/* Decorative circles */}
-                            <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10"></div>
-                            <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white/10"></div>
-                        </div>
+                        <EducationPreview article={educationArticle} />
                     </div>
+                </div>
+
+                {/* Mobile Footer Action Bar (Visible only on small screens) */}
+                <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 md:hidden flex items-center justify-between z-50">
+                    <Link href="/dashboard/tenant/support" className="flex items-center gap-2 text-gray-600">
+                        <div className="relative">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                            {stats.unreadMessages > 0 && (
+                                <span className="absolute -top-1 -right-1 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"></span>
+                            )}
+                        </div>
+                        <span className="text-sm font-medium">Messages</span>
+                    </Link>
+                    <Link href="/dashboard/tenant/marketplace" className="bg-[#00853E] text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#006c32] transition-colors">
+                        Browse Properties
+                    </Link>
                 </div>
             </FadeIn>
         </div>

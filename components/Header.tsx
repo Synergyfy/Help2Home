@@ -37,8 +37,8 @@ export default function Header() {
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-180 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
                         </button>
                         <div className="absolute top-full left-0 w-48 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
-                            <Link href="/dashboard/tenant/marketplace" className="block px-4 py-3 hover:bg-gray-50 hover:text-brand-green transition-colors">Marketplace</Link>
-                            <Link href="/browse/properties" className="block px-4 py-3 hover:bg-gray-50 hover:text-brand-green transition-colors">All Properties</Link>
+                            <Link href={isLoggedIn ? "/dashboard/tenant/marketplace" : "/marketplace"} className="block px-4 py-3 hover:bg-gray-50 hover:text-brand-green transition-colors">Marketplace</Link>
+                            <Link href="/marketplace" className="block px-4 py-3 hover:bg-gray-50 hover:text-brand-green transition-colors">All Properties</Link>
                         </div>
                     </div>
                     <Link href="/list-property" className="hover:text-brand-green transition-colors">List your property</Link>
@@ -120,7 +120,7 @@ export default function Header() {
             {/* Mobile Menu */}
             {isMenuOpen && (
                 <div className="lg:hidden absolute top-full left-0 w-full bg-white border-t shadow-lg p-4 flex flex-col gap-4 z-50 max-h-[80vh] overflow-y-auto">
-                    <Link href="/browse" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>Browse</Link>
+                    <Link href={isLoggedIn ? "/dashboard/tenant/marketplace" : "/marketplace"} className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>Browse</Link>
                     <Link href="/list-property" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>List your property</Link>
                     <Link href="/about" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>About Us</Link>
 

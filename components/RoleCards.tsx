@@ -43,14 +43,14 @@ export default function RoleCards() {
                     </div>
                 </FadeIn>
 
-                {/* Grid on desktop, vertical stack on mobile */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Centered Flex Layout - Single Line on Desktop */}
+                <div className="flex flex-col md:flex-row justify-center items-stretch gap-6 max-w-6xl mx-auto">
                     {roles.map((role, index) => (
                         <FadeIn
                             key={role.title}
                             delay={index * 0.1}
                             direction="up"
-                            className="h-full"
+                            className="flex-1 md:max-w-xs"
                         >
                             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all flex flex-col items-start h-full">
                                 <div className="mb-4 p-3 bg-brand-green/10 text-brand-green rounded-lg group-hover:bg-brand-green group-hover:text-white transition-colors">

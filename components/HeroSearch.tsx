@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const slides = [
@@ -8,7 +9,7 @@ const slides = [
         role: 'Tenant',
         headline: (
             <>
-                Find your next home in Nigeria — <span className="text-brand-green">fast, trusted, local</span>
+                <span className="text-brand-green">Get your home now, pay later</span> — fast, trusted, local
             </>
         ),
         subhead: 'Search verified homes, schedule viewings and pay rent online — all in one place.',
@@ -109,9 +110,11 @@ export default function HeroSearch() {
                                         transition={{ delay: 0.5 }}
                                         className="flex flex-col sm:flex-row gap-4 mb-8 md:mb-0"
                                     >
-                                        <button className="bg-brand-green text-white px-6 md:px-8 py-3 rounded-md font-medium hover:bg-green-600 transition-colors shadow-lg text-base md:text-lg transform hover:scale-105 active:scale-95 duration-200">
-                                            {slides[currentSlide].cta}
-                                        </button>
+                                        <Link href="/marketplace">
+                                            <button className="bg-brand-green text-white px-6 md:px-8 py-3 rounded-md font-medium hover:bg-green-600 transition-colors shadow-lg text-base md:text-lg transform hover:scale-105 active:scale-95 duration-200">
+                                                {slides[currentSlide].cta}
+                                            </button>
+                                        </Link>
                                     </motion.div>
                                 </motion.div>
                             </AnimatePresence>
@@ -182,10 +185,12 @@ export default function HeroSearch() {
                             <button className="flex-1 md:flex-none px-6 py-3 text-gray-600 hover:text-brand-green font-medium text-sm border-r border-gray-200 transition-colors">
                                 Filters
                             </button>
-                            <button className="flex-1 md:flex-none bg-brand-green text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-all font-bold shadow-md flex items-center justify-center gap-2 active:scale-95">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
-                                Search
-                            </button>
+                            <Link href="/marketplace" className="flex-1 md:flex-none">
+                                <button className="w-full bg-brand-green text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-all font-bold shadow-md flex items-center justify-center gap-2 active:scale-95">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
+                                    Search
+                                </button>
+                            </Link>
                         </div>
                     </div>
                 </motion.div>

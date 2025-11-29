@@ -10,7 +10,7 @@ const listings = [
         location: 'Lekki Phase 1, Lagos',
         price: '₦2,500,000',
         badges: ['Verified', '2 Beds', '2 Baths'],
-        imageColor: 'bg-slate-200',
+        image: '/assets/marketplace assets/home1.png',
     },
     {
         id: 2,
@@ -18,7 +18,7 @@ const listings = [
         location: 'Victoria Island, Lagos',
         price: '₦5,000,000',
         badges: ['Verified', '3 Beds', '4 Baths'],
-        imageColor: 'bg-slate-300',
+        image: '/assets/marketplace assets/Home2.png',
     },
     {
         id: 3,
@@ -26,7 +26,7 @@ const listings = [
         location: 'Yaba, Lagos',
         price: '₦800,000',
         badges: ['Verified', 'Studio', '1 Bath'],
-        imageColor: 'bg-slate-200',
+        image: '/assets/marketplace assets/Home3.png',
     },
     {
         id: 4,
@@ -34,7 +34,7 @@ const listings = [
         location: 'Ikoyi, Lagos',
         price: '₦12,000,000',
         badges: ['Verified', '4 Beds', '5 Baths'],
-        imageColor: 'bg-slate-300',
+        image: '/assets/marketplace assets/Home4.png',
     }
 ];
 
@@ -48,7 +48,7 @@ export default function FeaturedListings() {
                             <h2 className="text-3xl font-bold text-gray-900 mb-2">Featured Listings</h2>
                             <p className="text-gray-600">Explore our top verified properties available for rent.</p>
                         </div>
-                        <Link href="/browse" className="hidden md:inline-block text-brand-green font-medium hover:underline">
+                        <Link href="/marketplace" className="hidden md:inline-block text-brand-green font-medium hover:underline">
                             View all listings &rarr;
                         </Link>
                     </div>
@@ -64,10 +64,12 @@ export default function FeaturedListings() {
                         >
                             <div className="group block bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-lg transition-all h-full flex flex-col">
                                 {/* Image Area */}
-                                <Link href={`/listing/${listing.id}`} className="relative block aspect-[4/3] bg-gray-100 overflow-hidden">
-                                    <div className={`w-full h-full ${listing.imageColor} flex items-center justify-center text-slate-400 group-hover:scale-105 transition-transform duration-500`}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg>
-                                    </div>
+                                <Link href={`/marketplace/${listing.id}`} className="relative block aspect-[4/3] bg-gray-100 overflow-hidden">
+                                    <img
+                                        src={listing.image}
+                                        alt={listing.title}
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    />
 
                                     {/* Badges */}
                                     <div className="absolute top-3 left-3 flex flex-wrap gap-2">
@@ -100,7 +102,7 @@ export default function FeaturedListings() {
                                         ))}
                                     </div>
 
-                                    <Link href={`/listing/${listing.id}`} className="block w-full text-center border border-brand-green text-brand-green hover:bg-brand-green hover:text-white py-2 rounded-md font-medium transition-colors text-sm mt-auto">
+                                    <Link href={`/marketplace/${listing.id}`} className="block w-full text-center border border-brand-green text-brand-green hover:bg-brand-green hover:text-white py-2 rounded-md font-medium transition-colors text-sm mt-auto">
                                         View listing
                                     </Link>
                                 </div>
@@ -110,11 +112,11 @@ export default function FeaturedListings() {
                 </div>
 
                 <div className="mt-8 text-center md:hidden">
-                    <Link href="/browse" className="inline-block text-brand-green font-medium hover:underline">
+                    <Link href="/marketplace" className="inline-block text-brand-green font-medium hover:underline">
                         View all listings &rarr;
                     </Link>
                 </div>
-            </div>
-        </section>
+            </div >
+        </section >
     );
 }

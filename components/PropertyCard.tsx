@@ -37,7 +37,7 @@ export default function PropertyCard({
 
     return (
         <div className="group relative">
-            <Link href={`/dashboard/tenant/marketplace/${id}`} className="block">
+            <Link href={`/marketplace/${id}`} className="block">
                 <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group-hover:-translate-y-1">
                     {/* Image Container */}
                     <div className="relative h-56 sm:h-64 w-full overflow-hidden bg-gray-100">
