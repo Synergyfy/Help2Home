@@ -56,7 +56,7 @@ export default function PropertyQuickCard({ propertyName, propertyAddress, prope
                 <a href="#" className="text-sm text-[#6D28D9] font-medium hover:underline block mb-2">
                     View Property Details
                 </a>
-                <a href="/dashboard/tenant/marketplace" className="text-sm text-gray-500 hover:text-gray-900 block">
+                <a href="/marketplace" className="text-sm text-gray-500 hover:text-gray-900 block">
                     Return to Marketplace
                 </a>
             </div>

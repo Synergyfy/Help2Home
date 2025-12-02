@@ -2,6 +2,7 @@ import TenantSteps from '@/components/TenantSteps';
 import TenantTimeline from '@/components/TenantTimeline';
 import TenantCallouts from '@/components/TenantCallouts';
 import RentCalculator from '@/components/RentCalculator';
+import AffordabilityCalculator from '@/components/AffordabilityCalculator';
 import HowItWorksFAQs from '@/components/HowItWorksFAQs';
 import FadeIn from '@/components/FadeIn';
 import Link from 'next/link';
@@ -54,6 +55,7 @@ export default function TenantHowItWorksPage() {
             <TenantSteps />
             <TenantTimeline />
             <TenantCallouts />
+            <AffordabilityCalculator />
             <RentCalculator />
 
             {/* CTA Section */}

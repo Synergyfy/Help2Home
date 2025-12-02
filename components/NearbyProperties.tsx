@@ -50,7 +50,7 @@ export default function NearbyProperties() {
                         <div className="flex-1">
                             <h4 className="text-xs font-medium text-gray-900 mb-2 line-clamp-2">{property.title}</h4>
                             <Link
-                                href={`/dashboard/tenant/marketplace/${property.id}`}
+                                href={`/marketplace/${property.id}`}
                                 className="inline-block bg-[#00853E] text-white text-xs font-bold px-4 py-1.5 rounded hover:bg-[#006c32] transition-colors"
                             >
                                 View

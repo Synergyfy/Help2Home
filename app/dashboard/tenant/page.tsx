@@ -120,7 +120,7 @@ export default function TenantDashboard() {
                         isEmpty={stats.ongoingApplications === 0}
                         emptyText="No active applications — start one now."
                         emptyCtaText="Browse properties"
-                        emptyCtaLink="/dashboard/tenant/marketplace"
+                        emptyCtaLink="/marketplace"
                         variant="blue"
                     />
 
@@ -218,7 +218,7 @@ export default function TenantDashboard() {
                         </div>
                         <span className="text-sm font-medium">Messages</span>
                     </Link>
-                    <Link href="/dashboard/tenant/marketplace" className="bg-[#00853E] text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#006c32] transition-colors">
+                    <Link href="/marketplace" className="bg-[#00853E] text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#006c32] transition-colors">
                         Browse Properties
                     </Link>
                 </div>

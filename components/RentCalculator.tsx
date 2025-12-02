@@ -40,8 +40,8 @@ export default function RentCalculator() {
         // Get interest rate from selected bank
         const interestRate = PARTNER_BANKS[selectedBankIndex].rate;
 
-        // Calculate flat interest on principal
-        const interestAmount = (principal * interestRate) / 100;
+        // Calculate monthly interest on principal
+        const interestAmount = (principal * (interestRate / 100)) * months;
 
         // Total repayable = principal + interest
         const totalRepayable = principal + interestAmount;

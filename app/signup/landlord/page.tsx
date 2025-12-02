@@ -47,7 +47,7 @@ export default function LandlordSignUpPage() {
                 <FadeIn>
                     <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
                         <div className="text-center mb-10">
-                            <Link href="/signup" className="text-sm text-gray-500 hover:text-brand-green mb-4 inline-block">
+                            <Link href="/signup" className="text-sm text-gray-500 hover:text-[#00853E] mb-4 inline-block">
                                 ← Back to Role Selection
                             </Link>
                             <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -67,7 +67,7 @@ export default function LandlordSignUpPage() {
                                         name="firstName"
                                         value={formData.firstName}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-purple focus:border-transparent"
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00853E] focus:border-transparent"
                                         required
                                     />
                                 </div>
@@ -78,7 +78,7 @@ export default function LandlordSignUpPage() {
                                         name="lastName"
                                         value={formData.lastName}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-purple focus:border-transparent"
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00853E] focus:border-transparent"
                                         required
                                     />
                                 </div>
@@ -91,7 +91,7 @@ export default function LandlordSignUpPage() {
                                     name="email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-purple focus:border-transparent"
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00853E] focus:border-transparent"
                                     required
                                 />
                             </div>
@@ -103,7 +103,7 @@ export default function LandlordSignUpPage() {
                                     name="phone"
                                     value={formData.phone}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-purple focus:border-transparent"
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00853E] focus:border-transparent"
                                     required
                                 />
                             </div>
@@ -115,7 +115,7 @@ export default function LandlordSignUpPage() {
                                         name="role"
                                         value={formData.role}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-purple focus:border-transparent"
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00853E] focus:border-transparent"
                                         required
                                     >
                                         <option value="landlord">Landlord</option>
@@ -129,7 +129,7 @@ export default function LandlordSignUpPage() {
                                         name="portfolioSize"
                                         value={formData.portfolioSize}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-purple focus:border-transparent"
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00853E] focus:border-transparent"
                                         required
                                     >
                                         <option value="">Select...</option>
@@ -149,7 +149,7 @@ export default function LandlordSignUpPage() {
                                         name="password"
                                         value={formData.password}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-purple focus:border-transparent"
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00853E] focus:border-transparent"
                                         required
                                     />
                                 </div>
@@ -160,22 +160,22 @@ export default function LandlordSignUpPage() {
                                         name="confirmPassword"
                                         value={formData.confirmPassword}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-purple focus:border-transparent"
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#00853E] focus:border-transparent"
                                         required
                                     />
                                 </div>
                             </div>
 
                             <div className="flex items-start gap-3 mt-4">
-                                <input type="checkbox" required className="mt-1 w-4 h-4 text-brand-purple border-gray-300 rounded focus:ring-brand-purple" />
+                                <input type="checkbox" required className="mt-1 w-4 h-4 text-[#00853E] border-gray-300 rounded focus:ring-[#00853E]" />
                                 <p className="text-sm text-gray-600">
-                                    I agree to the <Link href="/terms" className="text-brand-purple hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-brand-purple hover:underline">Privacy Policy</Link>.
+                                    I agree to the <Link href="/terms" className="text-[#00853E] hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-[#00853E] hover:underline">Privacy Policy</Link>.
                                 </p>
                             </div>
 
                             <button
                                 type="submit"
-                                className="w-full bg-brand-purple text-white py-4 rounded-lg font-bold text-lg hover:bg-purple-800 transition-colors shadow-lg mt-6"
+                                className="w-full bg-[#00853E] text-white py-4 rounded-lg font-bold text-lg hover:bg-green-700 transition-colors shadow-lg mt-6"
                             >
                                 Create Partner Account
                             </button>
