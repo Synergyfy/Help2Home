@@ -4,6 +4,7 @@ import React,{ useState,JSX } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import FadeIn from '@/components/FadeIn';
+import {toast} from 'react-toastify'
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -76,8 +77,8 @@ export default function OnboardingPage() {
     localStorage.setItem('user_onboarding', JSON.stringify(onboardingData));
     localStorage.setItem('user_session', 'true');
     window.dispatchEvent(new Event('auth-change'));
-
-    if (role === 'tenant') router.push('/signin');
+    toast.success('login with your credentials');
+    router.push('/signin');
   };
 
   // Define form steps dynamically
