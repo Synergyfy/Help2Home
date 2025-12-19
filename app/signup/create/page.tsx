@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import FadeIn from '@/components/FadeIn';
 import { useUserStore } from '@/store/userStore';
-import {  toast } from 'react-toastify';
 
 export default function CreateAccountPage() {
   const router = useRouter();
@@ -22,11 +21,7 @@ export default function CreateAccountPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (form.password !== form.confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
+    if (form.password !== form.confirmPassword) return alert('Passwords do not match');
 
     // Save user info in Zustand
     setUser({ email: form.email, role: roleParam, verified: false });
@@ -34,12 +29,7 @@ export default function CreateAccountPage() {
     // Simulate OTP
     localStorage.setItem('email_otp', '123456');
 
-    toast.success('Account created successfully! OTP sent.');
-
-    // Redirect after a short delay so toast can be seen
-    setTimeout(() => {
-      router.push('/signup/verify');
-    }, 1500);
+    router.push('/signup/verify');
   };
 
   return (
@@ -116,7 +106,6 @@ export default function CreateAccountPage() {
           </div>
         </FadeIn>
       </div>
-
     </main>
   );
 }
