@@ -77,9 +77,7 @@ export default function OnboardingPage() {
     localStorage.setItem('user_session', 'true');
     window.dispatchEvent(new Event('auth-change'));
 
-    if (role === 'tenant') router.push('/dashboard/tenant/profile');
-    else if (role === 'investor') router.push('/dashboard/investor');
-    else router.push('/dashboard/landlord');
+    if (role === 'tenant') router.push('/signin');
   };
 
   // Define form steps dynamically
