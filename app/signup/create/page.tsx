@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import FadeIn from '@/components/FadeIn';
 import { useUserStore } from '@/store/userStore';
+import {toast} from 'react-toastify'
 
 // Zod validation schema
 const createAccountSchema = z
