@@ -3,8 +3,25 @@
 import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import FadeIn from '@/components/FadeIn';
 import { useUserStore } from '@/store/userStore';
+
+// Zod validation schema
+const createAccountSchema = z
+  .object({
+    email: z.string().email({ message: 'Invalid email address' }),
+    password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+    confirmPassword: z.string().min(6, { message: 'Confirm password is required' }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
+
+type CreateAccountForm = z.infer<typeof createAccountSchema>;
 
 export default function CreateAccountPage() {
   const router = useRouter();
@@ -15,21 +32,30 @@ export default function CreateAccountPage() {
   let roleParam = params.get('role');
   if (!roleParam || !allowedRoles.includes(roleParam)) roleParam = 'tenant';
 
-  const [form, setForm] = useState({ email: '', password: '', confirmPassword: '' });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateAccountForm>({
+    resolver: zodResolver(createAccountSchema),
+  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, [e.target.name]: e.target.value });
+  const onSubmit = async (data: CreateAccountForm) => {
+    try {
+      // simulate network request
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (form.password !== form.confirmPassword) return alert('Passwords do not match');
+      // Save user info in Zustand
+      setUser({ email: data.email, role: roleParam, verified: false });
 
-    // Save user info in Zustand
-    setUser({ email: form.email, role: roleParam, verified: false });
+      // Simulate OTP
+      localStorage.setItem('email_otp', '123456');
 
-    // Simulate OTP
-    localStorage.setItem('email_otp', '123456');
-
-    router.push('/signup/verify');
+      router.push('/signup/verify');
+    } catch (err) {
+      console.error(err);
+      alert('Something went wrong. Please try again.');
+    }
   };
 
   return (
@@ -45,41 +71,35 @@ export default function CreateAccountPage() {
                 ← Back to Role Selection
               </Link>
 
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Create your account
-              </h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Create your account</h1>
 
-              <p className="text-gray-600 capitalize">
-                Signing up as a {roleParam}
-              </p>
+              <p className="text-gray-600 capitalize">Signing up as a {roleParam}</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                 <input
-                  name="email"
                   type="email"
-                  required
-                  onChange={handleChange}
+                  {...register('email')}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-transparent"
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Password
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
                   <input
-                    name="password"
                     type="password"
-                    required
-                    onChange={handleChange}
+                    {...register('password')}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-transparent"
                   />
+                  {errors.password && (
+                    <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                  )}
                 </div>
 
                 <div>
@@ -87,20 +107,44 @@ export default function CreateAccountPage() {
                     Confirm Password
                   </label>
                   <input
-                    name="confirmPassword"
                     type="password"
-                    required
-                    onChange={handleChange}
+                    {...register('confirmPassword')}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-transparent"
                   />
+                  {errors.confirmPassword && (
+                    <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
+                  )}
                 </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-brand-green text-white py-4 rounded-lg font-bold text-lg hover:opacity-90 transition shadow-lg mt-6"
+                disabled={isSubmitting}
+                className="w-full bg-brand-green text-white py-4 rounded-lg font-bold text-lg hover:opacity-90 transition shadow-lg mt-6 flex justify-center items-center gap-2"
               >
-                Continue
+                {isSubmitting && (
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    ></path>
+                  </svg>
+                )}
+                {isSubmitting ? 'Creating...' : 'Continue'}
               </button>
             </form>
           </div>
