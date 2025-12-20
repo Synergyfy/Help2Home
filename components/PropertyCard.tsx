@@ -1,8 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { CiStar } from "react-icons/ci";
+import { TbNewSection } from "react-icons/tb";
+import { GrStatusGood } from "react-icons/gr";
 
 interface PropertyCardProps {
     id: number | string;
@@ -51,13 +54,13 @@ export default function PropertyCard({
                         {/* Badges */}
                         <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
                             {featured && (
-                                <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                                    ⭐ Featured
+                                <span className="inline-flex gap-1 items-center bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                                    <CiStar className='w-3 h-3 text-yellow-800' /> Featured
                                 </span>
                             )}
                             {isNew && (
-                                <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                                    🆕 New
+                                <span className="inline-flex gap-1 items-center bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                                    <TbNewSection className='w-3 h-3 text-blue-800' /> New
                                 </span>
                             )}
                             {verified && (

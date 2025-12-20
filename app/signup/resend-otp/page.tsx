@@ -1,11 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link'
 import FadeIn from '@/components/FadeIn';
+import { toast } from 'react-toastify';
+import { useUserStore } from '@/store/userStore';
 
 export default function ResendOtpPage() {
   const [timer, setTimer] = useState(60); // 60-second cooldown
   const [message, setMessage] = useState('OTP has been sent to your email');
+  const [otp, setOtp] = useState('');
+
+  const setUserOtp = useUserStore((state) => state.setOtp);
+
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const storedOtp = localStorage.getItem('email_otp') || '';
+    setOtp(storedOtp);
+  }, []);
 
   // Countdown timer for resending
   useEffect(() => {
@@ -16,10 +29,18 @@ export default function ResendOtpPage() {
 
   const handleResend = () => {
     if (timer > 0) return; // prevent spamming
-    // Simulate sending OTP
+
     const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    localStorage.setItem('email_otp', newOtp);
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('email_otp', newOtp);
+    }
+
+    setOtp(newOtp);
+    setUserOtp(newOtp);
+
     setMessage(`A new OTP has been sent!`);
+    toast.success('OTP resent successfully');
     setTimer(60);
   };
 
@@ -44,12 +65,14 @@ export default function ResendOtpPage() {
             </button>
 
             <p className="mt-6 text-center text-gray-500 text-sm">
-              Enter your OTP on the <b className="text-gray-700">Verify Email</b> page to continue
+              Enter your OTP on the <Link href='/verify' className="text-green-700">Verify Email</Link> page to continue
             </p>
 
-            <p className="mt-2 text-center text-gray-400 text-xs">
-              For demo, your OTP is <b>{localStorage.getItem('email_otp') || '123456'}</b>
-            </p>
+            {typeof window !== 'undefined' && (
+              <p className="mt-2 text-center text-gray-400 text-xs">
+                For demo, your OTP is <b>{otp || '123456'}</b>
+              </p>
+            )}
           </div>
         </div>
       </FadeIn>

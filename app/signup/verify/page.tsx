@@ -5,24 +5,55 @@ import Link from 'next/link';
 import { useState } from 'react';
 import FadeIn from '@/components/FadeIn';
 import { useUserStore } from '@/store/userStore';
-
+import {toast} from 'react-toastify'
 export default function VerifyEmailPage() {
-     const router = useRouter();
-  const setUser = useUserStore((state) => state.setUser);
-  const user = useUserStore((state) => state);
+    const router = useRouter();
+    const setUser = useUserStore((state) => state.setUser);
+    const user = useUserStore((state) => state);
 
-  const [otp, setOtp] = useState('');
-  const [error, setError] = useState('');
+    const [otp, setOtp] = useState('');
+    const [error, setError] = useState('');
+    const [isVerifying, setIsVerifying] = useState(false);
 
-  const handleVerify = () => {
+    const handleVerify = async () => {
+  setError('');
+  setIsVerifying(true);
+
+  try {
+    // simulate network request delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     const savedOtp = localStorage.getItem('email_otp');
-    if (otp !== savedOtp) return setError('Invalid OTP. Please try again.');
+    if (otp !== savedOtp) {
+      setError('Invalid OTP. Please try again.');
+      toast.error('Invalid OTP. Please try again.', {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+      setIsVerifying(false);
+      return;
+    }
 
     // Mark verified in Zustand
     setUser({ verified: true });
 
+    // Show success toast
+    toast.success('Email verified successfully!', {
+      position: 'top-right',
+      autoClose: 2000,
+    });
+
+    setIsVerifying(false);
     router.push(`/onboarding/${user.role}`);
-    };
+  } catch (err) {
+    console.error(err);
+    toast.error('Something went wrong. Please try again.', {
+      position: 'top-right',
+      autoClose: 3000,
+    });
+    setIsVerifying(false);
+  }
+};
 
     return (
         <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-100 to-gray-50 px-4">
@@ -57,9 +88,11 @@ export default function VerifyEmailPage() {
 
                         <button
                             onClick={handleVerify}
-                            className="w-full bg-[#00853E] hover:bg-green-700 text-white font-semibold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl"
+                            disabled={isVerifying}
+                            className={`w-full bg-[#00853E] text-white font-semibold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl ${isVerifying ? 'opacity-50 cursor-not-allowed hover:bg-[#00853E]' : 'hover:bg-green-700'
+                                }`}
                         >
-                            Verify Email
+                            {isVerifying ? 'Verifying...' : 'Verify Email'}
                         </button>
                     </div>
 
