@@ -24,7 +24,7 @@ const createAccountSchema = z
 
 type CreateAccountForm = z.infer<typeof createAccountSchema>;
 
-export default function CreateAccountPage() {
+export default function CreateAccountClient() {
   const router = useRouter();
   const params = useSearchParams();
   const setUser = useUserStore((state) => state.setUser);
