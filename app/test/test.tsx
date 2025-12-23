@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react';
 import MarketplaceHero from '@/components/MarketplaceHero';
 import PropertyCard from '@/components/PropertyCard';
-import AdvancedFilterSidebar from '@/components/marketplace/AdvancedFilterSidebar';
+import AdvancedFilterSidebar from '@/components/marketplace/FilterModal';
 import { useMarketplaceStore } from '@/store/marketplaceStore';
 
 const allProperties = [
