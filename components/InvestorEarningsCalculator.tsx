@@ -1,27 +1,72 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import FadeIn from './FadeIn';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 export default function InvestorEarningsCalculator() {
-    // Inputs
-    const [investmentAmount, setInvestmentAmount] = useState<number>(500000);
+    // Inputs (raw values)
+    const [investmentAmount, setInvestmentAmount] = useState<number>(500_000);
+    const [investmentInput, setInvestmentInput] = useState<string>('500,000');
     const [duration, setDuration] = useState<number>(12);
     const [mode, setMode] = useState<'fixed' | 'compound'>('fixed');
-    const [monthlyRate, setMonthlyRate] = useState<number>(2.0); // Default 2%
+    const [monthlyRate, setMonthlyRate] = useState<number>(2.0);
+    const [monthlyRateInput, setMonthlyRateInput] = useState<string>('2');
     const [advancedMode, setAdvancedMode] = useState(false);
 
     // Outputs
-    const [monthlyEarnings, setMonthlyEarnings] = useState(0);
-    const [totalEarnings, setTotalEarnings] = useState(0);
-    const [totalPayout, setTotalPayout] = useState(0);
-    const [apr, setApr] = useState(0);
+    const [monthlyEarnings, setMonthlyEarnings] = useState<number>(0);
+    const [totalEarnings, setTotalEarnings] = useState<number>(0);
+    const [totalPayout, setTotalPayout] = useState<number>(0);
+    const [apr, setApr] = useState<number>(0);
     const [chartData, setChartData] = useState<any[]>([]);
+
+    const router = useRouter()
+
+    // Format numbers with commas
+    const formatCurrency = (val: number) =>
+        new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(val);
+
+    // Format numbers with commas
+    const formatNumber = (val: number) => val.toLocaleString();
+
+    // Handle investment input live formatting
+    const handleInvestmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // Remove commas and non-digit characters
+        const raw = e.target.value.replace(/,/g, '').replace(/\D/g, '');
+        if (!raw) {
+            setInvestmentInput('');
+            setInvestmentAmount(0);
+            return;
+        }
+        const num = parseInt(raw, 10);
+        setInvestmentAmount(num);
+        setInvestmentInput(num.toLocaleString());
+    };
+
+    // Handle monthly rate live formatting
+    const handleRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const raw = e.target.value.replace(/,/g, '');
+        if (/^\d*\.?\d*$/.test(raw)) {
+            const num = raw ? parseFloat(raw) : 0;
+            setMonthlyRate(num);
+            setMonthlyRateInput(raw); // Keep input editable while typing
+        }
+    };
+
+    // Optional: format nicely on blur
+    const handleRateBlur = () => {
+        setMonthlyRateInput(monthlyRate.toLocaleString());
+    };
+
+    const handleSubmit = () => {
+        router.push('/signup')
+    }
 
     // Calculations
     useEffect(() => {
-        const amount = Math.max(investmentAmount, 100000); // Min 100k
+        const amount = investmentAmount;
         const dur = duration;
         const rate = monthlyRate / 100;
 
@@ -29,32 +74,27 @@ export default function InvestorEarningsCalculator() {
         let tEarnings = 0;
         let tPayout = 0;
         let effectiveApr = 0;
-        const data = [];
+        const data: any[] = [];
 
         if (mode === 'fixed') {
-            // Fixed Earnings (Simple Interest)
             mEarnings = amount * rate;
             tEarnings = mEarnings * dur;
             tPayout = amount + tEarnings;
-            effectiveApr = (tEarnings / amount) * (12 / dur) * 100; // Annualized simple interest
+            effectiveApr = (tEarnings / amount) * (12 / dur) * 100;
 
-            // Chart Data
             for (let i = 0; i <= dur; i++) {
                 data.push({
                     month: i,
                     principal: amount,
-                    value: amount + (mEarnings * i),
+                    value: amount + mEarnings * i,
                 });
             }
         } else {
-            // Compound Earnings
-            // Formula: A = P * (1 + r)^t
             tPayout = amount * Math.pow(1 + rate, dur);
             tEarnings = tPayout - amount;
-            mEarnings = tEarnings / dur; // Average monthly earnings
-            effectiveApr = (Math.pow(1 + rate, 12) - 1) * 100; // Effective Annual Rate
+            mEarnings = tEarnings / dur;
+            effectiveApr = (Math.pow(1 + rate, 12) - 1) * 100;
 
-            // Chart Data
             for (let i = 0; i <= dur; i++) {
                 data.push({
                     month: i,
@@ -71,10 +111,6 @@ export default function InvestorEarningsCalculator() {
         setChartData(data);
 
     }, [investmentAmount, duration, mode, monthlyRate]);
-
-    const formatCurrency = (val: number) => {
-        return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(val);
-    };
 
     return (
         <section className="py-20 bg-white" id="calculator">
@@ -100,25 +136,32 @@ export default function InvestorEarningsCalculator() {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Investment Amount (₦)</label>
                                 <input
-                                    type="number"
-                                    value={investmentAmount}
-                                    onChange={(e) => setInvestmentAmount(Number(e.target.value))}
+                                    type="text"
+                                    value={investmentInput}
+                                    onChange={handleInvestmentChange}
+                                    onBlur={handleInvestmentChange}
                                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-transparent transition-all mb-2"
                                 />
                                 <input
                                     type="range"
-                                    min="100000"
-                                    max="50000000"
-                                    step="50000"
+                                    min={100_000}
+                                    max={50_000_000}
+                                    step={50_000}
                                     value={investmentAmount}
-                                    onChange={(e) => setInvestmentAmount(Number(e.target.value))}
+                                    onChange={(e) => {
+                                        setInvestmentAmount(Number(e.target.value));
+                                        setInvestmentInput(formatNumber(Number(e.target.value)));
+                                    }}
                                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-green"
                                 />
                                 <div className="flex gap-2 mt-2">
-                                    {[100000, 500000, 1000000, 5000000].map((amt) => (
+                                    {[100_000, 500_000, 1_000_000, 5_000_000].map((amt) => (
                                         <button
                                             key={amt}
-                                            onClick={() => setInvestmentAmount(amt)}
+                                            onClick={() => {
+                                                setInvestmentAmount(amt);
+                                                setInvestmentInput(formatNumber(amt));
+                                            }}
                                             className="text-xs bg-white border border-gray-300 px-2 py-1 rounded hover:border-brand-green hover:text-brand-green transition-colors"
                                         >
                                             {formatCurrency(amt)}
@@ -136,7 +179,9 @@ export default function InvestorEarningsCalculator() {
                                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-transparent transition-all"
                                 >
                                     {[3, 6, 9, 12, 18, 24].map((m) => (
-                                        <option key={m} value={m}>{m} Months {m >= 12 ? `(${m / 12} Year${m / 12 > 1 ? 's' : ''})` : ''}</option>
+                                        <option key={m} value={m}>
+                                            {m} Months {m >= 12 ? `(${m / 12} Year${m / 12 > 1 ? 's' : ''})` : ''}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
@@ -186,15 +231,15 @@ export default function InvestorEarningsCalculator() {
                                 </div>
                                 {advancedMode ? (
                                     <input
-                                        type="number"
-                                        step="0.1"
-                                        value={monthlyRate}
-                                        onChange={(e) => setMonthlyRate(Number(e.target.value))}
+                                        type="text"
+                                        value={monthlyRateInput}
+                                        onChange={handleRateChange}
+                                        onBlur={handleRateBlur}
                                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-transparent transition-all"
                                     />
                                 ) : (
                                     <div className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-100 text-gray-500">
-                                        {monthlyRate}%
+                                        {monthlyRate.toLocaleString()}%
                                     </div>
                                 )}
                             </div>
@@ -208,7 +253,7 @@ export default function InvestorEarningsCalculator() {
                                 <div>
                                     <p className="text-sm text-gray-500 mb-1">Estimated Monthly Earnings</p>
                                     <p className="text-3xl md:text-4xl font-bold text-brand-green">
-                                        {formatCurrency(mode === 'fixed' ? monthlyEarnings : monthlyEarnings)}
+                                        {formatCurrency(monthlyEarnings)}
                                         {mode === 'compound' && <span className="text-sm font-normal text-gray-500 ml-2">(avg)</span>}
                                     </p>
                                 </div>
@@ -235,7 +280,7 @@ export default function InvestorEarningsCalculator() {
                                     <LineChart data={chartData}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                                         <XAxis dataKey="month" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
-                                        <YAxis tick={{ fontSize: 12 }} tickFormatter={(val) => `₦${val / 1000}k`} tickLine={false} axisLine={false} />
+                                        <YAxis tick={{ fontSize: 12 }} tickFormatter={(val) => `₦${val.toLocaleString()}`} tickLine={false} axisLine={false} />
                                         <Tooltip formatter={(value: number) => formatCurrency(value)} />
                                         <Legend />
                                         <Line type="monotone" dataKey="principal" stroke="#e5e7eb" strokeWidth={2} dot={false} name="Principal" />
@@ -246,10 +291,10 @@ export default function InvestorEarningsCalculator() {
 
                             {/* CTAs */}
                             <div className="flex flex-col sm:flex-row gap-4">
-                                <button className="flex-1 bg-brand-green text-white px-6 py-4 rounded-full font-bold hover:bg-green-600 transition-colors shadow-lg shadow-green-200 text-center">
+                                <button onClick={handleSubmit} className="flex-1 bg-brand-green text-white px-6 py-4 rounded-full font-bold hover:bg-green-600 transition-colors shadow-lg shadow-green-200 text-center">
                                     Start Investing
                                 </button>
-                                <button className="flex-1 bg-white text-gray-900 border border-gray-200 px-6 py-4 rounded-full font-bold hover:border-brand-green hover:text-brand-green transition-colors text-center">
+                                <button onClick={handleSubmit} className="flex-1 bg-white text-gray-900 border border-gray-200 px-6 py-4 rounded-full font-bold hover:border-brand-green hover:text-brand-green transition-colors text-center">
                                     Save Scenario
                                 </button>
                             </div>

@@ -30,18 +30,22 @@ export default function Header() {
 
                 {/* Desktop Nav */}
                 <nav className="hidden lg:flex items-center gap-8 text-sm font-medium text-gray-600" aria-label="Main navigation">
-                    {/* Browse Dropdown */}
+                    {/* Rent Dropdown */}
                     <div className="relative group">
                         <button className="flex items-center gap-1 hover:text-brand-green transition-colors py-4">
-                            Browse
+                            Rent
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-180 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
                         </button>
                         <div className="absolute top-full left-0 w-48 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
-                            <Link href="/marketplace" className="block px-4 py-3 hover:bg-gray-50 hover:text-brand-green transition-colors">Marketplace</Link>
-                            <Link href="/marketplace" className="block px-4 py-3 hover:bg-gray-50 hover:text-brand-green transition-colors">All Properties</Link>
+                            <Link href="/marketplace" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>Property to Rent</Link>
+                        <Link href="/marketplace" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>Student Property</Link>
+                        <Link href="/marketplace" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>Corporate Property</Link>
+                        <Link href="/marketplace" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>Rent To Own</Link>
                         </div>
                     </div>
-                    <Link href="/list-property" className="hover:text-brand-green transition-colors">List your property</Link>
+
+                    <Link href="/marketplace" className="hover:text-brand-green transition-colors">Buy</Link>
+                    <Link href="/marketplace" className="hover:text-brand-green transition-colors">Service Apartments</Link>
                     <Link href="/about" className="hover:text-brand-green transition-colors">About Us</Link>
 
                     {/* How It Works Dropdown */}
@@ -120,8 +124,16 @@ export default function Header() {
             {/* Mobile Menu */}
             {isMenuOpen && (
                 <div className="lg:hidden absolute top-full left-0 w-full bg-white border-t shadow-lg p-4 flex flex-col gap-4 z-50 max-h-[80vh] overflow-y-auto">
-                    <Link href="/marketplace" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>Browse</Link>
-                    <Link href="/list-property" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>List your property</Link>
+                    <div className="border-b border-gray-100 pb-2">
+                        <p className="text-xs font-bold text-gray-400 uppercase mb-2">Rent</p>
+                        <Link href="/marketplace" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>Property to Rent</Link>
+                        <Link href="/marketplace" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>Student Property</Link>
+                        <Link href="/marketplace" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>Corporate Property</Link>
+                        <Link href="/marketplace" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>Rent To Own</Link>
+                    </div>
+
+                    <Link href="/buy" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>Buy</Link>
+                    <Link href="/marketplace" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>Service Apartments</Link>
                     <Link href="/about" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>About Us</Link>
 
                     <div className="border-t border-gray-100 pt-2">

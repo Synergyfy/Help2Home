@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import FadeIn from './FadeIn';
 
 interface Fee {
@@ -11,13 +12,13 @@ interface Fee {
 
 export default function LandlordEarningsCalculator() {
     // Inputs
-    const [annualRent, setAnnualRent] = useState<number>(1200000);
+    const [annualRent, setAnnualRent] = useState<string>('1200000');
     const [downPaymentPercent, setDownPaymentPercent] = useState<number>(50);
     const [duration, setDuration] = useState<number>(10);
     const [interestRate, setInterestRate] = useState<number>(3);
     const [fees, setFees] = useState<Fee[]>([]);
     const [newFeeName, setNewFeeName] = useState('');
-    const [newFeeAmount, setNewFeeAmount] = useState<number>(0);
+    const [newFeeAmount, setNewFeeAmount] = useState<string>('0');
 
     // Outputs
     const [downPaymentAmount, setDownPaymentAmount] = useState(0);
@@ -30,67 +31,88 @@ export default function LandlordEarningsCalculator() {
     const [extraEarningsPercent, setExtraEarningsPercent] = useState(0);
     const [totalFees, setTotalFees] = useState(0);
 
-    // Calculations
-    useEffect(() => {
-        const rent = Math.max(annualRent, 50000); // Minimum rent validation
-        const dpPercent = Math.min(Math.max(downPaymentPercent, 30), 70); // 30-70% validation
-        const dur = Math.min(Math.max(duration, 1), 10); // 1-10 months validation
-        const rate = Math.min(Math.max(interestRate, 0), 5); // 0-5% validation
+    const router = useRouter();
 
-        // A. Down Payment Calculation
+    // Helper: parse string to number safely
+    const parseNumber = (val: string) => {
+        const num = Number(val.replace(/,/g, ''));
+        return isNaN(num) ? 0 : num;
+    };
+
+    // Format numbers as currency
+    const formatCurrency = (val: number) =>
+        new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(val);
+
+    // Format input for display with commas
+    const formatInput = (val: string) => {
+        const num = parseNumber(val);
+        return num === 0 ? '' : num.toLocaleString();
+    };
+
+    const handleSubmit = () => {
+        router.push('/signup')
+    }
+
+    // Recalculate whenever inputs change
+    useEffect(() => {
+        const rent = Math.max(parseNumber(annualRent), 50000);
+        const dpPercent = Math.min(Math.max(downPaymentPercent, 30), 70);
+        const dur = Math.min(Math.max(duration, 1), 10);
+        const rate = Math.min(Math.max(interestRate, 0), 5);
+
         const dpAmount = rent * (dpPercent / 100);
         setDownPaymentAmount(dpAmount);
 
-        // B. Remaining Balance
         const principal = rent - dpAmount;
         setInstallmentPrincipal(principal);
 
-        // C. Monthly Installment Amount (with interest)
-
-
+        // Monthly interest added to principal
         const monthlyPrincipal = principal / dur;
         const monthlyInterest = principal * (rate / 100);
         const monthly = monthlyPrincipal + monthlyInterest;
-
         setMonthlyPayment(monthly);
 
-        // D. Total Installment Paid
         const totalInstallment = monthly * dur;
         setTotalInstallmentPaid(totalInstallment);
 
-        // E. Total Earnings (Installment)
         const totalInstallmentEarnings = dpAmount + totalInstallment;
         setTotalEarningsInstallment(totalInstallmentEarnings);
 
-        // F. Upfront Model Earnings
         setTotalEarningsUpfront(rent);
 
-        // G. Extra Earnings
         const extra = totalInstallmentEarnings - rent;
         setExtraEarnings(extra);
         setExtraEarningsPercent((extra / rent) * 100);
 
-        // Fees
         const feesSum = fees.reduce((acc, fee) => acc + fee.amount, 0);
         setTotalFees(feesSum);
-
     }, [annualRent, downPaymentPercent, duration, interestRate, fees]);
 
+    // Add a new fee
     const addFee = () => {
-        if (newFeeName && newFeeAmount > 0) {
-            setFees([...fees, { id: Date.now().toString(), name: newFeeName, amount: newFeeAmount }]);
+        const amount = parseNumber(newFeeAmount);
+        if (newFeeName && amount > 0) {
+            setFees([...fees, { id: Date.now().toString(), name: newFeeName, amount }]);
             setNewFeeName('');
-            setNewFeeAmount(0);
+            setNewFeeAmount('0');
         }
     };
 
+    // Remove a fee
     const removeFee = (id: string) => {
         setFees(fees.filter(f => f.id !== id));
     };
 
-    const formatCurrency = (val: number) => {
-        return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(val);
+    const handleAnnualRentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value.replace(/,/g, '').replace(/[^0-9]/g, '');
+        if (!rawValue) {
+            setAnnualRent('');
+            return;
+        }
+        const num = parseInt(rawValue, 10);
+        setAnnualRent(num.toLocaleString());
     };
+
 
     return (
         <section className="py-20 bg-white" id="calculator">
@@ -107,20 +129,20 @@ export default function LandlordEarningsCalculator() {
                 </FadeIn>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                    {/* Input Panel */}
+                    {/* Input Section */}
                     <div className="lg:col-span-5 bg-gray-50 p-8 rounded-2xl border border-gray-200">
                         <h3 className="text-xl font-bold text-gray-900 mb-6">Property Details</h3>
-
                         <div className="space-y-6">
                             {/* Annual Rent */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Annual Rent (₦)</label>
                                 <input
-                                    type="number"
+                                    type="text"
                                     value={annualRent}
-                                    onChange={(e) => setAnnualRent(Number(e.target.value))}
+                                    onChange={handleAnnualRentChange}
                                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-transparent transition-all"
                                 />
+
                             </div>
 
                             {/* Down Payment */}
@@ -172,7 +194,7 @@ export default function LandlordEarningsCalculator() {
                                 />
                             </div>
 
-                            {/* Other Fees */}
+                            {/* Fees */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Other Fees (Paid Upfront)</label>
                                 <div className="space-y-3 mb-3">
@@ -181,9 +203,7 @@ export default function LandlordEarningsCalculator() {
                                             <span>{fee.name}</span>
                                             <div className="flex items-center gap-3">
                                                 <span className="font-medium">{formatCurrency(fee.amount)}</span>
-                                                <button onClick={() => removeFee(fee.id)} className="text-red-500 hover:text-red-700">
-                                                    &times;
-                                                </button>
+                                                <button onClick={() => removeFee(fee.id)} className="text-red-500 hover:text-red-700">&times;</button>
                                             </div>
                                         </div>
                                     ))}
@@ -197,10 +217,11 @@ export default function LandlordEarningsCalculator() {
                                         className="flex-1 px-3 py-2 rounded-lg border border-gray-300 text-sm"
                                     />
                                     <input
-                                        type="number"
+                                        type="text"
                                         placeholder="Amount"
-                                        value={newFeeAmount || ''}
-                                        onChange={(e) => setNewFeeAmount(Number(e.target.value))}
+                                        value={newFeeAmount}
+                                        onChange={(e) => setNewFeeAmount(e.target.value.replace(/[^0-9,]/g, ''))}
+                                        onBlur={() => setNewFeeAmount(formatInput(newFeeAmount))}
                                         className="w-24 px-3 py-2 rounded-lg border border-gray-300 text-sm"
                                     />
                                     <button
@@ -214,12 +235,11 @@ export default function LandlordEarningsCalculator() {
                         </div>
                     </div>
 
-                    {/* Result Panel */}
+                    {/* Results Section */}
                     <div className="lg:col-span-7 space-y-8">
-
-                        {/* Comparison Cards */}
+                        {/* Option A & B */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Upfront Model */}
+                            {/* Upfront */}
                             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                                 <h4 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">Option A: Upfront Payment</h4>
                                 <div className="space-y-3 text-sm">
@@ -245,11 +265,9 @@ export default function LandlordEarningsCalculator() {
                                 </div>
                             </div>
 
-                            {/* Installment Model */}
+                            {/* Installment */}
                             <div className="bg-white p-6 rounded-2xl border border-brand-green/30 shadow-md relative overflow-hidden">
-                                <div className="absolute top-0 right-0 bg-brand-green text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
-                                    Recommended
-                                </div>
+                                <div className="absolute top-0 right-0 bg-brand-green text-white text-xs font-bold px-3 py-1 rounded-bl-lg">Recommended</div>
                                 <h4 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">Option B: Installment Model</h4>
                                 <div className="space-y-3 text-sm">
                                     <div className="flex justify-between text-gray-600">
@@ -275,30 +293,25 @@ export default function LandlordEarningsCalculator() {
                             </div>
                         </div>
 
-                        {/* Difference Highlight */}
+                        {/* Extra Earnings */}
                         <div className="bg-brand-green/10 p-8 rounded-2xl border border-brand-green/20 text-center">
                             <h3 className="text-gray-900 font-medium mb-2">Extra Money You Earn by Choosing Monthly Payments</h3>
-                            <div className="text-4xl md:text-5xl font-bold text-brand-green mb-2">
-                                {formatCurrency(extraEarnings)}
-                            </div>
-                            <div className="inline-block bg-white text-brand-green px-3 py-1 rounded-full text-sm font-bold shadow-sm mb-4">
-                                +{extraEarningsPercent.toFixed(1)}% Gain
-                            </div>
+                            <div className="text-4xl md:text-5xl font-bold text-brand-green mb-2">{formatCurrency(extraEarnings)}</div>
+                            <div className="inline-block bg-white text-brand-green px-3 py-1 rounded-full text-sm font-bold shadow-sm mb-4">+{extraEarningsPercent.toFixed(1)}% Gain</div>
                             <p className="text-gray-600 max-w-lg mx-auto">
                                 Landlords who choose monthly payments earn more because tenants pay interest on the remaining balance.
                             </p>
                         </div>
 
-                        {/* CTAs */}
+                        {/* CTA Buttons */}
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <button className="bg-brand-green text-white px-8 py-4 rounded-full font-bold hover:bg-green-600 transition-colors shadow-lg shadow-green-200">
+                            <button onClick={handleSubmit} className="bg-brand-green text-white px-8 py-4 rounded-full font-bold hover:bg-green-600 transition-colors shadow-lg shadow-green-200">
                                 Register Your Property
                             </button>
                             <button className="bg-white text-gray-900 border border-gray-200 px-8 py-4 rounded-full font-bold hover:border-brand-green hover:text-brand-green transition-colors">
                                 Talk to Help2Home Agent
                             </button>
                         </div>
-
                     </div>
                 </div>
             </div>

@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import FadeIn from './FadeIn';
 import { calculateAffordability, AffordabilityResult } from '../lib/affordability';
 
-// Simple Info Icon Component
+// Info Icon Component
 const InfoIcon = ({ tooltip }: { tooltip: string }) => (
     <div className="group relative inline-block ml-2 cursor-help">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 hover:text-brand-green transition-colors">
@@ -19,12 +20,26 @@ const InfoIcon = ({ tooltip }: { tooltip: string }) => (
     </div>
 );
 
+// Helpers
+const formatNumberWithCommas = (value: number | string) => {
+    if (value === '' || value === 0) return '';
+    return Number(value).toLocaleString('en-NG');
+};
+const formatCurrency = (value: number) => new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(value);
+const formatPercent = (value: number) => `${Math.round(value * 100)}%`;
+
 export default function AffordabilityCalculator() {
+    const router = useRouter();
+    const params = useSearchParams();
+
+    // Get pre-filled amount from query if exists
+    const prefilledAmount = params.get('amount') ? Number(params.get('amount')) : '';
+
     // Inputs
-    const [monthlyIncome, setMonthlyIncome] = useState<number | ''>('');
+    const [monthlyIncome, setMonthlyIncome] = useState<number | ''>(prefilledAmount);
     const [affordabilityRatio, setAffordabilityRatio] = useState(0.30);
-    const [durationMonths, setDurationMonths] = useState(10); // Default max duration
-    const [monthlyInterestRate, setMonthlyInterestRate] = useState(0.02); // Default 2%
+    const [durationMonths, setDurationMonths] = useState(10);
+    const [monthlyInterestRate, setMonthlyInterestRate] = useState(0.02);
 
     // Optional Inputs
     const [showAdvanced, setShowAdvanced] = useState(false);
@@ -34,7 +49,7 @@ export default function AffordabilityCalculator() {
     // Results
     const [result, setResult] = useState<AffordabilityResult | null>(null);
 
-    // Calculate on change
+    // Recalculate whenever inputs change
     useEffect(() => {
         if (monthlyIncome === '' || monthlyIncome === 0) {
             setResult(null);
@@ -51,13 +66,7 @@ export default function AffordabilityCalculator() {
         setResult(res);
     }, [monthlyIncome, affordabilityRatio, durationMonths, monthlyInterestRate, existingLoanPayments, hasExistingLoans]);
 
-    const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(value);
-    };
-
-    const formatPercent = (value: number) => {
-        return `${Math.round(value * 100)}%`;
-    };
+    const handleSubmit = () => router.push('/signup');
 
     return (
         <section id="affordability-calculator" className="py-20 bg-white">
@@ -79,9 +88,12 @@ export default function AffordabilityCalculator() {
                                         Monthly Income (₦) <span className="text-red-500">*</span>
                                     </label>
                                     <input
-                                        type="number"
-                                        value={monthlyIncome}
-                                        onChange={(e) => setMonthlyIncome(e.target.value === '' ? '' : Number(e.target.value))}
+                                        type="text"
+                                        value={formatNumberWithCommas(monthlyIncome)}
+                                        onChange={(e) => {
+                                            const numericValue = Number(e.target.value.replace(/,/g, ''));
+                                            setMonthlyIncome(isNaN(numericValue) ? '' : numericValue);
+                                        }}
                                         placeholder="e.g. 300,000"
                                         className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none transition-all text-lg"
                                     />
@@ -148,7 +160,7 @@ export default function AffordabilityCalculator() {
                                     />
                                 </div>
 
-                                {/* Optional / Advanced Toggle */}
+                                {/* Advanced Options */}
                                 <div className="pt-4 border-t border-gray-200">
                                     <button
                                         onClick={() => setShowAdvanced(!showAdvanced)}
@@ -179,9 +191,12 @@ export default function AffordabilityCalculator() {
                                                         Total Monthly Repayments (₦)
                                                     </label>
                                                     <input
-                                                        type="number"
-                                                        value={existingLoanPayments}
-                                                        onChange={(e) => setExistingLoanPayments(e.target.value === '' ? '' : Number(e.target.value))}
+                                                        type="text"
+                                                        value={formatNumberWithCommas(existingLoanPayments)}
+                                                        onChange={(e) => {
+                                                            const numericValue = Number(e.target.value.replace(/,/g, ''));
+                                                            setExistingLoanPayments(isNaN(numericValue) ? '' : numericValue);
+                                                        }}
                                                         placeholder="e.g. 20,000"
                                                         className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none"
                                                     />
@@ -194,7 +209,6 @@ export default function AffordabilityCalculator() {
 
                             {/* Results Section */}
                             <div className="lg:w-1/2 bg-brand-green text-white p-8 lg:p-10 flex flex-col justify-center relative overflow-hidden">
-                                {/* Background decoration */}
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-16 -mt-16 pointer-events-none"></div>
                                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-10 -mb-10 pointer-events-none"></div>
 
@@ -248,7 +262,7 @@ export default function AffordabilityCalculator() {
                                                     </div>
                                                 </div>
 
-                                                <button className="w-full bg-white text-brand-green py-3 rounded-xl font-bold hover:bg-green-50 transition-colors shadow-lg mt-2">
+                                                <button onClick={handleSubmit} className="w-full bg-white text-brand-green py-3 rounded-xl font-bold hover:bg-green-50 transition-colors shadow-lg mt-2">
                                                     Proceed to Apply
                                                 </button>
                                             </>

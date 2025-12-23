@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import FadeIn from './FadeIn';
+import { useUserStore } from '@/store/userStore';
 
 const roles = [
     {
@@ -31,6 +33,14 @@ const roles = [
 ];
 
 export default function RoleCards() {
+    const router = useRouter();
+    const setRole = useUserStore((state) => state.setRole);
+
+    const handleGetStarted = (roleParam: string) => {
+        setRole(roleParam);
+        router.push('/signup/create-account');
+    };
+
     return (
         <section className="py-16 bg-gray-50">
             <div className="container mx-auto px-6 md:px-12">
@@ -61,9 +71,12 @@ export default function RoleCards() {
                                     {role.description}
                                 </p>
                                 <div className="flex gap-3 w-full mt-auto">
-                                    <Link href={`/signup?role=${role.roleParam}`} className="flex-1 text-center bg-brand-green text-white py-2 rounded-md text-sm font-medium hover:bg-green-600 transition-colors">
+                                    <button 
+                                        onClick={() => handleGetStarted(role.roleParam)}
+                                        className="flex-1 text-center bg-brand-green text-white py-2 rounded-md text-sm font-medium hover:bg-green-600 transition-colors"
+                                    >
                                         Get started
-                                    </Link>
+                                    </button>
                                     <Link href={`/roles/${role.roleParam}`} className="flex-1 text-center border border-gray-300 text-gray-700 py-2 rounded-md text-sm font-medium hover:bg-gray-50 transition-colors">
                                         Learn more
                                     </Link>
