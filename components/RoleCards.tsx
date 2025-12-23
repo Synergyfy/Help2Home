@@ -36,7 +36,7 @@ export default function RoleCards() {
     const router = useRouter();
     const setRole = useUserStore((state) => state.setRole);
 
-    const handleGetStarted = (roleParam: string) => {
+    const handleGetStarted = (roleParam: []) => {
         setRole(roleParam);
         router.push('/signup/create-account');
     };
