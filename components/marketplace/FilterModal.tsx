@@ -1,6 +1,7 @@
 'use client';
 
 import { useMarketplaceStore } from '@/store/marketplaceStore';
+import { FaXmark } from "react-icons/fa6";
 
 interface FilterModalProps {
   isOpen: boolean;
@@ -48,7 +49,7 @@ export default function FilterModal({ isOpen, onClose }: FilterModalProps) {
               className="p-2 rounded-full hover:bg-gray-100 transition"
               aria-label="Close"
             >
-              ×
+              <FaXmark className='w-4 h-4'/>
             </button>
           </div>
 

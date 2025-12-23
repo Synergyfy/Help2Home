@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { RiSearchLine } from 'react-icons/ri';
-import heroBg from '@/Home.png';
+import heroBg from '@/About us assets/Rectangle 103.png';
 
 type PropertyType = 'rent' | 'buy';
 type PropertyCategory =
