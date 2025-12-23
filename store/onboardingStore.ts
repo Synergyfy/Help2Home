@@ -6,6 +6,7 @@ interface OnboardingState {
     firstName: string;
     lastName: string;
     phone: string;
+    country: string;         
     portfolioSize: string;
     investorType: string;
     investmentBudget: string;
@@ -26,6 +27,7 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
     firstName: '',
     lastName: '',
     phone: '',
+    country: '',           
     portfolioSize: '',
     investorType: 'individual',
     investmentBudget: '',
@@ -45,6 +47,7 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
         firstName: '',
         lastName: '',
         phone: '',
+        country: '',         
         portfolioSize: '',
         investorType: 'individual',
         investmentBudget: '',
