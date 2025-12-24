@@ -40,7 +40,8 @@ export default function PropertyDetailsPage() {
 
 
     // Optional chaining for images array
-    const images = [property.image];
+    const images = property.images && property.images.length > 0 ? [property.images[0]] : [];
+
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -127,10 +128,10 @@ export default function PropertyDetailsPage() {
                                     Rent Now
                                 </Link>
                                 <Link
-                                    href={`/check-rent-affordability?amount=${property.price}&propertyId=${property.id}`}
+                                    href={`/tenant-rent-calculator?amount=${property.price}&propertyId=${property.id}`}
                                     className="block w-full bg-brand-green text-white font-bold py-4 mt-3 text-center rounded-xl hover:bg-green-600 transition-colors shadow-md"
                                 >
-                                    Check Affordability
+                                    Calculate Rent
                                 </Link>
                             </div>
 

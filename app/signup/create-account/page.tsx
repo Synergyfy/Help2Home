@@ -28,7 +28,7 @@ const createAccountSchema = z
 
 type CreateAccountForm = z.infer<typeof createAccountSchema>;
 
-// Role info definitions with images and marketing style copy
+// Role info definitions
 const roleInfoMap: Record<
   string,
   { explanation: string; benefits: string; image: string }
@@ -53,6 +53,11 @@ const roleInfoMap: Record<
     benefits: "Track ROI, explore high-potential properties, and manage investments with ease.",
     image: "https://images.unsplash.com/photo-1581091215367-6f07e9b97302?w=900",
   },
+  caretaker: {
+    explanation: "Manage properties and tenants efficiently as a caretaker.",
+    benefits: "Coordinate maintenance, track tenant issues, and streamline daily tasks.",
+    image: "https://images.unsplash.com/photo-1590650046265-0d75d6e2533f?w=900",
+  },
 };
 
 export default function CreateAccountClient() {
@@ -76,15 +81,17 @@ export default function CreateAccountClient() {
       setCurrentIndex((prev) => (prev + 1) % roles.length);
       setDisplayText('');
       setCharIndex(0);
-    }, 7000); // change every 7 seconds
+    }, 7000); // 7 seconds per role
     return () => clearInterval(interval);
   }, [roles]);
 
-  // Typewriter effect for explanation
+  // Typewriter effect for explanation per current slide
   useEffect(() => {
-    const currentRole = roles ? roles[currentIndex] : '';
-    if (!currentRole) return;
-    const explanation = roleInfoMap[currentRole].explanation;
+    if (!roles || roles.length === 0) return;
+    const currentRole = roles[currentIndex];
+    const explanation = roleInfoMap[currentRole]?.explanation;
+    if (!explanation) return;
+
     if (charIndex < explanation.length) {
       const timeout = setTimeout(() => {
         setDisplayText((prev) => prev + explanation[charIndex]);
@@ -123,8 +130,13 @@ export default function CreateAccountClient() {
 
   if (!hasHydrated) return <div className="min-h-screen bg-gray-50" />;
 
-  const currentRole = roles[currentIndex];
-  const roleInfo = roleInfoMap[currentRole];
+  if (!roles || roles.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-500">No role selected. Redirecting...</p>
+      </div>
+    );
+  }
 
   // Combine all selected roles for mobile tooltip
   const combinedMobileInfo = roles.reduce(
@@ -144,37 +156,45 @@ export default function CreateAccountClient() {
         {/* Desktop Panel */}
         <div className="hidden md:flex md:w-1/2 relative overflow-hidden">
           <AnimatePresence mode="wait">
-            <motion.div
-              key={currentRole}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1 }}
-              className="absolute inset-0"
-            >
-              <BackgroundPanel
-                backgroundImage={roleInfo.image}
-                containerClassName="w-full h-full"
-                overlayClassName="absolute inset-0 bg-black/40"
-                contentClassName="absolute inset-0 flex flex-col justify-center items-center text-center p-8"
-              >
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8 }}
-                >
-                  <h2 className="text-white text-4xl font-bold mb-4 drop-shadow-lg">
-                    Welcome to HelptoHome
-                  </h2>
-                  <p className="text-gray-200 text-lg drop-shadow-md max-w-xs mb-2">
-                    {displayText}
-                  </p>
-                  <p className="text-gray-200 text-base drop-shadow-sm max-w-xs">
-                    {roleInfo.benefits}
-                  </p>
-                </motion.div>
-              </BackgroundPanel>
-            </motion.div>
+            {roles.map((role, index) => {
+              const info = roleInfoMap[role];
+              if (!info) return null;
+              return (
+                currentIndex === index && (
+                  <motion.div
+                    key={role}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1 }}
+                    className="absolute inset-0"
+                  >
+                    <BackgroundPanel
+                      backgroundImage={info.image}
+                      containerClassName="w-full h-full"
+                      overlayClassName="absolute inset-0 bg-black/40"
+                      contentClassName="absolute inset-0 flex flex-col justify-center items-center text-center p-8"
+                    >
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                      >
+                        <h2 className="text-white text-4xl font-bold mb-4 drop-shadow-lg">
+                          Welcome to Help2Home
+                        </h2>
+                        <p className="text-gray-200 text-lg drop-shadow-md max-w-xs mb-2">
+                          {displayText}
+                        </p>
+                        <p className="text-gray-200 text-base drop-shadow-sm max-w-xs">
+                          {info.benefits}
+                        </p>
+                      </motion.div>
+                    </BackgroundPanel>
+                  </motion.div>
+                )
+              );
+            })}
           </AnimatePresence>
         </div>
 
