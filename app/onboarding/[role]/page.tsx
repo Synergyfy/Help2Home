@@ -1,6 +1,6 @@
 'use client';
 
-import React, { JSX, useEffect } from 'react';
+import React, { JSX, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import FadeIn from '@/components/FadeIn';
 import BackgroundPanel from '@/components/lib/BackgroundPanel';
@@ -11,8 +11,7 @@ import { COUNTRIES, NIGERIA_STATES } from '@/utils/locations';
 
 export default function OnboardingPage() {
   const router = useRouter();
-
-  const role = useUserStore((state) => state.role[0] || 'tenant');
+  const roles = useUserStore((state) => state.role); // array of roles
   const setUserOnboarding = useUserStore((state) => state.setOnboarding);
 
   const formData = useOnboardingStore((state) => state.formData);
@@ -21,9 +20,13 @@ export default function OnboardingPage() {
   const setStep = useOnboardingStore((state) => state.setStep);
   const resetOnboarding = useOnboardingStore((state) => state.reset);
 
+  const [selectedRole, setSelectedRole] = useState<string | null>(
+    roles.length === 1 ? roles[0] : null
+  );
+
   useEffect(() => {
     setStep(0);
-  }, [setStep]);
+  }, [setStep, selectedRole]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -35,6 +38,7 @@ export default function OnboardingPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedRole) return;
 
     let onboardingData: Record<string, any> = {
       firstName: formData.firstName,
@@ -44,7 +48,7 @@ export default function OnboardingPage() {
       state: formData.state,
     };
 
-    if (role === 'tenant') {
+    if (selectedRole === 'tenant') {
       onboardingData = {
         ...onboardingData,
         gender: formData.gender,
@@ -52,12 +56,13 @@ export default function OnboardingPage() {
         employmentStatus: formData.employmentStatus,
         monthlyIncome: formData.monthlyIncome,
       };
-    } else if (['landlord', 'agent', 'property_manager'].includes(role)) {
+    } else if (['landlord', 'agent', 'property_manager', 'caretaker'].includes(selectedRole)) {
       onboardingData = {
         ...onboardingData,
         portfolioSize: formData.portfolioSize,
+        responsibilities: formData.responsibilities,
       };
-    } else if (role === 'investor') {
+    } else if (selectedRole === 'investor') {
       onboardingData = {
         ...onboardingData,
         investorType: formData.investorType,
@@ -65,23 +70,28 @@ export default function OnboardingPage() {
       };
     }
 
-    setUserOnboarding(onboardingData);
+    setUserOnboarding({ role: selectedRole, data: onboardingData });
     resetOnboarding();
+    toast.success(`Onboarding for ${selectedRole} complete!`);
 
-    toast.success('Onboarding complete! Login with your credentials.');
-    router.push('/signin');
+    // Remove the completed role
+    const remainingRoles = roles.filter((r) => r !== selectedRole);
+    if (remainingRoles.length === 0) {
+      router.push('/signin');
+    } else {
+      setSelectedRole(null); // show role selector for remaining roles
+    }
   };
 
-  const steps: { title: string; fields: JSX.Element; tooltip?: string }[] = [
+  // --- Steps Definition ---
+  const baseSteps = [
     {
       title: 'Basic Info',
       tooltip: 'We use this to personalize your experience and verify your account.',
       fields: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              First Name
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
             <input
               type="text"
               name="firstName"
@@ -91,11 +101,8 @@ export default function OnboardingPage() {
               className="w-full px-4 py-3 rounded-lg border border-gray-300"
             />
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Last Name
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
             <input
               type="text"
               name="lastName"
@@ -105,14 +112,8 @@ export default function OnboardingPage() {
               className="w-full px-4 py-3 rounded-lg border border-gray-300"
             />
           </div>
-
           <div className="md:col-span-2">
-            <label
-              className="block text-sm font-medium text-gray-700 mb-2"
-              title="Used for account verification and important notifications"
-            >
-              Phone Number
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
             <input
               type="tel"
               name="phone"
@@ -122,14 +123,8 @@ export default function OnboardingPage() {
               className="w-full px-4 py-3 rounded-lg border border-gray-300"
             />
           </div>
-
           <div>
-            <label
-              className="block text-sm font-medium text-gray-700 mb-2"
-              title="Your country helps us localize listings and regulations"
-            >
-              Country
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
             <select
               name="country"
               value={formData.country || ''}
@@ -138,20 +133,14 @@ export default function OnboardingPage() {
               className="w-full px-4 py-3 rounded-lg border border-gray-300"
             >
               <option value="">Select Country</option>
-              {COUNTRIES.map((country) => (
-                <option key={country} value={country}>{country}</option>
+              {COUNTRIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
               ))}
             </select>
           </div>
-
           {formData.country === 'Nigeria' && (
             <div>
-              <label
-                className="block text-sm font-medium text-gray-700 mb-2"
-                title="State helps us match you with nearby properties"
-              >
-                State
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">State</label>
               <select
                 name="state"
                 value={formData.state || ''}
@@ -160,8 +149,8 @@ export default function OnboardingPage() {
                 className="w-full px-4 py-3 rounded-lg border border-gray-300"
               >
                 <option value="">Select State</option>
-                {NIGERIA_STATES.map((state) => (
-                  <option key={state} value={state}>{state}</option>
+                {NIGERIA_STATES.map((s) => (
+                  <option key={s} value={s}>{s}</option>
                 ))}
               </select>
             </div>
@@ -169,20 +158,17 @@ export default function OnboardingPage() {
         </div>
       ),
     },
+  ];
 
-    ...(role === 'tenant'
-      ? [{
+  const roleStepsMap: Record<string, { title: string; tooltip?: string; fields: JSX.Element }[]> = {
+    tenant: [
+      {
         title: 'Tenant Details',
         tooltip: 'This information helps landlords assess suitability.',
         fields: (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label
-                className="block text-sm font-medium text-gray-700 mb-2"
-                title="Used only for demographic insights"
-              >
-                Gender
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
               <select
                 name="gender"
                 value={formData.gender || ''}
@@ -195,14 +181,8 @@ export default function OnboardingPage() {
                 <option value="female">Female</option>
               </select>
             </div>
-
             <div>
-              <label
-                className="block text-sm font-medium text-gray-700 mb-2"
-                title="Your current residential address"
-              >
-                Address
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
               <input
                 type="text"
                 name="address"
@@ -212,14 +192,8 @@ export default function OnboardingPage() {
                 className="w-full px-4 py-3 rounded-lg border border-gray-300"
               />
             </div>
-
             <div>
-              <label
-                className="block text-sm font-medium text-gray-700 mb-2"
-                title="Employment status helps assess rental affordability"
-              >
-                Employment Status
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Employment Status</label>
               <select
                 name="employmentStatus"
                 value={formData.employmentStatus || ''}
@@ -234,14 +208,8 @@ export default function OnboardingPage() {
                 <option value="unemployed">Unemployed</option>
               </select>
             </div>
-
             <div>
-              <label
-                className="block text-sm font-medium text-gray-700 mb-2"
-                title="Used to match you with suitable rental options"
-              >
-                Monthly Income
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Monthly Income</label>
               <select
                 name="monthlyIncome"
                 value={formData.monthlyIncome || ''}
@@ -258,17 +226,149 @@ export default function OnboardingPage() {
             </div>
           </div>
         ),
-      }]
-      : []),
-  ];
+      },
+    ],
+
+    landlord: [
+      {
+        title: 'Landlord Details',
+        tooltip: 'Tell us about your property portfolio.',
+        fields: (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Portfolio Size</label>
+            <input
+              type="number"
+              name="portfolioSize"
+              value={formData.portfolioSize || ''}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300"
+            />
+          </div>
+        ),
+      },
+    ],
+
+    agent: [
+      {
+        title: 'Agent Details',
+        tooltip: 'Provide your property management portfolio info.',
+        fields: (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Portfolio Size</label>
+            <input
+              type="number"
+              name="portfolioSize"
+              value={formData.portfolioSize || ''}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300"
+            />
+          </div>
+        ),
+      },
+    ],
+
+    caretaker: [
+      {
+        title: 'Caretaker Details',
+        tooltip: 'Provide your property management responsibilities.',
+        fields: (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Portfolio Size</label>
+              <input
+                type="number"
+                name="portfolioSize"
+                value={formData.portfolioSize || ''}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 rounded-lg border border-gray-300"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Responsibilities</label>
+              <input
+                type="text"
+                name="responsibilities"
+                value={formData.responsibilities || ''}
+                onChange={handleChange}
+                placeholder="E.g., Maintenance, Repairs, Tenant Coordination"
+                required
+                className="w-full px-4 py-3 rounded-lg border border-gray-300"
+              />
+            </div>
+          </div>
+        ),
+      },
+    ],
+
+    investor: [
+      {
+        title: 'Investor Details',
+        tooltip: 'Provide your investment preferences.',
+        fields: (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Investor Type</label>
+              <input
+                type="text"
+                name="investorType"
+                value={formData.investorType || ''}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 rounded-lg border border-gray-300"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Investment Budget</label>
+              <input
+                type="number"
+                name="investmentBudget"
+                value={formData.investmentBudget || ''}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 rounded-lg border border-gray-300"
+              />
+            </div>
+          </div>
+        ),
+      },
+    ],
+  };
+
+  // Compose steps for current role
+  const steps = selectedRole ? [...baseSteps, ...(roleStepsMap[selectedRole] || [])] : [];
 
   const safeStep = Math.min(currentStep, steps.length - 1);
   const isLastStep = safeStep === steps.length - 1;
 
+  if (!selectedRole && roles.length > 1) {
+    // Show role selector first
+    return (
+      <main className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-lg">
+          <h2 className="text-2xl font-bold mb-4 text-gray-900">Select a role to onboard</h2>
+          <p className="mb-6 text-gray-600">You have multiple roles. Complete onboarding for one role now, and do the others later.</p>
+          <div className="flex flex-col gap-4">
+            {roles.map((r) => (
+              <button
+                key={r}
+                onClick={() => setSelectedRole(r)}
+                className="w-full py-3 bg-brand-green text-white rounded-lg font-semibold hover:bg-green-600 transition"
+              >
+                {r.charAt(0).toUpperCase() + r.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="h-screen bg-gray-50 overflow-hidden">
       <div className="flex h-full flex-col md:flex-row">
-
         {/* Info Panel */}
         <BackgroundPanel
           backgroundImage="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=900"
@@ -280,10 +380,12 @@ export default function OnboardingPage() {
             <h2 className="text-white text-4xl font-bold mb-4 drop-shadow-lg">
               Welcome to Help2Home
             </h2>
-            <p className="text-gray-200 text-lg drop-shadow-md max-w-md mb-4">
-              Help2Home connects tenants, landlords, agents, and investors seamlessly.
-              Find verified homes, manage properties, and invest in rental opportunities.
-            </p>
+            {selectedRole && (
+              <p className="text-gray-200 text-lg drop-shadow-md max-w-md mb-4">
+                {selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)} Onboarding — Fill in your details to get started.
+              </p>
+            )}
+
 
             <div className="space-y-4">
               <div className="bg-white/20 p-4 rounded-lg">
@@ -351,7 +453,6 @@ export default function OnboardingPage() {
             </FadeIn>
           </div>
         </div>
-
       </div>
     </main>
   );

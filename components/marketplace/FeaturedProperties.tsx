@@ -29,14 +29,19 @@ export default function FeaturedProperties({ properties, label }: FeaturedProper
                     <PropertyCard
                         key={property.id}
                         id={property.id}
-                        image={property.image}
+                        image={property.images[0]}
                         title={property.title}
                         location={property.location}
                         bedrooms={property.bedrooms}
                         bathrooms={property.bathrooms}
                         description={property.description}
                         price={`₦${property.price.toLocaleString()}`}
-                        monthlyPrice={property.monthlyPrice > 0 ? `₦${property.monthlyPrice.toLocaleString()}` : undefined}
+                        monthlyPrice={
+                            typeof property.monthlyPrice === 'number' && property.monthlyPrice > 0
+                                ? `₦${property.monthlyPrice.toLocaleString()}`
+                                : undefined
+                        }
+
                         featured={property.featured}
                         verified={property.verified}
                         isNew={property.isNew}

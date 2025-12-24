@@ -51,6 +51,15 @@ export default function Footer() {
                                 <li><Link href="/support" className="hover:text-brand-green transition-colors">Support Center</Link></li>
                             </ul>
                         </div>
+                           <div>
+                            <h3 className="font-bold text-white mb-4">How It Works</h3>
+                            <ul className="space-y-3">
+                                <li><Link href="/how-it-works/tenants" className="hover:text-brand-green transition-colors">Tenants</Link></li>
+                                <li><Link href="/how-it-works/landlords" className="hover:text-brand-green transition-colors">Landlords</Link></li>
+                                <li><Link href="/how-it-works/investors" className="hover:text-brand-green transition-colors">Investors</Link></li>
+                                <li><Link href="/how-it-works/caretakers" className="hover:text-brand-green transition-colors">Caretakers</Link></li>
+                            </ul>
+                        </div>
                         <div>
                             <h3 className="font-bold text-white mb-4">Legal</h3>
                             <ul className="space-y-3">

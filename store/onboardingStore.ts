@@ -1,4 +1,3 @@
-// stores/onboardingStore.ts
 import { create } from 'zustand';
 
 interface OnboardingState {
@@ -8,6 +7,7 @@ interface OnboardingState {
     phone: string;
     country: string;         
     portfolioSize: string;
+    responsibilities: string;  // added for caretaker
     investorType: string;
     investmentBudget: string;
     address: string;
@@ -29,6 +29,7 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
     phone: '',
     country: '',           
     portfolioSize: '',
+    responsibilities: '',  // added for caretaker
     investorType: 'individual',
     investmentBudget: '',
     address: '',
@@ -49,6 +50,7 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
         phone: '',
         country: '',         
         portfolioSize: '',
+        responsibilities: '', 
         investorType: 'individual',
         investmentBudget: '',
         address: '',

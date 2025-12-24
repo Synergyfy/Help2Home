@@ -35,8 +35,8 @@ export default function Header() {
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-180 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
                         </button>
                         <div className="absolute top-full left-0 w-52 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
-                            <Link href="/marketplace?category=residential" className="block text-gray-600 hover:text-brand-green py-2 pl-4">Residential Property</Link>
-                            <Link href="/marketplace?category=corporate" className="block text-gray-600 hover:text-brand-green py-2 pl-4">Corporate Property</Link>
+                            <Link href="/marketplace?category=residential" className="block text-gray-600 hover:text-brand-green py-2 pl-4">Residential Property to Rent</Link>
+                            <Link href="/marketplace?category=corporate" className="block text-gray-600 hover:text-brand-green py-2 pl-4">Commercial Property</Link>
                             <Link href="/marketplace?category=student" className="block text-gray-600 hover:text-brand-green py-2 pl-4">Student / Corpers Property</Link>
                         </div>
                     </div>
