@@ -5,8 +5,16 @@ import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/userStore';
 import { MdHome, MdApartment, MdAttachMoney, MdCheck } from 'react-icons/md';
 import { FaXmark } from 'react-icons/fa6';
+import InfoIcon from '@/components/lib/InfoIcon'
 
 const AVAILABLE_ROLES = ['landlord', 'agent', 'caretaker'] as const;
+
+const ROLE_TOOLTIPS: Record<(typeof AVAILABLE_ROLES)[number], string> = {
+  landlord: 'Owns property and lists it for rent or sale on the platform.',
+  agent: 'Manages listings and tenant relations on behalf of landlords.',
+  caretaker: 'Handles day-to-day property maintenance and tenant support.',
+};
+
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -121,35 +129,19 @@ export default function SignUpPage() {
                 {AVAILABLE_ROLES.map((r) => (
                   <button
                     key={r}
-                    className={`flex-1 flex items-center justify-between px-6 py-4 rounded-lg bg-brand-green text-white font-medium border border-green-700 ${
-                      tempRoles.includes(r) ? 'opacity-90' : ''
-                    }`}
+                    className={`flex-1 flex items-center justify-between px-6 py-4 rounded-lg bg-brand-green text-white font-medium border border-green-700 ${tempRoles.includes(r) ? 'opacity-90' : ''
+                      }`}
                     onClick={() => toggleTempRole(r)}
                   >
                     <span className="flex items-center gap-2">
                       <MdApartment /> {r.charAt(0).toUpperCase() + r.slice(1)}
                     </span>
                     {tempRoles.includes(r) && <MdCheck />}
+                     <InfoIcon tooltip={ROLE_TOOLTIPS[r]} />
                   </button>
                 ))}
               </div>
 
-              {/* Slider display if all selected */}
-              {allSelected && (
-                <div className="mt-6 p-4 bg-gray-100 rounded-lg text-gray-800 text-center font-medium">
-                  All roles selected! You will have access to landlord, agent, and caretaker features.
-                  <div className="mt-3">
-                    {/* Example slider */}
-                    <input
-                      type="range"
-                      min={1}
-                      max={100}
-                      defaultValue={50}
-                      className="w-full accent-brand-green"
-                    />
-                  </div>
-                </div>
-              )}
 
               <button
                 className="mt-6 w-full py-4 bg-brand-green text-white rounded-lg font-semibold hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"

@@ -34,15 +34,6 @@ export default function Footer() {
                             </ul>
                         </div>
                         <div>
-                            <h3 className="font-bold text-white mb-4">For</h3>
-                            <ul className="space-y-3">
-                                <li><Link href="/landlords" className="hover:text-brand-green transition-colors">Landlords</Link></li>
-                                <li><Link href="/tenants" className="hover:text-brand-green transition-colors">Tenants</Link></li>
-                                <li><Link href="/agents" className="hover:text-brand-green transition-colors">Agents</Link></li>
-                                <li><Link href="/investors" className="hover:text-brand-green transition-colors">Investors</Link></li>
-                            </ul>
-                        </div>
-                        <div>
                             <h3 className="font-bold text-white mb-4">Help</h3>
                             <ul className="space-y-3">
                                 <li><Link href="/how-it-works" className="hover:text-brand-green transition-colors">How It Works</Link></li>

@@ -7,7 +7,7 @@ import BackgroundPanel from '@/components/lib/BackgroundPanel';
 import { toast } from 'react-toastify';
 import { useUserStore } from '@/store/userStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
-import { COUNTRIES, NIGERIA_STATES } from '@/utils/locations';
+import { useCountries, useCountryStates } from '@/hooks/useCountries';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -20,6 +20,12 @@ export default function OnboardingPage() {
   const setStep = useOnboardingStore((state) => state.setStep);
   const resetOnboarding = useOnboardingStore((state) => state.reset);
 
+  // Fetch countries and states
+  const { countries, isLoading: countriesLoading } = useCountries();
+  const { data: states, isLoading: statesLoading } = useCountryStates(
+    formData.countryCode || null
+  );
+
   const [selectedRole, setSelectedRole] = useState<string | null>(
     roles.length === 1 ? roles[0] : null
   );
@@ -28,9 +34,22 @@ export default function OnboardingPage() {
     setStep(0);
   }, [setStep, selectedRole]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData({ [name]: value });
+    
+    // If country changes, update country code and reset state
+    if (name === 'country') {
+      const selectedCountry = countries.find((c) => c.name === value);
+      setFormData({ 
+        [name]: value,
+        countryCode: selectedCountry?.code || '',
+        state: '', // Reset state when country changes
+      });
+    } else {
+      setFormData({ [name]: value });
+    }
   };
 
   const handleNext = () => setStep(Math.min(currentStep + 1, steps.length - 1));
@@ -46,13 +65,15 @@ export default function OnboardingPage() {
       phone: formData.phone,
       country: formData.country,
       state: formData.state,
+      fullAddress: formData.fullAddress,
+      postalCode: formData.postalCode,
     };
 
     if (selectedRole === 'tenant') {
       onboardingData = {
         ...onboardingData,
         gender: formData.gender,
-        address: formData.address,
+        address: formData.fullAddress,
         employmentStatus: formData.employmentStatus,
         monthlyIncome: formData.monthlyIncome,
       };
@@ -89,72 +110,143 @@ export default function OnboardingPage() {
       title: 'Basic Info',
       tooltip: 'We use this to personalize your experience and verify your account.',
       fields: (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-            <input
-              type="text"
-              name="firstName"
-              value={formData.firstName || ''}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300"
-            />
+        <div className="space-y-6">
+          {/* Name Fields */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                First Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName || ''}
+                onChange={handleChange}
+                required
+                placeholder="Enter your first name"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-600 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Last Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName || ''}
+                onChange={handleChange}
+                required
+                placeholder="Enter your last name"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-600 focus:border-transparent"
+              />
+            </div>
           </div>
+
+          {/* Phone Number */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-            <input
-              type="text"
-              name="lastName"
-              value={formData.lastName || ''}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Phone Number <span className="text-red-500">*</span>
+            </label>
             <input
               type="tel"
               name="phone"
               value={formData.phone || ''}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300"
+              placeholder="+234 800 000 0000"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-600 focus:border-transparent"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
-            <select
-              name="country"
-              value={formData.country || ''}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300"
-            >
-              <option value="">Select Country</option>
-              {COUNTRIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </div>
-          {formData.country === 'Nigeria' && (
+
+          {/* Country and State */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">State</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Country <span className="text-red-500">*</span>
+              </label>
               <select
-                name="state"
-                value={formData.state || ''}
+                name="country"
+                value={formData.country || ''}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300"
+                disabled={countriesLoading}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-600 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
-                <option value="">Select State</option>
-                {NIGERIA_STATES.map((s) => (
-                  <option key={s} value={s}>{s}</option>
+                <option value="">
+                  {countriesLoading ? 'Loading countries...' : 'Select Country'}
+                </option>
+                {countries.map((c) => (
+                  <option key={c.code} value={c.name}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
             </div>
-          )}
+
+            {formData.country && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  State/Province <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="state"
+                  value={formData.state || ''}
+                  onChange={handleChange}
+                  required
+                  disabled={statesLoading}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-600 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">
+                    {statesLoading ? 'Loading states...' : 'Select State/Province'}
+                  </option>
+                  {states?.map((s) => (
+                    <option key={s.iso2} value={s.name}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+                {statesLoading && (
+                  <p className="text-xs text-gray-500 mt-1">Fetching states...</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Full Address */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Full Address <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              name="fullAddress"
+              value={formData.fullAddress || ''}
+              onChange={handleChange}
+              required
+              rows={3}
+              placeholder="Enter your complete street address (e.g., 123 Main Street, Apartment 4B)"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-600 focus:border-transparent resize-none"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Include street number, street name, and apartment/unit number if applicable
+            </p>
+          </div>
+
+          {/* Postal Code */}
+          <div className="md:w-1/2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Postal/Zip Code 
+            </label>
+            <input
+              type="text"
+              name="postalCode"
+              value={formData.postalCode || ''}
+              onChange={handleChange}
+              required
+              placeholder="Enter postal or zip code"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-600 focus:border-transparent"
+            />
+          </div>
         </div>
       ),
     },
@@ -182,17 +274,6 @@ export default function OnboardingPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address || ''}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300"
-              />
-            </div>
-            <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Employment Status</label>
               <select
                 name="employmentStatus"
@@ -208,7 +289,7 @@ export default function OnboardingPage() {
                 <option value="unemployed">Unemployed</option>
               </select>
             </div>
-            <div>
+            <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">Monthly Income</label>
               <select
                 name="monthlyIncome"
@@ -242,6 +323,7 @@ export default function OnboardingPage() {
               value={formData.portfolioSize || ''}
               onChange={handleChange}
               required
+              placeholder="Number of properties you own"
               className="w-full px-4 py-3 rounded-lg border border-gray-300"
             />
           </div>
@@ -262,6 +344,7 @@ export default function OnboardingPage() {
               value={formData.portfolioSize || ''}
               onChange={handleChange}
               required
+              placeholder="Number of properties you manage"
               className="w-full px-4 py-3 rounded-lg border border-gray-300"
             />
           </div>
@@ -283,6 +366,7 @@ export default function OnboardingPage() {
                 value={formData.portfolioSize || ''}
                 onChange={handleChange}
                 required
+                placeholder="Number of properties you manage"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300"
               />
             </div>
@@ -311,14 +395,18 @@ export default function OnboardingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Investor Type</label>
-              <input
-                type="text"
+              <select
                 name="investorType"
                 value={formData.investorType || ''}
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 rounded-lg border border-gray-300"
-              />
+              >
+                <option value="">Select Type</option>
+                <option value="individual">Individual Investor</option>
+                <option value="institutional">Institutional Investor</option>
+                <option value="reit">REIT Investor</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Investment Budget</label>
@@ -328,6 +416,7 @@ export default function OnboardingPage() {
                 value={formData.investmentBudget || ''}
                 onChange={handleChange}
                 required
+                placeholder="Enter budget in ₦"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300"
               />
             </div>
@@ -355,7 +444,7 @@ export default function OnboardingPage() {
               <button
                 key={r}
                 onClick={() => setSelectedRole(r)}
-                className="w-full py-3 bg-brand-green text-white rounded-lg font-semibold hover:bg-green-600 transition"
+                className="w-full py-3 bg-brand-green text-white rounded-lg font-semibold hover:bg-green-600 transition capitalize"
               >
                 {r.charAt(0).toUpperCase() + r.slice(1)}
               </button>
@@ -385,7 +474,6 @@ export default function OnboardingPage() {
                 {selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)} Onboarding — Fill in your details to get started.
               </p>
             )}
-
 
             <div className="space-y-4">
               <div className="bg-white/20 p-4 rounded-lg">
