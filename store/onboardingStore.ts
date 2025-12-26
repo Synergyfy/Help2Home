@@ -1,4 +1,3 @@
-// store/onboardingStore.ts
 import { create } from 'zustand';
 
 interface OnboardingState {
@@ -8,10 +7,10 @@ interface OnboardingState {
     lastName: string;
     phone: string;
     country: string;
-    countryCode: string;        
     state: string;
-    fullAddress: string;        
-    postalCode?: string;         
+    city: string;
+    fullAddress: string;
+    postalCode?: string;
     
     // Tenant specific
     gender?: 'male' | 'female';
@@ -19,12 +18,11 @@ interface OnboardingState {
     monthlyIncome?: string;
     
     // Landlord/Agent/Caretaker specific
-    portfolioSize?: number; // changed to number
+    portfolioSize?: number;
     responsibilities?: string;
     
     // Investor specific
-    investorType?: string;
-    investmentBudget?: number; // changed to number
+    investmentBudget?: number;
   };
   currentStep: number;
   setFormData: (data: Partial<OnboardingState['formData']>) => void;
@@ -34,27 +32,19 @@ interface OnboardingState {
 
 export const useOnboardingStore = create<OnboardingState>((set) => ({
   formData: {
-    // Basic Info
     firstName: '',
     lastName: '',
     phone: '',
     country: '',
-    countryCode: '',
     state: '',
+    city: '',
     fullAddress: '',
     postalCode: '',
-    
-    // Tenant specific
     gender: undefined,
     employmentStatus: undefined,
     monthlyIncome: undefined,
-    
-    // Landlord/Agent/Caretaker specific
     portfolioSize: undefined,
     responsibilities: undefined,
-    
-    // Investor specific
-    investorType: 'individual',
     investmentBudget: undefined,
   },
   currentStep: 0,
@@ -71,8 +61,8 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
         lastName: '',
         phone: '',
         country: '',
-        countryCode: '',
         state: '',
+        city: '',
         fullAddress: '',
         postalCode: '',
         gender: undefined,
@@ -80,7 +70,6 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
         monthlyIncome: undefined,
         portfolioSize: undefined,
         responsibilities: undefined,
-        investorType: 'individual',
         investmentBudget: undefined,
       },
       currentStep: 0,

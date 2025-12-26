@@ -134,44 +134,41 @@ export default function OnboardingForm({ role, onComplete }: Props) {
     const roleStepsMap: Record<string, { title: string; fields: JSX.Element; fieldsNames?: (keyof FormData)[] }[]> = {
         tenant: [
             {
-                title: 'Employment & Responsibilities',
+                title: 'Employment Information',
                 fields: (
                     <FadeIn>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
-                            <select {...register('gender')} className="w-full px-4 py-3 border rounded-lg">
-                                <option value="">Select Gender</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                            </select>
-                            {errors.gender && <p className="text-red-500 text-xs mt-1">{errors.gender.message}</p>}
+                        <div className="space-y-6">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                                <select {...register('gender')} className="w-full px-4 py-3 border rounded-lg">
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                                {errors.gender && <p className="text-red-500 text-xs mt-1">{errors.gender.message}</p>}
+                            </div>
 
-                            <label className="block text-sm font-medium text-gray-700 mt-4 mb-2">Employment Status</label>
-                            <select {...register('employmentStatus')} className="w-full px-4 py-3 border rounded-lg">
-                                <option value="">Select Employment Status</option>
-                                <option value="employed">Employed</option>
-                                <option value="self-employed">Self-Employed</option>
-                                <option value="student">Student</option>
-                                <option value="unemployed">Unemployed</option>
-                            </select>
-                            {errors.employmentStatus && <p className="text-red-500 text-xs mt-1">{errors.employmentStatus.message}</p>}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Employment Status</label>
+                                <select {...register('employmentStatus')} className="w-full px-4 py-3 border rounded-lg">
+                                    <option value="">Select Employment Status</option>
+                                    <option value="employed">Employed</option>
+                                    <option value="self-employed">Self-Employed</option>
+                                    <option value="student">Student</option>
+                                    <option value="unemployed">Unemployed</option>
+                                </select>
+                                {errors.employmentStatus && <p className="text-red-500 text-xs mt-1">{errors.employmentStatus.message}</p>}
+                            </div>
 
-                            <label className="block text-sm font-medium text-gray-700 mt-4 mb-2">Monthly Income</label>
-                            <input {...register('monthlyIncome')} className="w-full px-4 py-3 border rounded-lg" placeholder="e.g., 200000" />
-                            {errors.monthlyIncome && <p className="text-red-500 text-xs mt-1">{errors.monthlyIncome.message}</p>}
-
-                            <label className="block text-sm font-medium text-gray-700 mt-4 mb-2">Main Responsibilities</label>
-                            <select {...register('responsibilities')} className="w-full px-4 py-3 border rounded-lg">
-                                <option value="">Select Responsibilities</option>
-                                <option value="tenant">Tenant</option>
-                                <option value="student">Student</option>
-                                <option value="worker">Worker</option>
-                            </select>
-                            {errors.responsibilities && <p className="text-red-500 text-xs mt-1">{errors.responsibilities.message}</p>}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Monthly Income</label>
+                                <input {...register('monthlyIncome')} className="w-full px-4 py-3 border rounded-lg" placeholder="e.g., 200000" />
+                                {errors.monthlyIncome && <p className="text-red-500 text-xs mt-1">{errors.monthlyIncome.message}</p>}
+                            </div>
                         </div>
                     </FadeIn>
                 ),
-                fieldsNames: ['gender', 'employmentStatus', 'monthlyIncome', 'responsibilities'],
+                fieldsNames: ['gender', 'employmentStatus', 'monthlyIncome'],
             },
         ],
         landlord: [
@@ -266,11 +263,10 @@ export default function OnboardingForm({ role, onComplete }: Props) {
         setStep(Math.min(currentStep + 1, steps.length - 1));
     };
 
-  const submitForm = (data: FormData) => {
-    setFormData(data);
-    onComplete(data);
-    reset();
-};
+    const submitForm = (data: FormData) => {
+        setFormData(data);
+        onComplete(data);
+    };
 
     return (
         <div className="w-full h-full overflow-y-auto p-6 md:p-12">

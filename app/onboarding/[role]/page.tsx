@@ -18,13 +18,12 @@ export default function OnboardingPage() {
     roles.length === 1 ? roles[0] : null
   );
 
-  const handleOnboardingComplete = (formData: any) => {
+ const handleOnboardingComplete = (formData: any) => {
     if (!selectedRole) return;
-
     setUserOnboarding({ role: selectedRole, data: formData });
     resetOnboarding();
-    toast.success(`Onboarding for ${selectedRole} complete!`);
-
+    toast.success(`Onboarding for ${selectedRole} complete!`); 
+    
     const remainingRoles = roles.filter((r) => r !== selectedRole);
     if (remainingRoles.length === 0) {
       router.push('/signin');
