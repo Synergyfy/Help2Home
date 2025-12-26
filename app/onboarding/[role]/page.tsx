@@ -232,6 +232,7 @@ export default function OnboardingPage() {
             </p>
           </div>
 
+
           {/* Postal Code */}
           <div className="md:w-1/2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
