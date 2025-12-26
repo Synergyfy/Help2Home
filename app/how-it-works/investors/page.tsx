@@ -5,6 +5,7 @@ import FadeIn from '@/components/FadeIn';
 import InvestorSteps from '@/components/InvestorSteps';
 import InvestorEarningsCalculator from '@/components/InvestorEarningsCalculator';
 import HowItWorksFAQs from '@/components/HowItWorksFAQs';
+import InvestorTimeline from '@/components/InvestorsTimeline';
 
 export const metadata: Metadata = {
     title: 'How It Works for Investors - Help2Home',
@@ -52,11 +53,15 @@ export default function InvestorHowItWorksPage() {
                 </div>
             </section>
 
+            <InvestorTimeline/>
+
+             {/* Calculator Section */}
+            <InvestorEarningsCalculator />
+
             {/* Steps Section */}
             <InvestorSteps />
 
-            {/* Calculator Section */}
-            <InvestorEarningsCalculator />
+           
 
             {/* CTA Section */}
             <section className="py-20 bg-gradient-to-br from-brand-green/5 to-brand-purple/5">

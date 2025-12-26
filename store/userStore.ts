@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type Role = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor';
+export type Role = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor';
 
 interface UserState {
   email: string;

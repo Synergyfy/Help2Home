@@ -2,8 +2,7 @@ import { Suspense } from "react";
 import TenantSteps from "@/components/TenantSteps";
 import TenantTimeline from "@/components/TenantTimeline";
 import TenantCallouts from "@/components/TenantCallouts";
-import RentCalculator from "@/components/RentCalculator";
-import AffordabilityCalculator from "@/components/AffordabilityCalculator";
+import CalculatorCTA from "@/components/lib/CalculatorCTA"
 import HowItWorksFAQs from "@/components/HowItWorksFAQs";
 import FadeIn from "@/components/FadeIn";
 import Link from "next/link";
@@ -56,19 +55,46 @@ export default function TenantHowItWorksPage() {
           </FadeIn>
         </div>
       </section>
-
-      <TenantSteps />
       <TenantTimeline />
+
+
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6 md:px-12">
+
+          {/* Section Heading */}
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Know Your Numbers Before You Commit
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Make smarter housing and investment decisions with quick, reliable estimates.
+            </p>
+          </div>
+
+          {/* CTA Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <CalculatorCTA
+              title="Check Rent Affordability"
+              description="Estimate your rent affordability with ease."
+              placeholder="Enter Annual Rent (₦)"
+              redirectPath="/check-rent-affordability"
+            />
+
+            <CalculatorCTA
+              title="Maximize Your Investment Potential"
+              description="Quickly find out how much you can invest in properties and expected returns."
+              placeholder="Enter Investment Amount (₦)"
+              redirectPath="/investor-earning-calculator"
+            />
+          </div>
+
+        </div>
+      </section>
+
       <TenantCallouts />
 
-      {/* ✅ REQUIRED SUSPENSE BOUNDARIES */}
-      <Suspense fallback={null}>
-        <AffordabilityCalculator />
-      </Suspense>
+      <TenantSteps />
 
-      <Suspense fallback={null}>
-        <RentCalculator />
-      </Suspense>
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-br from-brand-green/5 to-brand-purple/5">

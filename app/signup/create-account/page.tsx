@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -13,11 +12,13 @@ import { useUserStore } from '@/store/userStore';
 import { toast } from 'react-toastify';
 import { FcGoogle } from 'react-icons/fc';
 import InfoIcon from '@/components/lib/InfoIcon';
+import type { Role } from '@/store/userStore'
 
-// Zod validation schema
+/* ---------------- Schema ---------------- */
+
 const createAccountSchema = z
   .object({
-    email: z.email({ message: 'Invalid email address' }),
+    email: z.string().email({ message: 'Invalid email address' }),
     password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
     confirmPassword: z.string().min(6, { message: 'Confirm password is required' }),
   })
@@ -28,9 +29,10 @@ const createAccountSchema = z
 
 type CreateAccountForm = z.infer<typeof createAccountSchema>;
 
-// Role info definitions
+/* ---------------- Role Info ---------------- */
+
 const roleInfoMap: Record<
-  string,
+  Role,
   { explanation: string; benefits: string; image: string }
 > = {
   tenant: {
@@ -60,9 +62,12 @@ const roleInfoMap: Record<
   },
 };
 
+/* ---------------- Component ---------------- */
+
 export default function CreateAccountClient() {
   const router = useRouter();
-  const roles = useUserStore((state) => state.role); // array of roles
+  const roles = useUserStore((state) => state.role); // array of selected roles
+  const setRole = useUserStore((state) => state.setRole);
   const hasHydrated = useUserStore((state) => state.hasHydrated);
   const setUser = useUserStore((state) => state.setUser);
 
@@ -74,18 +79,91 @@ export default function CreateAccountClient() {
   const [displayText, setDisplayText] = useState('');
   const [charIndex, setCharIndex] = useState(0);
 
-  // Auto-swipe effect for desktop
+  /* ---------------- Role Selection Logic ---------------- */
+  const canSelectRole = (roleToSelect: Role): boolean => {
+    if (!roles || roles.length === 0) return true;
+
+    // Tenant can only be tenant
+    if (roles.includes('tenant')) {
+      return roleToSelect === 'tenant';
+    }
+
+    // Investor can only be investor
+    if (roles.includes('investor')) {
+      return roleToSelect === 'investor';
+    }
+
+    // Landlord can also be agent or caretaker
+    if (roles.includes('landlord')) {
+      return ['landlord', 'agent', 'caretaker'].includes(roleToSelect);
+    }
+
+    // Agent can also be landlord or caretaker
+    if (roles.includes('agent')) {
+      return ['landlord', 'agent', 'caretaker'].includes(roleToSelect);
+    }
+
+    // Caretaker can also be landlord or agent
+    if (roles.includes('caretaker')) {
+      return ['landlord', 'agent', 'caretaker'].includes(roleToSelect);
+    }
+
+    return true;
+  };
+
+  const isRoleDisabled = (roleToCheck: Role): boolean => {
+    if (!roles || roles.length === 0) return false;
+    return !canSelectRole(roleToCheck);
+  };
+
+  /* ---------------- Role Toggle Function ---------------- */
+  const toggleRole = (role: Role) => {
+    if (!roles) return;
+
+    // Check if role can be selected
+    if (!canSelectRole(role)) {
+      if (roles.includes('tenant')) {
+        toast.error('Tenants can only select the tenant role');
+      } else if (roles.includes('investor')) {
+        toast.error('Investors can only select the investor role');
+      } else {
+        toast.error('This role combination is not allowed');
+      }
+      return;
+    }
+
+    let newRoles: Role[];
+    if (roles.includes(role)) {
+      // Prevent removing last role
+      if (roles.length > 1) {
+        newRoles = roles.filter((r) => r !== role);
+        toast.info(`${role.charAt(0).toUpperCase() + role.slice(1)} role removed`);
+      } else {
+        toast.warning('You must have at least one role selected');
+        return;
+      }
+    } else {
+      newRoles = [...roles, role];
+      toast.success(`${role.charAt(0).toUpperCase() + role.slice(1)} role added`);
+    }
+    
+    setRole(newRoles);
+    setCurrentIndex(0);
+    setDisplayText('');
+    setCharIndex(0);
+  };
+
+  /* ---------------- Slide & Typewriter Effects ---------------- */
   useEffect(() => {
     if (!roles || roles.length === 0) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % roles.length);
       setDisplayText('');
       setCharIndex(0);
-    }, 7000); // 7 seconds per role
+    }, 7000);
     return () => clearInterval(interval);
   }, [roles]);
 
-  // Typewriter effect for explanation per current slide
   useEffect(() => {
     if (!roles || roles.length === 0) return;
     const currentRole = roles[currentIndex];
@@ -101,44 +179,24 @@ export default function CreateAccountClient() {
     }
   }, [charIndex, currentIndex, roles]);
 
-  // Redirect if no role after hydration
   useEffect(() => {
     if (!hasHydrated) return;
     if (!roles || roles.length === 0) router.replace('/signup');
   }, [roles, hasHydrated, router]);
 
+  /* ---------------- Submit ---------------- */
   const onSubmit = async (data: CreateAccountForm) => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setUser({ email: data.email, verified: false });
-      localStorage.setItem('email_otp', '123456');
+    await new Promise((r) => setTimeout(r, 1500));
+    setUser({ email: data.email, verified: false });
+    localStorage.setItem('email_otp', '123456');
 
-      toast.success('Account created successfully! Please verify your email.', {
-        position: 'top-right',
-        autoClose: 3000,
-      });
-
-      router.push('/signup/verify');
-    } catch (err) {
-      console.error(err);
-      toast.error('Something went wrong. Please try again.', {
-        position: 'top-right',
-        autoClose: 5000,
-      });
-    }
+    toast.success('Account created successfully! Please verify your email.');
+    router.push('/signup/verify');
   };
 
   if (!hasHydrated) return <div className="min-h-screen bg-gray-50" />;
 
-  if (!roles || roles.length === 0) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">No role selected. Redirecting...</p>
-      </div>
-    );
-  }
-
-  // Combine all selected roles for mobile tooltip
+  /* ---------------- Combined Info for Mobile ---------------- */
   const combinedMobileInfo = roles.reduce(
     (acc, r) => {
       const info = roleInfoMap[r];
@@ -153,7 +211,7 @@ export default function CreateAccountClient() {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="flex flex-col md:flex-row min-h-screen">
-        {/* Desktop Panel */}
+        {/* Desktop Slide Panel */}
         <div className="hidden md:flex md:w-1/2 relative overflow-hidden">
           <AnimatePresence mode="wait">
             {roles.map((role, index) => {
@@ -175,21 +233,15 @@ export default function CreateAccountClient() {
                       overlayClassName="absolute inset-0 bg-black/40"
                       contentClassName="absolute inset-0 flex flex-col justify-center items-center text-center p-8"
                     >
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                      >
-                        <h2 className="text-white text-4xl font-bold mb-4 drop-shadow-lg">
-                          Welcome to Help2Home
-                        </h2>
-                        <p className="text-gray-200 text-lg drop-shadow-md max-w-xs mb-2">
-                          {displayText}
-                        </p>
-                        <p className="text-gray-200 text-base drop-shadow-sm max-w-xs">
-                          {info.benefits}
-                        </p>
-                      </motion.div>
+                      <h2 className="text-white text-4xl font-bold mb-4 drop-shadow-lg">
+                        Welcome to Help2Home
+                      </h2>
+                      <p className="text-gray-200 text-lg drop-shadow-md max-w-xs mb-2">
+                        {displayText}
+                      </p>
+                      <p className="text-gray-200 text-base drop-shadow-sm max-w-xs">
+                        {info.benefits}
+                      </p>
                     </BackgroundPanel>
                   </motion.div>
                 )
@@ -202,103 +254,97 @@ export default function CreateAccountClient() {
         <div className="w-full md:w-1/2 flex flex-col justify-center p-6 md:p-12">
           <FadeIn>
             <div className="bg-white rounded-2xl shadow-xl p-6 md:p-12 space-y-6">
-              {/* Header */}
-              <div className="text-center mb-6">
-                <Link href="/signup" className="text-sm text-gray-500 hover:text-brand-green mb-2 inline-block">
-                  ← Back to Role Selection
-                </Link>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  Create your account
-                </h1>
-                <div className="flex justify-center items-center gap-2 text-gray-600 capitalize">
-                  <span>Signing up as {roles.join(' / ')}</span>
-                  <InfoIcon tooltip={combinedMobileInfo.explanation.join(' ')} />
-                </div>
+
+              {/* Role Selector */}
+              <div className="flex flex-wrap justify-center gap-3 mb-4">
+                {(Object.keys(roleInfoMap) as Role[]).map((role) => {
+                  const active = roles.includes(role);
+                  const disabled = isRoleDisabled(role);
+                  return (
+                    <button
+                      key={role}
+                      type="button"
+                      onClick={() => toggleRole(role)}
+                      disabled={disabled && !active}
+                      className={`px-4 py-2 rounded-full text-sm capitalize border transition ${
+                        active
+                          ? 'bg-brand-green text-white border-brand-green'
+                          : disabled
+                          ? 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
+                          : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200'
+                      }`}
+                    >
+                      {role}
+                    </button>
+                  );
+                })}
               </div>
 
-              {/* Google OAuth */}
-              <div className="mb-6">
-                <button
-                  type="button"
-                  onClick={() => {}}
-                  className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg py-3 font-medium hover:bg-gray-50 transition"
-                >
-                  <FcGoogle size={24} />
-                  Sign up with Google
-                </button>
-                <div className="flex items-center gap-4 my-6">
-                  <div className="flex-1 h-px bg-gray-200" />
-                  <span className="text-sm text-gray-400">OR</span>
-                  <div className="flex-1 h-px bg-gray-200" />
-                </div>
+              {/* Header */}
+              <h1 className="text-3xl font-bold text-center text-gray-900 mb-4">
+                Create your account
+              </h1>
+
+              {/* Google */}
+              <button className="w-full border rounded-lg py-3 flex justify-center gap-2 mb-4 hover:bg-gray-50 transition">
+                <FcGoogle size={22} /> Sign up with Google
+              </button>
+
+              <div className="flex items-center gap-2 text-gray-400">
+                <hr className="flex-1" />
+                <span className="text-sm">or</span>
+                <hr className="flex-1" />
               </div>
 
               {/* Form */}
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                   <input
-                    type="email"
                     {...register('email')}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-transparent"
+                    type="email"
+                    placeholder="Email"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-600 focus:border-transparent"
                   />
-                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email?.message}</p>}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                    <input
-                      type="password"
-                      {...register('password')}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-transparent"
-                    />
-                    {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
-                  </div>
+                <div>
+                  <input
+                    {...register('password')}
+                    type="password"
+                    placeholder="Password"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-600 focus:border-transparent"
+                  />
+                  {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password?.message}</p>}
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-                    <input
-                      type="password"
-                      {...register('confirmPassword')}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-transparent"
-                    />
-                    {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>}
-                  </div>
+                <div>
+                  <input
+                    {...register('confirmPassword')}
+                    type="password"
+                    placeholder="Confirm Password"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-600 focus:border-transparent"
+                  />
+                  {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword?.message}</p>}
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-brand-green text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-brand-green text-white py-3 rounded-lg hover:bg-green-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Creating Account...' : 'Create Account'}
                 </button>
               </form>
 
-              {/* Footer */}
-              <p className="text-center text-gray-600 mt-6">
-                Already have an account?{' '}
-                <Link href="/signin" className="text-brand-green hover:underline font-semibold">
-                  Sign in
-                </Link>
-              </p>
-
               {/* Mobile Combined Tooltip */}
-              <motion.div
-                className="md:hidden mt-6 bg-blue-100 p-4 rounded-lg border border-blue-200 text-blue-800 text-sm space-y-1"
-                key={roles.join('-')}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.5 }}
-              >
+              <motion.div className="md:hidden mt-4 bg-blue-50 p-4 rounded-lg border border-blue-200 text-blue-800 text-sm space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">{roles.join(' / ')}</span>
+                  <span className="font-semibold capitalize">{roles.join(' / ')}</span>
                   <InfoIcon tooltip={combinedMobileInfo.explanation.join(' ')} />
                 </div>
                 {combinedMobileInfo.benefits.map((b, i) => (
-                  <p key={i}>{b}</p>
+                  <p key={i} className="text-xs">{b}</p>
                 ))}
               </motion.div>
             </div>

@@ -28,9 +28,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ClientLayout>
-          {children}
-          {/* Client-only providers */}
-          <GlobalProviders />
+          <GlobalProviders>
+            {children}
+          </GlobalProviders>
         </ClientLayout>
       </body>
     </html>
