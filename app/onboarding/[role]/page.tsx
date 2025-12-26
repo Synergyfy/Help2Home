@@ -11,7 +11,7 @@ import { useCountries, useCountryStates } from '@/hooks/useCountries';
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const roles = useUserStore((state) => state.role); // array of roles
+  const roles = useUserStore((state) => state.role);
   const setUserOnboarding = useUserStore((state) => state.setOnboarding);
 
   const formData = useOnboardingStore((state) => state.formData);
@@ -20,7 +20,6 @@ export default function OnboardingPage() {
   const setStep = useOnboardingStore((state) => state.setStep);
   const resetOnboarding = useOnboardingStore((state) => state.reset);
 
-  // Fetch countries and states
   const { countries, isLoading: countriesLoading } = useCountries();
   const { data: states, isLoading: statesLoading } = useCountryStates(
     formData.countryCode || null
@@ -38,14 +37,13 @@ export default function OnboardingPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    
-    // If country changes, update country code and reset state
+
     if (name === 'country') {
       const selectedCountry = countries.find((c) => c.name === value);
-      setFormData({ 
+      setFormData({
         [name]: value,
         countryCode: selectedCountry?.code || '',
-        state: '', // Reset state when country changes
+        state: '',
       });
     } else {
       setFormData({ [name]: value });
@@ -95,29 +93,27 @@ export default function OnboardingPage() {
     resetOnboarding();
     toast.success(`Onboarding for ${selectedRole} complete!`);
 
-    // Remove the completed role
     const remainingRoles = roles.filter((r) => r !== selectedRole);
     if (remainingRoles.length === 0) {
       router.push('/signin');
     } else {
-      setSelectedRole(null); // show role selector for remaining roles
+      setSelectedRole(null);
     }
   };
 
-  // --- Steps Definition ---
   const baseSteps = [
     {
       title: 'Basic Info',
       tooltip: 'We use this to personalize your experience and verify your account.',
       fields: (
         <div className="space-y-6">
-          {/* Name Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
                 First Name <span className="text-red-500">*</span>
               </label>
               <input
+                id="firstName"
                 type="text"
                 name="firstName"
                 value={formData.firstName || ''}
@@ -128,10 +124,11 @@ export default function OnboardingPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
                 Last Name <span className="text-red-500">*</span>
               </label>
               <input
+                id="lastName"
                 type="text"
                 name="lastName"
                 value={formData.lastName || ''}
@@ -143,12 +140,12 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          {/* Phone Number */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
               Phone Number <span className="text-red-500">*</span>
             </label>
             <input
+              id="phone"
               type="tel"
               name="phone"
               value={formData.phone || ''}
@@ -159,18 +156,19 @@ export default function OnboardingPage() {
             />
           </div>
 
-          {/* Country and State */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
                 Country <span className="text-red-500">*</span>
               </label>
               <select
+                id="country"
                 name="country"
                 value={formData.country || ''}
                 onChange={handleChange}
                 required
                 disabled={countriesLoading}
+                title="Select your country"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-600 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
                 <option value="">
@@ -186,22 +184,24 @@ export default function OnboardingPage() {
 
             {formData.country && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-2">
                   State/Province <span className="text-red-500">*</span>
                 </label>
                 <select
+                  id="state"
                   name="state"
                   value={formData.state || ''}
                   onChange={handleChange}
                   required
                   disabled={statesLoading}
+                  title="Select your state or province"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-600 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
                   <option value="">
                     {statesLoading ? 'Loading states...' : 'Select State/Province'}
                   </option>
                   {states?.map((s) => (
-                    <option key={s.iso2} value={s.name}>
+                    <option key={s.name} value={s.name}>
                       {s.name}
                     </option>
                   ))}
@@ -213,12 +213,12 @@ export default function OnboardingPage() {
             )}
           </div>
 
-          {/* Full Address */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="fullAddress" className="block text-sm font-medium text-gray-700 mb-2">
               Full Address <span className="text-red-500">*</span>
             </label>
             <textarea
+              id="fullAddress"
               name="fullAddress"
               value={formData.fullAddress || ''}
               onChange={handleChange}
@@ -232,13 +232,12 @@ export default function OnboardingPage() {
             </p>
           </div>
 
-
-          {/* Postal Code */}
           <div className="md:w-1/2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Postal/Zip Code 
+            <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-2">
+              Postal/Zip Code
             </label>
             <input
+              id="postalCode"
               type="text"
               name="postalCode"
               value={formData.postalCode || ''}
@@ -261,12 +260,16 @@ export default function OnboardingPage() {
         fields: (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+              <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-2">
+                Gender
+              </label>
               <select
+                id="gender"
                 name="gender"
                 value={formData.gender || ''}
                 onChange={handleChange}
                 required
+                title="Select your gender"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300"
               >
                 <option value="">Select Gender</option>
@@ -275,12 +278,16 @@ export default function OnboardingPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Employment Status</label>
+              <label htmlFor="employmentStatus" className="block text-sm font-medium text-gray-700 mb-2">
+                Employment Status
+              </label>
               <select
+                id="employmentStatus"
                 name="employmentStatus"
                 value={formData.employmentStatus || ''}
                 onChange={handleChange}
                 required
+                title="Select employment status"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300"
               >
                 <option value="">Select...</option>
@@ -291,12 +298,16 @@ export default function OnboardingPage() {
               </select>
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Monthly Income</label>
+              <label htmlFor="monthlyIncome" className="block text-sm font-medium text-gray-700 mb-2">
+                Monthly Income
+              </label>
               <select
+                id="monthlyIncome"
                 name="monthlyIncome"
                 value={formData.monthlyIncome || ''}
                 onChange={handleChange}
                 required
+                title="Select monthly income range"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300"
               >
                 <option value="">Select...</option>
@@ -317,8 +328,11 @@ export default function OnboardingPage() {
         tooltip: 'Tell us about your property portfolio.',
         fields: (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Portfolio Size</label>
+            <label htmlFor="portfolioSize" className="block text-sm font-medium text-gray-700 mb-2">
+              Portfolio Size
+            </label>
             <input
+              id="portfolioSize"
               type="number"
               name="portfolioSize"
               value={formData.portfolioSize || ''}
@@ -338,8 +352,11 @@ export default function OnboardingPage() {
         tooltip: 'Provide your property management portfolio info.',
         fields: (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Portfolio Size</label>
+            <label htmlFor="portfolioSizeAgent" className="block text-sm font-medium text-gray-700 mb-2">
+              Portfolio Size
+            </label>
             <input
+              id="portfolioSizeAgent"
               type="number"
               name="portfolioSize"
               value={formData.portfolioSize || ''}
@@ -360,8 +377,11 @@ export default function OnboardingPage() {
         fields: (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Portfolio Size</label>
+              <label htmlFor="portfolioSizeCaretaker" className="block text-sm font-medium text-gray-700 mb-2">
+                Portfolio Size
+              </label>
               <input
+                id="portfolioSizeCaretaker"
                 type="number"
                 name="portfolioSize"
                 value={formData.portfolioSize || ''}
@@ -372,8 +392,11 @@ export default function OnboardingPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Responsibilities</label>
+              <label htmlFor="responsibilities" className="block text-sm font-medium text-gray-700 mb-2">
+                Responsibilities
+              </label>
               <input
+                id="responsibilities"
                 type="text"
                 name="responsibilities"
                 value={formData.responsibilities || ''}
@@ -395,12 +418,16 @@ export default function OnboardingPage() {
         fields: (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Investor Type</label>
+              <label htmlFor="investorType" className="block text-sm font-medium text-gray-700 mb-2">
+                Investor Type
+              </label>
               <select
+                id="investorType"
                 name="investorType"
                 value={formData.investorType || ''}
                 onChange={handleChange}
                 required
+                title="Select investor type"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300"
               >
                 <option value="">Select Type</option>
@@ -410,8 +437,11 @@ export default function OnboardingPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Investment Budget</label>
+              <label htmlFor="investmentBudget" className="block text-sm font-medium text-gray-700 mb-2">
+                Investment Budget
+              </label>
               <input
+                id="investmentBudget"
                 type="number"
                 name="investmentBudget"
                 value={formData.investmentBudget || ''}
@@ -427,14 +457,11 @@ export default function OnboardingPage() {
     ],
   };
 
-  // Compose steps for current role
   const steps = selectedRole ? [...baseSteps, ...(roleStepsMap[selectedRole] || [])] : [];
-
   const safeStep = Math.min(currentStep, steps.length - 1);
   const isLastStep = safeStep === steps.length - 1;
 
   if (!selectedRole && roles.length > 1) {
-    // Show role selector first
     return (
       <main className="h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-lg">
@@ -459,7 +486,6 @@ export default function OnboardingPage() {
   return (
     <main className="h-screen bg-gray-50 overflow-hidden">
       <div className="flex h-full flex-col md:flex-row">
-        {/* Info Panel */}
         <BackgroundPanel
           backgroundImage="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=900"
           containerClassName="hidden md:flex md:w-1/2 h-full relative overflow-hidden"
