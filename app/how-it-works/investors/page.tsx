@@ -55,11 +55,13 @@ export default function InvestorHowItWorksPage() {
 
             <InvestorTimeline/>
 
+             {/* Calculator Section */}
+            <InvestorEarningsCalculator />
+
             {/* Steps Section */}
             <InvestorSteps />
 
-            {/* Calculator Section */}
-            <InvestorEarningsCalculator />
+           
 
             {/* CTA Section */}
             <section className="py-20 bg-gradient-to-br from-brand-green/5 to-brand-purple/5">

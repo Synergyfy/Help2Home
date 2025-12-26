@@ -1,50 +1,39 @@
+// store/countriesStore.ts
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 
-export interface Country {
+// Define proper types based on what country-state-city returns
+export interface CountryType {
   name: string;
-  code: string;
-  states?: State[];
+  isoCode: string;
+  phonecode?: string;
 }
 
-export interface State {
+export interface StateType {
   name: string;
-  code: string;
+  isoCode: string;
+  countryCode: string;
+}
+
+export interface CityType {
+  name: string;
+  countryCode: string;
+  stateCode: string;
 }
 
 interface CountriesState {
-  countries: Country[];
-  setCountries: (countries: Country[]) => void;
-  getCountryByName: (name: string) => Country | undefined;
-  getStatesByCountry: (countryName: string) => State[];
-  hasHydrated: boolean;
-  setHasHydrated: (hydrated: boolean) => void;
+  countries: CountryType[];
+  states: StateType[];
+  cities: CityType[];
+  setCountries: (countries: CountryType[]) => void;
+  setStates: (states: StateType[]) => void;
+  setCities: (cities: CityType[]) => void;
 }
 
-export const useCountriesStore = create<CountriesState>()(
-  persist(
-    (set, get) => ({
-      countries: [],
-      hasHydrated: false,
-      
-      setCountries: (countries) => set({ countries }),
-      
-      getCountryByName: (name) => {
-        return get().countries.find((c) => c.name === name);
-      },
-      
-      getStatesByCountry: (countryName) => {
-        const country = get().getCountryByName(countryName);
-        return country?.states || [];
-      },
-      
-      setHasHydrated: (hydrated) => set({ hasHydrated: hydrated }),
-    }),
-    {
-      name: 'countries-storage',
-      onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
-      },
-    }
-  )
-);
+export const useCountriesStore = create<CountriesState>((set) => ({
+  countries: [],
+  states: [],
+  cities: [],
+  setCountries: (countries) => set({ countries }),
+  setStates: (states) => set({ states }),
+  setCities: (cities) => set({ cities }),
+}));

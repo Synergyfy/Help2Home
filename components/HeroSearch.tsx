@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import HeroImg from '@/About us assets/heroImg.jpg'
 
 const slides = [
     {
@@ -62,87 +64,52 @@ export default function HeroSearch() {
     }, []);
 
     return (
-        <section className="relative bg-white py-8 md:py-12 lg:py-20 overflow-hidden">
+        <section className="relative overflow-hidden py-8 md:py-12 lg:py-20">
+            {/* Background Image */}
+            <div className="absolute inset-0 -z-10">
+                <Image
+                    src={HeroImg}
+                    alt="Beautiful house exterior"
+                    fill
+                    className="object-cover object-center"
+                    priority
+                />
+                {/* Darker overlay for better contrast */}
+                <div className="absolute inset-0 bg-black/40"></div>
+            </div>
+
             <div className="container mx-auto px-4 sm:px-6 md:px-12">
                 <div className="flex flex-col md:flex-row items-start gap-8 md:gap-12 mb-8 md:mb-12">
-
-                    {/* Text Content (Left) */}
+                    {/* Text Content */}
                     <div className="flex-1 w-full md:max-w-xl z-10 flex flex-col md:min-h-[500px] relative">
-                        {/* Slideshow Wrapper */}
-                        <div className="relative w-full">
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={currentSlide}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    transition={{ duration: 0.5 }}
-                                    className="w-full flex flex-col justify-start"
-                                >
-                                    <motion.span
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.2 }}
-                                        className="inline-block w-fit py-1 px-3 rounded-full bg-brand-green/10 text-brand-green text-sm font-bold mb-3 md:mb-4"
-                                    >
-                                        For {slides[currentSlide].role}s
-                                    </motion.span>
-                                    <motion.h1
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.3 }}
-                                        className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 leading-tight mb-4 md:mb-6"
-                                    >
-                                        <span>{slides[currentSlide].headline}</span>
-                                    </motion.h1>
-                                    <motion.p
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ delay: 0.4 }}
-                                        className="text-base md:text-lg text-gray-600 mb-6 md:mb-8 leading-relaxed"
-                                    >
-                                        {slides[currentSlide].subhead}
-                                    </motion.p>
-
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.5 }}
-                                        className="flex flex-col sm:flex-row gap-4 mb-8 md:mb-0"
-                                    >
-                                        <Link href="/marketplace">
-                                            <button className="bg-brand-green text-white px-6 md:px-8 py-3 rounded-md font-medium hover:bg-green-600 transition-colors shadow-lg text-base md:text-lg transform hover:scale-105 active:scale-95 duration-200">
-                                                {slides[currentSlide].cta}
-                                            </button>
-                                        </Link>
-                                    </motion.div>
-                                </motion.div>
-                            </AnimatePresence>
-                        </div>
-
-                        {/* Slide Indicators */}
-                        <div className="flex gap-2 mt-4 md:mt-8">
-                            {slides.map((_, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setCurrentSlide(index)}
-                                    className={`h-1.5 rounded-full transition-all duration-300 ${index === currentSlide ? 'bg-brand-green w-8' : 'bg-gray-200 w-4 hover:bg-gray-300'
-                                        }`}
-                                    aria-label={`Go to slide ${index + 1}`}
-                                />
-                            ))}
-                        </div>
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={currentSlide}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.5 }}
+                            >
+                                <span className="inline-block w-fit py-1 px-3 rounded-full bg-brand-green/10 text-brand-green text-sm font-bold mb-3 md:mb-4">
+                                    For {slides[currentSlide].role}s
+                                </span>
+                                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight mb-4 md:mb-6">
+                                    {slides[currentSlide].headline}
+                                </h1>
+                                <p className="text-white text-base md:text-lg mb-6 md:mb-8 leading-relaxed">
+                                    {slides[currentSlide].subhead}
+                                </p>
+                                <Link href="/marketplace">
+                                    <button className="bg-brand-green text-white px-6 md:px-8 py-3 rounded-md font-medium hover:bg-green-600 transition-colors shadow-lg text-base md:text-lg">
+                                        {slides[currentSlide].cta}
+                                    </button>
+                                </Link>
+                            </motion.div>
+                        </AnimatePresence>
                     </div>
 
-                    {/* Image Content (Right) */}
-                    <div className="flex-1 relative w-full md:max-w-lg mt-8 md:mt-0">
-                        {/* Abstract Shape Background */}
-                        <motion.div
-                            animate={{ rotate: [3, 6, 3] }}
-                            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute top-0 right-0 w-full h-full bg-blue-50 rounded-[2rem] md:rounded-[3rem] scale-90 -z-10"
-                        ></motion.div>
-
+                    {/* Slide Image */}
+                    <div className="flex-1 relative w-full md:max-w-lg mt-8 md:mt-0 z-10">
                         <div className="relative rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white aspect-[4/3]">
                             <AnimatePresence mode="wait">
                                 <motion.img
@@ -160,7 +127,7 @@ export default function HeroSearch() {
                     </div>
                 </div>
 
-                {/* Search Bar - Centered Below */}
+                {/* Search Bar */}
                 <motion.div
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -194,15 +161,7 @@ export default function HeroSearch() {
                         </div>
                     </div>
                 </motion.div>
-
             </div>
-
-            {/* Decorative Green Circle Element */}
-            <motion.div
-                animate={{ y: [0, -20, 0], opacity: [0.2, 0.3, 0.2] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute bottom-0 left-0 w-24 h-48 bg-brand-green rounded-r-full opacity-20 -translate-x-1/2 translate-y-1/4 blur-2xl"
-            ></motion.div>
         </section>
     );
 }

@@ -14,17 +14,17 @@ interface OnboardingState {
     postalCode?: string;         
     
     // Tenant specific
-    gender: string;
-    employmentStatus: string;
-    monthlyIncome: string;
+    gender?: 'male' | 'female';
+    employmentStatus?: string;
+    monthlyIncome?: string;
     
     // Landlord/Agent/Caretaker specific
-    portfolioSize: string;
-    responsibilities: string;
+    portfolioSize?: number; // changed to number
+    responsibilities?: string;
     
     // Investor specific
-    investorType: string;
-    investmentBudget: string;
+    investorType?: string;
+    investmentBudget?: number; // changed to number
   };
   currentStep: number;
   setFormData: (data: Partial<OnboardingState['formData']>) => void;
@@ -45,17 +45,17 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
     postalCode: '',
     
     // Tenant specific
-    gender: '',
-    employmentStatus: '',
-    monthlyIncome: '',
+    gender: undefined,
+    employmentStatus: undefined,
+    monthlyIncome: undefined,
     
     // Landlord/Agent/Caretaker specific
-    portfolioSize: '',
-    responsibilities: '',
+    portfolioSize: undefined,
+    responsibilities: undefined,
     
     // Investor specific
     investorType: 'individual',
-    investmentBudget: '',
+    investmentBudget: undefined,
   },
   currentStep: 0,
   
@@ -75,13 +75,13 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
         state: '',
         fullAddress: '',
         postalCode: '',
-        gender: '',
-        employmentStatus: '',
-        monthlyIncome: '',
-        portfolioSize: '',
-        responsibilities: '',
+        gender: undefined,
+        employmentStatus: undefined,
+        monthlyIncome: undefined,
+        portfolioSize: undefined,
+        responsibilities: undefined,
         investorType: 'individual',
-        investmentBudget: '',
+        investmentBudget: undefined,
       },
       currentStep: 0,
     }),
