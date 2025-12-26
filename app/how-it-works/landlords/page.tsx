@@ -52,11 +52,14 @@ export default function LandlordHowItWorksPage() {
                 </div>
             </section>
 
+            {/* Calculator Section */}
+
+            <LandlordEarningsCalculator />
+
+
             {/* Steps Section */}
             <LandlordSteps />
 
-            {/* Calculator Section */}
-            <LandlordEarningsCalculator />
 
             {/* CTA Section */}
             <section className="py-20 bg-gradient-to-br from-brand-green/5 to-brand-purple/5">

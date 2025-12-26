@@ -11,7 +11,7 @@ import { useCountries, useCountryStates } from '@/hooks/useCountries';
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const roles = useUserStore((state) => state.role); // array of roles
+  const roles = useUserStore((state) => state.role); 
   const setUserOnboarding = useUserStore((state) => state.setOnboarding);
 
   const formData = useOnboardingStore((state) => state.formData);

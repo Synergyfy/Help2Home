@@ -5,6 +5,7 @@ import FadeIn from '@/components/FadeIn';
 import InvestorSteps from '@/components/InvestorSteps';
 import InvestorEarningsCalculator from '@/components/InvestorEarningsCalculator';
 import HowItWorksFAQs from '@/components/HowItWorksFAQs';
+import InvestorTimeline from '@/components/InvestorsTimeline';
 
 export const metadata: Metadata = {
     title: 'How It Works for Investors - Help2Home',
@@ -51,6 +52,8 @@ export default function InvestorHowItWorksPage() {
                     </FadeIn>
                 </div>
             </section>
+
+            <InvestorTimeline/>
 
             {/* Steps Section */}
             <InvestorSteps />

@@ -168,7 +168,7 @@ const steps = [
 
 export default function InvestorSteps() {
     return (
-        <section className="py-20 bg-gray-50">
+         <section className="py-20 bg-gray-50">
             <div className="container mx-auto px-6 md:px-12">
                 <FadeIn>
                     <div className="text-center max-w-3xl mx-auto mb-16">
@@ -181,21 +181,52 @@ export default function InvestorSteps() {
                     </div>
                 </FadeIn>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {/* Mobile Swipe */}
+                <div className="md:hidden overflow-x-auto snap-x snap-mandatory flex gap-6 pb-4 -mx-6 px-6">
+                    {steps.map((step, index) => (
+                        <div key={index} className="min-w-[85%] snap-center">
+                            <FadeIn delay={index * 0.03}>
+                                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 h-full">
+                                    <div className="w-12 h-12 bg-brand-green/10 rounded-xl flex items-center justify-center text-brand-green mb-6">
+                                        {step.icon}
+                                    </div>
+
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <span className="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center font-bold text-sm">
+                                            {index + 1}
+                                        </span>
+                                        <h3 className="text-xl font-bold text-gray-900 leading-tight">
+                                            {step.title}
+                                        </h3>
+                                    </div>
+
+                                    <p className="text-gray-600 leading-relaxed">
+                                        {step.description}
+                                    </p>
+                                </div>
+                            </FadeIn>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Desktop Grid */}
+                <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-8">
                     {steps.map((step, index) => (
                         <FadeIn key={index} delay={index * 0.05}>
                             <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 h-full hover:shadow-md transition-shadow">
                                 <div className="w-12 h-12 bg-brand-green/10 rounded-xl flex items-center justify-center text-brand-green mb-6">
                                     {step.icon}
                                 </div>
+
                                 <div className="flex items-center gap-3 mb-4">
-                                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center font-bold text-sm">
+                                    <span className="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center font-bold text-sm">
                                         {index + 1}
                                     </span>
                                     <h3 className="text-xl font-bold text-gray-900 leading-tight">
                                         {step.title}
                                     </h3>
                                 </div>
+
                                 <p className="text-gray-600 leading-relaxed">
                                     {step.description}
                                 </p>
