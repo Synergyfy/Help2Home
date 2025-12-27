@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useLocations } from '@/hooks/useMarketplaceQueries';
 import { useMarketplaceStore } from '@/store/marketplaceStore';
 import { useDebounce } from '@/hooks/useDebounce';
+import heroImg from '@/About us assets/heroImg.jpg'
 
 export default function MarketPlaceMain() {
     const router = useRouter();
