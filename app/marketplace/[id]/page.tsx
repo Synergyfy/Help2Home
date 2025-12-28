@@ -7,7 +7,7 @@ import { useParams } from 'next/navigation';
 import NearbyProperties from '@/components/NearbyProperties';
 import BookingModal from '@/components/BookingModal';
 import ConfirmationModal from '@/components/ConfirmationModal';
-import { allProperties } from '@/utils/properties';
+import { mockProperties } from '@/utils/properties';
 import { FaShower } from "react-icons/fa";
 import { FaHome } from 'react-icons/fa';
 
@@ -18,7 +18,7 @@ export default function PropertyDetailsPage() {
     const idString = Array.isArray(params.id) ? params.id[0] : params.id;
     const propertyId = idString ? parseInt(idString, 10) : null;
 
-    const property = allProperties.find(p => p.id === propertyId);
+    const property = mockProperties.find(p => p.id === propertyId);
 
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
@@ -137,7 +137,8 @@ export default function PropertyDetailsPage() {
 
                             {/* Nearby Properties */}
                             <div className="mt-6">
-                                <NearbyProperties />
+                                <NearbyProperties currentPropertyId={property.id}
+                                    location={property.location} />
                             </div>
                         </div>
                     </div>

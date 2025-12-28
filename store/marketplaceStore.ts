@@ -1,10 +1,9 @@
-// store/marketplaceStore.ts
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export type PropertyType = 'rent' | 'buy' | 'service-apartment' | 'rent-to-own';
+
 export type PropertyCategory = 
-  | 'all' 
   | 'residential-properties-to-rent'
   | 'student-properties-to-rent'
   | 'corporate-properties-to-rent'
@@ -23,212 +22,208 @@ export type PropertyCategory =
   | 'semi-detached'
   | 'townhouse';
 
+export type InclusionMode = 'include' | 'exclude' | 'show-only';
+export type AddedTimeframe = 'anytime' | '24h' | '3d' | '7d' | '14d' | '30d';
+export type OwnershipType = 'all' | 'freehold' | 'leasehold' | 'share-of-freehold';
 export type SortOption = 'featured' | 'price-low' | 'price-high' | 'newest';
+export type Status = 'all'| 'available' | 'sold'
 
-interface PriceRange {
-  min: number;
-  max: number;
+interface MinMax {
+  min: number | null;
+  max: number | null;
 }
 
 interface MarketplaceFilters {
   propertyType: PropertyType;
-  category: PropertyCategory;
+  categories: PropertyCategory[]; 
   location: string;
-  radius: number; // in miles
-  bedrooms: number | null;
-  bathrooms: number | null;
-  priceRange: PriceRange;
-  furnished: boolean | null;
-  parking: boolean | null;
-  garden: boolean | null;
-  pool: boolean | null;
+  radius: number;
+  bedrooms: MinMax;
+  bathrooms: MinMax;
+  priceRange: { min: number; max: number };
+  category: string;
+  status: Status;
+  
+  // Existing Inclusion Sections
+  newBuild: InclusionMode;
+  sharedOwnership: InclusionMode;
+  retirementHomes: InclusionMode;
+  auction: InclusionMode;
+  offPlan: InclusionMode; 
+
+  // Must-haves & Status
+  garden: boolean;
+  parking: boolean;
+  balcony: boolean;
+  chainFree: boolean;
+  reducedPrice: boolean;
+  underOffer: boolean;
+  
+  // Infrastructure & Utilitie
+  serviced: boolean;       // Cleaning, waste, etc.
+  electricity: boolean;    // Constant power/Inverter/Solar
+  waterSupply: boolean;    // Borehole/Treatment plant
+  security: boolean;       // Uniformed security/CCTV
+  gym: boolean;
+  pool: boolean;
+
+  // Features & Ownership
+  furnished: boolean;      // Fully, Semi, or Unfurnished
+  features: string[]; 
+  ownership: OwnershipType; // Freehold, Leasehold, C of O, etc.
+   dateAdded: AddedTimeframe;
+  keywords: string;
+  
+  // Accessibility & Size
+  floorLevel?: number;     // Important for apartments
+  totalArea?: number;      // Square footage/meters
+  isVerified: boolean;     // Verified listing status
+  
   sortBy: SortOption;
   searchQuery: string;
+
+  [key: string]: any;
 }
 
 interface MarketplaceState {
-  // Filters
   filters: MarketplaceFilters;
-  
-  // Pagination
   currentPage: number;
-  
-  // UI State
   showFilterModal: boolean;
+  resultsCount: number;
   
-  // Actions - Filters
-  setPropertyType: (type: PropertyType) => void;
-  setCategory: (category: PropertyCategory) => void;
-  setLocation: (location: string) => void;
-  setRadius: (radius: number) => void;
-  setBedrooms: (bedrooms: number | null) => void;
-  setBathrooms: (bathrooms: number | null) => void;
-  setPriceRange: (range: PriceRange) => void;
-  setFurnished: (furnished: boolean | null) => void;
-  setParking: (parking: boolean | null) => void;
-  setGarden: (garden: boolean | null) => void;
-  setPool: (pool: boolean | null) => void;
-  setSortBy: (sort: SortOption) => void;
-  setSearchQuery: (query: string) => void;
+  
+  // Actions
   setFilters: (filters: Partial<MarketplaceFilters>) => void;
-  
-  // Actions - Pagination
+  setPropertyType: (type: PropertyType) => void; 
+  setLocation: (location: string) => void;       
+  setSortBy: (sort: SortOption) => void;         
+  toggleCategory: (category: PropertyCategory) => void;
+  toggleFeature: (feature: string) => void;
   setCurrentPage: (page: number) => void;
-  nextPage: () => void;
-  prevPage: () => void;
-  
-  // Actions - UI
-  toggleFilterModal: () => void;
-  setFilterModal: (show: boolean) => void;
-  
-  // Actions - Reset
+  setResultsCount: (count: number) => void;
+  resetAdvancedFilters: () => void;
+  nextPage: () => void;                          
+  prevPage: () => void;                          
   resetFilters: () => void;
-  resetAll: () => void;
+  toggleFilterModal: () => void;
 }
-
 const defaultFilters: MarketplaceFilters = {
   propertyType: 'rent',
-  category: 'all',
+  categories: [],
   location: '',
-  radius: 1, // Default 1 mile radius
-  bedrooms: null,
-  bathrooms: null,
-  priceRange: { min: 0, max: 500000000 }, // NGN 500M max
-  furnished: null,
-  parking: null,
-  garden: null,
-  pool: null,
+  radius: 0,
+  category: 'all',
+  bedrooms: { min: 0, max: 0 },
+  bathrooms: { min: 0, max: 0 },
+  priceRange: { min: 0, max: 1000000000 },
+  status:'all',
+  newBuild: 'include',
+  sharedOwnership: 'include',
+  retirementHomes: 'include',
+  auction: 'include',
+  offPlan: 'include', 
+  garden: false,
+  parking: false,
+  balcony: false,
+  chainFree: false,
+  reducedPrice: false,
+  underOffer: false,
+  serviced: false,    
+  electricity: false, 
+  waterSupply: false, 
+  security: false,    
+  gym: false,         
+  pool: false,        
+  furnished: false,   
+  isVerified: false,  
+
+  features: [],
+  ownership: 'freehold', 
+   dateAdded: 'anytime',
+  keywords: '',
   sortBy: 'featured',
   searchQuery: '',
 };
-
 export const useMarketplaceStore = create<MarketplaceState>()(
   persist(
-    (set) => ({
-      // Initial State
+    (set, get) => ({ 
       filters: defaultFilters,
       currentPage: 1,
       showFilterModal: false,
-      
-      // Filter Actions
+      resultsCount: 0,
+
+      setResultsCount: (count) => set({ resultsCount: count }),
+      setFilters: (newFilters) => 
+        set((state) => ({ 
+          filters: { ...state.filters, ...newFilters }, 
+          currentPage: 1 
+        })),
+
+      // Specific setter for Property Type (Rent/Buy etc)
       setPropertyType: (type) =>
         set((state) => ({
           filters: { ...state.filters, propertyType: type },
-          currentPage: 1, // Reset to page 1 when filter changes
+          currentPage: 1
         })),
-      
-      setCategory: (category) =>
-        set((state) => ({
-          filters: { ...state.filters, category },
-          currentPage: 1,
-        })),
-      
+
+      // Specific setter for Location search
       setLocation: (location) =>
         set((state) => ({
           filters: { ...state.filters, location },
-          currentPage: 1,
+          currentPage: 1
         })),
-      
-      setRadius: (radius) =>
+
+      // Specific setter for Sorting
+      setSortBy: (sort) =>
         set((state) => ({
-          filters: { ...state.filters, radius },
-          currentPage: 1,
+          filters: { ...state.filters, sortBy: sort }
         })),
-      
-      setBedrooms: (bedrooms) =>
-        set((state) => ({
-          filters: { ...state.filters, bedrooms },
-          currentPage: 1,
-        })),
-      
-      setBathrooms: (bathrooms) =>
-        set((state) => ({
-          filters: { ...state.filters, bathrooms },
-          currentPage: 1,
-        })),
-      
-      setPriceRange: (range) =>
-        set((state) => ({
-          filters: { ...state.filters, priceRange: range },
-          currentPage: 1,
-        })),
-      
-      setFurnished: (furnished) =>
-        set((state) => ({
-          filters: { ...state.filters, furnished },
-          currentPage: 1,
-        })),
-      
-      setParking: (parking) =>
-        set((state) => ({
-          filters: { ...state.filters, parking },
-          currentPage: 1,
-        })),
-      
-      setGarden: (garden) =>
-        set((state) => ({
-          filters: { ...state.filters, garden },
-          currentPage: 1,
-        })),
-      
-      setPool: (pool) =>
-        set((state) => ({
-          filters: { ...state.filters, pool },
-          currentPage: 1,
-        })),
-      
-      setSortBy: (sortBy) =>
-        set((state) => ({
-          filters: { ...state.filters, sortBy },
-          currentPage: 1,
-        })),
-      
-      setSearchQuery: (searchQuery) =>
-        set((state) => ({
-          filters: { ...state.filters, searchQuery },
-          currentPage: 1,
-        })),
-      
-      setFilters: (newFilters) =>
-        set((state) => ({
-          filters: { ...state.filters, ...newFilters },
-          currentPage: 1,
-        })),
-      
-      // Pagination Actions
-      setCurrentPage: (page) => set({ currentPage: page }),
-      
-      nextPage: () =>
-        set((state) => ({ currentPage: state.currentPage + 1 })),
-      
-      prevPage: () =>
-        set((state) => ({ 
-          currentPage: Math.max(1, state.currentPage - 1) 
-        })),
-      
-      // UI Actions
-      toggleFilterModal: () =>
-        set((state) => ({ showFilterModal: !state.showFilterModal })),
-      
-      setFilterModal: (show) => set({ showFilterModal: show }),
-      
-      // Reset Actions
-      resetFilters: () => 
-        set({ filters: defaultFilters, currentPage: 1 }),
-      
-      resetAll: () => 
-        set({ 
-          filters: defaultFilters, 
-          currentPage: 1,
-          showFilterModal: false 
+
+      toggleCategory: (category) =>
+        set((state) => {
+          const current = state.filters.categories;
+          const categories = current.includes(category)
+            ? current.filter((c) => c !== category)
+            : [...current, category];
+          return { filters: { ...state.filters, categories }, currentPage: 1 };
         }),
+
+      toggleFeature: (feature) =>
+        set((state) => {
+          const current = state.filters.features;
+          const features = current.includes(feature)
+            ? current.filter((f) => f !== feature)
+            : [...current, feature];
+          return { filters: { ...state.filters, features }, currentPage: 1 };
+        }),
+
+        resetAdvancedFilters: () => set((state) => ({
+          filters: {
+            ...state.filters,
+            propertyTypes: [],
+            keywords: '',
+            newBuild: 'include',
+            sharedOwnership: 'include',
+            retirementHomes: 'include',
+            auction: 'include',
+            dateAdded: 'anytime',
+            isVerified: false
+          }
+        })),
+
+      setCurrentPage: (page) => set({ currentPage: page }),
+
+      // Pagination logic moved into store
+      nextPage: () => set((state) => ({ currentPage: state.currentPage + 1 })),
+      prevPage: () => set((state) => ({ currentPage: Math.max(1, state.currentPage - 1) })),
+
+      toggleFilterModal: () => set((state) => ({ showFilterModal: !state.showFilterModal })),
+      
+      resetFilters: () => set({ filters: defaultFilters, currentPage: 1 }),
     }),
     {
       name: 'marketplace-storage',
-      partialize: (state) => ({ 
-        filters: state.filters,
-        currentPage: state.currentPage,
-      }),
+      partialize: (state) => ({ filters: state.filters, currentPage: state.currentPage }),
     }
   )
 );

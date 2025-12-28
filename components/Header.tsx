@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
+    const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -17,6 +19,19 @@ export default function Header() {
         window.addEventListener('auth-change', checkAuth);
         return () => window.removeEventListener('auth-change', checkAuth);
     }, []);
+
+    const handleCategoryClick = (type: 'rent' | 'buy' | 'service-apartment' | 'rent-to-own', category?: string) => {
+        setIsMenuOpen(false);
+        
+        // Build query string
+        let queryString = `type=${type}`;
+        if (category) {
+            queryString += `&category=${category}`;
+        }
+        
+        // Navigate to marketplace with query params
+        router.push(`/marketplace?${queryString}`);
+    };
 
     return (
         <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100">
@@ -34,10 +49,25 @@ export default function Header() {
                             Rent
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-180 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
                         </button>
-                        <div className="absolute top-full left-0 w-52 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
-                            <Link href="/marketplace?category=residential" className="block text-gray-600 hover:text-brand-green py-2 pl-4">Residential Property to Rent</Link>
-                            <Link href="/marketplace?category=corporate" className="block text-gray-600 hover:text-brand-green py-2 pl-4">Commercial Property</Link>
-                            <Link href="/marketplace?category=student" className="block text-gray-600 hover:text-brand-green py-2 pl-4">Student / Corpers Property</Link>
+                        <div className="absolute top-full left-0 w-60 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
+                            <button 
+                                onClick={() => handleCategoryClick('rent', 'residential-properties-to-rent')}
+                                className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
+                            >
+                                Residential Property to Rent
+                            </button>
+                            <button 
+                                onClick={() => handleCategoryClick('rent', 'corporate-properties-to-rent')}
+                                className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
+                            >
+                                Corporate Property
+                            </button>
+                            <button 
+                                onClick={() => handleCategoryClick('rent', 'student-properties-to-rent')}
+                                className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
+                            >
+                                Student / Corpers Property
+                            </button>
                         </div>
                     </div>
 
@@ -47,15 +77,41 @@ export default function Header() {
                             Buy
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-180 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
                         </button>
-                        <div className="absolute top-full left-0 w-52 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
-                            <Link href="/marketplace?category=residential-buy" className="block text-gray-600 hover:text-brand-green py-2 pl-4">Residential Property for Sale</Link>
-                            <Link href="/marketplace?category=commercial-buy" className="block text-gray-600 hover:text-brand-green py-2 pl-4">Commercial Property for Sale</Link>
+                        <div className="absolute top-full left-0 w-60 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
+                            <button 
+                                onClick={() => handleCategoryClick('buy', 'residential-properties-for-sale')}
+                                className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
+                            >
+                                Residential Property for Sale
+                            </button>
+                            <button 
+                                onClick={() => handleCategoryClick('buy', 'commercial-properties-for-sale')}
+                                className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
+                            >
+                                Commercial Property for Sale
+                            </button>
+                            <button 
+                                onClick={() => handleCategoryClick('buy', 'corporate-properties-for-sale')}
+                                className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
+                            >
+                                Corporate Property for Sale
+                            </button>
                         </div>
                     </div>
 
                     {/* Standalone Menu Items */}
-                    <Link href="/service-apartments" className="hover:text-brand-green transition-colors">Service Apartments</Link>
-                    <Link href="/rent-to-own" className="hover:text-brand-green transition-colors">Rent to Own</Link>
+                    <button 
+                        onClick={() => handleCategoryClick('service-apartment')}
+                        className="hover:text-brand-green transition-colors"
+                    >
+                        Service Apartments
+                    </button>
+                    <button 
+                        onClick={() => handleCategoryClick('rent-to-own')}
+                        className="hover:text-brand-green transition-colors"
+                    >
+                        Rent to Own
+                    </button>
                     <Link href="/find-developers" className="hover:text-brand-green transition-colors">Find Developers</Link>
                 </nav>
 
@@ -98,19 +154,54 @@ export default function Header() {
                 <div className="lg:hidden absolute top-full left-0 w-full bg-white border-t shadow-lg p-4 flex flex-col gap-4 z-50 max-h-[80vh] overflow-y-auto">
                     <div className="border-b border-gray-100 pb-2">
                         <p className="text-xs font-bold text-gray-400 uppercase mb-2">Rent</p>
-                        <Link href="/marketplace?category=residential" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>Residential Property</Link>
-                        <Link href="/marketplace?category=corporate" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>Corporate Property</Link>
-                        <Link href="/marketplace?category=student" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>Student / Corpers Property</Link>
+                        <button 
+                            onClick={() => handleCategoryClick('rent', 'residential-properties-to-rent')}
+                            className="block w-full text-left text-gray-600 hover:text-brand-green py-2 pl-4"
+                        >
+                            Residential Property
+                        </button>
+                        <button 
+                            onClick={() => handleCategoryClick('rent', 'corporate-properties-to-rent')}
+                            className="block w-full text-left text-gray-600 hover:text-brand-green py-2 pl-4"
+                        >
+                            Corporate Property
+                        </button>
+                        <button 
+                            onClick={() => handleCategoryClick('rent', 'student-properties-to-rent')}
+                            className="block w-full text-left text-gray-600 hover:text-brand-green py-2 pl-4"
+                        >
+                            Student / Corpers Property
+                        </button>
                     </div>
 
                     <div className="border-b border-gray-100 pb-2">
                         <p className="text-xs font-bold text-gray-400 uppercase mb-2">Buy</p>
-                        <Link href="/marketplace?category=residential-buy" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>Residential Property for Sale</Link>
-                        <Link href="/marketplace?category=commercial-buy" className="block text-gray-600 hover:text-brand-green py-2 pl-4" onClick={() => setIsMenuOpen(false)}>Commercial Property for Sale</Link>
+                        <button 
+                            onClick={() => handleCategoryClick('buy', 'residential-properties-for-sale')}
+                            className="block w-full text-left text-gray-600 hover:text-brand-green py-2 pl-4"
+                        >
+                            Residential Property for Sale
+                        </button>
+                        <button 
+                            onClick={() => handleCategoryClick('buy', 'commercial-properties-for-sale')}
+                            className="block w-full text-left text-gray-600 hover:text-brand-green py-2 pl-4"
+                        >
+                            Commercial Property for Sale
+                        </button>
                     </div>
 
-                    <Link href="/service-apartments" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>Service Apartments</Link>
-                    <Link href="/rent-to-own" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>Rent to Own</Link>
+                    <button 
+                        onClick={() => handleCategoryClick('service-apartment')}
+                        className="text-left text-gray-600 hover:text-brand-green py-2"
+                    >
+                        Service Apartments
+                    </button>
+                    <button 
+                        onClick={() => handleCategoryClick('rent-to-own')}
+                        className="text-left text-gray-600 hover:text-brand-green py-2"
+                    >
+                        Rent to Own
+                    </button>
                     <Link href="/find-developers" className="text-gray-600 hover:text-brand-green py-2" onClick={() => setIsMenuOpen(false)}>Find Developers</Link>
 
                     {!isLoggedIn ? (

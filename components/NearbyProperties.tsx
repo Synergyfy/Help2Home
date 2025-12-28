@@ -3,61 +3,73 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { mockProperties } from '@/utils/properties';
 
-const nearbyProperties = [
-    {
-        id: 1,
-        image: '/assets/marketplace assets/3 Bedroom Flat, Lokogoma. Abuja.png',
-        title: '3 Bedroom Flat, Vgc, Eti-osa, Lagos',
-    },
-    {
-        id: 2,
-        image: '/assets/marketplace assets/3 Bedroom Flat, Lokogoma. Abuja-1.png',
-        title: '3 Bedroom Flat, Vgc, Eti-osa, Lagos',
-    },
-    {
-        id: 3,
-        image: '/assets/marketplace assets/3 Bedroom Flat, Lokogoma. Abuja-2.png',
-        title: '3 Bedroom Flat, Vgc, Eti-osa, Lagos',
-    },
-    {
-        id: 4,
-        image: '/assets/marketplace assets/3 Bedroom Flat, Lokogoma. Abuja-3.png',
-        title: '3 Bedroom Flat, Vgc, Eti-osa, Lagos',
-    },
-    {
-        id: 5,
-        image: '/assets/marketplace assets/3 Bedroom Flat, Lokogoma. Abuja-4.png',
-        title: '3 Bedroom Flat, Vgc, Eti-osa, Lagos',
-    },
-];
+// 1. Define the interface to fix the TS(2322) error
+interface NearbyPropertiesProps {
+    currentPropertyId: number;
+    location: string;
+}
 
-export default function NearbyProperties() {
+export default function NearbyProperties({ currentPropertyId, location }: NearbyPropertiesProps) {
+    
+    // 2. The "Calculation": Filter properties in the same location
+    // We exclude the current property itself so it doesn't recommend what you're already looking at.
+    const nearby = mockProperties
+        .filter(p => 
+            p.location === location && // Match location
+            p.id !== currentPropertyId   // Exclude current
+        )
+        .slice(0, 5); // Limit to top 5 results
+
+    // Fallback: If no properties are in the exact same location, 
+    // show any other featured properties so the sidebar isn't empty.
+    const displayProperties = nearby.length > 0 
+        ? nearby 
+        : mockProperties.filter(p => p.id !== currentPropertyId).slice(0, 5);
+
     return (
-        <div className="bg-gray-50 p-6 rounded-2xl">
-            <h3 className="font-bold text-gray-900 mb-6">Nearby Properties</h3>
+        <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
+            <h3 className="font-black text-gray-900 mb-6 flex items-center gap-2">
+                <span className="w-2 h-2 bg-brand-green rounded-full"></span>
+                Nearby Properties
+            </h3>
+            
             <div className="space-y-6">
-                {nearbyProperties.map((property) => (
-                    <div key={property.id} className="flex gap-4 items-start">
-                        <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                {displayProperties.map((property) => (
+                    <div key={property.id} className="flex gap-4 items-center group">
+                        <div className="relative w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-50">
                             <Image
-                                src={property.image}
+                                src={property.images?.[0] || '/placeholder.jpg'}
                                 alt={property.title}
                                 fill
-                                className="object-cover"
+                                className="object-cover group-hover:scale-110 transition-transform duration-300"
                             />
                         </div>
-                        <div className="flex-1">
-                            <h4 className="text-xs font-medium text-gray-900 mb-2 line-clamp-2">{property.title}</h4>
+                        <div className="flex-1 min-w-0">
+                            <h4 className="text-sm font-bold text-gray-900 mb-1 truncate">
+                                {property.title}
+                            </h4>
+                            <p className="text-xs text-brand-green font-black mb-2">
+                                {property.price.toLocaleString('en-NG', { 
+                                    style: 'currency', 
+                                    currency: 'NGN',
+                                    maximumFractionDigits: 0 
+                                })}
+                            </p>
                             <Link
                                 href={`/marketplace/${property.id}`}
-                                className="inline-block bg-[#00853E] text-white text-xs font-bold px-4 py-1.5 rounded hover:bg-[#006c32] transition-colors"
+                                className="text-[10px] uppercase tracking-widest font-black text-gray-400 hover:text-brand-green transition-colors"
                             >
-                                View
+                                View Details →
                             </Link>
                         </div>
                     </div>
                 ))}
+
+                {displayProperties.length === 0 && (
+                    <p className="text-sm text-gray-500 italic">No other properties nearby.</p>
+                )}
             </div>
         </div>
     );

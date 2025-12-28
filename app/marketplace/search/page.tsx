@@ -1,37 +1,43 @@
-'use client'
+'use client';
 
-import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import Image from 'next/image';
 import { useMarketplaceStore } from '@/store/marketplaceStore';
-import { useSearchProperties, useFeaturedProperties } from '@/hooks/useMarketplaceQueries';
+import { useSearchProperties } from '@/hooks/useMarketplaceQueries';
 import AdvancedFilterBar from '@/components/marketplace/AdvancedFilterBar';
 import { useMarketplaceUrlSync } from '@/hooks/useMarketplaceUrlSync';
+import FadeIn from '@/components/FadeIn';
 
+// Icons
+import {
+    HiOutlineLocationMarker,
+    HiOutlineHeart,
+    HiCheckCircle,
+    HiOutlineChevronLeft,
+    HiOutlineChevronRight
+} from 'react-icons/hi';
+import { IoBedOutline, IoWaterOutline } from 'react-icons/io5';
+
+const formatCurrency = (amount: number) => {
+    if (amount >= 1000000) return `₦${(amount / 1000000).toFixed(1)}M`;
+    return `₦${amount.toLocaleString()}`;
+};
 
 export default function MarketplacePage() {
-    const router = useRouter();
     const searchParams = useSearchParams();
     useMarketplaceUrlSync();
 
-
-    // Zustand store
     const {
         filters,
         currentPage,
-        setPropertyType,
-        setLocation,
-        setCurrentPage,
         nextPage,
         prevPage,
         setSortBy,
     } = useMarketplaceStore();
 
-  
-   
-
-
-    // Fetch properties with TanStack Query
+    // Preserved exactly as requested
     const {
         data: searchResults,
         isLoading,
@@ -39,262 +45,180 @@ export default function MarketplacePage() {
         error,
     } = useSearchProperties(
         {
-            propertyType: filters.propertyType,
-            location: filters.location,
+            ...filters,
+            location: filters.location?.trim() || undefined,
             category: filters.category !== 'all' ? filters.category : undefined,
-            bedrooms: filters.bedrooms,
-            bathrooms: filters.bathrooms,
-            priceMin: filters.priceRange.min,
-            priceMax: filters.priceRange.max,
-            radius: filters.radius,
-            furnished: filters.furnished,
-            parking: filters.parking,
-            garden: filters.garden,
-            pool: filters.pool,
+            status: filters.status !== 'all' ? filters.status : undefined,
+
+            bedrooms: (filters.bedrooms?.min ?? 0) > 0 ? (filters.bedrooms.min as number) : undefined,
+            bathrooms: (filters.bathrooms?.min ?? 0) > 0 ? (filters.bathrooms.min as number) : undefined,
+            priceMin: filters.priceRange.min > 0 ? filters.priceRange.min : undefined,
+            priceMax: filters.priceRange.max < 1000000000 ? filters.priceRange.max : undefined,
+
+            newBuild: filters.newBuild === 'show-only' ? 'only' : filters.newBuild,
+            sharedOwnership: filters.sharedOwnership === 'show-only' ? 'only' : filters.sharedOwnership,
+            retirementHomes: filters.retirementHomes === 'show-only' ? 'only' : filters.retirementHomes,
+            auctions: filters.auction === 'show-only' ? 'only' : filters.auction,
+            offPlan: filters.offPlan === 'show-only' ? 'only' : filters.offPlan,
+
+            verified: filters.isVerified || undefined,
+            garden: filters.garden || undefined,
+            parking: filters.parking || undefined,
+            balcony: filters.balcony || undefined,
+            serviced: filters.serviced || undefined,
+            electricity: filters.electricity || undefined,
+            waterSupply: filters.waterSupply || undefined,
+            security: filters.security || undefined,
+            gym: filters.gym || undefined,
+            pool: filters.pool || undefined,
+            furnished: filters.furnished || undefined,
+
+            chainFree: filters.chainFree || undefined,
+            reducedPrice: filters.reducedPrice || undefined,
+            underOffer: filters.underOffer || undefined,
+
+            keywords: filters.keywords?.trim() || undefined,
+            ownership: filters.ownership !== 'all' ? filters.ownership : undefined,
+            addedToZoopla: filters.dateAdded !== 'anytime' ? filters.dateAdded : undefined,
+
             sortBy: filters.sortBy,
         },
         currentPage
     );
 
-    // Fetch featured properties
-    const { data: featuredProperties } = useFeaturedProperties(filters.propertyType, 3);
-
     const properties = searchResults?.properties || [];
     const total = searchResults?.total || 0;
     const totalPages = Math.ceil(total / 12);
 
-    const getPropertyTypeLabel = () => {
-        switch (filters.propertyType) {
-            case 'rent': return 'Rent';
-            case 'buy': return 'Buy';
-            case 'service-apartment': return 'Service Apartments';
-            case 'rent-to-own': return 'Rent to Own';
-            default: return 'Properties';
-        }
-    };
-
     return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Advanced Filter Bar */}
+        <div className="min-h-screen bg-white pb-20">
             <AdvancedFilterBar />
 
-            <div className="max-w-7xl mx-auto px-4 py-8">
-                {/* Featured Properties Section */}
-                {featuredProperties && featuredProperties.length > 0 && (
-                    <section className="mb-12">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                            Featured {getPropertyTypeLabel()} Properties
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {featuredProperties.map((property) => (
-                                <PropertyCard key={property.id} property={property} />
-                            ))}
+            <div className="container mx-auto px-6 md:px-12 py-10">
+                <FadeIn direction="up">
+                    <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-900 mb-2">Property Listings</h1>
+                            <p className="text-gray-600">
+                                {isLoading
+                                    ? 'Loading properties...'
+                                    : `Showing ${total} ${filters.isVerified ? 'verified' : 'total'} listings.`}
+                            </p>
                         </div>
-                    </section>
-                )}
 
-                {/* Results Header */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-4 border-b border-gray-200">
-                    <div>
-                        <h2 className="text-2xl font-bold text-gray-900">
-                            {getPropertyTypeLabel()} Properties
-                            {filters.location && ` in ${filters.location}`}
-                        </h2>
-                        <p className="text-sm text-gray-500 mt-1">
-                            {isLoading ? 'Searching...' : `${total} ${total === 1 ? 'property' : 'properties'} found`}
-                        </p>
+                        <select
+                            value={filters.sortBy}
+                            onChange={(e) => setSortBy(e.target.value as any)}
+                            className="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 outline-none transition-all"
+                        >
+                            <option value="featured">Sort by: Featured</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="newest">Newest Listed</option>
+                        </select>
                     </div>
+                </FadeIn>
 
-                    {/* Sort Dropdown */}
-                    <select
-                        value={filters.sortBy}
-                        onChange={(e) => setSortBy(e.target.value as any)}
-                        className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    >
-                        <option value="featured">Featured</option>
-                        <option value="price-low">Price: Low to High</option>
-                        <option value="price-high">Price: High to Low</option>
-                        <option value="newest">Newest First</option>
-                    </select>
-                </div>
-
-                {/* Loading State */}
-                {isLoading && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {[...Array(6)].map((_, i) => (
-                            <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm animate-pulse">
-                                <div className="h-64 bg-gray-200"></div>
-                                <div className="p-4 space-y-3">
-                                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                                    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                                </div>
-                            </div>
+                {isLoading ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
+                    </div>
+                ) : error ? (
+                    <div className="py-20 text-center text-red-600 font-bold">Error fetching properties.</div>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {properties.map((property, index) => (
+                            <PropertyCard key={property.id} property={property} index={index} />
                         ))}
                     </div>
                 )}
 
-                {/* Error State */}
-                {error && (
-                    <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-                        <p className="text-red-600 font-medium">Failed to load properties</p>
-                        <p className="text-red-500 text-sm mt-1">Please try again later</p>
+                {totalPages > 1 && (
+                    <div className="flex justify-center items-center mt-16 gap-4">
+                        <PaginationButton onClick={prevPage} disabled={currentPage === 1} icon={<HiOutlineChevronLeft size={20} />} />
+                        <span className="text-sm font-bold text-gray-500">Page {currentPage} of {totalPages}</span>
+                        <PaginationButton onClick={nextPage} disabled={currentPage === totalPages} icon={<HiOutlineChevronRight size={20} />} />
                     </div>
                 )}
+            </div>
 
-                {/* Properties Grid */}
-                {!isLoading && !error && properties.length > 0 && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                    >
-                        {properties.map((property) => (
-                            <PropertyCard key={property.id} property={property} />
-                        ))}
+            <AnimatePresence>
+                {isFetching && !isLoading && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full text-xs font-bold uppercase z-50 shadow-2xl">
+                        Updating Results...
                     </motion.div>
                 )}
+            </AnimatePresence>
+        </div>
+    );
+}
 
-                {/* Empty State */}
-                {!isLoading && !error && properties.length === 0 && (
-                    <div className="bg-white rounded-xl p-12 text-center">
-                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+function PropertyCard({ property, index }: { property: any; index: number }) {
+    return (
+        <FadeIn delay={index * 0.05} direction="up" className="h-full">
+            <div className="group bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-lg transition-all h-full flex flex-col">
+                <div className="relative aspect-[4/3] overflow-hidden">
+                    <Image
+                        src={property.images?.[0] || '/placeholder.jpg'}
+                        alt={property.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    {property.verified && (
+                        <div className="absolute top-3 left-3">
+                            <span className="bg-brand-green/90 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm flex items-center gap-1">
+                                <HiCheckCircle size={12} /> VERIFIED
+                            </span>
                         </div>
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2">No properties found</h3>
-                        <p className="text-gray-600 mb-6">Try adjusting your search filters or location</p>
-                        <button
-                            onClick={() => window.location.reload()}
-                            className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all"
-                        >
-                            Reset filters
-                        </button>
+                    )}
+                    <button className="absolute top-3 right-3 bg-white/90 hover:bg-white rounded-full p-2 text-gray-400 hover:text-red-500 transition-colors">
+                        <HiOutlineHeart size={18} />
+                    </button>
+                </div>
+
+                <div className="p-5 flex flex-col flex-grow">
+                    <div className="flex justify-between items-start mb-2 gap-2">
+                        <h3 className="font-bold text-gray-900 truncate text-sm">{property.title}</h3>
+                        <p className="text-brand-green font-bold text-sm whitespace-nowrap">{formatCurrency(property.price)}</p>
                     </div>
-                )}
-
-                {/* Pagination */}
-                {!isLoading && !error && totalPages > 1 && (
-                    <div className="flex justify-center items-center mt-12 gap-2">
-                        <button
-                            onClick={prevPage}
-                            disabled={currentPage === 1}
-                            className="w-12 h-12 flex items-center justify-center rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                            </svg>
-                        </button>
-
-                        {[...Array(Math.min(5, totalPages))].map((_, i) => {
-                            const pageNum = i + 1;
-                            return (
-                                <button
-                                    key={pageNum}
-                                    onClick={() => setCurrentPage(pageNum)}
-                                    className={`w-12 h-12 flex items-center justify-center rounded-xl border ${currentPage === pageNum
-                                            ? 'bg-purple-600 text-white font-bold shadow-lg border-purple-600'
-                                            : 'border-gray-200 text-gray-700 hover:bg-gray-50 font-medium'
-                                        }`}
-                                >
-                                    {pageNum}
-                                </button>
-                            );
-                        })}
-
-                        <button
-                            onClick={nextPage}
-                            disabled={currentPage === totalPages}
-                            className="w-12 h-12 flex items-center justify-center rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
+                    <p className="text-xs text-gray-500 mb-4 truncate flex items-center gap-1">
+                        <HiOutlineLocationMarker size={14} className="text-gray-400" />
+                        {property.location}
+                    </p>
+                    <div className="flex flex-wrap gap-3 mb-6">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                            <IoBedOutline size={14} /> <span>{property.bedrooms} Beds</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                            <IoWaterOutline size={14} /> <span>{property.bathrooms} Baths</span>
+                        </div>
                     </div>
-                )}
+                    <Link href={`/marketplace/${property.id}`} className="block w-full text-center border border-brand-green text-brand-green hover:bg-brand-green hover:text-white py-2.5 rounded-lg font-bold transition-all text-xs mt-auto">
+                        View Listing
+                    </Link>
+                </div>
+            </div>
+        </FadeIn>
+    );
+}
 
-                {/* Loading overlay during pagination */}
-                {isFetching && !isLoading && (
-                    <div className="fixed bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg border border-gray-200 flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
-                        <span className="text-sm text-gray-600">Updating...</span>
-                    </div>
-                )}
+function SkeletonCard() {
+    return (
+        <div className="bg-white rounded-xl h-[380px] animate-pulse border border-gray-100 overflow-hidden">
+            <div className="aspect-[4/3] bg-gray-200" />
+            <div className="p-5 space-y-4">
+                <div className="h-4 bg-gray-200 rounded w-3/4" />
+                <div className="h-3 bg-gray-100 rounded w-1/2" />
+                <div className="h-10 bg-gray-50 rounded w-full mt-4" />
             </div>
         </div>
     );
 }
 
-// Property Card Component
-function PropertyCard({ property }: { property: any }) {
-    const router = useRouter();
-
+function PaginationButton({ onClick, disabled, icon }: any) {
     return (
-        <motion.div
-            whileHover={{ y: -4 }}
-            onClick={() => router.push(`/marketplace/${property.id}`)}
-            className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer group"
-        >
-            <div className="relative h-64 overflow-hidden">
-                <img
-                    src={property.images[0] || '/placeholder.jpg'}
-                    alt={property.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                {property.featured && (
-                    <div className="absolute top-3 left-3 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                        Featured
-                    </div>
-                )}
-                {property.isNew && (
-                    <div className="absolute top-3 right-3 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                        New
-                    </div>
-                )}
-            </div>
-
-            <div className="p-4">
-                <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-1 group-hover:text-purple-600 transition-colors">
-                    {property.title}
-                </h3>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-1">{property.location}, {property.city}</p>
-
-                <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
-                    <span className="flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
-                        {property.bedrooms} beds
-                    </span>
-                    <span className="flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
-                        {property.bathrooms} baths
-                    </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                    <div>
-                        <div className="text-2xl font-bold text-purple-600">
-                            ₦{(property.price / 1000000).toFixed(1)}M
-                        </div>
-                        {property.monthlyPrice && (
-                            <div className="text-xs text-gray-500">₦{(property.monthlyPrice / 1000).toFixed(0)}k/month</div>
-                        )}
-                    </div>
-                    {property.verified && (
-                        <div className="flex items-center gap-1 text-green-600 text-xs font-medium">
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            Verified
-                        </div>
-                    )}
-                </div>
-            </div>
-        </motion.div>
+        <button onClick={onClick} disabled={disabled} className="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:border-brand-green hover:text-brand-green disabled:opacity-30 bg-white shadow-sm transition-all">
+            {icon}
+        </button>
     );
 }
