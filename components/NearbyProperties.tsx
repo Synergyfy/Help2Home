@@ -7,8 +7,8 @@ import { mockProperties } from '@/utils/properties';
 
 // 1. Define the interface to fix the TS(2322) error
 interface NearbyPropertiesProps {
-    currentPropertyId: number;
-    location: string;
+    currentPropertyId?: number;
+    location?: string;
 }
 
 export default function NearbyProperties({ currentPropertyId, location }: NearbyPropertiesProps) {

@@ -1,99 +1,81 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { HiOutlineLocationMarker, HiCheckCircle } from 'react-icons/hi';
-import { IoBedOutline, IoWaterOutline } from 'react-icons/io5';
-import { MdOutlinePower, MdOutlineSecurity } from 'react-icons/md'; 
+import React, { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useMarketplaceStore } from '@/store/marketplaceStore';
 
-interface PropertyCardProps {
-  id: string | number;
-  image: string;
-  title: string;
-  location: string;
-  bedrooms: number;
-  bathrooms: number;
-  description?: string;
-  price: number;
-  monthlyPrice?: number;
-  featured?: boolean;
-  verified?: boolean;
-  isNew?: boolean;
-  amenities?: {
-    garden?: boolean;
-    parking?: boolean;
-    balcony?: boolean;
-    pool?: boolean;
-    gym?: boolean;
-    serviced?: boolean;
-    furnished?: boolean;
-    security?: boolean;
-    electricity?: boolean;
-    waterSupply?: boolean;
-  };
-  tags?: {
-    offPlan?: boolean;
-    auction?: boolean;
-    sharedOwnership?: boolean;
-    retirementHome?: boolean;
-    chainFree?: boolean;
-  };
-}
+export default function SearchResults() {
+  const searchParams = useSearchParams();
+  
+  // Extract state and actions from the store
+  const { 
+    filters, 
+    setFilters, 
+    setCategory, 
+    setPropertyType, 
+    resultsCount 
+  } = useMarketplaceStore();
 
-export default function PropertyCard(props: PropertyCardProps) {
-  const { id, image, title, location, bedrooms, bathrooms, price, verified, amenities } = props;
-
-  const formatCurrency = (amount: number) => `₦${amount.toLocaleString()}`;
+  // Sync URL params with Zustand store on mount
+  useEffect(() => {
+    const queryLocation = searchParams.get('location');
+    const queryType = searchParams.get('type');
+    
+    if (queryLocation || queryType) {
+      setFilters({
+        location: queryLocation || '',
+        propertyType: (queryType as any) || 'rent'
+      });
+    }
+  }, [searchParams, setFilters]);
 
   return (
-    <div className="group bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-lg transition-all h-full flex flex-col">
-      <Link href={`/marketplace/${id}`} className="relative block aspect-[4/3] overflow-hidden bg-gray-100">
-        <Image src={image} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-        
-        {verified && (
-          <div className="absolute top-3 left-3">
-            <span className="bg-brand-green/90 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm flex items-center gap-1">
-              <HiCheckCircle size={12}/> VERIFIED
-            </span>
-          </div>
-        )}
-      </Link>
+    <div className="p-6">
+      <div className="mb-8 flex gap-4">
+        {/* Example: Using setPropertyType action */}
+        <button 
+          onClick={() => setPropertyType('rent')}
+          className={`px-4 py-2 rounded ${filters.propertyType === 'rent' ? 'bg-brand-green text-white' : 'bg-gray-200'}`}
+        >
+          For Rent
+        </button>
+        <button 
+          onClick={() => setPropertyType('buy')}
+          className={`px-4 py-2 rounded ${filters.propertyType === 'buy' ? 'bg-brand-green text-white' : 'bg-gray-200'}`}
+        >
+          For Sale
+        </button>
+      </div>
 
-      <div className="p-5 flex flex-col flex-grow">
-        <div className="flex justify-between items-start mb-2 gap-2">
-          <h3 className="font-bold text-gray-900 truncate text-sm">{title}</h3>
-          <p className="text-brand-green font-bold text-sm">{formatCurrency(price)}</p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* Sidebar Filters */}
+        <aside className="col-span-1">
+          <h3 className="font-bold mb-4">Categories</h3>
+          <select 
+            value={filters.category} 
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full p-2 border rounded"
+          >
+            <option value="all">All Properties</option>
+            <option value="apartment">Apartments</option>
+            <option value="duplex">Duplex</option>
+          </select>
+        </aside>
 
-        <p className="text-xs text-gray-500 mb-4 flex items-center gap-1">
-          <HiOutlineLocationMarker size={14} /> {location}
-        </p>
-
-        {/* Core Specs */}
-        <div className="flex flex-wrap gap-3 mb-4">
-          <div className="flex items-center gap-1 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
-            <IoBedOutline size={14} /> <span>{bedrooms} Beds</span>
-          </div>
-          <div className="flex items-center gap-1 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
-            <IoWaterOutline size={14} /> <span>{bathrooms} Baths</span>
+        {/* Results Area */}
+        <main className="col-span-3">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-semibold">
+              Properties in {filters.location || 'All Locations'}
+            </h2>
+            <span className="text-gray-500">{resultsCount} results found</span>
           </div>
           
-          {/* New Details: Showing specific utilities if they exist */}
-          {amenities?.electricity && (
-            <div className="flex items-center gap-1 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
-              <MdOutlinePower size={14} className="text-yellow-500" /> <span>24/7 Power</span>
-            </div>
-          )}
-          {amenities?.security && (
-            <div className="flex items-center gap-1 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
-              <MdOutlineSecurity size={14} className="text-blue-500" /> <span>Secured</span>
-            </div>
-          )}
-        </div>
-
-        <Link href={`/marketplace/${id}`} className="block w-full text-center border border-brand-green text-brand-green hover:bg-brand-green hover:text-white py-2 rounded-lg font-bold transition-all text-xs mt-auto">
-          View Listing
-        </Link>
+          {/* Property cards would be mapped here */}
+          <div className="bg-white p-12 rounded-xl border-2 border-dashed border-gray-200 text-center">
+            Results for {filters.propertyType} category: {filters.category}
+          </div>
+        </main>
       </div>
     </div>
   );

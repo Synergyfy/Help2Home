@@ -26,7 +26,7 @@ export type InclusionMode = 'include' | 'exclude' | 'show-only';
 export type AddedTimeframe = 'anytime' | '24h' | '3d' | '7d' | '14d' | '30d';
 export type OwnershipType = 'all' | 'freehold' | 'leasehold' | 'share-of-freehold';
 export type SortOption = 'featured' | 'price-low' | 'price-high' | 'newest';
-export type Status = 'all'| 'available' | 'sold'
+export type Status = 'all'| 'available' | 'sold';
 
 interface MinMax {
   min: number | null;
@@ -44,14 +44,12 @@ interface MarketplaceFilters {
   category: string;
   status: Status;
   
-  // Existing Inclusion Sections
   newBuild: InclusionMode;
   sharedOwnership: InclusionMode;
   retirementHomes: InclusionMode;
   auction: InclusionMode;
   offPlan: InclusionMode; 
 
-  // Must-haves & Status
   garden: boolean;
   parking: boolean;
   balcony: boolean;
@@ -59,25 +57,22 @@ interface MarketplaceFilters {
   reducedPrice: boolean;
   underOffer: boolean;
   
-  // Infrastructure & Utilitie
-  serviced: boolean;       // Cleaning, waste, etc.
-  electricity: boolean;    // Constant power/Inverter/Solar
-  waterSupply: boolean;    // Borehole/Treatment plant
-  security: boolean;       // Uniformed security/CCTV
+  serviced: boolean;
+  electricity: boolean;
+  waterSupply: boolean;
+  security: boolean;
   gym: boolean;
   pool: boolean;
 
-  // Features & Ownership
-  furnished: boolean;      // Fully, Semi, or Unfurnished
+  furnished: boolean;
   features: string[]; 
-  ownership: OwnershipType; // Freehold, Leasehold, C of O, etc.
-   dateAdded: AddedTimeframe;
+  ownership: OwnershipType;
+  dateAdded: AddedTimeframe;
   keywords: string;
   
-  // Accessibility & Size
-  floorLevel?: number;     // Important for apartments
-  totalArea?: number;      // Square footage/meters
-  isVerified: boolean;     // Verified listing status
+  floorLevel?: number;
+  totalArea?: number;
+  isVerified: boolean;
   
   sortBy: SortOption;
   searchQuery: string;
@@ -91,22 +86,22 @@ interface MarketplaceState {
   showFilterModal: boolean;
   resultsCount: number;
   
-  
-  // Actions
   setFilters: (filters: Partial<MarketplaceFilters>) => void;
   setPropertyType: (type: PropertyType) => void; 
-  setLocation: (location: string) => void;       
-  setSortBy: (sort: SortOption) => void;         
+  setLocation: (location: string) => void; 
+  setCategory: (newCategory: string) => void; // Defined here
+  setSortBy: (sort: SortOption) => void;
   toggleCategory: (category: PropertyCategory) => void;
   toggleFeature: (feature: string) => void;
   setCurrentPage: (page: number) => void;
   setResultsCount: (count: number) => void;
   resetAdvancedFilters: () => void;
-  nextPage: () => void;                          
-  prevPage: () => void;                          
+  nextPage: () => void;
+  prevPage: () => void;
   resetFilters: () => void;
   toggleFilterModal: () => void;
 }
+
 const defaultFilters: MarketplaceFilters = {
   propertyType: 'rent',
   categories: [],
@@ -116,7 +111,7 @@ const defaultFilters: MarketplaceFilters = {
   bedrooms: { min: 0, max: 0 },
   bathrooms: { min: 0, max: 0 },
   priceRange: { min: 0, max: 1000000000 },
-  status:'all',
+  status: 'all',
   newBuild: 'include',
   sharedOwnership: 'include',
   retirementHomes: 'include',
@@ -128,22 +123,22 @@ const defaultFilters: MarketplaceFilters = {
   chainFree: false,
   reducedPrice: false,
   underOffer: false,
-  serviced: false,    
+  serviced: false,
   electricity: false, 
   waterSupply: false, 
-  security: false,    
-  gym: false,         
-  pool: false,        
-  furnished: false,   
-  isVerified: false,  
-
+  security: false,
+  gym: false,
+  pool: false,
+  furnished: false,
+  isVerified: false,
   features: [],
-  ownership: 'freehold', 
-   dateAdded: 'anytime',
+  ownership: 'all', 
+  dateAdded: 'anytime',
   keywords: '',
   sortBy: 'featured',
   searchQuery: '',
 };
+
 export const useMarketplaceStore = create<MarketplaceState>()(
   persist(
     (set, get) => ({ 
@@ -153,27 +148,32 @@ export const useMarketplaceStore = create<MarketplaceState>()(
       resultsCount: 0,
 
       setResultsCount: (count) => set({ resultsCount: count }),
+      
       setFilters: (newFilters) => 
         set((state) => ({ 
           filters: { ...state.filters, ...newFilters }, 
           currentPage: 1 
         })),
 
-      // Specific setter for Property Type (Rent/Buy etc)
       setPropertyType: (type) =>
         set((state) => ({
           filters: { ...state.filters, propertyType: type },
           currentPage: 1
         })),
 
-      // Specific setter for Location search
       setLocation: (location) =>
         set((state) => ({
           filters: { ...state.filters, location },
           currentPage: 1
         })),
 
-      // Specific setter for Sorting
+      // FIX: Added the missing setCategory implementation
+      setCategory: (newCategory) =>
+        set((state) => ({
+          filters: { ...state.filters, category: newCategory },
+          currentPage: 1
+        })),
+
       setSortBy: (sort) =>
         set((state) => ({
           filters: { ...state.filters, sortBy: sort }
@@ -197,28 +197,24 @@ export const useMarketplaceStore = create<MarketplaceState>()(
           return { filters: { ...state.filters, features }, currentPage: 1 };
         }),
 
-        resetAdvancedFilters: () => set((state) => ({
-          filters: {
-            ...state.filters,
-            propertyTypes: [],
-            keywords: '',
-            newBuild: 'include',
-            sharedOwnership: 'include',
-            retirementHomes: 'include',
-            auction: 'include',
-            dateAdded: 'anytime',
-            isVerified: false
-          }
-        })),
+      resetAdvancedFilters: () => set((state) => ({
+        filters: {
+          ...state.filters,
+          categories: [], // Changed from propertyTypes to categories to match interface
+          keywords: '',
+          newBuild: 'include',
+          sharedOwnership: 'include',
+          retirementHomes: 'include',
+          auction: 'include',
+          dateAdded: 'anytime',
+          isVerified: false
+        }
+      })),
 
       setCurrentPage: (page) => set({ currentPage: page }),
-
-      // Pagination logic moved into store
       nextPage: () => set((state) => ({ currentPage: state.currentPage + 1 })),
       prevPage: () => set((state) => ({ currentPage: Math.max(1, state.currentPage - 1) })),
-
       toggleFilterModal: () => set((state) => ({ showFilterModal: !state.showFilterModal })),
-      
       resetFilters: () => set({ filters: defaultFilters, currentPage: 1 }),
     }),
     {
