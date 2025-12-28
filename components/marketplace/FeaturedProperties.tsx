@@ -1,10 +1,9 @@
 // components/marketplace/FeaturedProperties.tsx
 'use client';
-import React from 'react';
 import PropertyCard from '@/components/PropertyCard';
 
 type FeaturedPropertiesProps = {
-    properties: typeof import('@/utils/properties').allProperties;
+    properties: typeof import('@/utils/properties').mockProperties;
     label: string;
 };
 

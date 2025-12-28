@@ -1,53 +1,82 @@
-// components/marketplace/PropertyGrid.tsx
 'use client';
-import React from 'react';
-import PropertyCard from '@/components/PropertyCard';
-import { FiHome } from "react-icons/fi";
 
+import React, { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useMarketplaceStore } from '@/store/marketplaceStore';
 
-type PropertyGridProps = {
-    properties: typeof import('@/utils/properties').allProperties;
-};
+export default function SearchResults() {
+  const searchParams = useSearchParams();
+  
+  // Extract state and actions from the store
+  const { 
+    filters, 
+    setFilters, 
+    setCategory, 
+    setPropertyType, 
+    resultsCount 
+  } = useMarketplaceStore();
 
-export default function PropertyGrid({ properties }: PropertyGridProps) {
-    if (!properties.length) return (
-        <div className="text-center py-16">
-            <div className="text-6xl mb-4"><FiHome className='w-4 h-4' /></div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">No properties found</h3>
-            <p className="text-gray-600 mb-6">Try adjusting your filters to see more results</p>
-            <button
-                onClick={() => import('@/store/marketplaceStore').then(mod => mod.useMarketplaceStore.getState().resetFilters())}
-                className="px-6 py-3 bg-brand-green text-white font-bold rounded-lg hover:bg-green-600 transition-colors"
-            >
-                Reset Filters
-            </button>
-        </div>
-    );
+  // Sync URL params with Zustand store on mount
+  useEffect(() => {
+    const queryLocation = searchParams.get('location');
+    const queryType = searchParams.get('type');
+    
+    if (queryLocation || queryType) {
+      setFilters({
+        location: queryLocation || '',
+        propertyType: (queryType as any) || 'rent'
+      });
+    }
+  }, [searchParams, setFilters]);
 
-    return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {properties.map((property) => (
-                <PropertyCard
-                    key={property.id}
-                    id={property.id}
-                    image={property.images[0]}
-                    title={property.title}
-                    location={property.location}
-                    bedrooms={property.bedrooms}
-                    bathrooms={property.bathrooms}
-                    description={property.description}
-                    price={`₦${property.price.toLocaleString()}`}
-                    monthlyPrice={
-                        typeof property.monthlyPrice === 'number' && property.monthlyPrice > 0
-                            ? `₦${property.monthlyPrice.toLocaleString()}`
-                            : undefined
-                    }
+  return (
+    <div className="p-6">
+      <div className="mb-8 flex gap-4">
+        {/* Example: Using setPropertyType action */}
+        <button 
+          onClick={() => setPropertyType('rent')}
+          className={`px-4 py-2 rounded ${filters.propertyType === 'rent' ? 'bg-brand-green text-white' : 'bg-gray-200'}`}
+        >
+          For Rent
+        </button>
+        <button 
+          onClick={() => setPropertyType('buy')}
+          className={`px-4 py-2 rounded ${filters.propertyType === 'buy' ? 'bg-brand-green text-white' : 'bg-gray-200'}`}
+        >
+          For Sale
+        </button>
+      </div>
 
-                    featured={property.featured}
-                    verified={property.verified}
-                    isNew={property.isNew}
-                />
-            ))}
-        </div>
-    );
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* Sidebar Filters */}
+        <aside className="col-span-1">
+          <h3 className="font-bold mb-4">Categories</h3>
+          <select 
+            value={filters.category} 
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full p-2 border rounded"
+          >
+            <option value="all">All Properties</option>
+            <option value="apartment">Apartments</option>
+            <option value="duplex">Duplex</option>
+          </select>
+        </aside>
+
+        {/* Results Area */}
+        <main className="col-span-3">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-semibold">
+              Properties in {filters.location || 'All Locations'}
+            </h2>
+            <span className="text-gray-500">{resultsCount} results found</span>
+          </div>
+          
+          {/* Property cards would be mapped here */}
+          <div className="bg-white p-12 rounded-xl border-2 border-dashed border-gray-200 text-center">
+            Results for {filters.propertyType} category: {filters.category}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
 }
