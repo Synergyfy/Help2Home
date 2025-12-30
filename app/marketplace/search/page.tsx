@@ -4,8 +4,8 @@ import SearchResults from '@/components/marketplace/SearchResults';
 export default function MarketplaceSearchPage() {
   return (
     <div className="max-w-7xl mx-auto">
-      <header className="py-10 px-6 border-b">
-        <h1 className="text-4xl font-bold">Property Marketplace</h1>
+      <header className="py-10 px-6  border-gray-600">
+        <h1 className="text-4xl font-bold sr-only">Property Marketplace</h1>
       </header>
 
      

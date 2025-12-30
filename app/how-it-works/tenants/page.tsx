@@ -81,10 +81,10 @@ export default function TenantHowItWorksPage() {
             />
 
             <CalculatorCTA
-              title="Maximize Your Investment Potential"
-              description="Quickly find out how much you can invest in properties and expected returns."
-              placeholder="Enter Investment Amount (₦)"
-              redirectPath="/investor-earning-calculator"
+              title="Rent Affordability"
+              description="See how much you can comfortably afford for your next home based on your income."
+              placeholder="Enter Monthly Income (₦)"
+              redirectPath="/tenant-rent-calculator" 
             />
           </div>
 

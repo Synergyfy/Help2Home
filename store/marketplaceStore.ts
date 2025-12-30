@@ -200,7 +200,7 @@ export const useMarketplaceStore = create<MarketplaceState>()(
       resetAdvancedFilters: () => set((state) => ({
         filters: {
           ...state.filters,
-          categories: [], // Changed from propertyTypes to categories to match interface
+          categories: [], 
           keywords: '',
           newBuild: 'include',
           sharedOwnership: 'include',
