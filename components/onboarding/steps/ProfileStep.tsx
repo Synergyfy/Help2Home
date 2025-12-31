@@ -1,0 +1,131 @@
+'use client'
+
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { FiUser, FiPhone, FiArrowRight, FiArrowLeft } from "react-icons/fi";
+import { useOnboardingStore } from "@/store/onboardingStore";
+
+const ProfileStep = () => {
+  const { getCurrentUser, updateUserData, nextStep, prevStep } = useOnboardingStore();
+  const user = getCurrentUser();
+  
+  const [fullName, setFullName] = useState(user?.fullName || "");
+  const [phone, setPhone] = useState(user?.phone || "");
+  const [errors, setErrors] = useState<{ fullName?: string; phone?: string }>({});
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: { fullName?: string; phone?: string } = {};
+
+    if (!fullName.trim()) {
+      newErrors.fullName = "Please enter your full name";
+    }
+
+    if (!phone.trim()) {
+      newErrors.phone = "Please enter your phone number";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    updateUserData({ fullName: fullName.trim(), phone: phone.trim() });
+    nextStep();
+  };
+
+  return (
+    <motion.div
+      key="profile-step"
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.3 }}
+      className="flex-1 flex flex-col"
+    >
+      <div className="mb-8">
+        <p className="text-sm text-brand-green font-bold uppercase tracking-wider mb-2">Personal Details</p>
+        <h1 className="text-3xl font-bold text-gray-900 leading-tight mb-2">
+          Tell us about yourself
+        </h1>
+        <p className="text-gray-600 font-medium">
+          We need a few details to personalize your real estate experience.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
+        <div className="space-y-6 flex-1">
+          <div>
+            <label htmlFor="fullName" className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
+              Full Name
+            </label>
+            <div className="relative group">
+              <FiUser 
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors" 
+                size={20} 
+              />
+              <input
+                type="text"
+                id="fullName"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="John Doe"
+                className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-100 bg-white text-gray-900 font-medium placeholder:text-gray-400 focus:outline-none focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 transition-all"
+              />
+            </div>
+            {errors.fullName && (
+              <p className="mt-2 text-sm text-red-500 font-bold flex items-center gap-1">
+                <span>•</span> {errors.fullName}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="phone" className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
+              Phone Number
+            </label>
+            <div className="relative group">
+              <FiPhone 
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors" 
+                size={20} 
+              />
+              <input
+                type="tel"
+                id="phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+234 800 000 0000"
+                className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-100 bg-white text-gray-900 font-medium placeholder:text-gray-400 focus:outline-none focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 transition-all"
+              />
+            </div>
+            {errors.phone && (
+              <p className="mt-2 text-sm text-red-500 font-bold flex items-center gap-1">
+                <span>•</span> {errors.phone}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-8 flex gap-3">
+          <button
+            type="button"
+            onClick={prevStep}
+            className="px-6 py-4 border-2 border-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2 active:scale-95"
+          >
+            <FiArrowLeft size={18} />
+            Back
+          </button>
+          <button
+            type="submit"
+            className="flex-1 py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-[0.98]"
+          >
+            Continue
+            <FiArrowRight size={20} />
+          </button>
+        </div>
+      </form>
+    </motion.div>
+  );
+};
+
+export default ProfileStep;

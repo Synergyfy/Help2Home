@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUserStore } from '@/store/userStore';
 import { MdHome, MdApartment, MdAttachMoney, MdCheck } from 'react-icons/md';
 import { FaXmark } from 'react-icons/fa6';
+import { motion, AnimatePresence } from 'framer-motion'; // Added for the creative transition
 import InfoIcon from '@/components/lib/InfoIcon';
 import FadeIn from '@/components/FadeIn';
+import { useOnboardingStore, UserRole } from '@/store/onboardingStore';
 
 const AVAILABLE_ROLES = ['landlord', 'agent', 'caretaker'] as const;
 
@@ -18,34 +19,82 @@ const ROLE_TOOLTIPS: Record<(typeof AVAILABLE_ROLES)[number], string> = {
 
 export default function SignUpPage() {
   const router = useRouter();
-  const setRole = useUserStore((state) => state.setRole);
+  const { setRoles, goToStep } = useOnboardingStore();
+  
   const [showModal, setShowModal] = useState(false);
-  const [tempRoles, setTempRoles] = useState<string[]>([]);
+  const [tempRoles, setTempRoles] = useState<UserRole[]>([]);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [activeMessage, setActiveMessage] = useState("");
 
   const handleRoleSelect = (role: string) => {
     if (role === 'landlord') {
-      setTempRoles([]); // reset for modal
+      setTempRoles([]); 
       setShowModal(true);
     } else {
-      setRole([role as any]);
-      router.push('/signup/create-account');
+      triggerCreativeRedirect([role as UserRole]);
     }
   };
 
-  const toggleTempRole = (role: string) => {
+  const handleModalConfirm = () => {
+    setShowModal(false);
+    triggerCreativeRedirect(tempRoles);
+  };
+
+  // The Creative Transition Logic
+  const triggerCreativeRedirect = (roles: UserRole[]) => {
+    setRoles(roles);
+    setIsRedirecting(true);
+    
+    // Tailored messages based on the first selected role
+    const messages = {
+      tenant: "Finding the best verified homes for you...",
+      investor: "Preparing your investment dashboard...",
+      landlord: "Setting up your property management suite...",
+      agent: "Configuring your agency tools...",
+      caretaker: "Initializing maintenance management..."
+    };
+    
+    setActiveMessage(messages[roles[0]] || "Customizing your experience...");
+
+    setTimeout(() => {
+      goToStep(0);
+      router.push('/onboarding');
+    }, 2000); // 2-second delay for the "creative" moment
+  };
+
+  const toggleTempRole = (role: UserRole) => {
     setTempRoles((prev) =>
       prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
     );
   };
 
-  const handleModalConfirm = () => {
-    setRole(tempRoles as any[]);
-    setShowModal(false);
-    router.push('/signup/create-account');
-  };
-
   return (
-    <main className="min-h-screen bg-gray-50 flex flex-col justify-center py-20">
+    <main className="min-h-screen bg-gray-50 flex flex-col justify-center py-20 relative">
+      {/* Creative Overlay: Only shows when redirecting */}
+      <AnimatePresence>
+        {isRedirecting && (
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center"
+          >
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="text-center"
+            >
+              {/* Premium Loader */}
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 border-4 border-brand-green/20 border-t-brand-green rounded-full animate-spin" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Excellent Choice.</h2>
+              <p className="text-brand-green font-medium animate-pulse">{activeMessage}</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="container mx-auto px-6 md:px-12">
         <FadeIn direction="up">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -75,7 +124,7 @@ export default function SignUpPage() {
             </button>
           </FadeIn>
 
-          {/* Landlord / Agent / Caretaker Card */}
+          {/* Landlord Card */}
           <FadeIn direction="up">
             <button
               onClick={() => handleRoleSelect('landlord')}
@@ -132,28 +181,31 @@ export default function SignUpPage() {
               </p>
 
               <div className="flex flex-col md:flex-row gap-4 mt-6">
-                {AVAILABLE_ROLES.map((r) => (
+                {(AVAILABLE_ROLES as unknown as UserRole[]).map((r) => (
                   <button
                     key={r}
-                    className={`flex-1 flex items-center justify-between px-6 py-4 rounded-lg bg-brand-green text-white font-medium border border-green-700 ${tempRoles.includes(r) ? 'opacity-90' : ''
-                      }`}
+                    className={`flex-1 flex items-center justify-between px-6 py-4 rounded-lg font-medium border-2 transition-all ${
+                      tempRoles.includes(r) 
+                      ? 'bg-brand-green text-white border-brand-green shadow-lg scale-[1.02]' 
+                      : 'bg-white text-gray-600 border-gray-100 hover:border-brand-green/30'
+                    }`}
                     onClick={() => toggleTempRole(r)}
                   >
                     <span className="flex items-center gap-2">
                       <MdApartment /> {r.charAt(0).toUpperCase() + r.slice(1)}
                     </span>
                     {tempRoles.includes(r) && <MdCheck />}
-                    <InfoIcon tooltip={ROLE_TOOLTIPS[r]} />
+                    <InfoIcon tooltip={ROLE_TOOLTIPS[r as keyof typeof ROLE_TOOLTIPS]} />
                   </button>
                 ))}
               </div>
 
               <button
-                className="mt-6 w-full py-4 bg-brand-green text-white rounded-lg font-semibold hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="mt-6 w-full py-4 bg-brand-green text-white rounded-lg font-semibold hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 onClick={handleModalConfirm}
                 disabled={tempRoles.length === 0}
               >
-                Confirm
+                Confirm Selection
               </button>
             </div>
           </div>

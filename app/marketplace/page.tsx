@@ -8,24 +8,17 @@ import { useMarketplaceStore } from '@/store/marketplaceStore';
 import { useDebounce } from '@/hooks/useDebounce';
 import { HiMapPin, HiMagnifyingGlass, HiXMark, HiFire } from "react-icons/hi2";
 
-type PropertyType = 'buy' | 'rent' | 'service-apartment' | 'rent-to-own';
+type PropertyType = 'rent' | 'buy';
 
 const TAB_ASSETS: Record<PropertyType, { image: string; title: string }> = {
-    buy: {
-        image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop',
-        title: 'perfect'
-    },
+    
     rent: {
         image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop',
         title: 'cozy'
     },
-    'service-apartment': {
-        image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=2070&auto=format&fit=crop',
-        title: 'luxury'
-    },
-    'rent-to-own': {
-        image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2070&auto=format&fit=crop',
-        title: 'future'
+    buy: {
+        image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop',
+        title: 'perfect'
     }
 };
 
@@ -38,7 +31,7 @@ const POPULAR_LOCATIONS = [
 
 export default function MarketPlaceMain() {
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState<PropertyType>('buy');
+    const [activeTab, setActiveTab] = useState<PropertyType>('rent');
     const [searchQuery, setSearchQuery] = useState('');
     const [showSuggestions, setShowSuggestions] = useState(false);
     const searchRef = useRef<HTMLDivElement>(null);
@@ -170,14 +163,13 @@ export default function MarketPlaceMain() {
                                             </div>
                                         )}
 
-                                        {/* Replace your current searchQuery conditional with this */}
                                         {searchQuery && (
                                             <div className="p-3 max-h-96 overflow-y-auto">
                                                 {locationsLoading ? (
                                                     <div className="p-8 text-center text-sm font-medium text-gray-400 animate-pulse">
                                                         Searching locations...
                                                     </div>
-                                                ) : locations && locations.length > 0 ? ( // Added 'locations &&' check here
+                                                ) : locations && locations.length > 0 ? ( 
                                                     locations.map((loc: any) => (
                                                         <button
                                                             key={loc.id}

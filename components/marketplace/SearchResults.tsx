@@ -26,7 +26,6 @@ const formatCurrency = (amount: number) => {
 };
 
 export default function MarketplacePage() {
-    const searchParams = useSearchParams();
     useMarketplaceUrlSync();
 
     const {

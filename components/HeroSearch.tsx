@@ -75,7 +75,7 @@ export default function HeroSearch() {
                     priority
                 />
                 {/* Darker overlay for better contrast */}
-                <div className="absolute inset-0 bg-black/40"></div>
+                <div className="absolute inset-0 bg-black/60"></div>
             </div>
 
             <div className="container mx-auto px-4 sm:px-6 md:px-12">
