@@ -26,10 +26,14 @@ const RoleChooserStep = () => {
   const { getCurrentUser, setActiveRole, nextStep, prevStep } = useOnboardingStore();
   const user = getCurrentUser();
   const selectedRoles = user?.roles || [];
-  
-  // Logic to determine completion based on existing store structure
-  const incompleteRoles = selectedRoles.filter(role => !user?.[role]?.onboardingCompleted);
-  const completedRoles = selectedRoles.filter(role => user?.[role]?.onboardingCompleted);
+
+  const incompleteRoles = selectedRoles.filter(
+    (role) => !user?.roleOnboardingCompleted?.[role]
+  );
+
+  const completedRoles = selectedRoles.filter(
+    (role) => user?.roleOnboardingCompleted?.[role]
+  );
 
   const handleStartOnboarding = (role: UserRole) => {
     setActiveRole(role);
@@ -58,8 +62,8 @@ const RoleChooserStep = () => {
           {allRolesCompleted ? "All set!" : "Configure your roles"}
         </h1>
         <p className="text-gray-600 font-medium leading-relaxed">
-          {allRolesCompleted 
-            ? "Your profiles are ready. You can now access your dashboard." 
+          {allRolesCompleted
+            ? "Your profiles are ready. You can now access your dashboard."
             : "Complete the setup for each role you've selected to get started."}
         </p>
       </div>
@@ -133,7 +137,7 @@ const RoleChooserStep = () => {
           <FiArrowLeft size={18} />
           Back
         </button>
-        
+
         {(allRolesCompleted || completedRoles.length > 0) && (
           <button
             onClick={handleFinish}
