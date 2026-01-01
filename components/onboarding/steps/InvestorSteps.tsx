@@ -20,7 +20,7 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
   const user = getCurrentUser();
   const investorData = user?.investor || {} as InvestorData;
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<InvestorData>({
     investmentBudget: investorData.investmentBudget || "",
     investmentType: investorData.investmentType || [],
     riskTolerance: investorData.riskTolerance || "",
@@ -36,7 +36,17 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
   const handleComplete = () => {
     updateRoleData("investor", formData);
     completeRoleOnboarding("investor");
-    goToStep(4);
+    
+    // Check if other selected roles need onboarding
+    const remainingRoles = user?.roles?.filter(
+      r => !user.roleOnboardingCompleted?.[r] && r !== 'investor'
+    ) || [];
+    
+    if (remainingRoles.length > 0) {
+      goToStep(4); // Back to chooser
+    } else {
+      nextStep(); // Proceed to completion screen
+    }
   };
 
   const toggleInvestmentType = (type: string) => {
@@ -65,8 +75,7 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
         <div className="space-y-6 flex-1">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
-              <FiDollarSign className="text-brand-green" />
-              Investment budget range
+              <FiDollarSign className="text-brand-green" /> Investment budget range
             </label>
             <div className="grid grid-cols-1 gap-3">
               {budgetRanges.map((range) => (
@@ -92,16 +101,14 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
             onClick={() => goToStep(4)}
             className="px-6 py-4 border-2 border-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2"
           >
-            <FiArrowLeft size={18} />
-            Back
+            <FiArrowLeft size={18} /> Back
           </button>
           <button
             onClick={handleContinue}
             disabled={!formData.investmentBudget}
             className="flex-1 py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95"
           >
-            Continue
-            <FiArrowRight size={18} />
+            Continue <FiArrowRight size={18} />
           </button>
         </div>
       </motion.div>
@@ -125,8 +132,7 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
         <div className="space-y-8 flex-1">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
-              <FiTrendingUp className="text-brand-green" />
-              Investment types
+              <FiTrendingUp className="text-brand-green" /> Investment types
             </label>
             <div className="grid grid-cols-2 gap-3">
               {investmentTypes.map((type) => (
@@ -140,8 +146,7 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
                       : "border-gray-100 hover:border-gray-300 text-gray-500"
                   }`}
                 >
-                  {type}
-                  {formData.investmentType.includes(type) && <FiCheck size={16} />}
+                  {type} {formData.investmentType.includes(type) && <FiCheck size={16} />}
                 </button>
               ))}
             </div>
@@ -169,20 +174,15 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
         </div>
 
         <div className="mt-8 flex gap-3">
-          <button
-            onClick={prevStep}
-            className="px-6 py-4 border-2 border-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2"
-          >
+          <button onClick={prevStep} className="px-6 py-4 border-2 border-gray-100 text-gray-600 font-bold rounded-xl active:scale-95 transition-all">
             <FiArrowLeft size={18} />
-            Back
           </button>
           <button
             onClick={handleContinue}
             disabled={formData.investmentType.length === 0 || !formData.riskTolerance}
             className="flex-1 py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95"
           >
-            Continue
-            <FiArrowRight size={18} />
+            Continue <FiArrowRight size={18} />
           </button>
         </div>
       </motion.div>
@@ -205,8 +205,7 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
       <div className="space-y-8 flex-1">
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
-            <FiTrendingUp className="text-brand-green" />
-            Expected annual returns
+            <FiTrendingUp className="text-brand-green" /> Expected annual returns
           </label>
           <div className="grid grid-cols-2 gap-3">
             {returnExpectations.map((expectation) => (
@@ -228,8 +227,7 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
 
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
-            <FiClock className="text-brand-green" />
-            Investment timeline
+            <FiClock className="text-brand-green" /> Investment timeline
           </label>
           <div className="grid grid-cols-1 gap-3">
             {timelines.map((timeline) => (
@@ -251,20 +249,15 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
       </div>
 
       <div className="mt-8 flex gap-3">
-        <button
-          onClick={prevStep}
-          className="px-6 py-4 border-2 border-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2"
-        >
+        <button onClick={prevStep} className="px-6 py-4 border-2 border-gray-100 text-gray-600 font-bold rounded-xl active:scale-95 transition-all">
           <FiArrowLeft size={18} />
-          Back
         </button>
         <button
           onClick={handleComplete}
           disabled={!formData.expectedReturns || !formData.investmentTimeline}
-          className="flex-1 py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95"
+          className="flex-1 py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95"
         >
-          Complete Investor Setup
-          <FiCheck size={18} />
+          Complete Investor Setup <FiCheck size={18} />
         </button>
       </div>
     </motion.div>

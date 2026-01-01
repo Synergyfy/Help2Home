@@ -5,59 +5,44 @@ export type Role = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor';
 
 interface UserState {
   email: string;
-  role: Role[];
+  fullName: string;
+  phone: string;
+  roles: Role[];       
+  activeRole: Role | null; 
   verified: boolean;
-  onboarding: Record<string, any>;
   hasHydrated: boolean;
-  otp: string;
-  setOtp: (otp: string) => void;
+  
+  // Actions
   setUser: (data: Partial<UserState>) => void;
-  addRole: (role: Role) => void;       // add a single role
-  removeRole: (role: Role) => void;    // remove a single role
-  setRole: (roles: Role[]) => void;    // replace entire array
-  setOnboarding: (data: Partial<UserState['onboarding']>) => void;
-  resetUser: () => void;
+  setActiveRole: (role: Role) => void;
+  setEmailVerified: (status: boolean) => void;
   setHasHydrated: (value: boolean) => void;
+  resetUser: () => void;
 }
 
 export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
       email: '',
-      role: [],
+      fullName: '',
+      phone: '',
+      roles: [],
+      activeRole: null,
+      
       verified: false,
-      onboarding: {},
       hasHydrated: false,
-      otp: '',
-      setOtp: (otp) => set({ otp }),
-      setUser: (data) => set((state) => ({ ...state, ...data })),
-      
-      // Add a role (union)
-      addRole: (role) =>
-        set((state) => ({
-          role: Array.from(new Set([...state.role, role])),
-        })),
-      
-      // Remove a role
-      removeRole: (role) =>
-        set((state) => ({
-          role: state.role.filter((r) => r !== role),
-        })),
-      
-      // Replace all roles
-      setRole: (roles) => set({ role: roles }),
 
-      setOnboarding: (data) =>
-        set((state) => ({ onboarding: { ...state.onboarding, ...data } })),
-      resetUser: () =>
-        set({ email: '', role: [], verified: false, onboarding: {} }),
-      setHasHydrated: (value) => set({ hasHydrated: value }),
+      setUser: (data) => set((state) => ({ ...state, ...data })),
+      setActiveRole: (activeRole) => set({ activeRole }),
+      setEmailVerified: (verified) => set({ verified }),
+      setHasHydrated: (hasHydrated) => set({ hasHydrated }),
+      resetUser: () => set({ 
+        email: '', roles: [], activeRole: null, verified: false, fullName: '', phone: '' 
+      }),
     }),
     {
-      name: 'user_store',
-      onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
-      },
+      name: 'help2home-session',
+      onRehydrateStorage: () => (state) => state?.setHasHydrated(true),
     }
   )
 );

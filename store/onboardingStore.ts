@@ -1,10 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-export type UserRole = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor';
-
-// Roles that can be combined (property management roles)
-export const MULTI_SELECT_ROLES: UserRole[] = ['landlord', 'caretaker', 'agent'];
+import { Role } from './userStore';
 
 export interface TenantData {
   preferredLocation: string;
@@ -47,287 +43,108 @@ export interface InvestorData {
   investmentTimeline: string;
 }
 
-export interface RoleOnboardingStatus {
-  landlord: boolean;
-  caretaker: boolean;
-  agent: boolean;
-  tenant: boolean;
-  investor: boolean;
-}
-
-export interface OnboardingData {
-  email: string;
-  fullName: string;
-  phone: string;
-  roles: UserRole[];
-  activeRole: UserRole | null;
-  currentStep: number;
-  completedSteps: number[];
-  isEmailVerified: boolean;
-  isOnboardingCompleted: boolean;
-  roleOnboardingCompleted: RoleOnboardingStatus;
-  tenant?: TenantData;
-  landlord?: LandlordData;
-  caretaker?: CaretakerData;
-  agent?: AgentData;
-  investor?: InvestorData;
-}
+export const MULTI_SELECT_ROLES: Role[] = ['landlord', 'caretaker', 'agent'];
+export type UserRole = Role;
 
 interface OnboardingStore {
-  users: Record<string, OnboardingData>;
-  currentEmail: string | null;
-  setCurrentEmail: (email: string) => void;
-  getCurrentUser: () => OnboardingData | null;
-  updateUserData: (data: Partial<OnboardingData>) => void;
-  setRoles: (roles: UserRole[]) => void;
-  toggleRole: (role: UserRole) => void;
-  setActiveRole: (role: UserRole) => void;
-  completeRoleOnboarding: (role: UserRole) => void;
-  setEmailVerified: (verified: boolean) => void;
-  setOnboardingCompleted: (completed: boolean) => void;
+  currentStep: number;
+  selectedRoles: Role[];
+  draftData: Record<string, any>;
+  roleOnboardingCompleted: Record<Role, boolean>;
+  onboardingCompleted: boolean;
+  activeRole: Role | null;
+  
+  setStep: (step: number) => void;
+  goToStep: (step: number) => void; 
   nextStep: () => void;
   prevStep: () => void;
-  goToStep: (step: number) => void;
-  completeStep: (step: number) => void;
-  updateRoleData: <T extends keyof Pick<OnboardingData, 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor'>>(
-    roleKey: T,
-    data: Partial<NonNullable<OnboardingData[T]>>
-  ) => void;
+  setRoles: (roles: Role[]) => void;
+  toggleRole: (role: Role) => void;
+  setActiveRole: (role: Role | null) => void;
+  setOnboardingCompleted: (status: boolean) => void;
+  updateRoleData: (role: Role, data: any) => void;
+  completeRoleOnboarding: (role: Role) => void;
   resetOnboarding: () => void;
   getTotalSteps: () => number;
-  getIncompleteRoles: () => UserRole[];
+  
+  // FIX: Added activeRole and roleOnboardingCompleted to the return type
+  getCurrentUser: () => ({
+    roles: Role[];
+    currentStep: number;
+    activeRole: Role | null;
+    roleOnboardingCompleted: Record<Role, boolean>;
+  } & OnboardingStore['draftData']) | null;
 }
-
-const getDefaultOnboardingData = (): OnboardingData => ({
-  email: '',
-  fullName: '',
-  phone: '',
-  roles: [],
-  activeRole: null,
-  currentStep: 0,
-  completedSteps: [],
-  isEmailVerified: false,
-  isOnboardingCompleted: false,
-  roleOnboardingCompleted: {
-    landlord: false,
-    caretaker: false,
-    agent: false,
-    tenant: false,
-    investor: false,
-  },
-});
 
 export const useOnboardingStore = create<OnboardingStore>()(
   persist(
     (set, get) => ({
-      users: {},
-      currentEmail: null,
-
-      setCurrentEmail: (email: string) => {
-        const { users } = get();
-        if (!users[email]) {
-          set({
-            users: {
-              ...users,
-              [email]: { ...getDefaultOnboardingData(), email },
-            },
-            currentEmail: email,
-          });
-        } else {
-          set({ currentEmail: email });
-        }
+      currentStep: 0,
+      selectedRoles: [],
+      activeRole: null,
+      onboardingCompleted: false,
+      draftData: {},
+      roleOnboardingCompleted: {
+        tenant: false, landlord: false, caretaker: false, agent: false, investor: false
       },
 
       getCurrentUser: () => {
-        const { users, currentEmail } = get();
-        return currentEmail ? users[currentEmail] || null : null;
+        const state = get();
+        if (!state.selectedRoles.length && state.currentStep === 0) return null;
+        return { 
+          roles: state.selectedRoles, 
+          currentStep: state.currentStep,
+          activeRole: state.activeRole, 
+          roleOnboardingCompleted: state.roleOnboardingCompleted,
+          ...state.draftData 
+        };
       },
 
-      updateUserData: (data: Partial<OnboardingData>) => {
-        const { users, currentEmail } = get();
-        if (!currentEmail) return;
-        set({
-          users: {
-            ...users,
-            [currentEmail]: { ...users[currentEmail], ...data },
-          },
-        });
-      },
-
-      setRoles: (roles: UserRole[]) => {
-        const { updateUserData } = get();
-        updateUserData({ roles });
-      },
-
-      toggleRole: (role: UserRole) => {
-        const { users, currentEmail } = get();
-        if (!currentEmail) return;
-        const currentRoles = users[currentEmail]?.roles || [];
-        
-        // If it's a multi-select role (landlord, caretaker, agent)
-        if (MULTI_SELECT_ROLES.includes(role)) {
-          // Remove tenant/investor if selecting a multi-select role
-          let newRoles = currentRoles.filter(r => MULTI_SELECT_ROLES.includes(r));
-          
-          if (newRoles.includes(role)) {
-            newRoles = newRoles.filter(r => r !== role);
-          } else {
-            newRoles = [...newRoles, role];
-          }
-          
-          set({
-            users: {
-              ...users,
-              [currentEmail]: { ...users[currentEmail], roles: newRoles },
-            },
-          });
-        } else {
-          // Tenant or Investor - single select, clears other roles
-          const newRoles = currentRoles.includes(role) ? [] : [role];
-          set({
-            users: {
-              ...users,
-              [currentEmail]: { ...users[currentEmail], roles: newRoles },
-            },
-          });
-        }
-      },
-
-      setActiveRole: (role: UserRole) => {
-        const { updateUserData } = get();
-        updateUserData({ activeRole: role });
-      },
-
-      completeRoleOnboarding: (role: UserRole) => {
-        const { users, currentEmail } = get();
-        if (!currentEmail) return;
-        const currentStatus = users[currentEmail]?.roleOnboardingCompleted || getDefaultOnboardingData().roleOnboardingCompleted;
-        set({
-          users: {
-            ...users,
-            [currentEmail]: {
-              ...users[currentEmail],
-              roleOnboardingCompleted: { ...currentStatus, [role]: true },
-            },
-          },
-        });
-      },
-
-      setEmailVerified: (verified: boolean) => {
-        const { updateUserData } = get();
-        updateUserData({ isEmailVerified: verified });
-      },
-
-      setOnboardingCompleted: (completed: boolean) => {
-        const { updateUserData } = get();
-        updateUserData({ isOnboardingCompleted: completed });
-      },
-
-      nextStep: () => {
-        const { users, currentEmail, completeStep } = get();
-        if (!currentEmail) return;
-        const currentStep = users[currentEmail]?.currentStep || 0;
-        completeStep(currentStep);
-        set({
-          users: {
-            ...users,
-            [currentEmail]: {
-              ...users[currentEmail],
-              currentStep: currentStep + 1,
-            },
-          },
-        });
-      },
-
-      prevStep: () => {
-        const { users, currentEmail } = get();
-        if (!currentEmail) return;
-        const currentStep = users[currentEmail]?.currentStep || 0;
-        if (currentStep > 0) {
-          set({
-            users: {
-              ...users,
-              [currentEmail]: {
-                ...users[currentEmail],
-                currentStep: currentStep - 1,
-              },
-            },
-          });
-        }
-      },
-
-      goToStep: (step: number) => {
-        const { users, currentEmail } = get();
-        if (!currentEmail) return;
-        set({
-          users: {
-            ...users,
-            [currentEmail]: {
-              ...users[currentEmail],
-              currentStep: step,
-            },
-          },
-        });
-      },
-
-      completeStep: (step: number) => {
-        const { users, currentEmail } = get();
-        if (!currentEmail) return;
-        const completedSteps = users[currentEmail]?.completedSteps || [];
-        if (!completedSteps.includes(step)) {
-          set({
-            users: {
-              ...users,
-              [currentEmail]: {
-                ...users[currentEmail],
-                completedSteps: [...completedSteps, step],
-              },
-            },
-          });
-        }
-      },
-
-      updateRoleData: (roleKey, data) => {
-        const { users, currentEmail } = get();
-        if (!currentEmail) return;
-        const currentRoleData = users[currentEmail]?.[roleKey] || {};
-        set({
-          users: {
-            ...users,
-            [currentEmail]: {
-              ...users[currentEmail],
-              [roleKey]: { ...currentRoleData, ...data },
-            },
-          },
-        });
-      },
-
-      resetOnboarding: () => {
-        const { users, currentEmail } = get();
-        if (!currentEmail) return;
-        set({
-          users: {
-            ...users,
-            [currentEmail]: { ...getDefaultOnboardingData(), email: currentEmail },
-          },
-        });
-      },
-
+      setStep: (currentStep) => set({ currentStep }),
+      goToStep: (step) => set({ currentStep: step }),
       getTotalSteps: () => {
-        const user = get().getCurrentUser();
-        if (!user?.roles.length) return 4; // email, verify, profile, role selection
-        // email(0), verify(1), profile(2), role selection(3), role chooser(4), role steps(5-7), completion(8)
-        return 9;
+        const { selectedRoles } = get();
+        // Base steps: Email, OTP, Profile, Role Selection, Role Chooser
+        const baseSteps = 5; 
+        return baseSteps + selectedRoles.length;
       },
+      nextStep: () => set((state) => ({ currentStep: state.currentStep + 1 })),
+      prevStep: () => set((state) => ({ currentStep: Math.max(0, state.currentStep - 1) })),
 
-      getIncompleteRoles: () => {
-        const user = get().getCurrentUser();
-        if (!user) return [];
-        return user.roles.filter(role => !user.roleOnboardingCompleted[role]);
-      },
+      setRoles: (selectedRoles) => set({ selectedRoles }),
+      toggleRole: (role) => set((state) => {
+        const isMulti = MULTI_SELECT_ROLES.includes(role);
+        if (isMulti) {
+          const currentMulti = state.selectedRoles.filter(r => MULTI_SELECT_ROLES.includes(r));
+          const newMulti = currentMulti.includes(role) 
+            ? currentMulti.filter(r => r !== role) 
+            : [...currentMulti, role];
+          return { selectedRoles: newMulti };
+        }
+        return { selectedRoles: state.selectedRoles.includes(role) ? [] : [role] };
+      }),
+      setActiveRole: (activeRole) => set({ activeRole }),
+
+      updateRoleData: (role, data) => set((state) => ({
+        draftData: { ...state.draftData, [role]: { ...state.draftData[role], ...data } }
+      })),
+
+      completeRoleOnboarding: (role) => set((state) => ({
+        roleOnboardingCompleted: { ...state.roleOnboardingCompleted, [role]: true }
+      })),
+      setOnboardingCompleted: (status) => set({ onboardingCompleted: status }),
+
+      resetOnboarding: () => set({
+        currentStep: 0,
+        selectedRoles: [],
+        activeRole: null,
+        draftData: {},
+        onboardingCompleted: false,
+        roleOnboardingCompleted: {
+          tenant: false, landlord: false, caretaker: false, agent: false, investor: false
+        }
+      }),
     }),
-    {
-      name: 'help2home-onboarding',
-    }
+    { name: 'help2home-onboarding-wizard' }
   )
 );

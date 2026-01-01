@@ -1,13 +1,16 @@
-'use client'
+'use client';
 
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { FiMail, FiArrowRight } from "react-icons/fi";
 import { useOnboardingStore } from "@/store/onboardingStore";
+import { useUserStore } from "@/store/userStore";
 
 const EmailStep = () => {
-  const { setCurrentEmail, nextStep, users } = useOnboardingStore();
-  const [email, setEmail] = useState("");
+  const { nextStep, currentStep, selectedRoles } = useOnboardingStore();
+  const { setUser, email: storedEmail } = useUserStore();
+
+  const [email, setEmail] = useState(storedEmail || "");
   const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -26,20 +29,16 @@ const EmailStep = () => {
     }
 
     const normalizedEmail = email.toLowerCase().trim();
-    setCurrentEmail(normalizedEmail);
     
-    // Check if user exists and has verified email with progress
-    const existingUser = users[normalizedEmail];
-    if (existingUser && existingUser.isEmailVerified && existingUser.currentStep > 1) {
-      // Logic for resuming is handled by the parent layout/store
-      return;
-    }
+    // Save identity to UserStore
+    setUser({ email: normalizedEmail });
     
     nextStep();
   };
 
-  const existingUser = email ? users[email.toLowerCase().trim()] : null;
-  const hasProgress = existingUser && existingUser.isEmailVerified && existingUser.currentStep > 1;
+  // Logic for showing "Resume" state based on the flattened store
+  // Since we only store one session now, we check if the current session has progress
+  const hasProgress = currentStep > 0;
 
   return (
     <motion.div
@@ -51,7 +50,9 @@ const EmailStep = () => {
       className="flex-1 flex flex-col"
     >
       <div className="mb-8">
-        <p className="text-sm text-brand-green font-bold uppercase tracking-wider mb-2">Welcome to Help2Home</p>
+        <p className="text-sm text-brand-green font-bold uppercase tracking-wider mb-2">
+          Welcome to Help2Home
+        </p>
         <h1 className="text-3xl font-bold text-gray-900 leading-tight mb-2">
           Let&apos;s get you started
         </h1>
@@ -63,7 +64,10 @@ const EmailStep = () => {
       <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
         <div className="space-y-4 flex-1">
           <div>
-            <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
+            <label 
+              htmlFor="email" 
+              className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide"
+            >
               Email Address
             </label>
             <div className="relative group">
@@ -97,15 +101,21 @@ const EmailStep = () => {
                 Welcome back! 👋
               </p>
               <p className="text-sm text-gray-600 leading-relaxed font-medium">
-                We found your progress. You can jump straight back to step {existingUser?.currentStep || 0 + 1}.
+                We found your progress. You can jump straight back to step {currentStep + 1}.
               </p>
-              <div className="mt-2 flex gap-2">
-                {existingUser?.roles?.map(role => (
-                  <span key={role} className="text-[10px] uppercase font-bold tracking-widest bg-white px-2 py-0.5 rounded border border-brand-green/20 text-brand-green">
-                    {role}
-                  </span>
-                ))}
-              </div>
+              
+              {selectedRoles.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {selectedRoles.map((role: string) => (
+                    <span 
+                      key={role} 
+                      className="text-[10px] uppercase font-bold tracking-widest bg-white px-2 py-0.5 rounded border border-brand-green/20 text-brand-green"
+                    >
+                      {role}
+                    </span>
+                  ))}
+                </div>
+              )}
             </motion.div>
           )}
         </div>

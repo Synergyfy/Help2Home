@@ -20,7 +20,7 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
   const user = getCurrentUser();
   const landlordData = user?.landlord || {} as LandlordData;
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LandlordData>({
     propertyCount: landlordData.propertyCount || "",
     propertyTypes: landlordData.propertyTypes || [],
     managementStyle: landlordData.managementStyle || "",
@@ -36,7 +36,17 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
   const handleComplete = () => {
     updateRoleData("landlord", formData);
     completeRoleOnboarding("landlord");
-    goToStep(4);
+
+    // Check if there are other roles selected that haven't been completed yet
+    const remainingRoles = user?.roles?.filter(
+      r => !user.roleOnboardingCompleted?.[r] && r !== 'landlord'
+    ) || [];
+
+    if (remainingRoles.length > 0) {
+      goToStep(4); // Return to Role Chooser
+    } else {
+      nextStep(); // Proceed to final completion screen
+    }
   };
 
   const togglePropertyType = (type: string) => {
@@ -74,8 +84,7 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
         <div className="space-y-8 flex-1">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
-              <FiHome className="text-brand-green" />
-              How many properties?
+              <FiHome className="text-brand-green" /> How many properties?
             </label>
             <div className="grid grid-cols-2 gap-3">
               {propertyCountOptions.map((option) => (
@@ -109,8 +118,7 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
                       : "border-gray-100 hover:border-gray-300 text-gray-500"
                   }`}
                 >
-                  {type}
-                  {formData.propertyTypes.includes(type) && <FiCheck size={16} />}
+                  {type} {formData.propertyTypes.includes(type) && <FiCheck size={16} />}
                 </button>
               ))}
             </div>
@@ -122,16 +130,14 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
             onClick={() => goToStep(4)}
             className="px-6 py-4 border-2 border-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2"
           >
-            <FiArrowLeft size={18} />
-            Back
+            <FiArrowLeft size={18} /> Back
           </button>
           <button
             onClick={handleContinue}
             disabled={!formData.propertyCount || formData.propertyTypes.length === 0}
             className="flex-1 py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95"
           >
-            Continue
-            <FiArrowRight size={18} />
+            Continue <FiArrowRight size={18} />
           </button>
         </div>
       </motion.div>
@@ -155,8 +161,7 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
         <div className="space-y-8 flex-1">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
-              <FiSettings className="text-brand-green" />
-              Management Approach
+              <FiSettings className="text-brand-green" /> Management Approach
             </label>
             <div className="grid grid-cols-1 gap-3">
               {managementStyles.map((style) => (
@@ -198,20 +203,15 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
         </div>
 
         <div className="mt-8 flex gap-3">
-          <button
-            onClick={prevStep}
-            className="px-6 py-4 border-2 border-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2"
-          >
+          <button onClick={prevStep} className="px-6 py-4 border-2 border-gray-100 text-gray-600 font-bold rounded-xl active:scale-95 transition-all">
             <FiArrowLeft size={18} />
-            Back
           </button>
           <button
             onClick={handleContinue}
             disabled={!formData.managementStyle || !formData.experience}
             className="flex-1 py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95"
           >
-            Continue
-            <FiArrowRight size={18} />
+            Continue <FiArrowRight size={18} />
           </button>
         </div>
       </motion.div>
@@ -234,8 +234,7 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
       <div className="space-y-6 flex-1">
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
-            <FiTool className="text-brand-green" />
-            Interested Services
+            <FiTool className="text-brand-green" /> Interested Services
           </label>
           <div className="grid grid-cols-2 gap-3">
             {servicesList.map((service) => (
@@ -249,8 +248,7 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
                     : "border-gray-100 hover:border-gray-300 text-gray-500"
                 }`}
               >
-                {service}
-                {formData.services.includes(service) && <FiCheck size={16} />}
+                {service} {formData.services.includes(service) && <FiCheck size={16} />}
               </button>
             ))}
           </div>
@@ -258,19 +256,14 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
       </div>
 
       <div className="mt-8 flex gap-3">
-        <button
-          onClick={prevStep}
-          className="px-6 py-4 border-2 border-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2"
-        >
+        <button onClick={prevStep} className="px-6 py-4 border-2 border-gray-100 text-gray-600 font-bold rounded-xl active:scale-95 transition-all">
           <FiArrowLeft size={18} />
-          Back
         </button>
         <button
           onClick={handleComplete}
           className="flex-1 py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95"
         >
-          Complete Landlord Setup
-          <FiCheck size={18} />
+          Complete Landlord Setup <FiCheck size={18} />
         </button>
       </div>
     </motion.div>
