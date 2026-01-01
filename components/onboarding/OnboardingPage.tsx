@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from "react";
 import { useOnboardingStore } from "@/store/onboardingStore";
 import OnboardingLayout from "./OnboardingLayout";
 import EmailStep from "./steps/EmailStep";
@@ -14,54 +15,50 @@ import AgentStep from "./steps/AgentSteps";
 import InvestorStep from "./steps/InvestorSteps";
 import CompletionStep from "./steps/CompletionStep";
 
-const Index = () => {
+const OnboardingPage = () => {
+  const [isHydrated, setIsHydrated] = useState(false); 
   const { getCurrentUser, getTotalSteps } = useOnboardingStore();
+  
+  // Stop hydration errors from localstorage mismatch
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
   const user = getCurrentUser();
   const currentStep = user?.currentStep || 0;
   const totalSteps = getTotalSteps();
 
   const renderStep = () => {
-    // Step 0: Email
-    if (currentStep === 0) {
-      return <EmailStep />;
+    if (!isHydrated) return <div className="flex-1 animate-pulse bg-gray-50 rounded-xl" />;
+
+    // Handle initial flow
+    switch (currentStep) {
+      case 0: return <EmailStep />;
+      case 1: return <VerifyEmailStep />;
+      case 2: return <ProfileStep />;
+      case 3: return <RoleSelectionStep />;
+      case 4: return <RoleChooserStep />;
     }
-    // Step 1: Email Verification
-    if (currentStep === 1) {
-      return <VerifyEmailStep />;
-    }
-    // Step 2: Profile
-    if (currentStep === 2) {
-      return <ProfileStep />;
-    }
-    // Step 3: Role Selection
-    if (currentStep === 3) {
-      return <RoleSelectionStep />;
-    }
-    // Step 4: Role Chooser (for multi-role users)
-    if (currentStep === 4) {
-      return <RoleChooserStep />;
-    }
-    // Step 5-7: Role-specific steps
-    if (currentStep >= 5 && currentStep <= 7) {
-      const roleStep = (currentStep - 4) as 1 | 2 | 3;
+
+    // Handle dynamic role forms
+    if (currentStep < totalSteps - 1) {
       const activeRole = user?.activeRole;
-      
+      // Convert current step into role-specific sub-step
+      const roleSubStep = Math.min(Math.max(currentStep - 4, 1), 3) as 1 | 2 | 3;
+
+      if (!activeRole) return <RoleChooserStep />;
+
       switch (activeRole) {
-        case "tenant":
-          return <TenantStep stepNumber={roleStep} />;
-        case "landlord":
-          return <LandlordStep stepNumber={roleStep} />;
-        case "caretaker":
-          return <CaretakerStep stepNumber={roleStep} />;
-        case "agent":
-          return <AgentStep stepNumber={roleStep} />;
-        case "investor":
-          return <InvestorStep stepNumber={roleStep} />;
-        default:
-          return <RoleChooserStep />;
+        case "tenant":    return <TenantStep stepNumber={roleSubStep} />;
+        case "landlord":  return <LandlordStep stepNumber={roleSubStep} />;
+        case "caretaker": return <CaretakerStep stepNumber={roleSubStep} />;
+        case "agent":     return <AgentStep stepNumber={roleSubStep} />;
+        case "investor":  return <InvestorStep stepNumber={roleSubStep} />;
+        default:          return <RoleChooserStep />;
       }
     }
-    // Step 8: Completion
+
+    // Fallback to completion
     return <CompletionStep />;
   };
 
@@ -72,4 +69,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default OnboardingPage;

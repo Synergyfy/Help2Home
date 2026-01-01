@@ -4,11 +4,13 @@ import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiMail, FiArrowRight, FiRefreshCw } from "react-icons/fi";
 import { useOnboardingStore } from "@/store/onboardingStore";
+import { useUserStore } from "@/store/userStore";
 
 const DEMO_OTP = "123456";
 
 const VerifyEmailStep = () => {
-  const { getCurrentUser, setEmailVerified, nextStep } = useOnboardingStore();
+  const { getCurrentUser, nextStep } = useOnboardingStore();
+  const { setEmailVerified, email } = useUserStore();
   const user = getCurrentUser();
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const [error, setError] = useState("");

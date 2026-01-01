@@ -4,9 +4,11 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FiUser, FiPhone, FiArrowRight, FiArrowLeft } from "react-icons/fi";
 import { useOnboardingStore } from "@/store/onboardingStore";
+import { useUserStore } from "@/store/userStore";
 
 const ProfileStep = () => {
-  const { getCurrentUser, updateUserData, nextStep, prevStep } = useOnboardingStore();
+  const { getCurrentUser, nextStep, prevStep } = useOnboardingStore();
+  const {setUser} = useUserStore()
   const user = getCurrentUser();
   
   const [fullName, setFullName] = useState(user?.fullName || "");
@@ -30,7 +32,7 @@ const ProfileStep = () => {
       return;
     }
 
-    updateUserData({ fullName: fullName.trim(), phone: phone.trim() });
+    setUser({ fullName: fullName.trim(), phone: phone.trim() });
     nextStep();
   };
 

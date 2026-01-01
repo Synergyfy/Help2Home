@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { FiKey, FiBriefcase, FiArrowRight, FiArrowLeft, FiCheck, FiUsers, FiHome, FiTrendingUp } from "react-icons/fi";
 import { useOnboardingStore, UserRole } from "@/store/onboardingStore";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/userStore";
 
 const roleIcons: Record<UserRole, React.ReactNode> = {
   tenant: <FiHome size={24} />,
@@ -23,7 +24,8 @@ const roleNames: Record<UserRole, string> = {
 
 const RoleChooserStep = () => {
   const router = useRouter();
-  const { getCurrentUser, setActiveRole, nextStep, prevStep } = useOnboardingStore();
+  const { getCurrentUser, nextStep, prevStep } = useOnboardingStore();
+  const {setActiveRole} = useUserStore()
   const user = getCurrentUser();
   const selectedRoles = user?.roles || [];
 

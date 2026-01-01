@@ -29,7 +29,7 @@ export default function GlobalProviders({ children }: { children: React.ReactNod
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      
+
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -42,7 +42,7 @@ export default function GlobalProviders({ children }: { children: React.ReactNod
         pauseOnHover
         theme="light"
       />
-      
+
       {/* Global Tooltip for all components */}
       <Tooltip id="role-tooltip" place="top" />
 

@@ -2,8 +2,9 @@
 
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { FiCheck, FiHome, FiKey, FiBriefcase, FiTrendingUp, FiUsers } from "react-icons/fi";
+import { FiCheck, FiHome, FiKey, FiBriefcase, FiTrendingUp, FiUsers, FiLogIn } from "react-icons/fi";
 import { useOnboardingStore, UserRole } from "@/store/onboardingStore";
+import { useRouter } from "next/navigation";
 
 const roleIcons: Record<UserRole, React.ReactNode> = {
   tenant: <FiHome size={32} />,
@@ -22,33 +23,33 @@ const roleNames: Record<UserRole, string> = {
 };
 
 const CompletionStep = () => {
-  const { getCurrentUser, resetOnboarding, setOnboardingCompleted } = useOnboardingStore();
+  const router = useRouter();
+  const { getCurrentUser, resetOnboarding,setOnboardingCompleted } = useOnboardingStore();
   const user = getCurrentUser();
 
   useEffect(() => {
+    // Mark the account as finished so they don't see onboarding again
     setOnboardingCompleted(true);
   }, [setOnboardingCompleted]);
 
   const primaryRole = user?.roles?.[0];
   const completedRoles = user?.roles?.filter(role => user.roleOnboardingCompleted?.[role]) || [];
 
+  const handleSignIn = () => {
+    router.push("/signin");
+  };
+
   const getRoleMessage = () => {
     if (completedRoles.length > 1) {
-      return `You've set up ${completedRoles.length} roles. Switch between them anytime from your dashboard.`;
+      return `You've successfully set up ${completedRoles.length} profiles. Please sign in to access your unified dashboard.`;
     }
     switch (primaryRole) {
-      case "tenant": 
-        return "We'll start showing you properties that match your preferences.";
-      case "landlord": 
-        return "Get ready to connect with verified tenants and manage your properties.";
-      case "caretaker":
-        return "You're set to manage properties. Start connecting with landlords.";
-      case "agent": 
-        return "Your professional profile is set. Start connecting with clients.";
-      case "investor": 
-        return "We'll curate investment opportunities based on your goals.";
-      default: 
-        return "Your account is ready.";
+      case "tenant": return "Your rental preferences are saved. Sign in to start viewing matching properties.";
+      case "landlord": return "Your landlord profile is ready. Sign in to list your first property.";
+      case "caretaker": return "Property management tools are ready. Sign in to connect with landlords.";
+      case "agent": return "Your agent profile is active. Sign in to start managing your listings.";
+      case "investor": return "Investment filters are applied. Sign in to view curated opportunities.";
+      default: return "Your account setup is complete. Please sign in to continue.";
     }
   };
 
@@ -57,9 +58,9 @@ const CompletionStep = () => {
       key="completion-step"
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4 }}
       className="flex-1 flex flex-col items-center justify-center text-center py-8"
     >
+      {/* Success Icon Animation */}
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
@@ -79,62 +80,59 @@ const CompletionStep = () => {
         </motion.div>
       </motion.div>
 
+      {/* Completion Text */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="mb-8"
+        className="mb-10"
       >
         <h1 className="text-3xl font-bold text-gray-900 mb-3 tracking-tight">
-          You're all set, {user?.fullName?.split(' ')[0] || 'there'}!
+          Setup Complete!
         </h1>
-        <p className="text-gray-600 max-w-sm mx-auto font-medium">
+        <p className="text-gray-600 max-w-sm mx-auto font-medium leading-relaxed">
           {getRoleMessage()}
         </p>
-        
-        {completedRoles.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-2 mt-6">
-            {completedRoles.map(role => (
-              <span 
-                key={role}
-                className="px-4 py-1.5 rounded-full bg-gray-100 text-gray-700 text-xs font-bold uppercase tracking-wider border border-gray-200"
-              >
-                {roleNames[role]}
-              </span>
-            ))}
-          </div>
-        )}
       </motion.div>
 
+      {/* Action Buttons */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
         className="w-full max-w-sm space-y-4"
       >
-        <button className="w-full py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg active:scale-[0.98]">
-          Go to Dashboard
-        </button>
-        <button
-          onClick={resetOnboarding}
-          className="w-full py-4 px-6 border-2 border-gray-100 text-gray-500 font-bold rounded-xl hover:bg-gray-50 transition-colors active:scale-[0.98]"
+        <button 
+          onClick={handleSignIn}
+          className="w-full py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-3 active:scale-[0.98]"
         >
-          Start Over
+          <FiLogIn size={20} />
+          Sign In to Your Account
+        </button>
+        
+        <button
+          onClick={() => {
+            resetOnboarding();
+            router.push("/onboarding");
+          }}
+          className="w-full py-4 px-6 text-gray-400 text-sm font-semibold hover:text-gray-600 transition-colors"
+        >
+          Not you? Start over
         </button>
       </motion.div>
 
+      {/* Info Badge */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="mt-12 p-5 rounded-2xl bg-gray-50 border border-gray-100 max-w-sm"
+        transition={{ delay: 0.6 }}
+        className="mt-12 p-4 rounded-2xl bg-brand-green/5 border border-brand-green/10 max-w-xs"
       >
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <div className="w-2 h-2 rounded-full bg-brand-green animate-pulse" />
-          <span className="text-xs font-bold text-gray-900 uppercase tracking-widest">Onboarding Complete</span>
-        </div>
-        <p className="text-xs text-gray-500 leading-relaxed font-medium">
-          Your preferences are securely saved. Access your specialized tools instantly from the sidebar menu.
+        <p className="text-[11px] text-brand-green font-bold uppercase tracking-widest mb-1">
+          Secure Session Active
+        </p>
+        <p className="text-[11px] text-gray-500 font-medium">
+          Your profile data has been cached locally. Simply sign in to sync with your permanent account.
         </p>
       </motion.div>
     </motion.div>

@@ -20,7 +20,7 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
   const user = getCurrentUser();
   const tenantData = user?.tenant || {} as TenantData;
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<TenantData>({
     preferredLocation: tenantData.preferredLocation || "",
     budgetRange: tenantData.budgetRange || "",
     moveInDate: tenantData.moveInDate || "",

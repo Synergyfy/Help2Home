@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import LandlordDashboard from '@/components/dashboard/landlord/LandlordDashboard';
 
 export default function LandlordDashboardPage() {
