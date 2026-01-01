@@ -46,11 +46,12 @@ const roles: { title: string; description: string; icon: JSX.Element; roleParam:
 
 export default function RoleCards() {
   const router = useRouter();
-  const setRole = useUserStore((state) => state.setRole);
+  const {setUser} = useUserStore()
 
   const handleGetStarted = (roleParam: Role) => {
-    // Pass as single-element array since setRole expects Role[]
-    setRole([roleParam]);
+    setUser({ 
+    roles: [roleParam] 
+  });
     router.push('/signup/create-account');
   };
 

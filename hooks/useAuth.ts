@@ -22,7 +22,10 @@ export const useAuth = () => {
   } = useOnboardingStore();
 
   const loginMutation = useMutation({
-    mutationFn: (email: string) => loginUser(email),
+    // Updated to accept an object containing both email and password
+    mutationFn: ({ email, password }: { email: string; password: string }) => 
+        loginUser(email, password),
+    
     onSuccess: (data: MockUserResponse) => {
       // 1. Sync User Session
       setUser({
@@ -62,7 +65,8 @@ export const useAuth = () => {
   });
 
   return {
-    signIn: (email: string) => loginMutation.mutate(email),
+    // Now accepts two arguments to match your SignInPage form
+    signIn: (email: string, password: string) => loginMutation.mutate({ email, password }),
     isLoading: loginMutation.isPending,
     error: loginMutation.error,
     isSuccess: loginMutation.isSuccess

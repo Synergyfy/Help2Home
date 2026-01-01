@@ -53,6 +53,8 @@ interface OnboardingStore {
   roleOnboardingCompleted: Record<Role, boolean>;
   onboardingCompleted: boolean;
   activeRole: Role | null;
+  currentEmail: string;
+
   
   setStep: (step: number) => void;
   goToStep: (step: number) => void; 
@@ -62,12 +64,13 @@ interface OnboardingStore {
   toggleRole: (role: Role) => void;
   setActiveRole: (role: Role | null) => void;
   setOnboardingCompleted: (status: boolean) => void;
+  setCurrentEmail: (email: string) => void;
   updateRoleData: (role: Role, data: any) => void;
   completeRoleOnboarding: (role: Role) => void;
   resetOnboarding: () => void;
   getTotalSteps: () => number;
   
-  // FIX: Added activeRole and roleOnboardingCompleted to the return type
+ 
   getCurrentUser: () => ({
     roles: Role[];
     currentStep: number;
@@ -82,6 +85,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
       currentStep: 0,
       selectedRoles: [],
       activeRole: null,
+      currentEmail: '',
       onboardingCompleted: false,
       draftData: {},
       roleOnboardingCompleted: {
@@ -96,9 +100,12 @@ export const useOnboardingStore = create<OnboardingStore>()(
           currentStep: state.currentStep,
           activeRole: state.activeRole, 
           roleOnboardingCompleted: state.roleOnboardingCompleted,
+          currentEmail: state.currentEmail,
           ...state.draftData 
         };
       },
+
+      setCurrentEmail: (currentEmail) => set({ currentEmail }),
 
       setStep: (currentStep) => set({ currentStep }),
       goToStep: (step) => set({ currentStep: step }),

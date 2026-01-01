@@ -9,6 +9,7 @@ interface UserState {
   phone: string;
   roles: Role[];       
   activeRole: Role | null; 
+  token: string | null;
   verified: boolean;
   hasHydrated: boolean;
   
@@ -27,6 +28,7 @@ export const useUserStore = create<UserState>()(
       fullName: '',
       phone: '',
       roles: [],
+      token: null,
       activeRole: null,
       
       verified: false,
@@ -37,7 +39,7 @@ export const useUserStore = create<UserState>()(
       setEmailVerified: (verified) => set({ verified }),
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
       resetUser: () => set({ 
-        email: '', roles: [], activeRole: null, verified: false, fullName: '', phone: '' 
+        email: '', roles: [], activeRole: null, verified: false, fullName: '', phone: '',token: null
       }),
     }),
     {

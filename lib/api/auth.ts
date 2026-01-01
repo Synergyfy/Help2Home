@@ -142,9 +142,26 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
   }
 };
 
-export const loginUser = async (email: string): Promise<MockUserResponse> => {
+// src/lib/api/auth.ts
+
+export const loginUser = async (email: string, password?: string): Promise<MockUserResponse> => {
+  // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  // Optional: Simulate a password check (for demo purposes)
+  // if (password === 'wrong-password') {
+  //   throw new Error('Invalid credentials');
+  // }
+
+  // Get user from mock database or fallback to new user
   const userData = MOCK_USERS[email] || MOCK_USERS['newuser@example.com'];
+
   // Ensure the returned email matches the login input
-  return { ...userData, user: { ...userData.user, email: email } };
+  return { 
+    ...userData, 
+    user: { 
+      ...userData.user, 
+      email: email 
+    } 
+  };
 };

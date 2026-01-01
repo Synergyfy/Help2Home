@@ -1,74 +1,76 @@
 'use client';
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { FiMail, FiArrowRight } from "react-icons/fi";
-import { useOnboardingStore } from "@/store/onboardingStore";
-import { useUserStore } from "@/store/userStore";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { FiEye, FiEyeOff, FiLock, FiMail, FiArrowRight } from 'react-icons/fi';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 
-const EmailStep = () => {
-  const { nextStep, currentStep, selectedRoles } = useOnboardingStore();
-  const { setUser, email: storedEmail } = useUserStore();
+import { useAuth } from '@/hooks/useAuth';
+import OnboardingLayout from '@/components/onboarding/OnboardingLayout';
 
-  const [email, setEmail] = useState(storedEmail || "");
-  const [error, setError] = useState("");
+const signInSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+});
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+type SignInValues = z.infer<typeof signInSchema>;
 
-    if (!email.trim()) {
-      setError("Please enter your email address");
-      return;
-    }
+export default function SignInPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const { signIn, isLoading } = useAuth();
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError("Please enter a valid email address");
-      return;
-    }
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<SignInValues>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: { email: '', password: '' }
+  });
 
-    const normalizedEmail = email.toLowerCase().trim();
-    
-    // Save identity to UserStore
-    setUser({ email: normalizedEmail });
-    
-    nextStep();
+  const onSubmit = (data: SignInValues) => {
+    signIn(data.email, data.password);
   };
 
-  // Logic for showing "Resume" state based on the flattened store
-  // Since we only store one session now, we check if the current session has progress
-  const hasProgress = currentStep > 0;
+  const demoEmails = [
+    'tenant', 'landlord', 'agent', 'investor', 'caretaker', 'multi'
+  ];
+
+  const handleDemoClick = (role: string) => {
+    setValue('email', `${role}@example.com`, { shouldValidate: true });
+    setValue('password', 'password123', { shouldValidate: true });
+  };
 
   return (
-    <motion.div
-      key="email-step"
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.3 }}
-      className="flex-1 flex flex-col"
-    >
-      <div className="mb-8">
-        <p className="text-sm text-brand-green font-bold uppercase tracking-wider mb-2">
-          Welcome to Help2Home
-        </p>
-        <h1 className="text-3xl font-bold text-gray-900 leading-tight mb-2">
-          Let&apos;s get you started
-        </h1>
-        <p className="text-gray-600 font-medium">
-          Enter your email to create an account or resume your setup.
-        </p>
-      </div>
+    <OnboardingLayout currentStep={0} totalSteps={1}>
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
+        className="flex flex-col h-full justify-center max-w-md mx-auto w-full px-4"
+      >
+        {/* Header */}
+        <div className="mb-8">
+          <p className="text-sm text-brand-green font-bold uppercase tracking-wider mb-2">
+            Welcome back to Help2Home
+          </p>
+          <h1 className="text-3xl font-bold text-gray-900 leading-tight mb-2">
+            Sign in to account
+          </h1>
+          <p className="text-gray-600 font-medium">
+            Enter your credentials to access your dashboard.
+          </p>
+        </div>
 
-      <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
-        <div className="space-y-4 flex-1">
+        <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+          {/* Email Input */}
           <div>
-            <label 
-              htmlFor="email" 
-              className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide"
-            >
-              Email Address
+            <label className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
+              Email address
             </label>
             <div className="relative group">
               <FiMail 
@@ -76,73 +78,103 @@ const EmailStep = () => {
                 size={20} 
               />
               <input
+                {...register('email')}
                 type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                className={`w-full pl-12 pr-4 py-4 rounded-xl border-2 ${errors.email ? 'border-red-500' : 'border-gray-100'} bg-white text-gray-900 font-medium placeholder:text-gray-400 focus:outline-none focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 transition-all`}
                 placeholder="you@example.com"
-                className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-100 bg-white text-gray-900 font-medium placeholder:text-gray-400 focus:outline-none focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 transition-all"
               />
             </div>
-            {error && (
+            {errors.email && (
               <p className="mt-2 text-sm text-red-500 font-bold flex items-center gap-1">
-                <span>•</span> {error}
+                <span>•</span> {errors.email.message}
               </p>
             )}
           </div>
 
-          {hasProgress && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="p-5 rounded-2xl bg-brand-green/5 border border-brand-green/20"
-            >
-              <p className="text-sm text-gray-900 font-bold mb-1">
-                Welcome back! 👋
+          {/* Password Input */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">
+                Password
+              </label>
+              <Link
+                href="/forgot-password"
+                className="text-xs font-bold text-brand-green hover:underline decoration-brand-green underline-offset-4"
+              >
+                Forgot password?
+              </Link>
+            </div>
+            <div className="relative group">
+              <FiLock 
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors" 
+                size={20} 
+              />
+              <input
+                {...register('password')}
+                type={showPassword ? "text" : "password"}
+                className={`w-full pl-12 pr-12 py-4 rounded-xl border-2 ${errors.password ? 'border-red-500' : 'border-gray-100'} bg-white text-gray-900 font-medium placeholder:text-gray-400 focus:outline-none focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 transition-all`}
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-green transition-colors"
+              >
+                {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="mt-2 text-sm text-red-500 font-bold flex items-center gap-1">
+                <span>•</span> {errors.password.message}
               </p>
-              <p className="text-sm text-gray-600 leading-relaxed font-medium">
-                We found your progress. You can jump straight back to step {currentStep + 1}.
-              </p>
-              
-              {selectedRoles.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {selectedRoles.map((role: string) => (
-                    <span 
-                      key={role} 
-                      className="text-[10px] uppercase font-bold tracking-widest bg-white px-2 py-0.5 rounded border border-brand-green/20 text-brand-green"
-                    >
-                      {role}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          )}
-        </div>
+            )}
+          </div>
 
-        <div className="mt-8 space-y-5">
+          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-[0.98]"
+            disabled={isLoading}
+            className={`w-full py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-[0.98] ${
+              isLoading ? 'opacity-70 cursor-not-allowed' : ''
+            }`}
           >
-            {hasProgress ? "Resume Setup" : "Continue"}
-            <FiArrowRight size={20} />
+            {isLoading ? 'Authenticating...' : 'Sign in'}
+            {!isLoading && <FiArrowRight size={20} />}
           </button>
-          
-          <p className="text-center text-xs text-gray-500 leading-relaxed font-medium px-4">
-            By continuing, you agree to our{" "}
-            <a href="#" className="text-gray-900 font-bold hover:underline decoration-brand-green underline-offset-4">
-              Terms of Service
-            </a>{" "}
-            and{" "}
-            <a href="#" className="text-gray-900 font-bold hover:underline decoration-brand-green underline-offset-4">
-              Privacy Policy
-            </a>
-          </p>
-        </div>
-      </form>
-    </motion.div>
-  );
-};
+        </form>
 
-export default EmailStep;
+        {/* Demo Accounts Grid */}
+        <div className="mt-10">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-100"></div>
+            </div>
+            <div className="relative flex justify-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
+              <span className="px-4 bg-white">Quick Demo Access</span>
+            </div>
+          </div>
+          
+          <div className="mt-6 grid grid-cols-3 gap-2">
+            {demoEmails.map((role) => (
+              <button
+                key={role}
+                type="button"
+                onClick={() => handleDemoClick(role)}
+                className="py-3 px-1 border-2 border-gray-50 bg-white rounded-xl text-[10px] font-bold text-gray-500 hover:border-brand-green/30 hover:text-brand-green hover:bg-brand-green/5 transition-all uppercase tracking-wider active:scale-95"
+              >
+                {role}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <p className="mt-10 text-center text-sm text-gray-500 font-medium">
+          Don't have an account?{' '}
+          <Link href="/register" className="text-gray-900 font-bold hover:underline decoration-brand-green underline-offset-4">
+            Create one for free
+          </Link>
+        </p>
+      </motion.div>
+    </OnboardingLayout>
+  );
+}
