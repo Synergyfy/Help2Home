@@ -14,9 +14,8 @@ export default function DashboardLayout({
 
     return (
         <UserProvider>
-            {/* Using a slightly darker gray background for the layout base to make cards pop */}
             <div className="min-h-screen bg-[#F9FAFB] flex relative">
-                
+
                 {/* Mobile Sidebar Overlay */}
                 {isSidebarOpen && (
                     <div
@@ -28,17 +27,20 @@ export default function DashboardLayout({
                 {/* Sidebar Container*/}
                 <div className="hidden md:block fixed inset-y-0 left-0 w-72 p-4 z-30">
                     <DashboardSidebar
-                        isOpen={true} 
+                        isOpen={true}
                         onClose={() => setIsSidebarOpen(false)}
                     />
                 </div>
 
-                {/* Main Content: Adjusted margin to account for wider, padded sidebar */}
+                {/* Main Content */}
                 <div className="flex-1 flex flex-col min-w-0 md:ml-72 transition-all duration-300">
-                    <DashboardHeader onMenuClick={() => setIsSidebarOpen(true)} />
+                    {/*  Header */}
+                    <div className="sticky top-0 z-20 w-full bg-white border-b border-gray-100">
+                        <DashboardHeader onMenuClick={() => setIsSidebarOpen(true)} />
+                    </div>
 
-                    {/* Page Content*/}
-                    <main className="flex-1 p-6 md:p-10 w-full max-w-[1600px] mx-auto">
+                    {/* Page Content */}
+                    <main className="flex-1 py-6 px-2 md:p-10 w-full max-w-[1600px] mx-auto">
                         {children}
                     </main>
                 </div>

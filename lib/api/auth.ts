@@ -112,7 +112,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       email: 'multi@example.com',
       fullName: 'Morgan Multi',
       phone: '+1 789 012 3456',
-      roles: ['landlord', 'investor'],
+      roles: ['landlord', 'investor','caretaker'],
       verified: true,
     },
     onboarding: {
