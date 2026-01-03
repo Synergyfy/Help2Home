@@ -23,9 +23,7 @@ export default function LandlordDashboard() {
 
   const router = useRouter();
 
-  const handleAddProperty = ()=>{
-    router.push('/dashboard/landlord/properties/add')
-  }
+  
 
   if (!hasHydrated) return null;
 
