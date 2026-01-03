@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { formatNumber, parseNumber } from '@/utils/helpers';
 
 interface FinancialsStepProps {
     data: any;
@@ -17,6 +18,13 @@ export default function FinancialsStep({ data, updateData }: FinancialsStepProps
         });
     };
 
+    // Calculate dynamic values for the example box
+    const propertyPrice = data.price?.amount || 0;
+    const depositPercent = data.installments?.depositPercent || 0;
+    const upfrontDeposit = propertyPrice * (depositPercent / 100);
+    const selectedTenure = data.installments?.tenures?.[0] || 12;
+    const monthlyPayment = propertyPrice > 0 ? (propertyPrice - upfrontDeposit) / selectedTenure : 0;
+
     return (
         <div className="space-y-6 max-w-3xl mx-auto">
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
@@ -28,12 +36,16 @@ export default function FinancialsStep({ data, updateData }: FinancialsStepProps
                             Price <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
-                            <span className="absolute left-3 top-2 text-gray-500">₦</span>
+                            <span className="absolute left-3 top-2 text-gray-500">
+                                {data.price?.currency === 'USD' ? '$' : '₦'}
+                            </span>
                             <input
-                                type="number"
-                                value={data.price?.amount || ''}
-                                onChange={(e) => updateData({ price: { ...data.price, amount: Number(e.target.value) } })}
-                                placeholder="0.00"
+                                type="text"
+                                value={formatNumber(data.price?.amount || '')}
+                                onChange={(e) => updateData({ 
+                                    price: { ...data.price, amount: parseNumber(e.target.value) } 
+                                })}
+                                placeholder="0"
                                 className="w-full pl-8 px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E]"
                             />
                         </div>
@@ -131,12 +143,12 @@ export default function FinancialsStep({ data, updateData }: FinancialsStepProps
                             </div>
                         </div>
 
-                        {/* Example Calculation */}
+                        {/* Updated Dynamic Example Calculation */}
                         <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-800">
-                            <strong>Example:</strong> For a property of ₦1,200,000 with 25% deposit over 12 months:
+                            <strong>Live Breakdown:</strong> Based on {data.price?.currency || 'NGN'} {formatNumber(propertyPrice)}
                             <ul className="list-disc list-inside mt-1 ml-2">
-                                <li>Upfront Deposit: ₦300,000</li>
-                                <li>Monthly Payment: ~₦75,000 (plus fees)</li>
+                                <li>Upfront Deposit ({depositPercent}%): {data.price?.currency === 'USD' ? '$' : '₦'}{formatNumber(upfrontDeposit)}</li>
+                                <li>Monthly Payment ({selectedTenure} months): {data.price?.currency === 'USD' ? '$' : '₦'}{formatNumber(Math.round(monthlyPayment))}</li>
                             </ul>
                         </div>
                     </div>

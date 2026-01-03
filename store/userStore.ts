@@ -4,6 +4,7 @@ import { persist } from 'zustand/middleware';
 export type Role = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor';
 
 interface UserState {
+  id: string;
   email: string;
   fullName: string;
   phone: string;
@@ -24,6 +25,7 @@ interface UserState {
 export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
+      id: '',
       email: '',
       fullName: '',
       phone: '',
@@ -39,7 +41,7 @@ export const useUserStore = create<UserState>()(
       setEmailVerified: (verified) => set({ verified }),
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
       resetUser: () => set({ 
-        email: '', roles: [], activeRole: null, verified: false, fullName: '', phone: '',token: null
+       id: '', email: '', roles: [], activeRole: null, verified: false, fullName: '', phone: '',token: null
       }),
     }),
     {

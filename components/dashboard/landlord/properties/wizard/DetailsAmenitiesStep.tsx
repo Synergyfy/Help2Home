@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import InfoIcon from '@/components/lib/InfoIcon';
 
 interface DetailsAmenitiesStepProps {
     data: any;
@@ -51,7 +51,11 @@ export default function DetailsAmenitiesStep({ data, updateData }: DetailsAmenit
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Area Size</label>
+                        <div>
+                        <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+                            Area Size
+                            <InfoIcon tooltip="This represents the total interior floor space or land area. While Square Meters (sqm) is the local standard, Square Feet (sqft) is often used internationally. 1 sqm is roughly 11 times larger than 1 sqft" />
+                        </label>
                         <div className="flex">
                             <input
                                 type="number"
@@ -59,16 +63,18 @@ export default function DetailsAmenitiesStep({ data, updateData }: DetailsAmenit
                                 value={data.specs?.area || ''}
                                 onChange={(e) => updateData({ specs: { ...data.specs, area: Number(e.target.value) } })}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-[#00853E] focus:border-[#00853E]"
+                                placeholder="0"
                             />
                             <select
                                 value={data.specs?.areaUnit || 'sqm'}
                                 onChange={(e) => updateData({ specs: { ...data.specs, areaUnit: e.target.value } })}
-                                className="border-l-0 border border-gray-300 rounded-r-lg px-3 bg-gray-50 text-gray-600"
+                                className="border-l-0 border border-gray-300 rounded-r-lg px-3 bg-gray-50 text-gray-600 focus:outline-none"
                             >
                                 <option value="sqm">sqm</option>
                                 <option value="sqft">sqft</option>
                             </select>
                         </div>
+                    </div>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Furnishing</label>

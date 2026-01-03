@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import {useRouter} from 'next/navigation'
 import { useUserStore } from '@/store/userStore';
 import { useDashboardStore } from '@/store/dashboardStore';
 import { useDashboardData } from '@/hooks/UseDashboardData';
@@ -20,6 +20,12 @@ export default function LandlordDashboard() {
   const { dateRange, setFilters } = useDashboardStore();
   
   const { data, isPending, isError } = useDashboardData();
+
+  const router = useRouter();
+
+  const handleAddProperty = ()=>{
+    router.push('/dashboard/landlord/properties/add')
+  }
 
   if (!hasHydrated) return null;
 
@@ -65,7 +71,7 @@ export default function LandlordDashboard() {
 
         {/* Right Column (Side Rail) */}
         <div className="space-y-6">
-          <QuickActions />
+          <QuickActions/>
           <VerificationStatus items={data.verification} />
           <PerformanceSnapshot />
           <HelpSupport />

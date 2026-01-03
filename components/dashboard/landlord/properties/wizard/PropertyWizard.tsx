@@ -8,6 +8,8 @@ import FinancialsStep from './FinancialsStep';
 import DetailsAmenitiesStep from './DetailsAmenitiesStep';
 import MediaStep from './MediaStep';
 import TermsPreviewStep from './TermsPreviewStep';
+import { useCreateProperty } from '@/hooks/useLandlordQueries';
+import { toast } from 'react-toastify';
 
 const STEPS = ['Basics', 'Financials', 'Details', 'Media', 'Preview'];
 
@@ -19,6 +21,9 @@ interface PropertyWizardProps {
 export default function PropertyWizard({ initialData, isEditing = false }: PropertyWizardProps) {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState(0);
+
+    const { mutate: createProperty, isPending } = useCreateProperty();
+
     const [formData, setFormData] = useState(initialData || {
         title: '',
         type: '',
@@ -32,7 +37,6 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
         description: { short: '', long: '' },
         terms: { availableFrom: '', minTenancy: '12' }
     });
-    const [isSaving, setIsSaving] = useState(false);
 
     const updateFormData = (updates: any) => {
         setFormData((prev: any) => ({ ...prev, ...updates }));
@@ -54,27 +58,24 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
         }
     };
 
-    const handleSaveDraft = async () => {
-        setIsSaving(true);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setIsSaving(false);
-        alert('Draft saved successfully!');
-    };
-
     const handlePublish = async () => {
-        // Validation check
+        //  Validation Check 
         if (!formData.title || !formData.price.amount || formData.images.length === 0) {
-            alert('Please fill in all required fields (Title, Price, and at least one Image).');
+            toast.error('Please fill in required fields: Title, Price, and Images');
             return;
         }
 
-        setIsSaving(true);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setIsSaving(false);
-        alert(isEditing ? 'Property updated successfully!' : 'Property published successfully!');
-        router.push('/dashboard/landlord/properties');
+        createProperty(formData, {
+            onSuccess: () => {
+                // Success Toast
+                toast.success(isEditing ? 'Property updated successfully!' : 'Property published successfully!');
+                router.push('/dashboard/landlord/properties');
+            },
+            onError: (error: any) => {
+                // Error Toast
+                toast.error(error?.message || 'Failed to save property. Please try again.');
+            }
+        });
     };
 
     const renderStep = () => {
@@ -90,7 +91,6 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
 
     return (
         <div className="pb-20">
-            {/* Header */}
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-900">
                     {isEditing ? 'Edit Property' : 'Add New Property'}
@@ -98,36 +98,41 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
                 <StepIndicator steps={STEPS} currentStep={currentStep} />
             </div>
 
-            {/* Step Content */}
             <div className="min-h-[400px]">
                 {renderStep()}
             </div>
 
-            {/* Footer Actions */}
             <div className="fixed bottom-0 left-0 md:left-56 right-0 bg-white border-t border-gray-200 p-4 z-10 flex justify-between items-center">
                 <button
-                    onClick={handleSaveDraft}
-                    disabled={isSaving}
-                    className="text-gray-600 hover:text-gray-900 font-medium px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                    onClick={() => toast.info('Draft saving is not implemented yet')}
+                    disabled={isPending}
+                    className="text-gray-600 hover:text-gray-900 font-medium px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
                 >
-                    {isSaving ? 'Saving...' : 'Save Draft'}
+                    Save Draft
                 </button>
 
                 <div className="flex gap-3">
                     <button
                         onClick={handleBack}
-                        disabled={currentStep === 0 || isSaving}
-                        className={`px-6 py-2 border border-gray-300 rounded-lg font-medium transition-colors ${currentStep === 0 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-50'
+                        disabled={currentStep === 0 || isPending}
+                        className={`px-6 py-2 border border-gray-300 rounded-lg font-medium transition-colors ${currentStep === 0 || isPending ? 'text-gray-300 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-50'
                             }`}
                     >
                         Back
                     </button>
                     <button
                         onClick={handleNext}
-                        disabled={isSaving}
-                        className="px-6 py-2 bg-[#00853E] text-white rounded-lg hover:bg-green-700 font-medium transition-colors shadow-sm"
+                        disabled={isPending}
+                        className="px-6 py-2 bg-[#00853E] text-white rounded-lg hover:bg-green-700 font-medium transition-colors shadow-sm disabled:opacity-50 min-w-[140px]"
                     >
-                        {currentStep === STEPS.length - 1 ? (isEditing ? 'Update Property' : 'Publish Property') : 'Next Step'}
+                        {isPending ? (
+                            <span className="flex items-center gap-2">
+                                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                Processing...
+                            </span>
+                        ) : (
+                            currentStep === STEPS.length - 1 ? (isEditing ? 'Update Property' : 'Publish Property') : 'Next Step'
+                        )}
                     </button>
                 </div>
             </div>

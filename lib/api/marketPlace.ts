@@ -1,4 +1,4 @@
-import { mockProperties as allProperties,updateMockDb,Property,addPropertyToMockDb } from '@/utils/properties';
+import { mockProperties as allProperties,updateMockDb,Property,} from '@/utils/properties';
 
 export interface Location {
   id: string;
@@ -56,7 +56,7 @@ export interface PropertySearchResult {
   pageSize: number;
 }
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function fetchLocations(query?: string): Promise<Location[]> {
   await delay(200);
@@ -233,19 +233,3 @@ export async function updateProperty(id: number, updates: Partial<Property>): Pr
   return updatedProperty;
 }
 
-export async function createProperty(newPropertyData: Partial<Property>): Promise<Property> {
-  await delay(1000); 
-
-  const newProperty: Property = {
-    ...newPropertyData,
-    id: Math.floor(Math.random() * 10000), 
-    dateAdded: new Date().toISOString(),
-    listingAge: '24h',
-    featured: false,
-    verified: false,
-  } as Property;
-
-  addPropertyToMockDb(newProperty);
-
-  return newProperty;
-}
