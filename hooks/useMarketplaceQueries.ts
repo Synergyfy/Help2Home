@@ -9,7 +9,6 @@ import {
   SearchFilters,
   PropertySearchResult,
   Location,
-  createProperty               
 } from '@/lib/api/marketPlace';
 import { Property } from '@/utils/properties'; 
 
@@ -67,18 +66,7 @@ export function useProperty(id: number) {
   });
 }
 
-export function useCreateProperty() {
-  const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: createProperty,
-    onSuccess: () => {
-      // This is the magic: it tells TanStack Query to refetch the list.
-      // Since mockProperties now has the new item, the UI updates instantly.
-      queryClient.invalidateQueries({ queryKey: marketplaceKeys.all });
-    },
-  });
-}
 
 export function usePriceStats(location: string) {
   return useQuery({

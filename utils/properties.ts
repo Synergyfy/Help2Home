@@ -1,5 +1,4 @@
 import type { PropertyCategory, OwnershipType, AddedTimeframe } from "@/store/marketplaceStore";
-
 import Img1 from '@/assets/alexander-andrews-A3DPhhAL6Zg-unsplash(1).jpg'
 import Img2 from '@/About us assets/heroImg.jpg'
 
@@ -15,6 +14,7 @@ export type Property = {
   state: string;
   postcode?: string;
   images: string[];
+  createdBy?: string;
 
   // --- Specifications ---
   bedrooms: number;
@@ -22,6 +22,7 @@ export type Property = {
   floorSize?: number;
 
   // --- Amenities ---
+  amenities?: string[]; 
   furnished?: boolean;
   parking?: boolean;
   garden?: boolean;
@@ -35,24 +36,27 @@ export type Property = {
   deposit?: number;
   fees?: number;
   currency?: string;
+  isInstallmentAllowed?: boolean;
 
   serviced?: boolean;
   electricity?: boolean;
   waterSupply?: boolean;
   security?: boolean;
   
+  // --- Status & Analytics ---
+  featured: boolean;
+  verified: boolean;
+  isNew: boolean;         
+  availableFrom?: string;
+  status?: 'available' | 'sold' | 'let-agreed';
+  keywords?: string[];
+  views?: number;
+  inquiries?: number;
+  
   // --- Search Flags ---
   isOffPlan: boolean;     
   isNewBuild: boolean;
 
-  // --- Status & Search Flags ---
-  featured: boolean;
-  verified: boolean;
-  isNew: boolean;        
-  availableFrom?: string;
-  status?: 'available' | 'sold' | 'let-agreed';
-  keywords?: string[];
-  
   // --- Map/Radius Data ---
   latitude?: number;
   longitude?: number;
@@ -77,8 +81,8 @@ export type Property = {
   hasReducedPrice: boolean;
   isUnderOffer: boolean;
 };
-
 export let mockProperties: Property[] = [
+  
   {
     id: 1,
     title: "The Glass House - 5 Bed Detached",
@@ -89,11 +93,12 @@ export let mockProperties: Property[] = [
     location: "Ikoyi",
     city: "Lagos",
     state: "Lagos",
-    images: [Img1.src,Img2.src],
+    images: [Img1.src, Img2.src],
     bedrooms: 5,
     bathrooms: 6,
     floorSize: 1200,
     price: 1500000000,
+    currency: 'NGN',
     featured: true,
     verified: true,
     isNew: true,
@@ -118,7 +123,12 @@ export let mockProperties: Property[] = [
     isChainFree: true,
     hasReducedPrice: false,
     isUnderOffer: false,
-    keywords: ['luxury', 'automated', 'waterfront']
+    keywords: ['luxury', 'automated', 'waterfront'],
+    // Added fields
+    amenities: ['Private Cinema', 'Smart Home System', 'Elevator', 'Wine Cellar'],
+    isInstallmentAllowed: true,
+    views: 1240,
+    inquiries: 18
   },
   {
     id: 2,
@@ -130,11 +140,12 @@ export let mockProperties: Property[] = [
     location: "Wuse 2",
     city: "Abuja",
     state: "FCT",
-    images: [Img2.src,Img1.src],
+    images: [Img2.src, Img1.src],
     bedrooms: 0,
     bathrooms: 10,
     floorSize: 2500,
     price: 2800000000,
+    currency: 'NGN',
     featured: true,
     verified: false, 
     isNew: false,
@@ -153,8 +164,14 @@ export let mockProperties: Property[] = [
     isAuction: true,
     isChainFree: false,
     hasReducedPrice: false,
-    isUnderOffer: false
+    isUnderOffer: false,
+    // Added fields
+    amenities: ['Fiber Optic Internet', 'CCTV', 'Central AC', 'Ample Parking'],
+    isInstallmentAllowed: false,
+    views: 850,
+    inquiries: 5
   },
+  // ... remaining properties (3-12)
   {
     id: 3,
     title: "3 Bedroom Modern Terrace",
@@ -169,6 +186,7 @@ export let mockProperties: Property[] = [
     bedrooms: 3,
     bathrooms: 3,
     price: 4500000,
+    currency: 'NGN',
     monthlyPrice: 375000,
     featured: false,
     verified: true,
@@ -437,7 +455,86 @@ export let mockProperties: Property[] = [
     isChainFree: true,
     hasReducedPrice: false,
     isUnderOffer: false
-  }
+  },
+  {
+    id: 11,
+    createdBy: 'user_clt06multi006', // Morgan Multi
+    title: "The Glass House - 5 Bed Detached",
+    description: "A breathtaking smart home with a private cinema and elevator.",
+    propertyType: 'buy', 
+    category: 'residential-properties-for-sale',
+    address: "Banana Island",
+    location: "Ikoyi",
+    city: "Lagos",
+    state: "Lagos",
+    images: [Img1.src, Img2.src],
+    bedrooms: 5,
+    bathrooms: 6,
+    floorSize: 1200,
+    price: 1500000000,
+    featured: true,
+    verified: true,
+    isNew: true,
+    isOffPlan: false,
+    isNewBuild: true,
+    pool: true,
+    gym: true,
+    garden: true,
+    parking: true,
+    balcony: true,
+    serviced: true,
+    electricity: true,
+    waterSupply: true,
+    security: true,
+    status: 'available',
+    ownership: 'freehold',
+    dateAdded: "2023-12-28T10:00:00Z",
+    listingAge: '24h',
+    isRetirementHome: false,
+    isSharedOwnership: false,
+    isAuction: false,
+    isChainFree: true,
+    hasReducedPrice: false,
+    isUnderOffer: false,
+    keywords: ['luxury', 'automated', 'waterfront']
+  },
+  {
+    id: 12,
+    createdBy: 'user_clt06multi006', // Morgan Multi
+    title: "3 Bedroom Modern Terrace",
+    description: "Spacious terrace house in a gated, secure community.",
+    propertyType: 'rent', 
+    category: 'residential-properties-to-rent',
+    address: "Orchid Road",
+    location: "Lekki",
+    city: "Lagos",
+    state: "Lagos",
+    images: [Img2.src, Img1.src],
+    bedrooms: 3,
+    bathrooms: 3,
+    price: 4500000,
+    monthlyPrice: 375000,
+    featured: false,
+    verified: true,
+    isNew: true,
+    isOffPlan: false,
+    isNewBuild: true,
+    garden: true,
+    parking: true,
+    electricity: true,
+    waterSupply: true,
+    security: true,
+    status: 'available',
+    ownership: 'leasehold',
+    dateAdded: "2023-12-25T12:00:00Z",
+    listingAge: '3d',
+    isRetirementHome: false,
+    isSharedOwnership: false,
+    isAuction: false,
+    isChainFree: true,
+    hasReducedPrice: false,
+    isUnderOffer: false
+  },
 ];
 
 export const updateMockDb = (newData: Property[]) => {

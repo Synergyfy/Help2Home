@@ -2,19 +2,27 @@
 
 import React from 'react';
 import PropertyWizard from '@/components/dashboard/landlord/properties/wizard/PropertyWizard';
-import { mockProperties } from '@/lib/mockLandlordData';
+import { mockProperties } from '@/utils/properties';
 
 export default function EditPropertyPage({ params }: { params: { id: string } }) {
-    // In a real app, fetch data based on params.id
-    // For mock, we'll just grab the first one or a specific one if possible
-    const property = mockProperties.find(p => p.id === params.id) || mockProperties[0];
+    // 1. Convert string param to number to fix the comparison error
+    const propertyId = Number(params.id);
 
-    // Transform mock data to form data structure if needed
+    // 2. Find the property in the mock database
+    const property = mockProperties.find(p => p.id === propertyId);
+
+    // 3. Fallback logic: If property isn't found, you might want to handle it 
+    // but for now we fallback to the first mock or the property itself
+    const dataToEdit = property || mockProperties[0];
+
+    // 4. Transform to initialData
+    // We remove the nested 'description' and 'terms' objects because your 
+    // Property interface is now flat.
     const initialData = {
-        ...property,
-        // Ensure nested objects exist
-        description: { short: 'Mock description', long: 'Long mock description' },
-        terms: { availableFrom: '2024-06-01', minTenancy: '12' }
+        ...dataToEdit,
+        // Ensure any fields the Wizard expects are present
+        description: dataToEdit.description || '',
+        availableFrom: dataToEdit.availableFrom || '',
     };
 
     return <PropertyWizard initialData={initialData} isEditing={true} />;

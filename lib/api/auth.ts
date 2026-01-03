@@ -2,6 +2,7 @@ import { Role } from '@/store/userStore';
 
 export interface MockUserResponse {
   user: {
+    id: string; // Added ID
     email: string;
     fullName: string;
     phone: string;
@@ -16,9 +17,9 @@ export interface MockUserResponse {
 }
 
 const MOCK_USERS: Record<string, MockUserResponse> = {
-  // 1. Agent - Fully Onboarded
   'agent@example.com': {
     user: {
+      id: 'user_clt01agent001',
       email: 'agent@example.com',
       fullName: 'Alice Agent',
       phone: '+1 234 567 8901',
@@ -34,9 +35,9 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
     }
   },
 
-  // 2. Landlord - Fully Onboarded
   'landlord@example.com': {
     user: {
+      id: 'user_clt02landlord002',
       email: 'landlord@example.com',
       fullName: 'Lawrence Landlord',
       phone: '+1 345 678 9012',
@@ -52,9 +53,9 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
     }
   },
 
-  // 3. Investor - Fully Onboarded
   'investor@example.com': {
     user: {
+      id: 'user_clt03investor003',
       email: 'investor@example.com',
       fullName: 'Ivan Investor',
       phone: '+1 456 789 0123',
@@ -70,9 +71,9 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
     }
   },
 
-  // 4. Caretaker - Fully Onboarded
   'caretaker@example.com': {
     user: {
+      id: 'user_clt04caretaker004',
       email: 'caretaker@example.com',
       fullName: 'Charlie Caretaker',
       phone: '+1 567 890 1234',
@@ -88,9 +89,9 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
     }
   },
 
-  // 5. Tenant - Fully Onboarded
   'tenant@example.com': {
     user: {
+      id: 'user_clt05tenant005',
       email: 'tenant@example.com',
       fullName: 'Tessa Tenant',
       phone: '+1 678 901 2345',
@@ -106,13 +107,13 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
     }
   },
 
-  // 6. Multi-Role User (Landlord & Investor) - Both Onboarded
   'multi@example.com': {
     user: {
+      id: 'user_clt06multi006',
       email: 'multi@example.com',
       fullName: 'Morgan Multi',
       phone: '+1 789 012 3456',
-      roles: ['landlord', 'agent','caretaker'],
+      roles: ['landlord', 'agent', 'caretaker'],
       verified: true,
     },
     onboarding: {
@@ -125,9 +126,9 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
     }
   },
 
-  // 7. New User - Needs Onboarding (Primary role: Landlord)
   'newuser@example.com': {
     user: {
+      id: 'user_clt07newuser007',
       email: 'newuser@example.com',
       fullName: 'New User',
       phone: '',
@@ -143,24 +144,16 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
 };
 
 // src/lib/api/auth.ts
-
 export const loginUser = async (email: string, password?: string): Promise<MockUserResponse> => {
-  // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  // Optional: Simulate a password check (for demo purposes)
-  // if (password === 'wrong-password') {
-  //   throw new Error('Invalid credentials');
-  // }
-
-  // Get user from mock database or fallback to new user
   const userData = MOCK_USERS[email] || MOCK_USERS['newuser@example.com'];
 
-  // Ensure the returned email matches the login input
   return { 
     ...userData, 
     user: { 
       ...userData.user, 
+      id: userData.user.id,
       email: email 
     } 
   };
