@@ -269,53 +269,53 @@ export default function ApplicationStatusPage() {
                             </div>
                         )}
 
-                                <DocumentsEvidenceSection
-                                    documents={application.documents}
-                                    onUpload={handleUpload}
-                                />
+                        <DocumentsEvidenceSection
+                            documents={application.documents}
+                            onUpload={handleUpload}
+                        />
 
-                                <ContractSection
-                                    contract={application.contract}
-                                    onSign={handleSignContract}
-                                />
+                        <ContractSection
+                            contract={application.contract}
+                            onSign={handleSignContract}
+                        />
 
-                                <RepaymentScheduleSummary schedule={application.repayment} />
+                        <RepaymentScheduleSummary schedule={application.repayment} />
 
-                                <ActivityLog logs={application.activityLog} />
-                            </div>
+                        <ActivityLog logs={application.activityLog} />
+                    </div>
 
                     {/* Right Column - Sidebar */}
-                        <div className="lg:col-span-1">
-                            <StatusSummaryCard
-                                status={application.currentStatus}
-                                progressPercent={application.progressPercent}
-                                lastUpdated={application.lastUpdated}
-                                onUploadClick={() => alert('General upload clicked')}
-                                onContactSupport={handleContactSupport}
-                            />
+                    <div className="lg:col-span-1">
+                        <StatusSummaryCard
+                            status={application.currentStatus}
+                            progressPercent={application.progressPercent}
+                            lastUpdated={application.lastUpdated}
+                            onUploadClick={() => alert('General upload clicked')}
+                            onContactSupport={handleContactSupport}
+                        />
 
-                            <PropertyQuickCard
-                                propertyName={application.propertyName}
-                                propertyAddress={application.propertyAddress}
-                                propertyImage={application.propertyImage}
-                                landlordName={application.landlordName}
-                                financials={application.financials}
-                            />
+                        <PropertyQuickCard
+                            propertyName={application.propertyName}
+                            propertyAddress={application.propertyAddress}
+                            propertyImage={application.propertyImage}
+                            landlordName={application.landlordName}
+                            financials={application.financials}
+                        />
 
-                            <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-4 mb-6">
-                                <h4 className="text-yellow-800 font-bold text-sm mb-2 flex items-center gap-2">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                    </svg>
-                                    Important Notice
-                                </h4>
-                                <p className="text-xs text-yellow-700">
-                                    Please ensure your bank statement is clear and legible. Blurred documents will delay your application.
-                                </p>
-                            </div>
+                        <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-4 mb-6">
+                            <h4 className="text-yellow-800 font-bold text-sm mb-2 flex items-center gap-2">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                Important Notice
+                            </h4>
+                            <p className="text-xs text-yellow-700">
+                                Please ensure your bank statement is clear and legible. Blurred documents will delay your application.
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
-            );
+        </div>
+    );
 }

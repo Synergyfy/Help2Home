@@ -1,5 +1,4 @@
-import { Property } from '@/utils/properties';
-import { mockProperties as allProperties } from '@/utils/properties';
+import { mockProperties as allProperties,updateMockDb,Property,addPropertyToMockDb } from '@/utils/properties';
 
 export interface Location {
   id: string;
@@ -216,4 +215,37 @@ export async function fetchPriceStats(location: string) {
   if (props.length === 0) return null;
   const avg = props.reduce((acc, p) => acc + p.price, 0) / props.length;
   return { averagePrice: avg, count: props.length };
+}
+
+export async function updateProperty(id: number, updates: Partial<Property>): Promise<Property> {
+  await delay(800);
+  
+  const index = allProperties.findIndex(p => p.id === id);
+  if (index === -1) throw new Error("Property not found");
+
+  const updatedProperty = { ...allProperties[index], ...updates };
+  
+  // Update the "Database"
+  const newDb = [...allProperties];
+  newDb[index] = updatedProperty;
+  updateMockDb(newDb);
+
+  return updatedProperty;
+}
+
+export async function createProperty(newPropertyData: Partial<Property>): Promise<Property> {
+  await delay(1000); 
+
+  const newProperty: Property = {
+    ...newPropertyData,
+    id: Math.floor(Math.random() * 10000), 
+    dateAdded: new Date().toISOString(),
+    listingAge: '24h',
+    featured: false,
+    verified: false,
+  } as Property;
+
+  addPropertyToMockDb(newProperty);
+
+  return newProperty;
 }

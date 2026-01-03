@@ -22,7 +22,7 @@ export const useAuth = () => {
   } = useOnboardingStore();
 
   const loginMutation = useMutation({
-    // Updated to accept an object containing both email and password
+    // Accept an object containing both email and password
     mutationFn: ({ email, password }: { email: string; password: string }) => 
         loginUser(email, password),
     

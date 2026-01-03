@@ -4,7 +4,6 @@ import Img1 from '@/assets/alexander-andrews-A3DPhhAL6Zg-unsplash(1).jpg'
 import Img2 from '@/About us assets/heroImg.jpg'
 
 export type Property = {
-  // --- Core Identity ---
   id: number;
   title: string;
   description: string;
@@ -79,7 +78,7 @@ export type Property = {
   isUnderOffer: boolean;
 };
 
-export const mockProperties: Property[] = [
+export let mockProperties: Property[] = [
   {
     id: 1,
     title: "The Glass House - 5 Bed Detached",
@@ -440,3 +439,11 @@ export const mockProperties: Property[] = [
     isUnderOffer: false
   }
 ];
+
+export const updateMockDb = (newData: Property[]) => {
+  mockProperties = newData;
+};
+
+export const addPropertyToMockDb = (property: Property) => {
+  mockProperties = [property, ...mockProperties];
+};

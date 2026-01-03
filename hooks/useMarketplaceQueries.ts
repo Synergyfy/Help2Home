@@ -1,5 +1,5 @@
 // hooks/useMarketplaceQueries.ts
-import { useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query';
+import { useQuery, useQueryClient,useMutation, keepPreviousData } from '@tanstack/react-query';
 import {
   fetchLocations,
   searchProperties,
@@ -8,7 +8,8 @@ import {
   fetchPriceStats,
   SearchFilters,
   PropertySearchResult,
-  Location,               
+  Location,
+  createProperty               
 } from '@/lib/api/marketPlace';
 import { Property } from '@/utils/properties'; 
 
@@ -63,6 +64,19 @@ export function useProperty(id: number) {
     queryKey: marketplaceKeys.property(id),
     queryFn: () => fetchPropertyById(id),
     staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useCreateProperty() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createProperty,
+    onSuccess: () => {
+      // This is the magic: it tells TanStack Query to refetch the list.
+      // Since mockProperties now has the new item, the UI updates instantly.
+      queryClient.invalidateQueries({ queryKey: marketplaceKeys.all });
+    },
   });
 }
 
