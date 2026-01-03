@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import {toast} from 'react-toastify'
 import { usePathname } from 'next/navigation';
 import { useUserStore } from '@/store/userStore';
 import NotificationBell from '@/components/dashboard/common/NotificationBell';
@@ -13,6 +15,8 @@ interface DashboardHeaderProps {
 export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
     const pathname = usePathname();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+    const router = useRouter()
     
     // Get data directly from your store definition
     const { fullName, activeRole, email, resetUser, hasHydrated } = useUserStore();
@@ -26,6 +30,13 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
     const rolePath = activeRole || 'tenant';
     const profileLink = `/dashboard/${rolePath}/profile`;
     const settingsLink = `/dashboard/${rolePath}/settings`;
+
+    const handleLogout = () => {
+        resetUser();
+        setIsProfileOpen(false);
+        toast.success('Logged out successfully');
+        router.replace('/signin');
+    };
 
     return (
         <header className="bg-white h-20 border-b border-gray-100 flex items-center justify-between px-4 md:px-8 sticky top-0 z-20 w-full">
@@ -94,10 +105,7 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
                                 
                                 <div className="border-t border-gray-100 my-1"></div>
                                 <button
-                                    onClick={() => {
-                                        resetUser();
-                                        setIsProfileOpen(false);
-                                    }}
+                                    onClick={handleLogout}
                                     className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium"
                                 >
                                     Sign Out

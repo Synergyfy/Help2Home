@@ -12,11 +12,11 @@ interface NearbyPropertiesProps {
 }
 
 export default function NearbyProperties({ currentPropertyId, location }: NearbyPropertiesProps) {
-    
+
     // 2. The "Calculation": Filter properties in the same location
     // We exclude the current property itself so it doesn't recommend what you're already looking at.
     const nearby = mockProperties
-        .filter(p => 
+        .filter(p =>
             p.location === location && // Match location
             p.id !== currentPropertyId   // Exclude current
         )
@@ -24,8 +24,8 @@ export default function NearbyProperties({ currentPropertyId, location }: Nearby
 
     // Fallback: If no properties are in the exact same location, 
     // show any other featured properties so the sidebar isn't empty.
-    const displayProperties = nearby.length > 0 
-        ? nearby 
+    const displayProperties = nearby.length > 0
+        ? nearby
         : mockProperties.filter(p => p.id !== currentPropertyId).slice(0, 5);
 
     return (
@@ -34,7 +34,7 @@ export default function NearbyProperties({ currentPropertyId, location }: Nearby
                 <span className="w-2 h-2 bg-brand-green rounded-full"></span>
                 Nearby Properties
             </h3>
-            
+
             <div className="space-y-6">
                 {displayProperties.map((property) => (
                     <div key={property.id} className="flex gap-4 items-center group">
@@ -51,10 +51,10 @@ export default function NearbyProperties({ currentPropertyId, location }: Nearby
                                 {property.title}
                             </h4>
                             <p className="text-xs text-brand-green font-black mb-2">
-                                {property.price.toLocaleString('en-NG', { 
-                                    style: 'currency', 
+                                {property.price.toLocaleString('en-NG', {
+                                    style: 'currency',
                                     currency: 'NGN',
-                                    maximumFractionDigits: 0 
+                                    maximumFractionDigits: 0
                                 })}
                             </p>
                             <Link
