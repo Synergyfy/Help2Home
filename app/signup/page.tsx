@@ -11,7 +11,7 @@ import { Role } from '@/store/userStore';
 export default function SignUpPage() {
   const router = useRouter();
   const { setRoles, goToStep } = useOnboardingStore();
-  
+
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [activeMessage, setActiveMessage] = useState("");
 
@@ -19,7 +19,7 @@ export default function SignUpPage() {
     // 1. Sync Roles to Store
     setRoles(roles);
     setIsRedirecting(true);
-    
+
     // 2. Set Contextual Message
     const messages: Record<string, string> = {
       tenant: "Finding the best verified homes for you...",
@@ -28,7 +28,7 @@ export default function SignUpPage() {
       agent: "Configuring your agency tools...",
       caretaker: "Initializing maintenance management..."
     };
-    
+
     setActiveMessage(messages[roles[0]] || "Customizing your experience...");
 
     // 3. Navigate after transition effect
@@ -43,22 +43,22 @@ export default function SignUpPage() {
       {/* Creative Overlay */}
       <AnimatePresence>
         {isRedirecting && (
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center"
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               className="text-center"
             >
               <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 border-4 border-[#00853E]/20 border-t-[#00853E] rounded-full animate-spin" />
+                <div className="w-16 h-16 border-4 border-brand-green/20 border-t-brand-green rounded-full animate-spin" />
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Excellent Choice.</h2>
-              <p className="text-[#00853E] font-medium animate-pulse">{activeMessage}</p>
+              <p className="text-brand-green font-medium animate-pulse">{activeMessage}</p>
             </motion.div>
           </motion.div>
         )}
@@ -68,7 +68,7 @@ export default function SignUpPage() {
         <FadeIn direction="up">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Join <span className="text-[#00853E]">Help2Home</span>
+              Join <span className="text-brand-green">Help2Home</span>
             </h1>
             <p className="text-lg text-gray-600">
               Select your primary path to get started. You can add additional management roles later in your profile.
@@ -81,9 +81,9 @@ export default function SignUpPage() {
           <FadeIn direction="up">
             <button
               onClick={() => triggerCreativeRedirect(['tenant'])}
-              className="w-full bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#00853E]/30 transition-all flex flex-col items-start h-full group text-left"
+              className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
             >
-              <div className="mb-6 p-4 bg-[#00853E]/10 text-[#00853E] rounded-2xl group-hover:bg-[#00853E] group-hover:text-white transition-all duration-300">
+              <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
                 <MdHome size={32} />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">Tenant</h3>
@@ -97,9 +97,9 @@ export default function SignUpPage() {
           <FadeIn direction="up">
             <button
               onClick={() => triggerCreativeRedirect(['landlord'])} // Triggers immediately now
-              className="w-full bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#00853E]/30 transition-all flex flex-col items-start h-full group text-left"
+              className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
             >
-              <div className="mb-6 p-4 bg-[#00853E]/10 text-[#00853E] rounded-2xl group-hover:bg-[#00853E] group-hover:text-white transition-all duration-300">
+              <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
                 <MdApartment size={32} />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">Property Management</h3>
@@ -113,9 +113,9 @@ export default function SignUpPage() {
           <FadeIn direction="up">
             <button
               onClick={() => triggerCreativeRedirect(['investor'])}
-              className="w-full bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#00853E]/30 transition-all flex flex-col items-start h-full group text-left"
+              className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
             >
-              <div className="mb-6 p-4 bg-[#00853E]/10 text-[#00853E] rounded-2xl group-hover:bg-[#00853E] group-hover:text-white transition-all duration-300">
+              <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
                 <MdAttachMoney size={32} />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">Investor</h3>
@@ -129,7 +129,7 @@ export default function SignUpPage() {
         <div className="text-center mt-12">
           <p className="text-gray-500">
             Already have an account?{' '}
-            <a href="/signin" className="text-[#00853E] font-bold hover:underline ml-1">
+            <a href="/signin" className="text-brand-green font-bold hover:underline ml-1">
               Sign In
             </a>
           </p>

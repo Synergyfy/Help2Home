@@ -25,7 +25,7 @@ export default function PaymentTimeline({
     totalCount
 }: PaymentTimelineProps) {
     return (
-        <div className="bg-white rounded-2xl p-4 md:p-8 shadow-sm border border-gray-100 mb-8">
+        <div className="bg-white rounded-xl p-4 md:p-8 shadow-sm border border-gray-100 mb-8">
             <div className="mb-8">
                 <h3 className="text-xl font-bold text-gray-900">{title}</h3>
                 <p className="text-gray-500">{companyName}</p>
@@ -40,17 +40,17 @@ export default function PaymentTimeline({
                         <div key={item.id} className="flex flex-col items-center">
                             <div
                                 className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold mb-3 transition-colors
-                                    ${item.status === 'completed' ? 'bg-[#00853E] text-white' :
-                                        item.status === 'current' ? 'bg-[#00853E] text-white' :
+                                    ${item.status === 'completed' ? 'bg-brand-green text-white' :
+                                        item.status === 'current' ? 'bg-brand-green text-white' :
                                             'bg-[#6B46C1] text-white'}`}
                             >
                                 {item.id}
                             </div>
                             <div className="text-center">
-                                <span className={`block text-sm font-medium ${item.status === 'upcoming' ? 'text-[#6B46C1]' : 'text-[#00853E]'}`}>
+                                <span className={`block text-sm font-medium ${item.status === 'upcoming' ? 'text-[#6B46C1]' : 'text-brand-green'}`}>
                                     {item.month}
                                 </span>
-                                <span className={`block text-xl font-bold ${item.status === 'upcoming' ? 'text-[#6B46C1]' : 'text-[#00853E]'}`}>
+                                <span className={`block text-xl font-bold ${item.status === 'upcoming' ? 'text-[#6B46C1]' : 'text-brand-green'}`}>
                                     {item.day}
                                 </span>
                             </div>
@@ -62,8 +62,8 @@ export default function PaymentTimeline({
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
                     <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 rounded-full border-2 border-[#00853E] flex items-center justify-center">
-                            <div className="w-3 h-3 bg-[#00853E] rounded-full"></div>
+                        <div className="w-5 h-5 rounded-full border-2 border-brand-green flex items-center justify-center">
+                            <div className="w-3 h-3 bg-brand-green rounded-full"></div>
                         </div>
                         <span className="text-gray-600 text-sm">
                             {completedCount}/{totalCount} Milestones Completed
@@ -79,7 +79,7 @@ export default function PaymentTimeline({
                     </div>
                 </div>
 
-                <button className="w-full md:w-auto bg-[#00853E] text-white font-bold px-6 py-2.5 rounded-lg hover:bg-[#006c32] transition-colors">
+                <button className="w-full md:w-auto bg-brand-green text-white font-bold px-6 py-2.5 rounded-lg hover:bg-[#006c32] transition-colors">
                     Continue Payment
                 </button>
             </div>

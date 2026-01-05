@@ -100,7 +100,7 @@ export default function HeroSearch() {
                                     {slides[currentSlide].subhead}
                                 </p>
                                 <Link href="/marketplace">
-                                    <button className="bg-brand-green text-white px-6 md:px-8 py-3 rounded-md font-medium hover:bg-green-600 transition-colors shadow-lg text-base md:text-lg">
+                                    <button className="bg-brand-green text-white px-6 md:px-8 py-3 rounded-xl font-medium hover:bg-green-600 transition-colors shadow-lg text-base md:text-lg">
                                         {slides[currentSlide].cta}
                                     </button>
                                 </Link>
@@ -153,7 +153,7 @@ export default function HeroSearch() {
                                 Filters
                             </button>
                             <Link href="/marketplace" className="flex-1 md:flex-none">
-                                <button className="w-full bg-brand-green text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-all font-bold shadow-md flex items-center justify-center gap-2 active:scale-95">
+                                <button className="w-full bg-brand-green text-white px-8 py-3 rounded-xl hover:bg-green-600 transition-all font-bold shadow-md flex items-center justify-center gap-2 active:scale-95">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
                                     Search
                                 </button>

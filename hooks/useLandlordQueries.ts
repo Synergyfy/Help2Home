@@ -10,13 +10,23 @@ export function useCreateProperty() {
   const userId = useUserStore((state) => state.id); 
 
   return useMutation({
-    mutationFn: (data: Partial<Property>) => createProperty(data, userId),
+    // Changed to 'any' to accept PropertySchema from the wizard
+    mutationFn: (data: any) => createProperty(data, userId),
     onSuccess: () => {
+      // Invalidate everything to be safe during debugging
       queryClient.invalidateQueries({ queryKey: marketplaceKeys.all });
       
+      // Explicitly invalidate the user's specific list
       queryClient.invalidateQueries({ 
         queryKey: [...marketplaceKeys.all, 'mine', userId] 
       });
+
+      // Also invalidate the standard search query which might be used elsewhere
+      queryClient.invalidateQueries({
+        queryKey: [...marketplaceKeys.all, 'properties']
+      });
+      
+      console.log('[useCreateProperty] Cache invalidated for user:', userId);
     },
   });
 }
@@ -29,13 +39,9 @@ export function useLandlordProperties() {
   return useQuery({
     queryKey: [...marketplaceKeys.all, 'mine', userId],
     queryFn: async () => {
-      // Fetch all properties from the mock DB
-      const response = await searchProperties({});
-      
-      // Filter the list to only include properties created by the current user
-      return response.properties.filter(
-        (property) => property.createdBy === userId
-      );
+      // Fetch properties using the ownerId filter (so we get pagination correct for this user)
+      const response = await searchProperties({ ownerId: userId });
+      return response.properties;
     },
     // Only run the query if we actually have a userId
     enabled: !!userId,

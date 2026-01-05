@@ -1,13 +1,12 @@
 'use client';
 
 import React from 'react';
+import { useFormContext } from 'react-hook-form';
+import { PropertySchema } from '@/lib/validations/propertySchema';
 
-interface BasicsStepProps {
-    data: any;
-    updateData: (data: any) => void;
-}
+export default function BasicsStep() {
+    const { register, formState: { errors } } = useFormContext<PropertySchema>();
 
-export default function BasicsStep({ data, updateData }: BasicsStepProps) {
     return (
         <div className="space-y-6 max-w-3xl mx-auto">
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
@@ -21,11 +20,11 @@ export default function BasicsStep({ data, updateData }: BasicsStepProps) {
                         </label>
                         <input
                             type="text"
-                            value={data.title || ''}
-                            onChange={(e) => updateData({ title: e.target.value })}
+                            {...register('title')}
                             placeholder="e.g., Modern 2-Bedroom Apartment in Lekki Phase 1"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E]"
+                            className={`w-full px-4 py-2 border rounded-lg focus:ring-[#00853E] focus:border-[#00853E] ${errors.title ? 'border-red-500' : 'border-gray-300'}`}
                         />
+                        {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title.message}</p>}
                         <p className="text-xs text-gray-500 mt-1">Keep it short and descriptive — location and size help renters.</p>
                     </div>
 
@@ -36,9 +35,8 @@ export default function BasicsStep({ data, updateData }: BasicsStepProps) {
                                 Property Type <span className="text-red-500">*</span>
                             </label>
                             <select
-                                value={data.type || ''}
-                                onChange={(e) => updateData({ type: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E] bg-white"
+                                {...register('type')}
+                                className={`w-full px-4 py-2 border rounded-lg focus:ring-[#00853E] focus:border-[#00853E] bg-white ${errors.type ? 'border-red-500' : 'border-gray-300'}`}
                             >
                                 <option value="">Select type</option>
                                 <option value="Apartment">Apartment</option>
@@ -48,6 +46,7 @@ export default function BasicsStep({ data, updateData }: BasicsStepProps) {
                                 <option value="Detached House">Detached House</option>
                                 <option value="Commercial">Commercial</option>
                             </select>
+                            {errors.type && <p className="text-xs text-red-500 mt-1">{errors.type.message}</p>}
                         </div>
 
                         {/* Listing Type */}
@@ -59,10 +58,8 @@ export default function BasicsStep({ data, updateData }: BasicsStepProps) {
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
-                                        name="listingType"
                                         value="Rent"
-                                        checked={data.listingType === 'Rent'}
-                                        onChange={(e) => updateData({ listingType: e.target.value })}
+                                        {...register('listingType')}
                                         className="text-[#00853E] focus:ring-[#00853E]"
                                     />
                                     <span>For Rent</span>
@@ -70,10 +67,8 @@ export default function BasicsStep({ data, updateData }: BasicsStepProps) {
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
-                                        name="listingType"
                                         value="Sale"
-                                        checked={data.listingType === 'Sale'}
-                                        onChange={(e) => updateData({ listingType: e.target.value })}
+                                        {...register('listingType')}
                                         className="text-[#00853E] focus:ring-[#00853E]"
                                     />
                                     <span>For Sale</span>
@@ -96,16 +91,16 @@ export default function BasicsStep({ data, updateData }: BasicsStepProps) {
                         <div className="relative">
                             <input
                                 type="text"
-                                value={data.address?.street || ''}
-                                onChange={(e) => updateData({ address: { ...data.address, street: e.target.value } })}
+                                {...register('address.street')}
                                 placeholder="Start typing address..."
-                                className="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E]"
+                                className={`w-full pl-10 px-4 py-2 border rounded-lg focus:ring-[#00853E] focus:border-[#00853E] ${errors.address?.street ? 'border-red-500' : 'border-gray-300'}`}
                             />
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                         </div>
+                        {errors.address?.street && <p className="text-xs text-red-500 mt-1">{errors.address.street.message}</p>}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -113,19 +108,19 @@ export default function BasicsStep({ data, updateData }: BasicsStepProps) {
                             <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
                             <input
                                 type="text"
-                                value={data.address?.city || ''}
-                                onChange={(e) => updateData({ address: { ...data.address, city: e.target.value } })}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E]"
+                                {...register('address.city')}
+                                className={`w-full px-4 py-2 border rounded-lg focus:ring-[#00853E] focus:border-[#00853E] ${errors.address?.city ? 'border-red-500' : 'border-gray-300'}`}
                             />
+                            {errors.address?.city && <p className="text-xs text-red-500 mt-1">{errors.address.city.message}</p>}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
                             <input
                                 type="text"
-                                value={data.address?.state || ''}
-                                onChange={(e) => updateData({ address: { ...data.address, state: e.target.value } })}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E]"
+                                {...register('address.state')}
+                                className={`w-full px-4 py-2 border rounded-lg focus:ring-[#00853E] focus:border-[#00853E] ${errors.address?.state ? 'border-red-500' : 'border-gray-300'}`}
                             />
+                            {errors.address?.state && <p className="text-xs text-red-500 mt-1">{errors.address.state.message}</p>}
                         </div>
                     </div>
 

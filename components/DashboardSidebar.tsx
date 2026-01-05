@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useUserStore, Role } from '@/store/userStore'; 
+import { useUserStore, Role } from '@/store/userStore';
 import {
     MdDashboard, MdPerson, MdFavorite, MdDescription, MdHistory,
     MdPayment, MdSupportAgent, MdSettings, MdNotifications,
@@ -120,26 +120,26 @@ const NAV_CONFIG = {
 export default function DashboardSidebar({ isOpen = false, onClose }: { isOpen?: boolean, onClose?: () => void }) {
     const pathname = usePathname();
     const router = useRouter();
-    
+
     const { activeRole, resetUser } = useUserStore();
 
     // We prioritize the role in the URL to keep the UI consistent if a user deep-links
     const urlRole = pathname.split('/')[2] as Role;
     const currentRole = (urlRole && NAV_CONFIG[urlRole] ? urlRole : activeRole || 'tenant') as keyof typeof NAV_CONFIG;
-    
+
     const navItems = NAV_CONFIG[currentRole];
 
     const handleLogout = () => {
-        resetUser(); 
+        resetUser();
         toast.success('Signed out successfully');
-        router.replace('/signin'); 
+        router.replace('/signin');
     };
 
     return (
         <aside className={`
             fixed inset-y-0 left-0 z-40 
             w-64 m-4 
-            bg-[#00853E] text-white 
+            bg-brand-green text-white 
             rounded-2xl 
             transition-transform duration-300 ease-in-out
             flex flex-col shadow-2xl
@@ -166,11 +166,11 @@ export default function DashboardSidebar({ isOpen = false, onClose }: { isOpen?:
                             className={`
                                 flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group
                                 ${isActive
-                                    ? 'bg-white text-[#00853E] font-bold shadow-lg shadow-black/10'
+                                    ? 'bg-white text-brand-green font-bold shadow-lg shadow-black/10'
                                     : 'text-white/80 hover:bg-white/10 hover:text-white'}
                             `}
                         >
-                            <Icon size={20} className={isActive ? 'text-[#00853E]' : 'text-white/70 group-hover:text-white'} />
+                            <Icon size={20} className={isActive ? 'text-brand-green' : 'text-white/70 group-hover:text-white'} />
                             <span className="text-[13px] font-medium">{item.label}</span>
                         </Link>
                     );

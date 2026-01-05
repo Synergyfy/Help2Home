@@ -1,12 +1,12 @@
 'use client';
 
-import  { useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import {toast} from 'react-toastify'
+import { toast } from 'react-toastify'
 import { usePathname } from 'next/navigation';
 import { useUserStore } from '@/store/userStore';
-import NotificationBell from '@/components/dashboard/common/NotificationBell';
+import NotificationBell from '@/components/notifications/NotificationBell';
 
 interface DashboardHeaderProps {
     onMenuClick: () => void;
@@ -17,7 +17,7 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
 
     const router = useRouter()
-    
+
     // Get data directly from your store definition
     const { fullName, activeRole, email, resetUser, hasHydrated } = useUserStore();
 
@@ -95,14 +95,14 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
                                     <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Account</p>
                                     <p className="text-sm truncate text-gray-600">{email}</p>
                                 </div>
-                                
+
                                 <Link href={profileLink} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-green" onClick={() => setIsProfileOpen(false)}>
                                     My Profile
                                 </Link>
                                 <Link href={settingsLink} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-green" onClick={() => setIsProfileOpen(false)}>
                                     Settings
                                 </Link>
-                                
+
                                 <div className="border-t border-gray-100 my-1"></div>
                                 <button
                                     onClick={handleLogout}

@@ -2,10 +2,12 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { useLandlordProperties } from '@/hooks/useLandlordQueries';
+import { useUserStore, Role } from '@/store/userStore';
 import PropertiesTable from '@/components/dashboard/landlord/properties/PropertiesTable';
 import PropertyCard from '@/components/dashboard/landlord/properties/PropertyCard';
 import FilterBar from '@/components/dashboard/landlord/properties/FilterBar';
+import { Property } from '@/utils/properties';
+import { useLandlordProperties } from '@/hooks/useLandlordQueries';
 
 export default function PropertiesPage() {
     const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
@@ -17,7 +19,7 @@ export default function PropertiesPage() {
 
     const filteredProperties = useMemo(() => {
         return properties
-            .filter(property => {
+            .filter((property: Property) => {
                 // Search flat city and title
                 const matchesSearch =
                     property.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -26,7 +28,7 @@ export default function PropertiesPage() {
                 const matchesStatus = statusFilter === 'All' || property.status === statusFilter;
                 return matchesSearch && matchesStatus;
             })
-            .sort((a, b) => {
+            .sort((a: Property, b: Property) => {
                 const dateA = a.dateAdded ? new Date(a.dateAdded).getTime() : 0;
                 const dateB = b.dateAdded ? new Date(b.dateAdded).getTime() : 0;
                 return dateB - dateA;
@@ -39,6 +41,13 @@ export default function PropertiesPage() {
 
     return (
         <div className="space-y-6">
+            {/* DEBUGGING OUTPUT */}
+            <div className="bg-yellow-50 p-2 text-xs text-yellow-800 border border-yellow-200 rounded mb-4">
+                DEBUG: UserId from Store: "{useUserStore.getState().id}" |
+                Properties Fetched: {properties.length} |
+                IsLoading: {isLoading ? 'Yes' : 'No'}
+            </div>
+
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Properties</h1>
@@ -79,13 +88,13 @@ export default function PropertiesPage() {
                         />
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {filteredProperties.map(property => (
+                            {filteredProperties.map((property: Property) => (
                                 <PropertyCard
                                     key={property.id}
                                     property={property}
-                                    onDelete={() => {}}
-                                    onDuplicate={() => {}}
-                                    onToggleStatus={() => {}}
+                                    onDelete={() => { }}
+                                    onDuplicate={() => { }}
+                                    onToggleStatus={() => { }}
                                 />
                             ))}
                         </div>

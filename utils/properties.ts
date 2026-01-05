@@ -48,7 +48,7 @@ export type Property = {
   verified: boolean;
   isNew: boolean;         
   availableFrom?: string;
-  status?: 'available' | 'sold' | 'let-agreed';
+  status?: 'available' | 'sold' | 'let-agreed' | 'draft';
   keywords?: string[];
   views?: number;
   inquiries?: number;
@@ -81,7 +81,7 @@ export type Property = {
   hasReducedPrice: boolean;
   isUnderOffer: boolean;
 };
-export let mockProperties: Property[] = [
+const initialProperties: Property[] = [
   
   {
     id: 1,
@@ -458,7 +458,7 @@ export let mockProperties: Property[] = [
   },
   {
     id: 11,
-    createdBy: 'user_clt06multi006', // Morgan Multi
+    createdBy: 'user_clt02landlord002', // Lawrence Landlord
     title: "The Glass House - 5 Bed Detached",
     description: "A breathtaking smart home with a private cinema and elevator.",
     propertyType: 'buy', 
@@ -500,7 +500,7 @@ export let mockProperties: Property[] = [
   },
   {
     id: 12,
-    createdBy: 'user_clt06multi006', // Morgan Multi
+    createdBy: 'user_clt02landlord002', // Lawrence Landlord
     title: "3 Bedroom Modern Terrace",
     description: "Spacious terrace house in a gated, secure community.",
     propertyType: 'rent', 
@@ -537,10 +537,60 @@ export let mockProperties: Property[] = [
   },
 ];
 
+const STORAGE_KEY = 'help2home_properties_db_v1';
+export let mockProperties: Property[] = [...initialProperties];
+let isInitialized = false;
+
+const syncToStorage = () => {
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(mockProperties));
+    } catch (error) {
+      console.error('Failed to save properties to storage:', error);
+    }
+  }
+};
+
+const loadFromStorage = () => {
+  if (typeof window !== 'undefined' && !isInitialized) {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          console.log(`[PropertiesDB] Loaded ${parsed.length} properties from storage.`);
+          mockProperties = parsed;
+        } else {
+             // Storage exists but is empty/invalid? fall back to default
+             console.log('[PropertiesDB] Storage empty or invalid, using defaults.');
+             syncToStorage();
+        }
+      } else {
+        // First run: save defaults
+        console.log('[PropertiesDB] First run, initializing storage with defaults.');
+        syncToStorage();
+      }
+    } catch (error) {
+      console.error('Failed to load properties from storage:', error);
+    } finally {
+      isInitialized = true;
+    }
+  }
+};
+
 export const updateMockDb = (newData: Property[]) => {
   mockProperties = newData;
+  syncToStorage();
 };
 
 export const addPropertyToMockDb = (property: Property) => {
+  // Ensure we are up to date before adding
+  loadFromStorage();
   mockProperties = [property, ...mockProperties];
+  syncToStorage();
+};
+
+export const getMockProperties = () => {
+  loadFromStorage();
+  return mockProperties;
 };
