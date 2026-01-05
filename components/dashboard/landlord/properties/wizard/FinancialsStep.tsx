@@ -1,29 +1,32 @@
 'use client';
 
 import React from 'react';
-import { formatNumber, parseNumber } from '@/utils/helpers';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { PropertySchema } from '@/lib/validations/propertySchema';
+import { formatNumber } from '@/utils/helpers';
 
-interface FinancialsStepProps {
-    data: any;
-    updateData: (data: any) => void;
-}
+export default function FinancialsStep() {
+    const { register, setValue, formState: { errors } } = useFormContext<PropertySchema>();
 
-export default function FinancialsStep({ data, updateData }: FinancialsStepProps) {
-    const handleInstallmentToggle = (checked: boolean) => {
-        updateData({
-            installments: {
-                ...data.installments,
-                enabled: checked
-            }
-        });
-    };
+    // Watch values for live calculations
+    const price = useWatch({ name: 'price' });
+    const installments = useWatch({ name: 'installments' });
+    const listingType = useWatch({ name: 'listingType' });
 
     // Calculate dynamic values for the example box
-    const propertyPrice = data.price?.amount || 0;
-    const depositPercent = data.installments?.depositPercent || 0;
+    const propertyPrice = price?.amount || 0;
+    const depositPercent = installments?.depositPercent || 0;
     const upfrontDeposit = propertyPrice * (depositPercent / 100);
-    const selectedTenure = data.installments?.tenures?.[0] || 12;
+    const selectedTenure = installments?.tenures?.[0] || 12; // Just picking first for demo
     const monthlyPayment = propertyPrice > 0 ? (propertyPrice - upfrontDeposit) / selectedTenure : 0;
+
+    const handleTenureToggle = (month: number) => {
+        const currentTenures = installments?.tenures || [];
+        const newTenures = currentTenures.includes(month)
+            ? currentTenures.filter((m: number) => m !== month)
+            : [...currentTenures, month];
+        setValue('installments.tenures', newTenures);
+    };
 
     return (
         <div className="space-y-6 max-w-3xl mx-auto">
@@ -37,18 +40,22 @@ export default function FinancialsStep({ data, updateData }: FinancialsStepProps
                         </label>
                         <div className="relative">
                             <span className="absolute left-3 top-2 text-gray-500">
-                                {data.price?.currency === 'USD' ? '$' : '₦'}
+                                {price?.currency === 'USD' ? '$' : '₦'}
                             </span>
                             <input
                                 type="text"
-                                value={formatNumber(data.price?.amount || '')}
-                                onChange={(e) => updateData({ 
-                                    price: { ...data.price, amount: parseNumber(e.target.value) } 
-                                })}
                                 placeholder="0"
-                                className="w-full pl-8 px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E]"
+                                onChange={(e) => {
+                                    const val = e.target.value.replace(/,/g, '');
+                                    if (!isNaN(Number(val))) {
+                                        setValue('price.amount', Number(val));
+                                    }
+                                }}
+                                value={price?.amount ? formatNumber(price.amount) : ''}
+                                className={`w-full pl-8 px-4 py-2 border rounded-lg focus:ring-[#00853E] focus:border-[#00853E] ${errors.price?.amount ? 'border-red-500' : 'border-gray-300'}`}
                             />
                         </div>
+                        {errors.price?.amount && <p className="text-xs text-red-500 mt-1">{errors.price.amount.message}</p>}
                     </div>
 
                     <div>
@@ -56,8 +63,7 @@ export default function FinancialsStep({ data, updateData }: FinancialsStepProps
                             Currency
                         </label>
                         <select
-                            value={data.price?.currency || 'NGN'}
-                            onChange={(e) => updateData({ price: { ...data.price, currency: e.target.value } })}
+                            {...register('price.currency')}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E] bg-white"
                         >
                             <option value="NGN">Nigerian Naira (NGN)</option>
@@ -65,14 +71,13 @@ export default function FinancialsStep({ data, updateData }: FinancialsStepProps
                         </select>
                     </div>
 
-                    {data.listingType === 'Rent' && (
+                    {listingType === 'Rent' && (
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Payment Period
                             </label>
                             <select
-                                value={data.price?.period || 'year'}
-                                onChange={(e) => updateData({ price: { ...data.price, period: e.target.value } })}
+                                {...register('price.period')}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E] bg-white"
                             >
                                 <option value="year">Per Year</option>
@@ -93,15 +98,14 @@ export default function FinancialsStep({ data, updateData }: FinancialsStepProps
                     <label className="relative inline-flex items-center cursor-pointer">
                         <input
                             type="checkbox"
+                            {...register('installments.enabled')}
                             className="sr-only peer"
-                            checked={data.installments?.enabled || false}
-                            onChange={(e) => handleInstallmentToggle(e.target.checked)}
                         />
                         <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00853E]"></div>
                     </label>
                 </div>
 
-                {data.installments?.enabled && (
+                {installments?.enabled && (
                     <div className="space-y-4 pt-4 border-t border-gray-100 animate-fadeIn">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -111,8 +115,7 @@ export default function FinancialsStep({ data, updateData }: FinancialsStepProps
                                 type="number"
                                 min="0"
                                 max="100"
-                                value={data.installments?.depositPercent || ''}
-                                onChange={(e) => updateData({ installments: { ...data.installments, depositPercent: Number(e.target.value) } })}
+                                {...register('installments.depositPercent', { valueAsNumber: true })}
                                 className="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E]"
                             />
                             <p className="text-xs text-gray-500 mt-1">Percentage of total rent required upfront.</p>
@@ -127,14 +130,8 @@ export default function FinancialsStep({ data, updateData }: FinancialsStepProps
                                     <label key={months} className="flex items-center gap-2 cursor-pointer border p-3 rounded-lg hover:bg-gray-50">
                                         <input
                                             type="checkbox"
-                                            checked={data.installments?.tenures?.includes(months) || false}
-                                            onChange={(e) => {
-                                                const current = data.installments?.tenures || [];
-                                                const updated = e.target.checked
-                                                    ? [...current, months]
-                                                    : current.filter((m: number) => m !== months);
-                                                updateData({ installments: { ...data.installments, tenures: updated } });
-                                            }}
+                                            checked={installments.tenures?.includes(months) || false}
+                                            onChange={() => handleTenureToggle(months)}
                                             className="text-[#00853E] focus:ring-[#00853E]"
                                         />
                                         <span>{months} Months</span>
@@ -145,10 +142,10 @@ export default function FinancialsStep({ data, updateData }: FinancialsStepProps
 
                         {/* Updated Dynamic Example Calculation */}
                         <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-800">
-                            <strong>Live Breakdown:</strong> Based on {data.price?.currency || 'NGN'} {formatNumber(propertyPrice)}
+                            <strong>Live Breakdown:</strong> Based on {price?.currency || 'NGN'} {formatNumber(propertyPrice)}
                             <ul className="list-disc list-inside mt-1 ml-2">
-                                <li>Upfront Deposit ({depositPercent}%): {data.price?.currency === 'USD' ? '$' : '₦'}{formatNumber(upfrontDeposit)}</li>
-                                <li>Monthly Payment ({selectedTenure} months): {data.price?.currency === 'USD' ? '$' : '₦'}{formatNumber(Math.round(monthlyPayment))}</li>
+                                <li>Upfront Deposit ({depositPercent}%): {price?.currency === 'USD' ? '$' : '₦'}{formatNumber(upfrontDeposit)}</li>
+                                <li>Monthly Payment ({selectedTenure} months): {price?.currency === 'USD' ? '$' : '₦'}{formatNumber(Math.round(monthlyPayment))}</li>
                             </ul>
                         </div>
                     </div>

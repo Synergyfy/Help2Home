@@ -1,53 +1,70 @@
 'use client';
 
 import React from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { PropertySchema } from '@/lib/validations/propertySchema';
 
-interface MediaStepProps {
-    data: any;
-    updateData: (data: any) => void;
+interface ImageItem {
+    id: string;
+    url: string;
+    isPrimary: boolean;
+    file?: File;
 }
 
-export default function MediaStep({ data, updateData }: MediaStepProps) {
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // Mock upload logic - in real app would upload to server
-        if (e.target.files && e.target.files.length > 0) {
-            const newImages = Array.from(e.target.files).map((file, index) => ({
-                id: `new-${Date.now()}-${index}`,
-                url: URL.createObjectURL(file),
-                isPrimary: (data.images?.length || 0) === 0 && index === 0, // First image is primary if none exist
-                file: file
-            }));
+export default function MediaStep() {
+    const { setValue, formState: { errors } } = useFormContext<PropertySchema>();
+    
+    const images = (useWatch({ name: 'images' }) || []) as ImageItem[];
 
-            updateData({
-                images: [...(data.images || []), ...newImages]
+    const convertToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = error => reject(error);
+        });
+    };
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const files = Array.from(e.target.files);
+
+            const newImagePromises = files.map(async (file, index) => {
+                const base64 = await convertToBase64(file);
+                return {
+                    id: `new-${Date.now()}-${index}`,
+                    url: base64,
+                    isPrimary: images.length === 0 && index === 0,
+                    file: file
+                };
             });
+
+            const newImages = await Promise.all(newImagePromises);
+            setValue('images', [...images, ...newImages], { shouldValidate: true });
         }
     };
 
     const removeImage = (id: string) => {
-        updateData({
-            images: data.images.filter((img: any) => img.id !== id)
-        });
+        const updated = images.filter((img) => img.id !== id);
+        setValue('images', updated, { shouldValidate: true });
     };
 
     const setPrimary = (id: string) => {
-        updateData({
-            images: data.images.map((img: any) => ({
-                ...img,
-                isPrimary: img.id === id
-            }))
-        });
+        const updated = images.map(img => ({
+            ...img,
+            isPrimary: img.id === id
+        }));
+        setValue('images', updated, { shouldValidate: true });
     };
 
     return (
         <div className="space-y-6 max-w-3xl mx-auto">
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className={`bg-white p-6 rounded-xl shadow-sm border ${errors.images ? 'border-red-500' : 'border-gray-100'}`}>
                 <h2 className="text-xl font-bold text-gray-900 mb-2">Photos & Media</h2>
                 <p className="text-sm text-gray-500 mb-6">
                     Upload high-quality photos to attract more tenants. At least one photo is required.
                 </p>
 
-                {/* Upload Area */}
                 <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-gray-50 transition-colors cursor-pointer relative">
                     <input
                         type="file"
@@ -62,18 +79,18 @@ export default function MediaStep({ data, updateData }: MediaStepProps) {
                     <p className="text-gray-900 font-medium">Click to upload or drag and drop</p>
                     <p className="text-xs text-gray-500 mt-1">SVG, PNG, JPG or GIF (max. 10MB)</p>
                 </div>
+                {errors.images && <p className="text-xs text-red-500 mt-2 text-center">{errors.images.message}</p>}
 
-                {/* Image Grid */}
-                {data.images && data.images.length > 0 && (
+                {images.length > 0 && (
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
-                        {data.images.map((image: any) => (
+                        {images.map((image) => (
                             <div key={image.id} className="relative group rounded-lg overflow-hidden border border-gray-200 aspect-[4/3]">
                                 <img src={image.url} alt="Property" className="w-full h-full object-cover" />
 
-                                {/* Overlay Actions */}
                                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
                                     <div className="flex justify-end">
                                         <button
+                                            type="button"
                                             onClick={() => removeImage(image.id)}
                                             className="p-1 bg-white rounded-full text-red-600 hover:bg-red-50"
                                         >
@@ -88,6 +105,7 @@ export default function MediaStep({ data, updateData }: MediaStepProps) {
                                             <span className="bg-[#00853E] text-white text-xs px-2 py-1 rounded-full">Cover Photo</span>
                                         ) : (
                                             <button
+                                                type="button"
                                                 onClick={() => setPrimary(image.id)}
                                                 className="bg-white/90 text-gray-800 text-xs px-3 py-1 rounded-full hover:bg-white"
                                             >

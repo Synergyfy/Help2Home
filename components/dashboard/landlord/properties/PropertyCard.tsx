@@ -12,7 +12,7 @@ interface PropertyCardProps {
 }
 
 export default function PropertyCard({ property, onDelete }: PropertyCardProps) {
-    
+
     const formatPrice = (price: number, currency: string = 'NGN') => {
         return new Intl.NumberFormat('en-NG', {
             style: 'currency',
@@ -35,17 +35,17 @@ export default function PropertyCard({ property, onDelete }: PropertyCardProps) 
             <div className="h-48 w-full bg-gray-200 relative">
                 {/* Image Handling for flat string array */}
                 {property.images && property.images[0] ? (
-                    <img 
-                        className="h-full w-full object-cover absolute inset-0" 
-                        src={property.images[0]} 
-                        alt={property.title} 
+                    <img
+                        className="h-full w-full object-cover absolute inset-0"
+                        src={property.images[0]}
+                        alt={property.title}
                     />
                 ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-gray-400">
                         No Image
                     </div>
                 )}
-                
+
                 <div className="absolute top-3 right-3">
                     <span className={`px-2 py-1 text-[10px] font-bold uppercase rounded-lg shadow-sm ${getStatusColor(property.status)}`}>
                         {property.status || 'available'}
@@ -81,7 +81,7 @@ export default function PropertyCard({ property, onDelete }: PropertyCardProps) 
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <span className="text-[#00853E] font-bold">
+                    <span className="text-brand-green font-bold">
                         {formatPrice(property.price, property.currency)}
                     </span>
                     <div className="flex gap-1">

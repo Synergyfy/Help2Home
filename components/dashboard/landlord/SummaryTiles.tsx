@@ -21,7 +21,7 @@ export default function SummaryTiles({ tiles }: { tiles: SummaryTileData[] }) {
 
                     <div className="flex flex-col h-full justify-between">
                         <div>
-                            <p className="text-3xl font-bold text-gray-900 mb-1 group-hover:text-[#00853E] transition-colors">
+                            <p className="text-3xl font-bold text-gray-900 mb-1 group-hover:text-brand-green transition-colors">
                                 {tile.value}
                             </p>
                             <p className="text-sm font-medium text-gray-700">{tile.label}</p>

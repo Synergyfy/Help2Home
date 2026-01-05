@@ -29,6 +29,7 @@ export const useAuth = () => {
     onSuccess: (data: MockUserResponse) => {
       // 1. Sync User Session
       setUser({
+        id: data.user.id,
         email: data.user.email,
         fullName: data.user.fullName,
         phone: data.user.phone,

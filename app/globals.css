@@ -1,7 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-green: #16a34a;
+  --color-brand-green: #00853E;
+  --color-brand-green-hover: #006837;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
 :root {
@@ -12,5 +15,5 @@
 body {
   color: var(--foreground);
   background: var(--background);
+  font-family: var(--font-sans);
 }
-

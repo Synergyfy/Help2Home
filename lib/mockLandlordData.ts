@@ -148,3 +148,85 @@ export const MOCK_VERIFICATION: VerificationItem[] = [
     { id: 'license', label: 'Agency license', status: 'missing' }, 
 ];
 
+export interface Tenant {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    propertyId: string;
+    propertyName: string;
+    status: 'Active' | 'Past' | 'Evicted';
+    rentAmount: number;
+    leaseStart: string;
+    leaseEnd: string;
+    paymentStatus: 'Up to date' | 'Late' | 'Pending';
+    avatarUrl?: string;
+}
+
+export const MOCK_TENANTS: Tenant[] = [
+    {
+        id: 't1',
+        name: 'Jane Doe',
+        email: 'jane.doe@example.com',
+        phone: '+234 801 111 2222',
+        propertyId: '1',
+        propertyName: 'The Glass House - 5 Bed Detached',
+        status: 'Active',
+        rentAmount: 1500000,
+        leaseStart: '2023-01-01',
+        leaseEnd: '2024-01-01',
+        paymentStatus: 'Up to date'
+    },
+    {
+        id: 't2',
+        name: 'John Smith',
+        email: 'john.smith@example.com',
+        phone: '+234 802 222 3333',
+        propertyId: '3',
+        propertyName: '3 Bedroom Modern Terrace',
+        status: 'Active',
+        rentAmount: 375000,
+        leaseStart: '2023-06-01',
+        leaseEnd: '2024-06-01',
+        paymentStatus: 'Late'
+    },
+    {
+        id: 't3',
+        name: 'Michael Brown',
+        email: 'mike.brown@example.com',
+        phone: '+234 803 333 4444',
+        propertyId: '5',
+        propertyName: 'VI Executive Staff Quarters',
+        status: 'Past',
+        rentAmount: 2900000,
+        leaseStart: '2022-01-01',
+        leaseEnd: '2023-01-01',
+        paymentStatus: 'Up to date'
+    },
+    {
+        id: 't4',
+        name: 'Sarah Connor',
+        email: 'sarah.c@example.com',
+        phone: '+234 804 444 5555',
+        propertyId: '6',
+        propertyName: 'The Penthouse Short-Let',
+        status: 'Active',
+        rentAmount: 4000000,
+        leaseStart: '2023-09-01',
+        leaseEnd: '2024-09-01',
+        paymentStatus: 'Up to date'
+    },
+    {
+        id: 't5',
+        name: 'David Wilson',
+        email: 'david.w@example.com',
+        phone: '+234 805 555 6666',
+        propertyId: '2',
+        propertyName: 'Apex Corporate Plaza',
+        status: 'Active',
+        rentAmount: 500000,
+        leaseStart: '2023-03-15',
+        leaseEnd: '2025-03-15',
+        paymentStatus: 'Pending'
+    }
+];

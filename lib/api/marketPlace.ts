@@ -1,4 +1,4 @@
-import { mockProperties as allProperties,updateMockDb,Property,} from '@/utils/properties';
+import { mockProperties as _unused, updateMockDb, Property, getMockProperties } from '@/utils/properties';
 
 export interface Location {
   id: string;
@@ -47,8 +47,10 @@ export interface SearchFilters {
   offPlan?: 'include' | 'exclude' | 'only';  
   
   addedToZoopla?: string;
+  ownerId?: string;
 }
 
+// ... (PropertySearchResult interface)
 export interface PropertySearchResult {
   properties: Property[];
   total: number;
@@ -61,6 +63,8 @@ export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, 
 export async function fetchLocations(query?: string): Promise<Location[]> {
   await delay(200);
   const locationMap = new Map<string, Location>();
+
+  const allProperties = getMockProperties();
 
   allProperties.forEach(property => {
     const areaKey = `area-${property.location}`;
@@ -97,8 +101,21 @@ export async function searchProperties(
 ): Promise<PropertySearchResult> {
   await delay(400);
 
-  
- let filtered = [...allProperties];
+  const allProperties = getMockProperties();
+  let filtered = [...allProperties];
+  console.log('[searchProperties] Total properties in mock DB:', allProperties.length);
+  console.log('[searchProperties] Filters:', filters);
+
+  // 0. Owner Filter (Critical for Landlord Dashboard)
+  if (filters.ownerId) {
+    console.log(`[searchProperties] Filtering by ownerId: '${filters.ownerId}'`);
+    filtered = filtered.filter(p => {
+        const match = p.createdBy === filters.ownerId;
+        console.log(`[searchProperties] Checking p.id=${p.id} createdBy='${p.createdBy}' vs filter='${filters.ownerId}' -> match=${match}`);
+        return match;
+    });
+    console.log(`[searchProperties] Post-owner-filter count: ${filtered.length}`);
+  }
 
   // Modify Section 1: Basic Filters
   if (filters.propertyType && filters.propertyType !== 'all' as any) {
@@ -199,11 +216,13 @@ export async function searchProperties(
 
 export async function fetchPropertyById(id: number): Promise<Property | null> {
   await delay(200);
+  const allProperties = getMockProperties();
   return allProperties.find(p => p.id === id) || null;
 }
 
 export async function fetchFeaturedProperties(limit: number = 3, propertyType?: string): Promise<Property[]> {
   await delay(200);
+  const allProperties = getMockProperties();
   let featured = allProperties.filter(p => p.featured);
   if (propertyType) featured = featured.filter(p => p.propertyType === propertyType);
   return featured.slice(0, limit);
@@ -211,6 +230,7 @@ export async function fetchFeaturedProperties(limit: number = 3, propertyType?: 
 
 export async function fetchPriceStats(location: string) {
   await delay(200);
+  const allProperties = getMockProperties();
   const props = allProperties.filter(p => p.city.toLowerCase() === location.toLowerCase());
   if (props.length === 0) return null;
   const avg = props.reduce((acc, p) => acc + p.price, 0) / props.length;
@@ -220,16 +240,15 @@ export async function fetchPriceStats(location: string) {
 export async function updateProperty(id: number, updates: Partial<Property>): Promise<Property> {
   await delay(800);
   
+  const allProperties = getMockProperties();
   const index = allProperties.findIndex(p => p.id === id);
   if (index === -1) throw new Error("Property not found");
 
   const updatedProperty = { ...allProperties[index], ...updates };
   
-  // Update the "Database"
   const newDb = [...allProperties];
   newDb[index] = updatedProperty;
   updateMockDb(newDb);
 
   return updatedProperty;
 }
-

@@ -2,11 +2,11 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { mockProperties } from '@/utils/properties';
+import { getMockProperties } from '@/utils/properties';
 
 export default function PropertyDetailsPage({ params }: { params: { id: string } }) {
     // Find property by ID or fallback
-    const property = mockProperties.find(p => p.id.toString() === params.id) || mockProperties[0];
+    const property = getMockProperties().find(p => p.id.toString() === params.id) || getMockProperties()[0];
 
     // Updated to handle flat price number and currency
     const formatPrice = (price: number, currency: string = 'NGN') => {

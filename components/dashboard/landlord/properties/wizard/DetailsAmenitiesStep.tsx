@@ -1,11 +1,9 @@
 'use client';
 
+import React from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { PropertySchema } from '@/lib/validations/propertySchema';
 import InfoIcon from '@/components/lib/InfoIcon';
-
-interface DetailsAmenitiesStepProps {
-    data: any;
-    updateData: (data: any) => void;
-}
 
 const AMENITIES_LIST = [
     'Water Supply', 'Electricity (24/7)', 'Security', 'Gated Estate',
@@ -14,13 +12,15 @@ const AMENITIES_LIST = [
     'Garden', 'Boys Quarters (BQ)', 'CCTV', 'Waste Disposal'
 ];
 
-export default function DetailsAmenitiesStep({ data, updateData }: DetailsAmenitiesStepProps) {
+export default function DetailsAmenitiesStep() {
+    const { register, setValue } = useFormContext<PropertySchema>();
+    const amenities = useWatch({ name: 'amenities' }) || [];
+
     const toggleAmenity = (amenity: string) => {
-        const current = data.amenities || [];
-        const updated = current.includes(amenity)
-            ? current.filter((a: string) => a !== amenity)
-            : [...current, amenity];
-        updateData({ amenities: updated });
+        const updated = amenities.includes(amenity)
+            ? amenities.filter((a: string) => a !== amenity)
+            : [...amenities, amenity];
+        setValue('amenities', updated, { shouldDirty: true, shouldValidate: true });
     };
 
     return (
@@ -34,8 +34,7 @@ export default function DetailsAmenitiesStep({ data, updateData }: DetailsAmenit
                         <input
                             type="number"
                             min="0"
-                            value={data.specs?.bedrooms || ''}
-                            onChange={(e) => updateData({ specs: { ...data.specs, bedrooms: Number(e.target.value) } })}
+                            {...register('specs.bedrooms', { valueAsNumber: true })}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E]"
                         />
                     </div>
@@ -45,42 +44,38 @@ export default function DetailsAmenitiesStep({ data, updateData }: DetailsAmenit
                             type="number"
                             min="0"
                             step="0.5"
-                            value={data.specs?.bathrooms || ''}
-                            onChange={(e) => updateData({ specs: { ...data.specs, bathrooms: Number(e.target.value) } })}
+                            {...register('specs.bathrooms', { valueAsNumber: true })}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E]"
                         />
                     </div>
                     <div>
                         <div>
-                        <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
-                            Area Size
-                            <InfoIcon tooltip="This represents the total interior floor space or land area. While Square Meters (sqm) is the local standard, Square Feet (sqft) is often used internationally. 1 sqm is roughly 11 times larger than 1 sqft" />
-                        </label>
-                        <div className="flex">
-                            <input
-                                type="number"
-                                min="0"
-                                value={data.specs?.area || ''}
-                                onChange={(e) => updateData({ specs: { ...data.specs, area: Number(e.target.value) } })}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-[#00853E] focus:border-[#00853E]"
-                                placeholder="0"
-                            />
-                            <select
-                                value={data.specs?.areaUnit || 'sqm'}
-                                onChange={(e) => updateData({ specs: { ...data.specs, areaUnit: e.target.value } })}
-                                className="border-l-0 border border-gray-300 rounded-r-lg px-3 bg-gray-50 text-gray-600 focus:outline-none"
-                            >
-                                <option value="sqm">sqm</option>
-                                <option value="sqft">sqft</option>
-                            </select>
+                            <label className="flex items-center text-sm font-medium text-gray-700 mb-1">
+                                Area Size
+                                <InfoIcon tooltip="This represents the total interior floor space or land area. While Square Meters (sqm) is the local standard, Square Feet (sqft) is often used internationally. 1 sqm is roughly 11 times larger than 1 sqft" />
+                            </label>
+                            <div className="flex">
+                                <input
+                                    type="number"
+                                    min="0"
+                                    {...register('specs.area', { valueAsNumber: true })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-[#00853E] focus:border-[#00853E]"
+                                    placeholder="0"
+                                />
+                                <select
+                                    {...register('specs.areaUnit')}
+                                    className="border-l-0 border border-gray-300 rounded-r-lg px-3 bg-gray-50 text-gray-600 focus:outline-none"
+                                >
+                                    <option value="sqm">sqm</option>
+                                    <option value="sqft">sqft</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Furnishing</label>
                         <select
-                            value={data.specs?.furnishing || ''}
-                            onChange={(e) => updateData({ specs: { ...data.specs, furnishing: e.target.value } })}
+                            {...register('specs.furnishing')}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E] bg-white"
                         >
                             <option value="">Select...</option>
@@ -101,7 +96,7 @@ export default function DetailsAmenitiesStep({ data, updateData }: DetailsAmenit
                         <label key={amenity} className="flex items-center gap-2 cursor-pointer p-2 hover:bg-gray-50 rounded-lg">
                             <input
                                 type="checkbox"
-                                checked={data.amenities?.includes(amenity) || false}
+                                checked={amenities.includes(amenity)}
                                 onChange={() => toggleAmenity(amenity)}
                                 className="rounded text-[#00853E] focus:ring-[#00853E]"
                             />
