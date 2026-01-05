@@ -21,7 +21,7 @@ export const propertySchema = z.object({
     areaUnit: z.enum(['sqm', 'sqft']).optional(),
     furnishing: z.string().optional(),
   }),
-  amenities: z.array(z.string()).default([]),
+  amenities: z.array(z.string()),
   images: z.array(z.object({
     id: z.string(),
     url: z.string(), // This will store the Base64 string

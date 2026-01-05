@@ -136,7 +136,7 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
                 </div>
 
                 <div className="min-h-[400px]">
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                    <form onSubmit={handleSubmit(onSubmit as SubmitHandler<PropertySchema>)}>
                         {renderStep()}
                     </form>
                 </div>
