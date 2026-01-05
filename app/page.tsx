@@ -29,7 +29,7 @@ export default function Home() {
           title="See What You Can Earn as a Landlord"
           description="Determine your property investment potential based on your budget and target ROI."
           placeholder="Enter Investment Budget (₦)"
-          redirectPath="/landlord-earning-calculator"
+          redirectPath="/landlord-earnings-calculator"
         />
         <FeaturesGrid />
         <Testimonials />

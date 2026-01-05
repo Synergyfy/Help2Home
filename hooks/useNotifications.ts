@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { useUserStore } from '@/store/userStore';
 import { useNotificationStore } from '@/store/notificationStore';
 import {
@@ -35,10 +36,12 @@ export const useNotifications = () => {
     retry: 2,
   });
 
-  // Update last fetched timestamp when data changes
-  if (query.data && query.dataUpdatedAt) {
-    setLastFetchedAt(query.dataUpdatedAt);
-  }
+  // Update last fetched timestamp when data changes (wrapped in useEffect to prevent infinite loop)
+  useEffect(() => {
+    if (query.data && query.dataUpdatedAt) {
+      setLastFetchedAt(query.dataUpdatedAt);
+    }
+  }, [query.dataUpdatedAt, setLastFetchedAt]);
 
   // Filter out dismissed notifications and add read status
   const notifications: (Notification & { isRead: boolean })[] = (query.data || [])
