@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation'
 import { useUserStore } from '@/store/userStore';
 import { useDashboardStore } from '@/store/dashboardStore';
 import { useDashboardData } from '@/hooks/UseDashboardData';
+import { useApplications } from '@/hooks/useApplications';
+import { Application } from '@/store/applicationStore';
 
 // UI Components
 import SummaryTiles from './SummaryTiles';
@@ -18,16 +20,14 @@ import HelpSupport from './HelpSupport';
 export default function LandlordDashboard() {
   const { activeRole, hasHydrated } = useUserStore();
   const { dateRange, setFilters } = useDashboardStore();
-
   const { data, isPending, isError } = useDashboardData();
+  const { applications, isLoading: appsLoading } = useApplications();
 
   const router = useRouter();
 
-
-
   if (!hasHydrated) return null;
 
-  if (isPending) {
+  if (isPending || appsLoading) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center">
         <div className="w-12 h-12 border-4 border-brand-green/20 border-t-brand-green rounded-full animate-spin mb-4" />
@@ -39,6 +39,23 @@ export default function LandlordDashboard() {
   }
 
   if (isError) return <div className="p-10 text-red-500">Failed to load {activeRole} data.</div>;
+
+  // Derive application stats for landlord
+  const pendingAppsCount = applications.filter((a: Application) => a.status === 'Pending' || a.status === 'Under Review').length;
+
+  const enrichedSummary = [
+    ...(data?.summary || []),
+    {
+      id: 'applications-stat',
+      label: 'Pending Applications',
+      value: pendingAppsCount.toString(),
+      subtitle: pendingAppsCount > 0 ? 'Needs review' : 'All caught up',
+      trend: pendingAppsCount > 0 ? 'up' : 'neutral',
+      trendValue: pendingAppsCount > 0 ? 'New' : '',
+      status: pendingAppsCount > 0 ? 'warning' : 'neutral',
+      link: '/dashboard/landlord/applications'
+    }
+  ];
 
   return (
     <div className="pb-12">
@@ -56,7 +73,7 @@ export default function LandlordDashboard() {
       </div>
 
       {/* Summary Tiles */}
-      <SummaryTiles tiles={data.summary} />
+      <SummaryTiles tiles={enrichedSummary} />
 
       {/* Main Layout Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">

@@ -45,6 +45,8 @@ const NAV_CONFIG = {
 
         { label: 'Tenants', href: '/dashboard/landlord/tenants', icon: MdGroup },
 
+        { label: 'Applications', href: '/dashboard/landlord/applications', icon: MdAssignment },
+
         { label: 'Payments', href: '/dashboard/landlord/payments', icon: MdPayment },
 
         { label: 'Contracts', href: '/dashboard/landlord/contracts', icon: MdDescription },

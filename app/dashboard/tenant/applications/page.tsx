@@ -4,29 +4,19 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-// Mock data for applications list
-const applications = [
-    {
-        id: 'A-000123',
-        propertyTitle: 'Sunnyvale Apartments',
-        propertyAddress: '15, Admiralty Way, Lekki Phase 1, Lagos',
-        propertyImage: '/assets/marketplace assets/Home2.png',
-        status: 'Under Review',
-        submittedDate: 'Mar 1, 2026',
-        progress: 35,
-    },
-    {
-        id: 'A-000124',
-        propertyTitle: 'Greenwood Estate',
-        propertyAddress: '22, Orchid Road, Chevron, Lagos',
-        propertyImage: '/assets/marketplace assets/Home3.png',
-        status: 'Draft',
-        submittedDate: 'Not submitted',
-        progress: 10,
-    }
-];
+import { useApplications } from '@/hooks/useApplications';
 
 export default function ApplicationsListPage() {
+    const { applications, isLoading } = useApplications();
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6D28D9]"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="p-4 md:p-8 font-sans min-h-screen bg-gray-50">
             <div className="max-w-5xl mx-auto">
@@ -70,14 +60,15 @@ export default function ApplicationsListPage() {
                                                 <h3 className="font-bold text-lg text-gray-900">{app.propertyTitle}</h3>
                                                 <p className="text-sm text-gray-500">{app.propertyAddress}</p>
                                             </div>
-                                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${app.status === 'Under Review' ? 'bg-purple-100 text-[#6D28D9]' :
+                                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${app.status === 'Under Review' || app.status === 'Pending' ? 'bg-purple-100 text-[#6D28D9]' :
                                                 app.status === 'Draft' ? 'bg-gray-100 text-gray-600' :
-                                                    'bg-green-100 text-green-700'
+                                                    app.status === 'Rejected' ? 'bg-red-100 text-red-700' :
+                                                        'bg-green-100 text-green-700'
                                                 }`}>
                                                 {app.status}
                                             </span>
                                         </div>
-                                        <p className="text-xs text-gray-400 mt-2">Application ID: {app.id} • Submitted: {app.submittedDate}</p>
+                                        <p className="text-xs text-gray-400 mt-2">Application ID: {app.id} • Submitted: {app.submittedAt ? new Date(app.submittedAt).toLocaleDateString() : 'Not submitted'}</p>
                                     </div>
 
                                     <div className="mt-4">

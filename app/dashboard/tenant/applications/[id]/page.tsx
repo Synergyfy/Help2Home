@@ -11,6 +11,8 @@ import RepaymentScheduleSummary from '@/components/dashboard/application/Repayme
 import ActivityLog from '@/components/dashboard/application/ActivityLog';
 import PropertyQuickCard from '@/components/dashboard/application/PropertyQuickCard';
 import { ApplicationDetails, ApplicationDocument } from '@/components/dashboard/application/types';
+import { useApplications } from '@/hooks/useApplications';
+import { Application } from '@/store/applicationStore';
 import BankRedirectModal from '@/components/dashboard/bank/BankRedirectModal';
 import BankInterstitial from '@/components/dashboard/bank/BankInterstitial';
 import { initiateBankRedirect, checkBankStatus, manualConfirmBank } from '@/utils/mockBankApi';
@@ -18,28 +20,27 @@ import { initiateBankRedirect, checkBankStatus, manualConfirmBank } from '@/util
 export default function ApplicationStatusPage() {
     const params = useParams();
     const applicationId = params.id as string;
-
-    // --- Mock Data ---
+    const { applications, isLoading: appsLoading } = useApplications();
     const [application, setApplication] = useState<ApplicationDetails | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Simulate API fetch
-        setTimeout(() => {
+        const found = applications.find((a: Application) => a.id === applicationId);
+        if (found) {
+            // Map the store Application type to the UI-required ApplicationDetails type
             setApplication({
-                id: applicationId || 'A-000123',
-                propertyId: 'prop_123',
-                propertyName: 'Sunnyvale Apartments',
-                propertyAddress: '15, Admiralty Way, Lekki Phase 1, Lagos',
-                propertyImage: '/assets/marketplace assets/Home4.png',
-                landlordName: 'Lekki Gardens Ltd',
-                currentStatus: 'Under Review',
-                progressPercent: 35,
-                lastUpdated: 'Mar 3, 2026 at 10:34 AM',
+                id: found.id,
+                propertyId: found.propertyId,
+                propertyName: found.propertyTitle,
+                propertyAddress: found.propertyAddress,
+                propertyImage: found.propertyImage,
+                landlordName: 'Lekki Gardens Ltd', 
+                currentStatus: found.status as any,
+                progressPercent: found.progress,
+                lastUpdated: found.submittedAt ? new Date(found.submittedAt).toLocaleString() : 'Just now',
                 timeline: [
-                    { id: '1', title: 'Application Submitted', status: 'Completed', responsibleParty: 'Tenant', timestamp: 'Mar 1, 2026' },
-                    { id: '2', title: 'Under Review', status: 'In Progress', responsibleParty: 'Help2Home', timestamp: 'Mar 2, 2026' },
-                    { id: '3', title: 'Bank Approval', status: 'Pending', responsibleParty: 'Bank' },
+                    { id: '1', title: 'Application Submitted', status: 'Completed', responsibleParty: 'Tenant', timestamp: found.submittedAt ? new Date(found.submittedAt).toLocaleDateString() : '' },
+                    { id: '2', title: 'Under Review', status: found.status === 'Under Review' || found.status === 'Approved' ? 'Completed' : 'In Progress', responsibleParty: 'Help2Home', timestamp: found.status === 'Under Review' ? 'Today' : '' },
+                    { id: '3', title: 'Bank Approval', status: found.status === 'Approved' ? 'In Progress' : 'Pending', responsibleParty: 'Bank' },
                     { id: '4', title: 'Funded', status: 'Pending', responsibleParty: 'Bank' },
                     { id: '5', title: 'Active', status: 'Pending', responsibleParty: 'Tenant' },
                     { id: '6', title: 'Completed', status: 'Pending', responsibleParty: 'Tenant' },
@@ -51,32 +52,30 @@ export default function ApplicationStatusPage() {
                 ],
                 contract: {
                     id: 'c_123',
-                    applicationId: applicationId || 'A-000123',
+                    applicationId: found.id,
                     name: 'Tenancy Agreement',
-                    parties: ['Mercy Okoli', 'Lekki Gardens Ltd'],
-                    rentAmount: 3500000,
-                    tenure: '12 Months',
+                    parties: [found.tenantName, 'Lekki Gardens Ltd'],
+                    rentAmount: found.financing.repaymentDuration * 291666, // Mock calc
+                    tenure: `${found.financing.repaymentDuration} Months`,
                     monthlyPayment: 291666,
                     isSigned: false,
                     pdfUrl: '#'
                 },
-                repayment: undefined, // Not active yet
                 activityLog: [
-                    { id: '1', event: 'Application submitted', actor: 'Mercy Okoli', timestamp: 'Mar 1, 2026 09:00 AM', type: 'status' },
-                    { id: '2', event: 'Document "Government ID" verified', actor: 'System', timestamp: 'Mar 1, 2026 10:30 AM', type: 'document' },
-                    { id: '3', event: 'Status changed to Under Review', actor: 'Help2Home Admin', timestamp: 'Mar 2, 2026 02:15 PM', type: 'status' },
-                    { id: '4', event: 'Document "Bank Statement" rejected', actor: 'Verification Team', timestamp: 'Mar 3, 2026 10:34 AM', type: 'document' },
+                    { id: '1', event: 'Application submitted', actor: found.tenantName, timestamp: found.submittedAt, type: 'status' },
+                    { id: '2', event: `Status changed to ${found.status}`, actor: 'System', timestamp: 'Today', type: 'status' },
                 ],
                 financials: {
-                    downPayment: 875000,
-                    duration: 12,
+                    downPayment: found.financing.downPaymentPercent * 35000, // Mock calc
+                    duration: found.financing.repaymentDuration,
                     monthlyPayment: 291666,
                     totalPayable: 3943750
                 }
             });
-            setIsLoading(false);
-        }, 1000);
-    }, [applicationId]);
+        }
+    }, [applicationId, applications]);
+
+    const isLoading = appsLoading && !application;
 
     // --- Handlers ---
     const handleUpload = (id: string) => {

@@ -17,28 +17,63 @@ export default function Home() {
         <RoleCards />
         <PurpleBanner />
         <FeaturedListings />
+
+        {/* Tenant Calculator Section */}
         <CalculatorCTA
-          title="Take Control of Your Rent Today"
+          variant="hero"
+          title="Take Control of Your"
+          highlightText="Rent Today"
           description="Estimate your monthly payments in seconds and plan your budget confidently."
           placeholder="Enter Annual Rent (₦)"
           redirectPath="/tenant-rent-calculator"
+          ctaText="Check Rent"
+          imageSrc="/assets/undraw_house_searching.svg"
+          badgeValue="Save 15%"
+          badgeLabel="Savings"
+          badgeType="savings"
+          bgColor="bg-[#F9FEFA]"
         />
+
         <HowItWorks />
         <LocationsGrid />
+
+        {/* Landlord Calculator Section */}
         <CalculatorCTA
-          title="See What You Can Earn as a Landlord"
+          variant="hero"
+          title="See What You Can Earn as a"
+          highlightText="Landlord"
           description="Determine your property investment potential based on your budget and target ROI."
           placeholder="Enter Investment Budget (₦)"
           redirectPath="/landlord-earnings-calculator"
+          ctaText="Calculate ROI"
+          imageSrc="/assets/undraw_for_sale.svg"
+          badgeValue="+₦250k/mo"
+          badgeLabel="Monthly ROI"
+          badgeType="earnings"
+          bgColor="bg-[#F4F7FF]"
+          imageBgColor="bg-[#E0E7FF]"
         />
+
         <FeaturesGrid />
         <Testimonials />
+
+        {/* Investor Calculator Section */}
         <CalculatorCTA
-          title="Maximize Your Investment Potential"
+          variant="hero"
+          title="Maximize Your Investment"
+          highlightText="Potential"
           description="Quickly find out how much you can invest in properties and expected returns."
           placeholder="Enter Investment Amount (₦)"
           redirectPath="/investor-earning-calculator"
+          ctaText="View Returns"
+          imageSrc="/assets/undraw_investing.svg"
+          badgeValue="12.5% Yield"
+          badgeLabel="Annual Yield"
+          badgeType="yield"
+          bgColor="bg-[#FFFBF5]"
+          imageBgColor="bg-[#FFEFD2]"
         />
+
         <FAQ />
       </main>
     </div>
