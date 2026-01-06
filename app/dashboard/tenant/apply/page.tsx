@@ -9,10 +9,16 @@ import ApplicationTenantInfo from '@/components/dashboard/apply/ApplicationTenan
 import ApplicationDocuments from '@/components/dashboard/apply/ApplicationDocuments';
 import { PropertyDetails, InstallmentPlan, ApplicationData, ApplicationDocument } from '@/components/dashboard/apply/types';
 
+import { useApplications } from '@/hooks/useApplications';
+import { useUserStore } from '@/store/userStore';
+import { Application } from '@/store/applicationStore';
+
 export default function ApplyPage() {
     const router = useRouter();
+    const { id: userId, fullName: userName, email: userEmail, phone: userPhone } = useUserStore();
+    const { submitApplication, isSubmitting } = useApplications();
 
-    // --- Mock Data ---
+    // --- Mock Data (Should ideally come from propertyId query param) ---
     const mockProperty: PropertyDetails = {
         id: 'prop_123',
         name: 'Sunnyvale Apartments',
@@ -32,13 +38,13 @@ export default function ApplyPage() {
             acceptedTerms: false
         },
         tenantInfo: {
-            firstName: 'Mercy',
-            lastName: 'Okoli',
-            email: 'mercyokoli@gmail.com',
-            phone: '08128860774',
+            firstName: userName?.split(' ')[0] || '',
+            lastName: userName?.split(' ')[1] || '',
+            email: userEmail || '',
+            phone: userPhone || '',
             employmentStatus: 'Employed',
-            employerName: 'Tech Solutions Ltd',
-            monthlySalary: '350,000'
+            employerName: '',
+            monthlySalary: ''
         },
         guarantor: {
             name: '',
@@ -65,7 +71,6 @@ export default function ApplyPage() {
         serviceFee: 50000
     });
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [errors, setErrors] = useState<string[]>([]);
 
@@ -144,26 +149,67 @@ export default function ApplyPage() {
 
     const handleSubmit = async () => {
         if (validate()) {
-            setIsSubmitting(true);
-            try {
-                // Simulate API call
-                await new Promise(resolve => setTimeout(resolve, 2000));
+            const newApp: Application = {
+                id: `A-${Math.floor(Math.random() * 900000) + 100000}`,
+                propertyId: mockProperty.id,
+                propertyTitle: mockProperty.name,
+                propertyAddress: mockProperty.location,
+                propertyImage: mockProperty.image,
+                landlordId: 'landlord_1', // Mock landlord
+                tenantId: userId || 'unknown',
+                tenantName: `${applicationData.tenantInfo.firstName} ${applicationData.tenantInfo.lastName}`,
+                tenantEmail: applicationData.tenantInfo.email,
+                tenantPhone: applicationData.tenantInfo.phone,
+                status: 'Pending',
+                submittedAt: new Date().toISOString(),
+                progress: 25,
+                financing: {
+                    downPaymentPercent: applicationData.financing.downPaymentPercent,
+                    repaymentDuration: applicationData.financing.repaymentDuration
+                },
+                details: {
+                    employmentStatus: applicationData.tenantInfo.employmentStatus,
+                    employerName: applicationData.tenantInfo.employerName,
+                    monthlySalary: applicationData.tenantInfo.monthlySalary
+                }
+            };
 
-                // Redirect to status page
-                router.push('/dashboard/tenant/applications/A-000123');
-            } catch (error) {
-                console.error('Error submitting application:', error);
-            } finally {
-                setIsSubmitting(false);
-            }
+            submitApplication(newApp, {
+                onSuccess: () => setShowSuccess(true)
+            });
         } else {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 
     const handleSaveDraft = () => {
-        // Mock save draft
-        alert("Application saved as draft!");
+        const newApp: Application = {
+            id: `A-${Math.floor(Math.random() * 900000) + 100000}`,
+            propertyId: mockProperty.id,
+            propertyTitle: mockProperty.name,
+            propertyAddress: mockProperty.location,
+            propertyImage: mockProperty.image,
+            landlordId: 'landlord_1',
+            tenantId: userId || 'unknown',
+            tenantName: `${applicationData.tenantInfo.firstName} ${applicationData.tenantInfo.lastName}`,
+            tenantEmail: applicationData.tenantInfo.email,
+            tenantPhone: applicationData.tenantInfo.phone,
+            status: 'Draft',
+            submittedAt: '',
+            progress: 10,
+            financing: {
+                downPaymentPercent: applicationData.financing.downPaymentPercent,
+                repaymentDuration: applicationData.financing.repaymentDuration
+            },
+            details: {
+                employmentStatus: applicationData.tenantInfo.employmentStatus,
+                employerName: applicationData.tenantInfo.employerName,
+                monthlySalary: applicationData.tenantInfo.monthlySalary
+            }
+        };
+        submitApplication(newApp, {
+            onSuccess: () => router.push('/dashboard/tenant/applications')
+        });
     };
 
     if (showSuccess) {

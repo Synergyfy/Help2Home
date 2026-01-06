@@ -1,4 +1,4 @@
-export type ApplicationStatus = 'Submitted' | 'Under Review' | 'Bank Approval' | 'Funded' | 'Active' | 'Completed' | 'Rejected';
+export type ApplicationStatus = 'Submitted' | 'Pending' | 'Under Review' | 'Bank Approval' | 'Funded' | 'Active' | 'Completed' | 'Rejected' | 'Approved' | 'Draft';
 
 export interface TimelineStep {
     id: string;

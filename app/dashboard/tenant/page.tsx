@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import FadeIn from '@/components/FadeIn';
+import { useApplications } from '@/hooks/useApplications';
 import {
     SummaryCard,
     RepaymentProgress,
@@ -12,46 +13,37 @@ import {
 } from '@/components/dashboard/DashboardWidgets';
 
 export default function TenantDashboard() {
-    const [isLoading, setIsLoading] = useState(true);
+    const { applications, isLoading: appsLoading } = useApplications();
 
-    // Mock Data State
-    const [stats, setStats] = useState({
-        ongoingApplications: 2,
-        approvedHomes: 1,
+    // Derived stats from real data
+    const stats = {
+        ongoingApplications: applications.filter(a => a.status === 'Pending' || a.status === 'Under Review').length,
+        approvedHomes: applications.filter(a => a.status === 'Approved').length,
         nextRepayment: {
             amount: 45200,
             dueDate: 'Mar 3, 2026',
         },
         unreadMessages: 3,
         repaymentProgress: 40,
-    });
+    };
 
-    const [recentApplications, setRecentApplications] = useState<any[]>([]);
+    const recentApplications = applications.slice(0, 5).map(app => ({
+        id: app.id,
+        propertyTitle: app.propertyTitle,
+        propertyImage: app.propertyImage,
+        status: (app.status === 'Pending' ? 'Submitted' : (app.status === 'Approved' ? 'Active' : app.status)) as any,
+        statusMessage: app.status === 'Pending' ? 'Your application has been received.' :
+            app.status === 'Under Review' ? 'Our team is reviewing your documents.' :
+                app.status === 'Approved' ? 'Congratulations! Your application is approved.' :
+                    app.status === 'Rejected' ? 'Unfortunately, your application was not successful.' : 'Draft saved.',
+        updatedAt: app.submittedAt ? new Date(app.submittedAt).toLocaleDateString() : 'Draft'
+    }));
     const [educationArticle, setEducationArticle] = useState<any>(null);
 
     useEffect(() => {
-        // Simulate API fetch
+        // Simulate API fetch for other data
         const fetchData = async () => {
-            await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5s delay
-
-            setRecentApplications([
-                {
-                    id: 'A-000123',
-                    propertyTitle: 'Modern 2-Bedroom Apartment in Lekki',
-                    propertyImage: '/images/apartment-1.jpg',
-                    status: 'Under Review',
-                    statusMessage: 'We are verifying your documents.',
-                    updatedAt: '2 days ago',
-                },
-                {
-                    id: 'A-000124',
-                    propertyTitle: 'Cozy Studio in Yaba',
-                    propertyImage: '/images/apartment-2.jpg',
-                    status: 'Submitted',
-                    statusMessage: 'Application sent — under initial review.',
-                    updatedAt: '5 days ago',
-                }
-            ]);
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             setEducationArticle({
                 title: 'Understanding Rent Financing',
@@ -59,14 +51,12 @@ export default function TenantDashboard() {
                 readTime: '3 min read',
                 image: '/images/education-1.jpg',
             });
-
-            setIsLoading(false);
         };
 
         fetchData();
     }, []);
 
-    if (isLoading) {
+    if (appsLoading && applications.length === 0) {
         return (
             <div className="space-y-8 pb-12 animate-pulse">
                 {/* Header Skeleton */}

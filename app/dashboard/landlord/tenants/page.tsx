@@ -1,19 +1,29 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
-import { MOCK_TENANTS, Tenant } from '@/lib/mockLandlordData';
+import { useTenants } from '@/hooks/useTenants';
+import AddTenantModal from '@/components/dashboard/landlord/tenants/AddTenantModal';
 
 export default function TenantsPage() {
+    const { tenants, isLoading } = useTenants();
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const filteredTenants = MOCK_TENANTS.filter(tenant => {
+    const filteredTenants = tenants.filter(tenant => {
         const matchesSearch = tenant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             tenant.propertyName.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'All' || tenant.status === statusFilter;
         return matchesSearch && matchesStatus;
     });
+
+    if (isLoading) {
+        return (
+            <div className="min-h-[400px] flex items-center justify-center">
+                <div className="w-12 h-12 border-4 border-brand-green/20 border-t-brand-green rounded-full animate-spin"></div>
+            </div>
+        );
+    }
 
     const getPaymentStatusColor = (status: string) => {
         switch (status) {
@@ -26,12 +36,16 @@ export default function TenantsPage() {
 
     return (
         <div className="space-y-6">
+            <AddTenantModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Tenants</h1>
                     <p className="text-gray-500">Manage your active and past tenants.</p>
                 </div>
-                <button className="px-4 py-2 bg-[#00853E] text-white rounded-lg hover:bg-green-700 font-medium transition-colors flex items-center gap-2 w-fit">
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="px-4 py-2 bg-[#00853E] text-white rounded-lg hover:bg-green-700 font-medium transition-colors flex items-center gap-2 w-fit"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
@@ -59,8 +73,8 @@ export default function TenantsPage() {
                             key={status}
                             onClick={() => setStatusFilter(status)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${statusFilter === status
-                                    ? 'bg-green-50 text-[#00853E] border border-green-100'
-                                    : 'text-gray-600 hover:bg-gray-50 border border-transparent'
+                                ? 'bg-green-50 text-[#00853E] border border-green-100'
+                                : 'text-gray-600 hover:bg-gray-50 border border-transparent'
                                 }`}
                         >
                             {status}

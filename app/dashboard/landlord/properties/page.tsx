@@ -41,13 +41,6 @@ export default function PropertiesPage() {
 
     return (
         <div className="space-y-6">
-            {/* DEBUGGING OUTPUT */}
-            <div className="bg-yellow-50 p-2 text-xs text-yellow-800 border border-yellow-200 rounded mb-4">
-                DEBUG: UserId from Store: "{useUserStore.getState().id}" |
-                Properties Fetched: {properties.length} |
-                IsLoading: {isLoading ? 'Yes' : 'No'}
-            </div>
-
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Properties</h1>
