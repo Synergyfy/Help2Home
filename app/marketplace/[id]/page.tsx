@@ -127,7 +127,7 @@ export default function PropertyDetailsPage() {
                                     <Link
                                         href={propertyId ? `/dashboard/tenant/apply?propertyId=${propertyId}` : '/signup'}
                                         onClick={(e) => {
-                                            // Optional: If you want to handle the "redirect" logic manually for non-Link transitions
+                                            // Optional: If we want to handle the "redirect" logic manually for non-Link transitions
                                             // But for Link, we can just ensure they land on Apply which should be protected by middleware or an internal check
                                         }}
                                         className="block w-full text-center border-2 border-brand-green text-brand-green font-bold py-4 rounded-xl hover:bg-green-50 transition-colors mt-3"
