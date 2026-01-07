@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useUserStore, Role } from '@/store/userStore';
@@ -7,13 +8,22 @@ import {
     MdDashboard, MdPerson, MdFavorite, MdDescription, MdHistory,
     MdPayment, MdSupportAgent, MdSettings, MdNotifications,
     MdSchool, MdHomeWork, MdGroup, MdTrendingUp, MdPieChart,
-    MdFolder, MdStorefront, MdAssignment, MdLogout, MdClose
+    MdFolder, MdStorefront, MdAssignment, MdLogout, MdClose, MdSecurity
 } from 'react-icons/md';
 import { RxDashboard } from "react-icons/rx";
 
 import { toast } from 'react-toastify';
 
 const NAV_CONFIG = {
+
+    admin: [
+        { label: 'Dashboard', href: '/dashboard/admin', icon: RxDashboard },
+        { label: 'User Management', href: '/dashboard/admin/users', icon: MdGroup },
+        { label: 'Role Permissions', href: '/dashboard/admin/roles', icon: MdSecurity },
+        { label: 'Audit Logs', href: '/dashboard/admin/audit', icon: MdHistory },
+        { label: 'Support Tickets', href: '/dashboard/admin/support', icon: MdSupportAgent },
+        { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
+    ],
 
     tenant: [
 
@@ -75,17 +85,6 @@ const NAV_CONFIG = {
 
     ],
 
-    admin: [
-
-        { label: 'Users', href: '/dashboard/admin/users', icon: MdGroup },
-
-        { label: 'Roles', href: '/dashboard/admin/roles', icon: MdSettings },
-
-        { label: 'Audit Logs', href: '/dashboard/admin/audit', icon: MdHistory },
-
-        { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
-
-    ],
 
     caretaker: [
 
@@ -123,12 +122,26 @@ export default function DashboardSidebar({ isOpen = false, onClose }: { isOpen?:
     const pathname = usePathname();
     const router = useRouter();
 
-    const { activeRole, resetUser } = useUserStore();
+    const { activeRole, resetUser,roles } = useUserStore();
+    // 1. Authorization Protection
+    useEffect(() => {
+        const isPathAdmin = pathname.startsWith('/dashboard/admin');
+        const hasAdminRole = roles.includes('admin');
 
-    // We prioritize the role in the URL to keep the UI consistent if a user deep-links
+        if (isPathAdmin && !hasAdminRole) {
+            toast.error("Unauthorized Access");
+            // Redirect to their active role dashboard or signin
+            if (activeRole) {
+                router.replace(`/dashboard/${activeRole}`);
+            } else {
+                router.replace('/signin');
+            }
+        }
+    }, [pathname, roles, activeRole, router]);
+
+    // 2. Role Logic
     const urlRole = pathname.split('/')[2] as Role;
     const currentRole = (urlRole && NAV_CONFIG[urlRole] ? urlRole : activeRole || 'tenant') as keyof typeof NAV_CONFIG;
-
     const navItems = NAV_CONFIG[currentRole];
 
     const handleLogout = () => {

@@ -1,6 +1,7 @@
 'use client';
 
 import CalculatorCTA from '@/components/lib/CalculatorCTA';
+import AffordabilityImg from '@/assets/undraw_best-place_dhzp.svg'
 
 export default function PurpleBanner() {
   return (
@@ -14,8 +15,7 @@ export default function PurpleBanner() {
         redirectPath="/check-rent-affordability"
         ctaText="Check Affordability"
         
-        // Customizations to match the "Purple" theme
-        imageSrc="/assets/undraw_dream_home.svg" 
+        imageSrc={AffordabilityImg}
         badgeValue="Luxury Choice"
         badgeLabel="Status"
         badgeType="savings"

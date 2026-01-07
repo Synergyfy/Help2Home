@@ -2,7 +2,7 @@ import { Role } from '@/store/userStore';
 
 export interface MockUserResponse {
   user: {
-    id: string; // Added ID
+    id: string; 
     email: string;
     fullName: string;
     phone: string;
@@ -17,6 +17,22 @@ export interface MockUserResponse {
 }
 
 const MOCK_USERS: Record<string, MockUserResponse> = {
+
+  'admin@example.com': {
+    user: {
+      id: 'user_admin01global',
+      email: 'admin@example.com',
+      fullName: 'System Administrator',
+      phone: '+1 800 123 4567',
+      roles: ['admin'], // Ensure 'admin' is added to your Role type in userStore
+      verified: true,
+    },
+    onboarding: {
+      roleOnboardingCompleted: { tenant: true, landlord: true, caretaker: true, agent: true, investor: true,admin:true },
+      draftData: {},
+      onboardingCompleted: true,
+    }
+  },
   'agent@example.com': {
     user: {
       id: 'user_clt01agent001',
@@ -27,7 +43,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: true, investor: false },
+      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: true, investor:false,admin:false },
       draftData: { 
         agent: { licenseNumber: 'AG-9920', specialization: ['Residential'], yearsExperience: '5+' } 
       },
@@ -45,7 +61,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: true, caretaker: false, agent: false, investor: false },
+      roleOnboardingCompleted: { tenant: false, landlord: true, caretaker: false, agent: false, investor:false,admin:false },
       draftData: { 
         landlord: { propertyCount: '2-5 properties', propertyTypes: ['Apartments'], managementStyle: 'Self-managed' } 
       },
@@ -63,7 +79,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: false, investor: true },
+      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: false, investor: true,admin:false},
       draftData: { 
         investor: { investmentBudget: '$100k - $500k', investmentType: ['Buy-to-let'], riskTolerance: 'Moderate' } 
       },
@@ -81,7 +97,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: true, agent: false, investor: false },
+      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: true, agent: false, investor:false,admin:false },
       draftData: { 
         caretaker: { propertiesManaged: '10+', managementExperience: '8 years', availableHours: 'Full-time' } 
       },
@@ -99,7 +115,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: true, landlord: false, caretaker: false, agent: false, investor: false },
+      roleOnboardingCompleted: { tenant: true, landlord: false, caretaker: false, agent: false, investor:false,admin:false },
       draftData: { 
         tenant: { preferredLocation: 'Downtown', budgetRange: '$1500 - $2500', moveInDate: '2026-02-01' } 
       },
@@ -117,7 +133,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: true, caretaker: false, agent: false, investor: true },
+      roleOnboardingCompleted: { tenant: false, landlord: true, caretaker: false, agent: false, investor: true,admin:false },
       draftData: { 
         landlord: { propertyCount: '6-10 properties' },
         investor: { investmentBudget: '$1M+' }
@@ -136,7 +152,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: false, investor: false },
+      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: false, investor:false,admin:false },
       draftData: {},
       onboardingCompleted: false,
     }

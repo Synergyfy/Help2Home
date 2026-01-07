@@ -89,7 +89,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
       onboardingCompleted: false,
       draftData: {},
       roleOnboardingCompleted: {
-        tenant: false, landlord: false, caretaker: false, agent: false, investor: false
+        tenant: false, landlord: false, caretaker: false, agent: false, investor: false,admin:false,
       },
 
       getCurrentUser: () => {
@@ -148,7 +148,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
         draftData: {},
         onboardingCompleted: false,
         roleOnboardingCompleted: {
-          tenant: false, landlord: false, caretaker: false, agent: false, investor: false
+          tenant: false, landlord: false, caretaker: false, agent: false, investor: false,admin:false
         }
       }),
     }),

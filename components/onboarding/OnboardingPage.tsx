@@ -19,7 +19,6 @@ const OnboardingPage = () => {
   const [isHydrated, setIsHydrated] = useState(false); 
   const { getCurrentUser, getTotalSteps } = useOnboardingStore();
   
-  // Stop hydration errors from localstorage mismatch
   useEffect(() => {
     setIsHydrated(true);
   }, []);

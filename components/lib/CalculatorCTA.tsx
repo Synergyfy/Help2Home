@@ -4,22 +4,23 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import FadeIn from '@/components/FadeIn';
 import { IoCheckmarkCircle, IoLeafOutline, IoStatsChartOutline, IoWalletOutline } from "react-icons/io5";
-import { LuCircleDollarSign } from "react-icons/lu";
+import { TbCurrencyNaira } from "react-icons/tb";
+import { StaticImageData } from 'next/image';
 
 interface CalculatorCTAProps {
   title?: string;
-  highlightText?: string; // The word you want in Green
+  highlightText?: string; 
   description?: string;
   placeholder: string;
   redirectPath: string;
   ctaText?: string;
   variant?: 'default' | 'minimal' | 'hero';
-  imageSrc?: string;
+  imageSrc?: string | StaticImageData;
   badgeValue?: string;
-  badgeLabel?: string; // Custom text like "Savings" or "Monthly ROI"
-  badgeType?: 'savings' | 'earnings' | 'yield'; // Changes the icon
-  bgColor?: string; // Custom background for the card (e.g. bg-[#F9FEFA])
-  imageBgColor?: string; // Custom background for the image frame (e.g. bg-[#FFEFE2])
+  badgeLabel?: string;
+  badgeType?: 'savings' | 'earnings' | 'yield';
+  bgColor?: string;
+  imageBgColor?: string;
 }
 
 export default function CalculatorCTA({
@@ -47,6 +48,10 @@ export default function CalculatorCTA({
     return Number(numericValue).toLocaleString();
   };
 
+  const imgUrl = typeof imageSrc === 'object' && imageSrc !== null && 'src' in imageSrc 
+    ? imageSrc.src 
+    : (imageSrc as string);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/,/g, '');
     if (/^\d*$/.test(rawValue)) {
@@ -60,7 +65,6 @@ export default function CalculatorCTA({
     router.push(`${redirectPath}?amount=${numericAmount}`);
   };
 
-  // Icon selector for badge
   const getBadgeIcon = () => {
     switch (badgeType) {
       case 'earnings': return <IoWalletOutline size={24} />;
@@ -69,7 +73,6 @@ export default function CalculatorCTA({
     }
   };
 
-  // --- MINIMAL VARIANT ---
   if (variant === 'minimal') {
     return (
       <div className="flex flex-col sm:flex-row gap-3 w-full">
@@ -91,71 +94,72 @@ export default function CalculatorCTA({
     );
   }
 
-  // --- HERO VARIANT ---
   if (variant === 'hero') {
     return (
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <div className={`flex flex-col lg:flex-row items-center justify-between gap-12 ${bgColor} rounded-[2.5rem] p-8 md:p-16 border border-gray-100 shadow-sm`}>
+      <section className="py-6 md:py-10 bg-white w-full">
+        {/* Increased max-width to 7xl to reduce side margins on large screens */}
+        <div className="container mx-auto px-4 md:px-6 max-w-7xl">
+          <div className={`flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16 ${bgColor} rounded-4xl md:rounded-[3rem] p-6 md:p-12 lg:p-20 border border-gray-100 shadow-sm`}>
             
-            <div className="w-full lg:w-1/2">
-              <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
-                {title} <span className="text-brand-green block">{highlightText}</span>
+            <div className="w-full lg:w-3/5">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 leading-[1.1]">
+                {title} <span className="text-brand-green block mt-1">{highlightText}</span>
               </h1>
-              <p className="text-gray-600 text-lg mb-10 max-w-md leading-relaxed">
+              <p className="text-gray-600 text-base md:text-lg mb-8 md:mb-12 max-w-xl leading-relaxed">
                 {description}
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-0 items-center bg-white rounded-xl shadow-lg shadow-green-900/5 p-1 border border-gray-100 mb-8 focus-within:ring-2 focus-within:ring-brand-green/20 transition-all">
+              <div className="flex flex-col sm:flex-row gap-0 items-center bg-white rounded-xl shadow-xl shadow-green-900/5 p-1.5 border border-gray-100 mb-8 focus-within:ring-2 focus-within:ring-brand-green/20 transition-all max-w-2xl">
                 <div className="flex items-center px-4 w-full text-gray-400">
-                  <LuCircleDollarSign size={22} className="shrink-0" />
+                  <TbCurrencyNaira size={24} className="shrink-0" />
                   <input
                     type="text"
                     inputMode="numeric"
                     value={formatNumber(amount)}
                     onChange={handleChange}
                     placeholder={placeholder}
-                    className="w-full py-4 px-3 outline-none text-gray-900 bg-transparent placeholder:text-gray-300 font-medium"
+                    className="w-full py-4 px-3 outline-none text-gray-900 bg-transparent placeholder:text-gray-300 font-semibold text-lg"
                   />
                 </div>
                 <button 
                   onClick={handleRedirect}
-                  className="bg-brand-green text-white px-10 py-4 rounded-lg font-bold hover:bg-green-600 transition-all whitespace-nowrap w-full sm:w-auto"
+                  className="bg-brand-green text-white px-10 py-4 lg:py-5 rounded-lg font-bold hover:bg-green-600 transition-all whitespace-nowrap w-full sm:w-auto text-lg shadow-lg shadow-brand-green/20"
                 >
                   {ctaText}
                 </button>
               </div>
 
-              <div className="flex flex-wrap gap-6">
-                <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                  <IoCheckmarkCircle className="text-brand-green" size={20} />
+              <div className="flex flex-wrap gap-x-8 gap-y-4">
+                <div className="flex items-center gap-2.5 text-sm md:text-base font-bold text-gray-700">
+                  <IoCheckmarkCircle className="text-brand-green" size={22} />
                   No credit check
                 </div>
-                <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                  <IoCheckmarkCircle className="text-brand-green" size={20} />
+                <div className="flex items-center gap-2.5 text-sm md:text-base font-bold text-gray-700">
+                  <IoCheckmarkCircle className="text-brand-green" size={22} />
                   Instant results
                 </div>
               </div>
             </div>
 
-            <div className="w-full lg:w-1/2 relative flex justify-center lg:justify-end">
-              <div className={`${imageBgColor} rounded-2xl p-6 md:p-10 w-full max-w-[450px] aspect-square flex items-center justify-center`}>
-                <div className="bg-white p-3 shadow-2xl rounded-sm border-[10px] border-white transform rotate-2 transition-transform hover:rotate-0">
-                   <img src={imageSrc} alt="Illustration" className="w-full h-full object-cover rounded-sm" />
+            <div className="w-full lg:w-2/5 relative flex justify-center lg:justify-end mt-8 lg:mt-0">
+              {/* Increased size of image container slightly */}
+              <div className={`${imageBgColor} rounded-3xl p-8 md:p-12 w-full max-w-[500px] aspect-square flex items-center justify-center relative overflow-visible`}>
+                <div className="bg-white p-3 shadow-2xl rounded-lg border-12 border-white transform rotate-3 transition-transform hover:rotate-0 duration-500">
+                   <img src={imgUrl} alt="Illustration" className="w-full h-full object-contain" />
                 </div>
-              </div>
 
-              {badgeValue && (
-                <div className="absolute -bottom-4 left-4 md:left-10 bg-white shadow-2xl rounded-2xl p-4 flex items-center gap-4 border border-gray-50">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-brand-green">
-                    {getBadgeIcon()}
+                {badgeValue && (
+                  <div className="absolute -bottom-6 -left-4 md:-left-8 bg-white shadow-2xl rounded-2xl p-4 md:p-5 flex items-center gap-4 border border-gray-50 z-20 min-w-[180px]">
+                    <div className="w-12 h-12 md:w-14 md:h-14 bg-green-50 rounded-full flex items-center justify-center text-brand-green shrink-0">
+                      {getBadgeIcon()}
+                    </div>
+                    <div>
+                      <p className="text-[10px] md:text-xs text-gray-400 font-bold uppercase tracking-widest">{badgeLabel}</p>
+                      <p className="text-xl md:text-2xl font-black text-gray-900">{badgeValue}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{badgeLabel}</p>
-                    <p className="text-xl font-black text-gray-900">{badgeValue}</p>
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -163,10 +167,9 @@ export default function CalculatorCTA({
     );
   }
 
-  // --- DEFAULT VARIANT ---
   return (
     <section className="py-20 bg-gray-50">
-      <div className="container mx-auto px-6 md:px-12">
+      <div className="container mx-auto px-6 max-w-7xl">
         <FadeIn direction="up">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{title}</h2>
@@ -180,9 +183,9 @@ export default function CalculatorCTA({
               value={formatNumber(amount)}
               onChange={handleChange}
               placeholder={placeholder}
-              className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green outline-none transition-all"
+              className="flex-1 px-4 py-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green outline-none transition-all font-medium"
             />
-            <button onClick={handleRedirect} className="bg-brand-green text-white px-6 py-3 rounded-lg font-bold hover:bg-green-600 shadow-md">
+            <button onClick={handleRedirect} className="bg-brand-green text-white px-8 py-4 rounded-lg font-bold hover:bg-green-600 shadow-md transition-all">
               {ctaText}
             </button>
         </div>

@@ -7,11 +7,15 @@ import FeaturesGrid from "@/components/FeaturesGrid";
 import LocationsGrid from "@/components/LocationsGrid";
 import Testimonials from "@/components/Testimonials";
 import FAQ from "@/components/FAQ";
-import CalculatorCTA from '@/components/lib/CalculatorCTA'
+import CalculatorCTA from '@/components/lib/CalculatorCTA';
+
+import TenantImg from '@/assets/undraw_house_searching.svg';
+import LandlordImg from '@/assets/undraw_for-sale_7qjb.svg';
+import InvestorImg from '@/assets/undraw_invest_t695.svg';
 
 export default function Home() {
   return (
-    <div className="min-h-screen font-[family-name:var(--font-geist-sans)]">
+    <div className="min-h-screen font-(family-name:--font-geist-sans)">
       <main>
         <HeroSearch />
         <RoleCards />
@@ -27,7 +31,7 @@ export default function Home() {
           placeholder="Enter Annual Rent (₦)"
           redirectPath="/tenant-rent-calculator"
           ctaText="Check Rent"
-          imageSrc="/assets/undraw_house_searching.svg"
+          imageSrc={TenantImg.src}
           badgeValue="Save 15%"
           badgeLabel="Savings"
           badgeType="savings"
@@ -46,7 +50,7 @@ export default function Home() {
           placeholder="Enter Investment Budget (₦)"
           redirectPath="/landlord-earnings-calculator"
           ctaText="Calculate ROI"
-          imageSrc="/assets/undraw_for_sale.svg"
+          imageSrc={LandlordImg}
           badgeValue="+₦250k/mo"
           badgeLabel="Monthly ROI"
           badgeType="earnings"
@@ -66,7 +70,7 @@ export default function Home() {
           placeholder="Enter Investment Amount (₦)"
           redirectPath="/investor-earning-calculator"
           ctaText="View Returns"
-          imageSrc="/assets/undraw_investing.svg"
+          imageSrc={InvestorImg}
           badgeValue="12.5% Yield"
           badgeLabel="Annual Yield"
           badgeType="yield"

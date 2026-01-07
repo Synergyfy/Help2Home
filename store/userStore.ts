@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type Role = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor';
+export type Role = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor' |'admin';
+
+
 
 interface UserState {
   id: string;
@@ -13,9 +15,14 @@ interface UserState {
   token: string | null;
   verified: boolean;
   hasHydrated: boolean;
+  onboardingCompleted: boolean;
+  roleOnboardingCompleted: Record<Role, boolean>;
+  draftData: Record<string, any>;
+  
   
   // Actions
   setUser: (data: Partial<UserState>) => void;
+  updateProfileData: (role: Role, data: any) => void;
   setActiveRole: (role: Role) => void;
   setEmailVerified: (status: boolean) => void;
   setHasHydrated: (value: boolean) => void;
@@ -35,8 +42,21 @@ export const useUserStore = create<UserState>()(
       
       verified: false,
       hasHydrated: false,
+      onboardingCompleted: false,
+      roleOnboardingCompleted: {
+        tenant: false,
+        landlord: false,
+        caretaker: false,
+        agent: false,
+        investor: false,
+        admin:false,
+      },
+      draftData: {},
 
       setUser: (data) => set((state) => ({ ...state, ...data })),
+      updateProfileData: (role, data) => set((state) => ({
+    draftData: { ...state.draftData, [role]: { ...state.draftData[role], ...data } }
+})),
       setActiveRole: (activeRole) => set({ activeRole }),
       setEmailVerified: (verified) => set({ verified }),
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
