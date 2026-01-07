@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import PropertySummaryCard from '@/components/dashboard/apply/PropertySummaryCard';
 import InstallmentPlanCard from '@/components/dashboard/apply/InstallmentPlanCard';
 import FinancingInputs from '@/components/dashboard/apply/FinancingInputs';
@@ -12,26 +12,40 @@ import { PropertyDetails, InstallmentPlan, ApplicationData, ApplicationDocument 
 import { useApplications } from '@/hooks/useApplications';
 import { useUserStore } from '@/store/userStore';
 import { Application } from '@/store/applicationStore';
+import { mockProperties } from '@/utils/properties';
 
 export default function ApplyPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const propertyIdParam = searchParams.get('propertyId');
+
     const { id: userId, fullName: userName, email: userEmail, phone: userPhone } = useUserStore();
     const { submitApplication, isSubmitting } = useApplications();
 
-    // --- Mock Data (Should ideally come from propertyId query param) ---
-    const mockProperty: PropertyDetails = {
-        id: 'prop_123',
-        name: 'Sunnyvale Apartments',
-        location: '15, Admiralty Way, Lekki Phase 1, Lagos',
-        rentPrice: 3500000,
-        paymentOption: 'Installment',
-        landlordName: 'Lekki Gardens Ltd',
+    // Find property from mock data
+    const selectedProperty = mockProperties.find(p => p.id.toString() === propertyIdParam);
+
+    const property: PropertyDetails = selectedProperty ? {
+        id: selectedProperty.id.toString(),
+        name: selectedProperty.title,
+        location: selectedProperty.location,
+        rentPrice: selectedProperty.price,
+        paymentOption: (selectedProperty.propertyType === 'rent' || selectedProperty.propertyType === 'service-apartment') ? 'Installment' : 'Outright',
+        landlordName: 'Authorized Owner',
+        image: (selectedProperty.images && selectedProperty.images.length > 0) ? selectedProperty.images[0] : '/assets/marketplace assets/home1.png'
+    } : {
+        id: 'manual',
+        name: 'Custom Application',
+        location: 'TBD',
+        rentPrice: 0,
+        paymentOption: 'Outright',
+        landlordName: 'TBD',
         image: '/assets/marketplace assets/home1.png'
     };
 
     // --- State ---
     const [applicationData, setApplicationData] = useState<ApplicationData>({
-        propertyId: mockProperty.id,
+        propertyId: property.id,
         financing: {
             downPaymentPercent: 25,
             repaymentDuration: 12,
@@ -77,7 +91,7 @@ export default function ApplyPage() {
     // --- Effects ---
     useEffect(() => {
         // Calculate Installment Plan
-        const rent = mockProperty.rentPrice;
+        const rent = property.rentPrice;
         const downPayment = (rent * applicationData.financing.downPaymentPercent) / 100;
         const principal = rent - downPayment;
         const interestRate = 0.15; // 15% flat for simplicity
@@ -95,7 +109,7 @@ export default function ApplyPage() {
             interestRate: 15,
             serviceFee: 50000
         });
-    }, [applicationData.financing.downPaymentPercent, applicationData.financing.repaymentDuration]);
+    }, [applicationData.financing.downPaymentPercent, applicationData.financing.repaymentDuration, property.rentPrice]);
 
     // --- Handlers ---
     const handleFinancingChange = (field: string, value: any) => {
@@ -151,11 +165,11 @@ export default function ApplyPage() {
         if (validate()) {
             const newApp: Application = {
                 id: `A-${Math.floor(Math.random() * 900000) + 100000}`,
-                propertyId: mockProperty.id,
-                propertyTitle: mockProperty.name,
-                propertyAddress: mockProperty.location,
-                propertyImage: mockProperty.image,
-                landlordId: 'landlord_1', // Mock landlord
+                propertyId: property.id,
+                propertyTitle: property.name,
+                propertyAddress: property.location,
+                propertyImage: property.image,
+                landlordId: selectedProperty?.createdBy || 'landlord_1',
                 tenantId: userId || 'unknown',
                 tenantName: `${applicationData.tenantInfo.firstName} ${applicationData.tenantInfo.lastName}`,
                 tenantEmail: applicationData.tenantInfo.email,
@@ -185,11 +199,11 @@ export default function ApplyPage() {
     const handleSaveDraft = () => {
         const newApp: Application = {
             id: `A-${Math.floor(Math.random() * 900000) + 100000}`,
-            propertyId: mockProperty.id,
-            propertyTitle: mockProperty.name,
-            propertyAddress: mockProperty.location,
-            propertyImage: mockProperty.image,
-            landlordId: 'landlord_1',
+            propertyId: property.id,
+            propertyTitle: property.name,
+            propertyAddress: property.location,
+            propertyImage: property.image,
+            landlordId: selectedProperty?.createdBy || 'landlord_1',
             tenantId: userId || 'unknown',
             tenantName: `${applicationData.tenantInfo.firstName} ${applicationData.tenantInfo.lastName}`,
             tenantEmail: applicationData.tenantInfo.email,
@@ -258,7 +272,7 @@ export default function ApplyPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Column - Form */}
                     <div className="lg:col-span-2">
-                        <PropertySummaryCard property={mockProperty} />
+                        <PropertySummaryCard property={property} />
 
                         <FinancingInputs
                             downPaymentPercent={applicationData.financing.downPaymentPercent}

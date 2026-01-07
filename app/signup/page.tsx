@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { MdHome, MdApartment, MdAttachMoney } from 'react-icons/md';
 import { motion, AnimatePresence } from 'framer-motion';
 import FadeIn from '@/components/FadeIn';
@@ -10,6 +10,8 @@ import { Role } from '@/store/userStore';
 
 export default function SignUpPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect');
   const { setRoles, goToStep } = useOnboardingStore();
 
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -33,8 +35,9 @@ export default function SignUpPage() {
 
     // 3. Navigate after transition effect
     setTimeout(() => {
-      goToStep(0); // Ensure onboarding starts from the beginning
-      router.push('/onboarding');
+      goToStep(0);
+      const target = redirect ? `/onboarding?redirect=${encodeURIComponent(redirect)}` : '/onboarding';
+      router.push(target);
     }, 2000);
   };
 
@@ -47,7 +50,7 @@ export default function SignUpPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center"
+            className="fixed inset-0 z-100 bg-white flex flex-col items-center justify-center"
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FiEye, FiEyeOff, FiLock, FiMail, FiArrowRight, FiUser, FiUsers, FiTrendingUp } from 'react-icons/fi';
+import { useSearchParams } from 'next/navigation';
 import { FiShield } from 'react-icons/fi';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,6 +30,8 @@ const DEMO_ACCOUNTS = [
 
 export default function SignInPage() {
     const [showPassword, setShowPassword] = useState(false);
+    const searchParams = useSearchParams();
+    const redirect = searchParams.get('redirect');
     const { signIn, isLoading } = useAuth();
 
     const { register, handleSubmit, setValue, formState: { errors } } = useForm<z.infer<typeof signInSchema>>({
@@ -135,7 +138,7 @@ export default function SignInPage() {
 
                     <div className="mt-10 text-center">
                         <p className="text-sm text-slate-500">
-                            Don't have an account? <Link href="/signup" className="text-brand-green font-bold hover:underline">Create one</Link>
+                            Don't have an account? <Link href={redirect ? `/signup?redirect=${encodeURIComponent(redirect)}` : "/signup"} className="text-brand-green font-bold hover:underline">Create one</Link>
                         </p>
                     </div>
                 </div>

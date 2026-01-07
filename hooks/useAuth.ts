@@ -1,13 +1,15 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useUserStore } from '@/store/userStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { loginUser, MockUserResponse } from '@/lib/api/auth';
 
 export const useAuth = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect');
   const setUser = useUserStore((state) => state.setUser);
   
   const { 
@@ -54,8 +56,8 @@ export const useAuth = () => {
       // 3. Smart Navigation Fix
       const primaryRole = data.user.roles[0];
 
-      if (primaryRole === 'admin') {
-        router.push('/dashboard/admin');
+      if (redirect) {
+        router.push(redirect);
         return;
       }
 

@@ -8,29 +8,29 @@ import { FiCheck, FiX, FiEye, FiClock, FiFileText, FiUserPlus, FiDollarSign } fr
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTenants } from '@/hooks/useTenants';
 import { Tenant } from '@/lib/mockLandlordData';
+import AddTenantModal from '@/components/dashboard/landlord/tenants/AddTenantModal';
 
 export default function LandlordApplicationsPage() {
     const { applications, isLoading, updateStatus, isUpdating } = useApplications();
     const { addTenant, isAdding } = useTenants();
     const [filter, setFilter] = useState<ApplicationStatus | 'All'>('All');
     const [selectedApp, setSelectedApp] = useState<any | null>(null);
+    const [isAddTenantModalOpen, setIsAddTenantModalOpen] = useState(false);
+    const [initialTenantData, setInitialTenantData] = useState<any>(null);
 
     const handleOnboard = (app: any) => {
-        const newTenant: Tenant = {
-            id: `T-${Math.floor(Math.random() * 900000) + 100000}`,
+        setInitialTenantData({
             name: app.tenantName,
             email: app.tenantEmail,
             phone: app.tenantPhone,
             propertyId: app.propertyId,
             propertyName: app.propertyTitle,
-            status: 'Active',
-            rentAmount: 0, // Placeholder, usually would come from property data
-            leaseStart: new Date().toISOString().split('T')[0],
-            leaseEnd: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
-            paymentStatus: 'Up to date',
-        };
-
-        addTenant(newTenant);
+            rentAmount: app.details.monthlySalary || '', // Or use property price if available
+            employmentStatus: app.details.employmentStatus,
+            employerName: app.details.employerName,
+            monthlySalary: app.details.monthlySalary,
+        });
+        setIsAddTenantModalOpen(true);
     };
 
     const filteredApps = applications.filter(app =>
@@ -57,6 +57,11 @@ export default function LandlordApplicationsPage() {
 
     return (
         <div className="space-y-6 pb-20">
+            <AddTenantModal
+                isOpen={isAddTenantModalOpen}
+                onClose={() => setIsAddTenantModalOpen(false)}
+                initialData={initialTenantData}
+            />
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Tenant Applications</h1>
@@ -95,7 +100,7 @@ export default function LandlordApplicationsPage() {
                             >
                                 <div className="p-5 flex flex-col md:flex-row gap-6">
                                     {/* Thumbnail */}
-                                    <div className="w-full md:w-32 h-32 relative rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                                    <div className="w-full md:w-32 h-32 relative rounded-lg overflow-hidden bg-gray-100 shrink-0">
                                         <Image
                                             src={app.propertyImage}
                                             alt={app.propertyTitle}
@@ -146,7 +151,7 @@ export default function LandlordApplicationsPage() {
                                             <button
                                                 onClick={() => handleOnboard(app)}
                                                 disabled={isAdding}
-                                                className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold bg-[#00853E] text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm disabled:opacity-50"
+                                                className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold bg-brand-green text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm disabled:opacity-50"
                                             >
                                                 {isAdding ? (
                                                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -210,14 +215,14 @@ export default function LandlordApplicationsPage() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setSelectedApp(null)}
-                            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60]"
+                            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-60"
                         />
                         <motion.div
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed right-0 top-0 h-full w-full max-w-xl bg-white shadow-2xl z-[70] overflow-y-auto"
+                            className="fixed right-0 top-0 h-full w-full max-w-xl bg-white shadow-2xl z-70 overflow-y-auto"
                         >
                             <div className="p-6 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
                                 <div>
@@ -256,7 +261,7 @@ export default function LandlordApplicationsPage() {
                                 <div className="space-y-4">
                                     <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider">Property Applied For</h4>
                                     <div className="flex gap-4 p-4 border border-gray-100 rounded-xl">
-                                        <div className="w-24 h-24 relative rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                                        <div className="w-24 h-24 relative rounded-lg overflow-hidden bg-gray-100 shrink-0">
                                             <Image src={selectedApp.propertyImage} alt={selectedApp.propertyTitle} fill className="object-cover" />
                                         </div>
                                         <div className="flex-1 flex flex-col justify-center">
@@ -334,7 +339,7 @@ export default function LandlordApplicationsPage() {
                                         <button
                                             onClick={() => { handleOnboard(selectedApp); setSelectedApp(null); }}
                                             disabled={isAdding}
-                                            className="flex-1 px-6 py-4 bg-[#00853E] text-white font-bold rounded-xl hover:bg-green-700 transition-all shadow-lg shadow-green-200 disabled:opacity-50 flex items-center justify-center gap-2"
+                                            className="flex-1 px-6 py-4 bg-brand-green text-white font-bold rounded-xl hover:bg-green-700 transition-all shadow-lg shadow-green-200 disabled:opacity-50 flex items-center justify-center gap-2"
                                         >
                                             {isAdding ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <FiUserPlus size={20} />}
                                             Onboard as Tenant
