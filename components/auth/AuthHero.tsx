@@ -34,7 +34,7 @@ export default function AuthHero() {
         <div className="relative hidden lg:flex flex-col h-full overflow-hidden bg-slate-900">
             <div className="absolute inset-0">
                 <Image src={HeroImg} alt="Auth Background" fill className="object-cover opacity-50" priority />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/40 to-transparent" />
             </div>
 
             <GeometricPattern />

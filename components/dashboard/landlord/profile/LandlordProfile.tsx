@@ -40,7 +40,7 @@ export default function LandlordProfile() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
                                 className={`flex-1 py-2.5 px-4 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${activeTab === tab.id
-                                        ? 'bg-[#00853E] text-white shadow-sm'
+                                        ? 'bg-brand-green text-white shadow-sm'
                                         : 'text-gray-600 hover:bg-gray-50'
                                     }`}
                             >

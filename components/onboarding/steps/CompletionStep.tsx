@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiCheck, FiHome, FiKey, FiBriefcase, FiTrendingUp, FiUsers, FiLogIn } from "react-icons/fi";
+import { FiShield } from 'react-icons/fi';
 import { useOnboardingStore, UserRole } from "@/store/onboardingStore";
 import { useRouter } from "next/navigation";
 
@@ -12,6 +13,7 @@ const roleIcons: Record<UserRole, React.ReactNode> = {
   caretaker: <FiUsers size={32} />,
   agent: <FiBriefcase size={32} />,
   investor: <FiTrendingUp size={32} />,
+  admin: <FiShield size={32} />,
 };
 
 const roleNames: Record<UserRole, string> = {
@@ -20,6 +22,7 @@ const roleNames: Record<UserRole, string> = {
   caretaker: "Caretaker",
   agent: "Real Estate Agent",
   investor: "Investor",
+  admin: "Administrator",
 };
 
 const CompletionStep = () => {

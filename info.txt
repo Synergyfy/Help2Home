@@ -1,0 +1,8 @@
+ 
+ --- super admin roles, sub admins for diffrnet part 
+
+ --landlord,agent,caretaker can create properties but agents  and caretakers will have diffrent qustions
+
+ --email will be collected and sent to landlord via a link for that particular property
+
+-- diffrent sub property types will have diffrent questions

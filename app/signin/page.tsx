@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FiEye, FiEyeOff, FiLock, FiMail, FiArrowRight, FiUser, FiUsers, FiTrendingUp } from 'react-icons/fi';
+import { FiShield } from 'react-icons/fi';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -16,6 +17,7 @@ const signInSchema = z.object({
 });
 
 const DEMO_ACCOUNTS = [
+    { label: 'Admin', email: 'admin@example.com', icon: FiShield },
     { label: 'Agent', email: 'agent@example.com', icon: FiUser },
     { label: 'Landlord', email: 'landlord@example.com', icon: FiUser },
     { label: 'Caretaker', email: 'caretaker@example.com', icon: FiUser },

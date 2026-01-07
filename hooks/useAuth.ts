@@ -8,21 +8,18 @@ import { loginUser, MockUserResponse } from '@/lib/api/auth';
 
 export const useAuth = () => {
   const router = useRouter();
-  
-  // User Session Store
   const setUser = useUserStore((state) => state.setUser);
   
-  // Onboarding Wizard Store
   const { 
     setRoles, 
     updateRoleData, 
     completeRoleOnboarding, 
     setOnboardingCompleted, 
-    goToStep 
+    goToStep,
+    setCurrentEmail
   } = useOnboardingStore();
 
   const loginMutation = useMutation({
-    // Accept an object containing both email and password
     mutationFn: ({ email, password }: { email: string; password: string }) => 
         loginUser(email, password),
     
@@ -36,28 +33,36 @@ export const useAuth = () => {
         roles: data.user.roles,
         verified: data.user.verified,
         activeRole: data.user.roles[0],
+        onboardingCompleted: data.onboarding.onboardingCompleted,
+        roleOnboardingCompleted: data.onboarding.roleOnboardingCompleted,
+        draftData: data.onboarding.draftData,
       });
 
-      // 2. Sync Onboarding State
+      // 2. Sync Onboarding Store
+      setCurrentEmail(data.user.email);
       setRoles(data.user.roles);
       setOnboardingCompleted(data.onboarding.onboardingCompleted);
       
-      // Populate completion status for each role
       Object.entries(data.onboarding.roleOnboardingCompleted).forEach(([role, isFinished]) => {
         if (isFinished) completeRoleOnboarding(role as any);
       });
       
-      // Populate saved draft data
       Object.entries(data.onboarding.draftData).forEach(([role, roleData]) => {
         updateRoleData(role as any, roleData);
       });
 
-      // 3. Navigate based on status
+      // 3. Smart Navigation Fix
       const primaryRole = data.user.roles[0];
+
+      if (primaryRole === 'admin') {
+        router.push('/dashboard/admin');
+        return;
+      }
+
       const isPrimaryDone = data.onboarding.roleOnboardingCompleted[primaryRole];
 
       if (!isPrimaryDone) {
-        goToStep(4); // Resume at Role Chooser
+        goToStep(4); 
         router.push('/onboarding');
       } else {
         router.push(`/dashboard/${primaryRole}`);
@@ -66,7 +71,6 @@ export const useAuth = () => {
   });
 
   return {
-    // Now accepts two arguments to match your SignInPage form
     signIn: (email: string, password: string) => loginMutation.mutate({ email, password }),
     isLoading: loginMutation.isPending,
     error: loginMutation.error,
