@@ -40,7 +40,7 @@ export default function PropertyDetailsPage({ params }: { params: { id: string }
                     >
                         Edit Listing
                     </Link>
-                    <button className="px-4 py-2 bg-[#00853E] text-white rounded-lg hover:bg-green-700 font-medium transition-colors">
+                    <button className="px-4 py-2 bg-brand-green text-white rounded-lg hover:bg-green-700 font-medium transition-colors">
                         View Public Page
                     </button>
                 </div>
@@ -61,7 +61,7 @@ export default function PropertyDetailsPage({ params }: { params: { id: string }
                         </div>
                         <div className="p-4 flex gap-2 overflow-x-auto">
                             {property.images?.map((imgUrl, index) => (
-                                <div key={index} className="h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:ring-2 hover:ring-[#00853E]">
+                                <div key={index} className="h-20 w-20 shrink-0 rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:ring-2 hover:ring-brand-green">
                                     <img src={imgUrl} alt="" className="w-full h-full object-cover" />
                                 </div>
                             ))}
@@ -71,8 +71,42 @@ export default function PropertyDetailsPage({ params }: { params: { id: string }
                     {/* Description */}
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                         <h2 className="text-xl font-bold text-gray-900 mb-4">Description</h2>
-                        <div className="prose max-w-none text-gray-600">
+                        <div className="prose max-w-none text-gray-600 mb-6">
                             <p>{property.description || "No description provided for this listing."}</p>
+                        </div>
+
+                        {/* Keywords/Tags */}
+                        {property.keywords && property.keywords.length > 0 && (
+                            <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-50">
+                                {property.keywords.map(tag => (
+                                    <span key={tag} className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-semibold rounded-full capitalize">
+                                        #{tag}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Infrastructure & Support */}
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h2 className="text-xl font-bold text-gray-900 mb-4">Infrastructure & Utilities</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className={`p-4 rounded-xl border flex flex-col items-center gap-2 ${property.electricity ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'}`}>
+                                <span className={`text-xs font-bold uppercase tracking-wider ${property.electricity ? 'text-green-700' : 'text-gray-400'}`}>Electricity</span>
+                                <span className={`text-xs ${property.electricity ? 'text-green-600' : 'text-gray-400'}`}>{property.electricity ? 'Constant' : 'Variable'}</span>
+                            </div>
+                            <div className={`p-4 rounded-xl border flex flex-col items-center gap-2 ${property.waterSupply ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'}`}>
+                                <span className={`text-xs font-bold uppercase tracking-wider ${property.waterSupply ? 'text-green-700' : 'text-gray-400'}`}>Water Supply</span>
+                                <span className={`text-xs ${property.waterSupply ? 'text-green-600' : 'text-gray-400'}`}>{property.waterSupply ? 'Available' : 'Limited'}</span>
+                            </div>
+                            <div className={`p-4 rounded-xl border flex flex-col items-center gap-2 ${property.security ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'}`}>
+                                <span className={`text-xs font-bold uppercase tracking-wider ${property.security ? 'text-green-700' : 'text-gray-400'}`}>Security</span>
+                                <span className={`text-xs ${property.security ? 'text-green-600' : 'text-gray-400'}`}>{property.security ? 'Gated/Guard' : 'Standard'}</span>
+                            </div>
+                            <div className={`p-4 rounded-xl border flex flex-col items-center gap-2 ${property.serviced ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'}`}>
+                                <span className={`text-xs font-bold uppercase tracking-wider ${property.serviced ? 'text-green-700' : 'text-gray-400'}`}>Serviced</span>
+                                <span className={`text-xs ${property.serviced ? 'text-green-600' : 'text-gray-400'}`}>{property.serviced ? 'Fully Managed' : 'Self-MGD'}</span>
+                            </div>
                         </div>
                     </div>
 
@@ -83,7 +117,7 @@ export default function PropertyDetailsPage({ params }: { params: { id: string }
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                 {property.amenities.map(amenity => (
                                     <div key={amenity} className="flex items-center gap-2 text-gray-700">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#00853E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
                                         <span className="capitalize">{amenity.replace(/-/g, ' ')}</span>
@@ -100,7 +134,7 @@ export default function PropertyDetailsPage({ params }: { params: { id: string }
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                         <div className="mb-4">
                             <span className="text-sm text-gray-500">Price</span>
-                            <div className="text-3xl font-bold text-[#00853E]">
+                            <div className="text-3xl font-bold text-brand-green">
                                 {formatPrice(property.price, property.currency)}
                             </div>
                         </div>
@@ -108,7 +142,9 @@ export default function PropertyDetailsPage({ params }: { params: { id: string }
                         <div className="space-y-3 pt-4 border-t border-gray-100">
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-600">Status</span>
-                                <span className="font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-800 uppercase text-[10px]">
+                                <span className={`font-medium px-2 py-0.5 rounded-full uppercase text-[10px] ${property.status === 'available' ? 'bg-green-100 text-green-800' :
+                                    property.status === 'sold' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+                                    }`}>
                                     {property.status || 'available'}
                                 </span>
                             </div>
@@ -119,6 +155,12 @@ export default function PropertyDetailsPage({ params }: { params: { id: string }
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-600">Inquiries</span>
                                 <span className="font-medium text-gray-900">{property.inquiries || 0}</span>
+                            </div>
+                            <div className="flex justify-between text-sm pt-2">
+                                <span className="text-gray-600 text-xs">Listed on</span>
+                                <span className="font-medium text-gray-400 text-xs">
+                                    {property.dateAdded ? new Date(property.dateAdded).toLocaleDateString() : 'Dec 28, 2023'}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -140,25 +182,41 @@ export default function PropertyDetailsPage({ params }: { params: { id: string }
                                 <span className="font-medium text-gray-900">{property.bathrooms}</span>
                             </div>
                             <div className="flex justify-between text-sm">
+                                <span className="text-gray-600">Floor Size</span>
+                                <span className="font-medium text-gray-900">{property.floorSize ? `${property.floorSize} sqm` : 'N/A'}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-600">Furnished</span>
+                                <span className="font-medium text-gray-900">{property.furnished ? 'Fully Furnished' : 'Unfurnished'}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-600">Ownership</span>
+                                <span className="font-medium text-brand-green capitalize">{property.ownership || 'Freehold'}</span>
+                            </div>
+                            <div className="flex justify-between text-sm pt-2 border-t border-gray-50">
                                 <span className="text-gray-600">Category</span>
-                                <span className="font-medium text-gray-900 capitalize">{property.category}</span>
+                                <span className="font-medium text-gray-900 capitalize text-xs">{property.category?.replace(/-/g, ' ')}</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Installments Card - Based on marketplace logic */}
                     {property.isInstallmentAllowed && (
-                        <div className="bg-blue-50 p-6 rounded-xl border border-blue-100">
-                            <h3 className="font-bold text-blue-900 mb-2">Installments Available</h3>
-                            <p className="text-sm text-blue-700 mb-4">
-                                This property supports flexible payment plans.
-                            </p>
-                            <div className="space-y-2 text-sm text-blue-800">
-                                <div className="flex justify-between">
-                                    <span>Payment Type:</span>
-                                    <span className="font-bold capitalize">{property.propertyType}</span>
+                        <div className="bg-green-50 p-6 rounded-xl border border-green-100">
+                            <div className="flex items-center gap-2 mb-2">
+                                <div className="w-6 h-6 rounded-full bg-brand-green flex items-center justify-center text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
                                 </div>
+                                <h3 className="font-bold text-green-900">Installments Available</h3>
                             </div>
+                            <p className="text-xs text-green-700 leading-relaxed mb-4">
+                                This property supports flexible payment plans tailored to your budget.
+                            </p>
+                            <button className="w-full py-2 bg-brand-green text-white text-xs font-bold rounded-lg hover:bg-green-700 transition-colors">
+                                View Payment Plan
+                            </button>
                         </div>
                     )}
                 </div>

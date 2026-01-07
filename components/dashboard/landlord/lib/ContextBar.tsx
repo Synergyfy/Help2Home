@@ -4,6 +4,7 @@ import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useUserStore, Role } from '@/store/userStore';
 import { MdOutlineSwapHoriz } from 'react-icons/md';
+import { toast } from 'react-toastify'
 
 export default function ContextBar() {
   const router = useRouter();
@@ -14,17 +15,32 @@ export default function ContextBar() {
 
   // Roles allowed to use the switcher
   const switcherAllowedRoles: Role[] = ['landlord', 'agent', 'caretaker'];
-  
+
   // Filter the user roles to only show those allowed in this switcher
   const filteredRoles = roles.filter(role => switcherAllowedRoles.includes(role));
-  
+
   // Only show if user has allowed roles and more than one option exists
   const canSwitch = filteredRoles.length > 1;
 
   const displayRole = pathname.split('/')[2] || activeRole || 'Dashboard';
 
+  const { roleOnboardingCompleted } = useUserStore();
+
   const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newRole = e.target.value as Role;
+
+    // Check if the target role has completed onboarding
+    if (!roleOnboardingCompleted[newRole]) {
+      const confirmOnboarding = window.confirm(`Onboarding for the ${newRole} role is incomplete. Would you like to complete it now? \n\nClick OK to complete now, or Cancel to skip for later.`);
+
+      if (confirmOnboarding) {
+        router.push('/onboarding');
+        return;
+      }
+      // If skip, allow the switch but maybe remind later (simplified here as just allowing)
+      toast.info(`You've skipped onboarding for ${newRole}. You can complete it any time from your profile.`);
+    }
+
     router.push(`/dashboard/${newRole}`);
   };
 
@@ -46,7 +62,7 @@ export default function ContextBar() {
           <div className="bg-brand-green/10 p-1.5 rounded-lg group-hover:bg-brand-green/20 transition-colors">
             <MdOutlineSwapHoriz className="text-brand-green text-lg md:text-xl" />
           </div>
-          
+
           <div className="flex flex-col flex-1 sm:flex-none">
             <span className="text-[9px] md:text-[10px] uppercase font-black text-gray-400 leading-none mb-1 tracking-wider">
               Switch Perspective

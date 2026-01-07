@@ -1,4 +1,3 @@
-// app/dashboard/admin/support/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -10,15 +9,56 @@ import {
   HiOutlineCheckCircle,
   HiOutlineExclamationCircle 
 } from 'react-icons/hi';
-
-const TICKETS = [
-  { id: 'TKT-1023', user: 'John Smith', subject: 'Payment failed for User #892', priority: 'High', status: 'Open', category: 'Billing', date: '2 hours ago' },
-  { id: 'TKT-1021', user: 'Sarah Wilson', subject: 'Landlord photo upload issue', priority: 'Medium', status: 'In Progress', category: 'Technical', date: '5 hours ago' },
-  { id: 'TKT-1019', user: 'Mike Ade', subject: 'Dark mode feature request', priority: 'Low', status: 'Resolved', category: 'Feature', date: 'Yesterday' },
-  { id: 'TKT-1018', user: 'Emma Stone', subject: 'Account verification delay', priority: 'High', status: 'Open', category: 'Account', date: '2 days ago' },
-];
-
 import TicketDetailModal from '@/components/dashboard/admin/support/TicketDetailModal';
+
+// Updated Mock Data to match Modal Requirements
+const TICKETS = [
+  { 
+    id: 'TKT-1023', 
+    user: 'John Smith', 
+    userEmail: 'john.smith@example.com',
+    subject: 'Payment failed for User #892', 
+    priority: 'High', 
+    status: 'Open', 
+    category: 'Billing', 
+    date: '2 hours ago',
+    createdAt: 'Jan 7, 2026',
+    property: 'Sunset Apartments',
+    unit: '4B',
+    dueDate: 'Tomorrow, 5:00 PM',
+    description: 'Hi Support, I tried to make a payment for my listing #892 using my Verve card, but the transaction kept failing even though I have sufficient funds.'
+  },
+  { 
+    id: 'TKT-1021', 
+    user: 'Sarah Wilson', 
+    userEmail: 's.wilson@web.com',
+    subject: 'Landlord photo upload issue', 
+    priority: 'Medium', 
+    status: 'In Progress', 
+    category: 'Technical', 
+    date: '5 hours ago',
+    createdAt: 'Jan 7, 2026',
+    property: 'Green Valley',
+    unit: '12A',
+    dueDate: 'Jan 10, 2026',
+    description: 'I am trying to upload high-resolution photos of my property, but the system keeps timing out at 90%.'
+  },
+  { 
+    id: 'TKT-1019', 
+    user: 'Mike Ade', 
+    userEmail: 'mike.ade@provider.net',
+    subject: 'Dark mode feature request', 
+    priority: 'Low', 
+    status: 'Resolved', 
+    category: 'Feature', 
+    date: 'Yesterday',
+    createdAt: 'Jan 6, 2026',
+    property: 'City Center Lofts',
+    unit: 'Penthouse 1',
+    dueDate: 'Completed',
+    description: 'Would love to see a dark mode option for the dashboard. It gets quite bright working late at night!'
+  },
+];
 
 export default function SupportRequestsPage() {
   const [filter, setFilter] = useState('All');
@@ -36,7 +76,7 @@ export default function SupportRequestsPage() {
           <button className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition-all">
             <HiOutlineFilter size={18} /> Filters
           </button>
-          <button className="flex items-center gap-2 bg-brand-green text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-brand-green/20 hover:bg-brand-green/90 transition-all">
+          <button className="flex items-center gap-2 bg-emerald-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all">
             New Ticket
           </button>
         </div>
@@ -57,8 +97,8 @@ export default function SupportRequestsPage() {
             <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
             <input 
               type="text" 
-              placeholder="Search by ticket ID, user, or subject..." 
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-brand-green/20 outline-none transition-all"
+              placeholder="Search by ticket ID..." 
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
             />
           </div>
           <div className="flex bg-slate-50 p-1 rounded-xl w-full md:w-auto">
@@ -123,7 +163,7 @@ export default function SupportRequestsPage() {
                   <td className="px-6 py-5 whitespace-nowrap text-right">
                     <button 
                       onClick={() => setSelectedTicket(ticket)} 
-                      className="text-brand-green font-bold text-sm hover:underline decoration-2 underline-offset-4"
+                      className="text-emerald-500 font-bold text-sm hover:underline decoration-2 underline-offset-4"
                     >
                       View Details
                     </button>
@@ -133,18 +173,9 @@ export default function SupportRequestsPage() {
             </tbody>
           </table>
         </div>
-        
-        {/* Pagination Footer */}
-        <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
-          <p className="text-xs font-medium text-slate-500">Showing 1 to 4 of 154 entries</p>
-          <div className="flex gap-2">
-            <button className="px-3 py-1 text-xs font-bold border border-slate-200 rounded-lg hover:bg-white transition-all">Previous</button>
-            <button className="px-3 py-1 text-xs font-bold bg-brand-green text-white rounded-lg shadow-sm">Next</button>
-          </div>
-        </div>
       </div>
 
-        {/*ticket modal */}
+      {/* Ticket Modal Instance */}
       <TicketDetailModal 
         ticket={selectedTicket} 
         onClose={() => setSelectedTicket(null)} 
@@ -153,7 +184,6 @@ export default function SupportRequestsPage() {
   );
 }
 
-// Helper Component for Stats
 function SupportStat({ label, value, icon: Icon, color }: { label: string, value: string, icon: any, color: string }) {
   return (
     <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">

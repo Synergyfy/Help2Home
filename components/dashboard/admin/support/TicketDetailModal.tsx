@@ -1,100 +1,89 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiOutlineX, HiOutlinePaperClip, HiOutlineLightningBolt } from 'react-icons/hi';
+import { HiOutlineXMark, HiOutlineChatBubbleLeftRight, HiOutlineUser, HiOutlinePhoto, HiCheckBadge } from 'react-icons/hi2';
+import { TicketSidebar } from './ticketModal/TicketSidebar';
+import { TicketReplyArea } from './ticketModal/TicketReplyArea';
 
-interface Ticket {
-  id: string;
-  user: string;
-  subject: string;
-  status: string;
-  priority: string;
-}
-
-export default function TicketDetailModal({ ticket, onClose }: { ticket: Ticket | null, onClose: () => void }) {
+export default function TicketDetailModal({ ticket, onClose }: any) {
   if (!ticket) return null;
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex justify-end">
-        {/* Backdrop */}
-        <motion.div 
-          initial={{ opacity: 0 }} 
-          animate={{ opacity: 1 }} 
-          exit={{ opacity: 0 }} 
+      <div className="fixed inset-0 z-50 flex justify-end overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           onClick={onClose}
-          className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" 
+          className="absolute inset-0 bg-slate-900/20 backdrop-blur-[2px]"
         />
-        
-        {/* Slide Panel */}
-        <motion.div 
-          initial={{ x: '100%' }} 
-          animate={{ x: 0 }} 
-          exit={{ x: '100%' }} 
-          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="relative w-full max-w-2xl bg-white h-full shadow-2xl flex flex-col"
+
+        <motion.div
+          initial={{ x: '100%' }}
+          animate={{ x: 0 }}
+          exit={{ x: '100%' }}
+          transition={{ type: 'spring', damping: 32, stiffness: 300 }}
+          className="relative w-full lg:max-w-[1000px] bg-white h-full shadow-[-20px_0_50px_-12px_rgba(0,0,0,0.1)] flex flex-col overflow-hidden"
         >
-          {/* Modal Header */}
-          <div className="p-6 border-b flex justify-between items-center bg-slate-50">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-bold text-brand-green bg-brand-green/10 px-2 py-0.5 rounded">
-                  {ticket.id}
-                </span>
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                  {ticket.status}
-                </span>
+          {/* Header */}
+          <header className="flex items-center justify-between px-6 py-5 border-b border-slate-50 shrink-0">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <HiOutlineChatBubbleLeftRight size={22} />
               </div>
-              <h2 className="text-xl font-bold text-slate-900">{ticket.subject}</h2>
+              <div>
+                <h1 className="text-base font-bold text-slate-900">{ticket.subject}</h1>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{ticket.id} • UNIT {ticket.unit}</p>
+              </div>
             </div>
-            <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
-              <HiOutlineX size={24} />
+            <button onClick={onClose} className="p-2 text-slate-400 hover:bg-slate-50 rounded-full transition-colors">
+              <HiOutlineXMark size={22} />
             </button>
-          </div>
+          </header>
 
-          {/* Chat/Conversation Area */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/30">
-            {/* User Message */}
-            <div className="flex flex-col items-start">
-              <div className="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-none max-w-[85%] shadow-sm">
-                <p className="text-sm text-slate-700 leading-relaxed">
-                  Hi Support, I tried to make a payment for my listing #892 using my Verve card, 
-                  but the transaction kept failing even though I have sufficient funds. 
-                  Can you look into this?
-                </p>
-                <span className="text-[10px] text-slate-400 mt-2 block font-bold uppercase">{ticket.user} • 2h ago</span>
+          <div className="flex flex-1 overflow-hidden">
+            {/* Thread Area */}
+            <div className="flex-1 flex flex-col bg-white overflow-y-auto">
+              <div className="p-8">
+                {/* Original Message */}
+                <div className="flex gap-4 mb-10">
+                  <div className="h-10 w-10 rounded-full bg-slate-100 shrink-0 overflow-hidden">
+                    <img src={ticket.userImage || "/api/placeholder/40/40"} alt="" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="space-y-3 flex-1">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-bold text-slate-900">{ticket.user}</span>
+                      <span className="text-[10px] font-medium text-slate-400">Received {ticket.createdAt}</span>
+                    </div>
+                    <div className="text-sm text-slate-600 leading-relaxed">
+                      {ticket.description}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Conversation Divider */}
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="h-px flex-1 bg-slate-100" />
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Conversation Started</span>
+                  <div className="h-px flex-1 bg-slate-100" />
+                </div>
+
+                {/* Agent Reply */}
+                <div className="flex flex-col items-end gap-2 ml-12">
+                   <div className="bg-slate-900 text-white p-4 rounded-2xl rounded-tr-none text-sm max-w-[90%]">
+                      Excellent, I've assigned a team to check the HVAC unit. They should arrive by 10 AM.
+                   </div>
+                   <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-600">
+                      <HiCheckBadge size={14}/> Seen by tenant
+                   </div>
+                </div>
               </div>
+              
+              <TicketReplyArea />
             </div>
 
-            {/* System Note */}
-            <div className="flex justify-center">
-              <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full uppercase tracking-tighter">
-                Ticket assigned to you
-              </span>
-            </div>
-          </div>
-
-          {/* Reply Area */}
-          <div className="p-6 border-t bg-white">
-            <div className="mb-4 flex gap-2">
-              <button className="text-[10px] font-bold bg-slate-100 text-slate-600 px-3 py-1 rounded hover:bg-slate-200 transition-colors flex items-center gap-1">
-                <HiOutlineLightningBolt /> Canned Response
-              </button>
-            </div>
-            <div className="relative border-2 border-slate-100 rounded-2xl focus-within:border-brand-green transition-all p-2">
-              <textarea 
-                className="w-full p-3 text-sm outline-none resize-none h-32"
-                placeholder="Type your response here..."
-              />
-              <div className="flex justify-between items-center p-2 border-t border-slate-50 mt-2">
-                <button className="p-2 text-slate-400 hover:text-brand-green">
-                  <HiOutlinePaperClip size={20} />
-                </button>
-                <button className="bg-brand-green text-white px-6 py-2 rounded-xl text-sm font-bold shadow-lg shadow-brand-green/20">
-                  Send Response
-                </button>
-              </div>
-            </div>
+            <TicketSidebar ticket={ticket} />
           </div>
         </motion.div>
       </div>

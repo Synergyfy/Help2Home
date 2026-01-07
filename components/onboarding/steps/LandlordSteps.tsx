@@ -45,7 +45,7 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
     if (remainingRoles.length > 0) {
       goToStep(4); // Return to Role Chooser
     } else {
-      nextStep(); // Proceed to final completion screen
+      goToStep(8); // Proceed to final completion screen
     }
   };
 
@@ -83,7 +83,7 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
 
         <div className="space-y-8 flex-1">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
+            <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
               <FiHome className="text-brand-green" /> How many properties?
             </label>
             <div className="grid grid-cols-2 gap-3">
@@ -92,11 +92,10 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
                   key={option}
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, propertyCount: option }))}
-                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all ${
-                    formData.propertyCount === option
-                      ? "border-brand-green bg-brand-green/5 text-brand-green"
-                      : "border-gray-100 hover:border-gray-300 text-gray-500"
-                  }`}
+                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all ${formData.propertyCount === option
+                    ? "border-brand-green bg-brand-green/5 text-brand-green"
+                    : "border-gray-100 hover:border-gray-300 text-gray-500"
+                    }`}
                 >
                   {option}
                 </button>
@@ -112,11 +111,10 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
                   key={type}
                   type="button"
                   onClick={() => togglePropertyType(type)}
-                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${
-                    formData.propertyTypes.includes(type)
-                      ? "border-brand-green bg-brand-green/5 text-brand-green"
-                      : "border-gray-100 hover:border-gray-300 text-gray-500"
-                  }`}
+                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${formData.propertyTypes.includes(type)
+                    ? "border-brand-green bg-brand-green/5 text-brand-green"
+                    : "border-gray-100 hover:border-gray-300 text-gray-500"
+                    }`}
                 >
                   {type} {formData.propertyTypes.includes(type) && <FiCheck size={16} />}
                 </button>
@@ -160,7 +158,7 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
 
         <div className="space-y-8 flex-1">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
+            <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
               <FiSettings className="text-brand-green" /> Management Approach
             </label>
             <div className="grid grid-cols-1 gap-3">
@@ -169,11 +167,10 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
                   key={style}
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, managementStyle: style }))}
-                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all text-left ${
-                    formData.managementStyle === style
-                      ? "border-brand-green bg-brand-green/5 text-brand-green"
-                      : "border-gray-100 hover:border-gray-300 text-gray-500"
-                  }`}
+                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all text-left ${formData.managementStyle === style
+                    ? "border-brand-green bg-brand-green/5 text-brand-green"
+                    : "border-gray-100 hover:border-gray-300 text-gray-500"
+                    }`}
                 >
                   {style}
                 </button>
@@ -189,11 +186,10 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
                   key={level}
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, experience: level }))}
-                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all ${
-                    formData.experience === level
-                      ? "border-brand-green bg-brand-green/5 text-brand-green"
-                      : "border-gray-100 hover:border-gray-300 text-gray-500"
-                  }`}
+                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all ${formData.experience === level
+                    ? "border-brand-green bg-brand-green/5 text-brand-green"
+                    : "border-gray-100 hover:border-gray-300 text-gray-500"
+                    }`}
                 >
                   {level}
                 </button>
@@ -233,7 +229,7 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
 
       <div className="space-y-6 flex-1">
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
+          <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
             <FiTool className="text-brand-green" /> Interested Services
           </label>
           <div className="grid grid-cols-2 gap-3">
@@ -242,11 +238,10 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
                 key={service}
                 type="button"
                 onClick={() => toggleService(service)}
-                className={`p-4 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${
-                  formData.services.includes(service)
-                    ? "border-brand-green bg-brand-green/5 text-brand-green"
-                    : "border-gray-100 hover:border-gray-300 text-gray-500"
-                }`}
+                className={`p-4 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${formData.services.includes(service)
+                  ? "border-brand-green bg-brand-green/5 text-brand-green"
+                  : "border-gray-100 hover:border-gray-300 text-gray-500"
+                  }`}
               >
                 {service} {formData.services.includes(service) && <FiCheck size={16} />}
               </button>

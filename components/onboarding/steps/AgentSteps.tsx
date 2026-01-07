@@ -43,7 +43,7 @@ const AgentStep = ({ stepNumber }: AgentStepProps) => {
     if (remainingRoles.length > 0) {
       goToStep(4); // Return to the Role Chooser list
     } else {
-      nextStep(); // Proceed to the final "Success/Welcome" step
+      goToStep(8); // Proceed to the final "Success/Welcome" step
     }
   };
 
@@ -90,7 +90,7 @@ const AgentStep = ({ stepNumber }: AgentStepProps) => {
 
         <div className="space-y-6 flex-1">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+            <label className="text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
               <FiAward className="text-brand-green" />
               License Number (optional)
             </label>
@@ -110,11 +110,10 @@ const AgentStep = ({ stepNumber }: AgentStepProps) => {
                 <button
                   key={option}
                   onClick={() => setFormData(prev => ({ ...prev, yearsExperience: option }))}
-                  className={`p-3 rounded-xl border-2 text-sm font-bold transition-all ${
-                    formData.yearsExperience === option
-                      ? "border-brand-green bg-brand-green/5 text-brand-green"
-                      : "border-gray-100 hover:border-gray-300 text-gray-500"
-                  }`}
+                  className={`p-3 rounded-xl border-2 text-sm font-bold transition-all ${formData.yearsExperience === option
+                    ? "border-brand-green bg-brand-green/5 text-brand-green"
+                    : "border-gray-100 hover:border-gray-300 text-gray-500"
+                    }`}
                 >
                   {option}
                 </button>
@@ -158,7 +157,7 @@ const AgentStep = ({ stepNumber }: AgentStepProps) => {
 
         <div className="space-y-6 flex-1">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+            <label className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
               <FiTarget className="text-brand-green" /> Property specializations
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -166,9 +165,8 @@ const AgentStep = ({ stepNumber }: AgentStepProps) => {
                 <button
                   key={spec}
                   onClick={() => toggleSpecialization(spec)}
-                  className={`p-3 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${
-                    formData.specialization.includes(spec) ? "border-brand-green bg-brand-green/5 text-brand-green" : "border-gray-100 hover:border-gray-300 text-gray-500"
-                  }`}
+                  className={`p-3 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${formData.specialization.includes(spec) ? "border-brand-green bg-brand-green/5 text-brand-green" : "border-gray-100 hover:border-gray-300 text-gray-500"
+                    }`}
                 >
                   {spec} {formData.specialization.includes(spec) && <FiCheck size={16} className="text-brand-green" />}
                 </button>
@@ -177,7 +175,7 @@ const AgentStep = ({ stepNumber }: AgentStepProps) => {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+            <label className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
               <FiMapPin className="text-brand-green" /> Areas you serve
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -185,9 +183,8 @@ const AgentStep = ({ stepNumber }: AgentStepProps) => {
                 <button
                   key={area}
                   onClick={() => toggleArea(area)}
-                  className={`p-3 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${
-                    formData.areasServed.includes(area) ? "border-brand-green bg-brand-green/5 text-brand-green" : "border-gray-100 hover:border-gray-300 text-gray-500"
-                  }`}
+                  className={`p-3 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${formData.areasServed.includes(area) ? "border-brand-green bg-brand-green/5 text-brand-green" : "border-gray-100 hover:border-gray-300 text-gray-500"
+                    }`}
                 >
                   {area} {formData.areasServed.includes(area) && <FiCheck size={16} className="text-brand-green" />}
                 </button>
@@ -227,7 +224,7 @@ const AgentStep = ({ stepNumber }: AgentStepProps) => {
 
       <div className="space-y-6 flex-1">
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+          <label className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
             <FiAward className="text-brand-green" /> Professional credentials
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -235,9 +232,8 @@ const AgentStep = ({ stepNumber }: AgentStepProps) => {
               <button
                 key={cert}
                 onClick={() => toggleCertification(cert)}
-                className={`p-3 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${
-                  formData.certifications.includes(cert) ? "border-brand-green bg-brand-green/5 text-brand-green" : "border-gray-100 hover:border-gray-300 text-gray-500"
-                }`}
+                className={`p-3 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${formData.certifications.includes(cert) ? "border-brand-green bg-brand-green/5 text-brand-green" : "border-gray-100 hover:border-gray-300 text-gray-500"
+                  }`}
               >
                 {cert} {formData.certifications.includes(cert) && <FiCheck size={16} className="text-brand-green" />}
               </button>

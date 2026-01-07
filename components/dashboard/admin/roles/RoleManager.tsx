@@ -1,149 +1,218 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Role, Permission, MOCK_ROLES } from '@/lib/mockSecurityData';
+import {
+  HiOutlineMail,
+  HiOutlineBadgeCheck,
+  HiOutlineLockClosed,
+  HiOutlineSearch,
+  HiOutlineTrash,
+  HiOutlinePencilAlt,
+  HiOutlineUserAdd
+} from 'react-icons/hi';
 
-const AVAILABLE_PERMISSIONS: { id: Permission; label: string; group: string }[] = [
-    { id: 'users:read', label: 'View Users', group: 'User Management' },
-    { id: 'users:write', label: 'Edit Users', group: 'User Management' },
-    { id: 'users:delete', label: 'Delete Users', group: 'User Management' },
-    { id: 'roles:read', label: 'View Roles', group: 'Role Management' },
-    { id: 'roles:write', label: 'Manage Roles', group: 'Role Management' },
-    { id: 'audit:read', label: 'View Audit Logs', group: 'Security' },
-    { id: 'properties:create', label: 'Create Properties', group: 'Properties' },
-    { id: 'properties:edit', label: 'Edit Properties', group: 'Properties' },
-    { id: 'properties:delete', label: 'Delete Properties', group: 'Properties' },
-    { id: 'payouts:request', label: 'Request Payouts', group: 'Finance' },
-    { id: 'payouts:approve', label: 'Approve Payouts', group: 'Finance' },
-    { id: 'settings:manage', label: 'Manage Settings', group: 'System' },
+// Define the shape of a Sub-User
+interface SubUser {
+  id: string;
+  name: string;
+  email: string;
+  roles: string[];
+  status: 'Active' | 'Away' | 'Inactive';
+  lastActive: string;
+  isSuperAdmin?: boolean;
+}
+
+const AVAILABLE_ROLES = [
+  { id: 'finance', name: 'Finance Admin', description: 'Manage payments, refunds, and financial reports.' },
+  { id: 'listing', name: 'Listing Admin', description: 'Approve, edit, and remove property listings.' },
+  { id: 'security', name: 'Security Admin', description: 'Access to audit logs, user bans, and security settings.' },
+  { id: 'support', name: 'Support Admin', description: 'Manage tickets, chat with users, and view FAQs.' },
 ];
 
+import { useAdminStore } from '@/store/adminStore';
+
 export default function RoleManager() {
-    const [roles, setRoles] = useState<Role[]>(MOCK_ROLES);
-    const [selectedRole, setSelectedRole] = useState<Role | null>(null);
-    const [isEditing, setIsEditing] = useState(false);
+  const { subAccounts: users, addSubAccount, removeSubAccount } = useAdminStore();
 
-    const handleSaveRole = (updatedRole: Role) => {
-        setRoles(prev => prev.map(r => r.id === updatedRole.id ? updatedRole : r));
-        setIsEditing(false);
-        setSelectedRole(null);
-    };
+  const [newUser, setNewUser] = useState({ name: '', email: '', roles: [] as string[] });
 
-    const togglePermission = (role: Role, permission: Permission) => {
-        const hasPermission = role.permissions.includes(permission);
-        const newPermissions = hasPermission
-            ? role.permissions.filter(p => p !== permission)
-            : [...role.permissions, permission];
+  const handleCreateAccount = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUser.name || !newUser.email) return;
 
-        return { ...role, permissions: newPermissions };
-    };
+    addSubAccount(newUser);
+    setNewUser({ name: '', email: '', roles: [] });
+  };
 
-    return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Roles List */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                    <h2 className="text-lg font-bold text-gray-900">Roles</h2>
-                    <button className="text-sm text-[#00853E] font-medium hover:underline">
-                        + New Role
-                    </button>
-                </div>
-                <div className="divide-y divide-gray-100">
-                    {roles.map(role => (
-                        <button
-                            key={role.id}
-                            onClick={() => {
-                                setSelectedRole(role);
-                                setIsEditing(true);
-                            }}
-                            className={`w-full text-left p-4 hover:bg-gray-50 transition-colors flex items-center justify-between ${selectedRole?.id === role.id ? 'bg-green-50 border-l-4 border-[#00853E]' : ''
-                                }`}
-                        >
-                            <div>
-                                <div className="font-medium text-gray-900">{role.name}</div>
-                                <div className="text-xs text-gray-500">{role.permissions.length} permissions</div>
-                            </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-                    ))}
-                </div>
-            </div>
+  const toggleRoleSelection = (roleName: string) => {
+    setNewUser(prev => ({
+      ...prev,
+      roles: prev.roles.includes(roleName)
+        ? prev.roles.filter(r => r !== roleName)
+        : [...prev.roles, roleName]
+    }));
+  };
 
-            {/* Role Editor */}
-            <div className="lg:col-span-2">
-                {selectedRole ? (
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                            <div>
-                                <h2 className="text-lg font-bold text-gray-900">Edit Role: {selectedRole.name}</h2>
-                                <p className="text-sm text-gray-500">{selectedRole.description}</p>
-                            </div>
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => setSelectedRole(null)}
-                                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg text-sm font-medium"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={() => handleSaveRole(selectedRole)}
-                                    className="px-4 py-2 bg-[#00853E] text-white rounded-lg text-sm font-medium hover:bg-green-700"
-                                >
-                                    Save Changes
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="p-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {Object.entries(
-                                    AVAILABLE_PERMISSIONS.reduce((acc, curr) => {
-                                        (acc[curr.group] = acc[curr.group] || []).push(curr);
-                                        return acc;
-                                    }, {} as Record<string, typeof AVAILABLE_PERMISSIONS>)
-                                ).map(([group, permissions]) => (
-                                    <div key={group} className="bg-gray-50 p-4 rounded-lg">
-                                        <h3 className="font-semibold text-gray-900 mb-3 text-sm uppercase tracking-wide">{group}</h3>
-                                        <div className="space-y-2">
-                                            {permissions.map(permission => (
-                                                <label key={permission.id} className="flex items-center gap-3 cursor-pointer">
-                                                    <div className="relative flex items-center">
-                                                        <input
-                                                            type="checkbox"
-                                                            className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border border-gray-300 transition-all checked:border-[#00853E] checked:bg-[#00853E]"
-                                                            checked={selectedRole.permissions.includes(permission.id)}
-                                                            onChange={() => setSelectedRole(togglePermission(selectedRole, permission.id))}
-                                                            disabled={selectedRole.isSystem && permission.id === 'users:read'} // Example of locked permission
-                                                        />
-                                                        <div className="pointer-events-none absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                    <span className="text-sm text-gray-700">{permission.label}</span>
-                                                </label>
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center h-full flex flex-col items-center justify-center text-gray-500">
-                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                        </div>
-                        <h3 className="text-lg font-medium text-gray-900">Select a Role</h3>
-                        <p className="max-w-xs mx-auto mt-2">Select a role from the list to view and edit its permissions.</p>
-                    </div>
-                )}
-            </div>
+  return (
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
+      {/* LEFT: User List Table */}
+      <div className="xl:col-span-2 space-y-6">
+        <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col sm:flex-row gap-4 justify-between items-center">
+          <div className="relative w-full sm:w-72">
+            <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <input
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-brand-green/20 outline-none"
+              placeholder="Search by name or email..."
+              type="text"
+            />
+          </div>
+          <div className="flex gap-2">
+            <select className="bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-sm outline-none">
+              <option>All Roles</option>
+            </select>
+          </div>
         </div>
-    );
+
+        <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-100">
+                  <th className="py-4 px-6 text-xs font-bold uppercase text-slate-500">User</th>
+                  <th className="py-4 px-6 text-xs font-bold uppercase text-slate-500">Assigned Roles</th>
+                  <th className="py-4 px-6 text-xs font-bold uppercase text-slate-500">Status</th>
+                  <th className="py-4 px-6 text-xs font-bold uppercase text-slate-500 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {users.map(user => (
+                  <tr key={user.id} className="group hover:bg-slate-50/50 transition-colors">
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500">
+                          {user.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-bold text-sm text-slate-900">{user.name}</p>
+                          <p className="text-xs text-slate-500">{user.email}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-4 px-6">
+                      <div className="flex flex-wrap gap-1.5">
+                        {user.roles.map(role => (
+                          <span key={role} className="px-2 py-0.5 rounded bg-emerald-50 text-brand-green text-[10px] font-bold border border-emerald-100">
+                            {role}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="py-4 px-6">
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${user.status === 'Active' ? 'bg-green-50 text-green-700 border-green-100' : 'bg-gray-50 text-gray-500 border-gray-100'
+                        }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${user.status === 'Active' ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                        {user.status}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6 text-right">
+                      <div className="flex justify-end gap-2">
+                        <button className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors"><HiOutlinePencilAlt size={18} /></button>
+                        <button
+                          onClick={() => removeSubAccount(user.id)}
+                          className="p-1.5 text-slate-400 hover:text-red-600 transition-colors"
+                        >
+                          <HiOutlineTrash size={18} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* RIGHT: Create Sub-Account Form */}
+      <div className="xl:col-span-1">
+        <div className="bg-white rounded-xl border border-slate-100 shadow-lg sticky top-8">
+          <div className="p-6 border-b border-slate-50 bg-linear-to-r from-white to-slate-50 rounded-t-xl">
+            <div className="flex items-center gap-3 mb-1">
+              <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-brand-green">
+                <HiOutlineUserAdd size={20} />
+              </div>
+              <h2 className="text-lg font-bold text-slate-900">New Sub-Account</h2>
+            </div>
+            <p className="text-xs text-slate-500 ml-11">Assign specific administrative powers.</p>
+          </div>
+
+          <form onSubmit={handleCreateAccount} className="p-6 space-y-5">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Full Name</label>
+                <div className="relative">
+                  <HiOutlineBadgeCheck className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <input
+                    value={newUser.name}
+                    onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                    placeholder="e.g. John Doe" type="text"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Email Address</label>
+                <div className="relative">
+                  <HiOutlineMail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <input
+                    value={newUser.email}
+                    onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-200 bg-slate-50 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                    placeholder="john@admin.com" type="email"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Assign Access</label>
+              <div className="space-y-2">
+                {AVAILABLE_ROLES.map(role => (
+                  <label key={role.id} className={`flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-all group ${newUser.roles.includes(role.name) ? 'border-brand-green bg-emerald-50/50' : 'border-slate-100 hover:bg-slate-50'
+                    }`}>
+                    <input
+                      type="checkbox"
+                      className="mt-1 rounded border-slate-300 text-brand-green focus:ring-brand-green"
+                      checked={newUser.roles.includes(role.name)}
+                      onChange={() => toggleRoleSelection(role.name)}
+                    />
+                    <div className="flex-1">
+                      <span className="block text-sm font-bold text-slate-900">{role.name}</span>
+                      <span className="block text-[11px] text-slate-500 leading-tight">{role.description}</span>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-slate-100 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setNewUser({ name: '', email: '', roles: [] })}
+                className="flex-1 px-4 py-2.5 border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+              >
+                Reset
+              </button>
+              <button
+                type="submit"
+                className="flex-2 px-4 py-2.5 bg-brand-green text-white rounded-lg text-sm font-bold shadow-lg shadow-emerald-900/20 hover:bg-emerald-700 transition-all"
+              >
+                Create Account
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 }

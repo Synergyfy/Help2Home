@@ -35,16 +35,15 @@ const CaretakerStep1 = () => {
 
       <div className="space-y-8 flex-1">
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">How many properties do you currently manage?</label>
+          <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">How many properties do you currently manage?</label>
           <div className="grid grid-cols-2 gap-3">
             {propertyRanges.map((range) => (
               <button
                 key={range}
                 type="button"
                 onClick={() => setPropertiesManaged(range)}
-                className={`p-4 rounded-xl border-2 text-sm font-bold transition-all ${
-                  propertiesManaged === range ? "border-brand-green bg-brand-green/5 text-brand-green" : "border-gray-100 hover:border-gray-300 text-gray-500"
-                }`}
+                className={`p-4 rounded-xl border-2 text-sm font-bold transition-all ${propertiesManaged === range ? "border-brand-green bg-brand-green/5 text-brand-green" : "border-gray-100 hover:border-gray-300 text-gray-500"
+                  }`}
               >
                 {range}
               </button>
@@ -53,16 +52,15 @@ const CaretakerStep1 = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Years of experience as a caretaker?</label>
+          <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Years of experience as a caretaker?</label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {experienceLevels.map((level) => (
               <button
                 key={level}
                 type="button"
                 onClick={() => setManagementExperience(level)}
-                className={`p-4 rounded-xl border-2 text-left text-sm font-bold transition-all ${
-                  managementExperience === level ? "border-brand-green bg-brand-green/5 text-brand-green" : "border-gray-100 hover:border-gray-300 text-gray-500"
-                }`}
+                className={`p-4 rounded-xl border-2 text-left text-sm font-bold transition-all ${managementExperience === level ? "border-brand-green bg-brand-green/5 text-brand-green" : "border-gray-100 hover:border-gray-300 text-gray-500"
+                  }`}
               >
                 {level}
               </button>
@@ -117,16 +115,15 @@ const CaretakerStep2 = () => {
 
       <div className="space-y-8 flex-1">
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">What's your availability?</label>
+          <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">What's your availability?</label>
           <div className="space-y-3">
             {hourOptions.map((option) => (
               <button
                 key={option}
                 type="button"
                 onClick={() => setAvailableHours(option)}
-                className={`w-full p-4 rounded-xl border-2 text-left text-sm font-bold transition-all ${
-                  availableHours === option ? "border-brand-green bg-brand-green/5 text-brand-green" : "border-gray-100 hover:border-gray-300 text-gray-500"
-                }`}
+                className={`w-full p-4 rounded-xl border-2 text-left text-sm font-bold transition-all ${availableHours === option ? "border-brand-green bg-brand-green/5 text-brand-green" : "border-gray-100 hover:border-gray-300 text-gray-500"
+                  }`}
               >
                 {option}
               </button>
@@ -135,16 +132,15 @@ const CaretakerStep2 = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Preferred Property Types</label>
+          <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Preferred Property Types</label>
           <div className="flex flex-wrap gap-2">
             {propertyTypes.map((type) => (
               <button
                 key={type}
                 type="button"
                 onClick={() => togglePropertyType(type)}
-                className={`px-4 py-2 rounded-full border-2 text-sm font-bold transition-all flex items-center gap-2 ${
-                  preferredPropertyTypes.includes(type) ? "border-brand-green bg-brand-green text-white" : "border-gray-100 hover:border-gray-300 text-gray-500"
-                }`}
+                className={`px-4 py-2 rounded-full border-2 text-sm font-bold transition-all flex items-center gap-2 ${preferredPropertyTypes.includes(type) ? "border-brand-green bg-brand-green text-white" : "border-gray-100 hover:border-gray-300 text-gray-500"
+                  }`}
               >
                 {preferredPropertyTypes.includes(type) && <FiCheck size={14} />} {type}
               </button>
@@ -184,14 +180,14 @@ const CaretakerStep3 = () => {
   const handleComplete = () => {
     updateRoleData("caretaker", { services });
     completeRoleOnboarding("caretaker");
-    
+
     // Check if other selected roles need onboarding
     const remainingRoles = user?.roles?.filter(r => !user.roleOnboardingCompleted?.[r] && r !== 'caretaker') || [];
-    
+
     if (remainingRoles.length > 0) {
       goToStep(4); // Back to chooser
     } else {
-      nextStep(); // Finish onboarding
+      goToStep(8); // Finish onboarding
     }
   };
 
@@ -210,9 +206,8 @@ const CaretakerStep3 = () => {
               key={service}
               type="button"
               onClick={() => toggleService(service)}
-              className={`p-4 rounded-xl border-2 text-sm font-bold text-left transition-all flex items-center justify-between ${
-                services.includes(service) ? "border-brand-green bg-brand-green/5 text-brand-green" : "border-gray-100 hover:border-gray-300 text-gray-500"
-              }`}
+              className={`p-4 rounded-xl border-2 text-sm font-bold text-left transition-all flex items-center justify-between ${services.includes(service) ? "border-brand-green bg-brand-green/5 text-brand-green" : "border-gray-100 hover:border-gray-300 text-gray-500"
+                }`}
             >
               {service} {services.includes(service) && <FiCheck className="text-brand-green" size={18} />}
             </button>

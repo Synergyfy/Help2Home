@@ -165,7 +165,7 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
                             type="button"
                             onClick={handleNext}
                             disabled={isPending}
-                            className="px-6 py-2 bg-[#00853E] text-white rounded-lg hover:bg-green-700 font-medium transition-colors shadow-sm disabled:opacity-50 min-w-[140px]"
+                            className="px-6 py-2 bg-brand-green text-white rounded-lg hover:bg-green-700 font-medium transition-colors shadow-sm disabled:opacity-50 min-w-[140px]"
                         >
                             {isPending ? (
                                 <span className="flex items-center gap-2">

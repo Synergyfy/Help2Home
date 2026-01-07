@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type Role = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor' |'admin';
+export type Role = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor' | 'admin' | 'superAdmin';
 
 
 
@@ -49,7 +49,8 @@ export const useUserStore = create<UserState>()(
         caretaker: false,
         agent: false,
         investor: false,
-        admin:false,
+        admin: false,
+        superAdmin: false,
       },
       draftData: {},
 
