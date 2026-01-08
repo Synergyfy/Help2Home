@@ -165,6 +165,20 @@ export interface Tenant {
         employmentStatus: string;
         employerName: string;
         monthlySalary: string;
+        guarantor?: {
+            name: string;
+            phone: string;
+            relationship: string;
+            email: string;
+        };
+        documents?: {
+            id: string;
+            type: string;
+            name: string;
+            status: string;
+            fileUrl?: string;
+        }[];
+        notes?: string;
     };
 }
 

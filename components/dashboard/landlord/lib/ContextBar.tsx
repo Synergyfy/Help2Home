@@ -9,7 +9,7 @@ import { toast } from 'react-toastify'
 export default function ContextBar() {
   const router = useRouter();
   const pathname = usePathname();
-  const { roles, activeRole, hasHydrated } = useUserStore();
+  const { roles, activeRole, hasHydrated, roleOnboardingCompleted } = useUserStore();
 
   if (!hasHydrated) return null;
 
@@ -23,8 +23,6 @@ export default function ContextBar() {
   const canSwitch = filteredRoles.length > 1;
 
   const displayRole = pathname.split('/')[2] || activeRole || 'Dashboard';
-
-  const { roleOnboardingCompleted } = useUserStore();
 
   const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newRole = e.target.value as Role;

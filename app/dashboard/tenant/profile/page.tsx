@@ -10,31 +10,38 @@ import DocumentsUploadArea from '@/components/dashboard/profile/DocumentsUploadA
 import HelpTipsCard from '@/components/dashboard/profile/HelpTipsCard';
 import { ProfileData, EmploymentData, Guarantor, DocumentItem } from '@/components/dashboard/profile/types';
 
+import { useUserStore } from '@/store/userStore';
+import { useOnboardingStore } from '@/store/onboardingStore';
+
 export default function ProfilePage() {
     const [showVerification, setShowVerification] = useState(false);
+    const { profile, email, phone, roleData, updateProfile, updateRoleProfileData } = useUserStore();
+    const onboarding = useOnboardingStore();
 
     // --- State for Verification View ---
     const [profileData, setProfileData] = useState<ProfileData>({
-        firstName: 'Mercy',
-        lastName: 'Okoli',
-        email: 'mercyokoli@gmail.com',
-        phone: '08128860774',
-        dob: '1995-05-12',
-        gender: 'Female',
-        maritalStatus: 'Single',
-        address: 'Plot 52, Sanni Abacha Street, Zone B, Karu. Abuja',
-        state: 'Federal Capital Territory Abuja.',
-        image: '/assets/dashboard/profile-placeholder.png'
+        firstName: profile.firstName || 'Mercy',
+        lastName: profile.lastName || 'Okoli',
+        email: email || 'mercyokoli@gmail.com',
+        phone: phone || '08128860774',
+        dob: profile.dob || '1995-05-12',
+        gender: profile.gender || 'Female',
+        maritalStatus: profile.maritalStatus || 'Single',
+        address: profile.address || 'Plot 52, Sanni Abacha Street, Zone B, Karu. Abuja',
+        state: profile.state || 'Federal Capital Territory Abuja.',
+        image: profile.image || '/assets/dashboard/profile-placeholder.png'
     });
 
+    const tenantRoleData = roleData.tenant || {} as any;
+
     const [employmentData, setEmploymentData] = useState<EmploymentData>({
-        status: 'Employed',
-        employerName: 'Tech Solutions Ltd',
-        jobTitle: 'Software Engineer',
-        salary: '350,000',
-        type: 'Permanent',
-        startDate: '2022-03-01',
-        contact: 'hr@techsolutions.com'
+        status: tenantRoleData.employmentStatus || 'Employed',
+        employerName: tenantRoleData.employerName || 'Tech Solutions Ltd',
+        jobTitle: tenantRoleData.jobTitle || 'Software Engineer',
+        salary: tenantRoleData.monthlySalary || '350,000',
+        type: tenantRoleData.type || 'Permanent',
+        startDate: tenantRoleData.startDate || '2022-03-01',
+        contact: tenantRoleData.contact || 'hr@techsolutions.com'
     });
 
     const [guarantors, setGuarantors] = useState<Guarantor[]>([]);

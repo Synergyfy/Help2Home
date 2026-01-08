@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FiMapPin, FiDollarSign, FiCalendar, FiHome, FiArrowRight, FiArrowLeft, FiCheck } from "react-icons/fi";
 import { useOnboardingStore, TenantData } from "@/store/onboardingStore";
+import { useUserStore } from "@/store/userStore";
 
 const locations = ["Lagos", "Abuja", "Port Harcourt", "Ibadan", "Kano", "Other"];
 const budgetRanges = ["₦50k - ₦150k", "₦150k - ₦300k", "₦300k - ₦500k", "₦500k - ₦1M", "₦1M+"];
@@ -36,6 +37,7 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
 
   const handleComplete = () => {
     updateRoleData("tenant", formData);
+    useUserStore.getState().updateRoleProfileData("tenant", formData);
     completeRoleOnboarding("tenant");
 
     // Check if there are other roles selected that haven't been completed yet

@@ -6,3 +6,9 @@
  --email will be collected and sent to landlord via a link for that particular property
 
 -- diffrent sub property types will have diffrent questions
+
+--user maagement,landlord,caretaker,agent, investor,tenant seprate
+
+--when adding properties add the sepcifications
+
+--in add property Make sure that they can also add videos as well, and accept both Portrait and Landscape videos and pictures size in the add property

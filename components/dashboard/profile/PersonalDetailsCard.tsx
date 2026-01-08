@@ -1,23 +1,38 @@
 import React, { useState } from 'react';
 import { ProfileData } from './types';
+import { useUserStore } from '@/store/userStore';
 
 interface PersonalDetailsCardProps {
-    data: ProfileData;
+    data: ProfileData; // Still accepting props for compatibility, but will prioritize store
     onSave: (data: ProfileData) => void;
 }
 
 export default function PersonalDetailsCard({ data, onSave }: PersonalDetailsCardProps) {
-    const [formData, setFormData] = useState<ProfileData>(data);
+    const { profile, updateProfile, email, phone: storePhone } = useUserStore();
+
+    const [formData, setFormData] = useState<ProfileData>({
+        ...data,
+        firstName: profile.firstName || data.firstName,
+        lastName: profile.lastName || data.lastName,
+        email: email || data.email,
+        phone: storePhone || data.phone,
+        dob: profile.dob || data.dob,
+        gender: profile.gender || data.gender,
+        maritalStatus: profile.maritalStatus || data.maritalStatus,
+        address: profile.address || data.address,
+        state: profile.state || data.state,
+        image: profile.image || data.image
+    });
     const [errors, setErrors] = useState<Partial<Record<keyof ProfileData, string>>>({});
     const [isEditing, setIsEditing] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData((prev: ProfileData) => ({ ...prev, [name]: value }));
         // Clear error when user types
         if (errors[name as keyof ProfileData]) {
-            setErrors(prev => ({ ...prev, [name]: undefined }));
+            setErrors((prev: Partial<Record<keyof ProfileData, string>>) => ({ ...prev, [name]: undefined }));
         }
         setIsEditing(true);
     };
@@ -59,6 +74,16 @@ export default function PersonalDetailsCard({ data, onSave }: PersonalDetailsCar
     const handleSubmit = () => {
         if (validate()) {
             onSave(formData);
+            updateProfile({
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                dob: formData.dob,
+                gender: formData.gender,
+                maritalStatus: formData.maritalStatus,
+                address: formData.address,
+                state: formData.state,
+                image: formData.image
+            });
             setIsEditing(false);
             setShowSuccess(true);
             setTimeout(() => setShowSuccess(false), 3000);
@@ -89,7 +114,7 @@ export default function PersonalDetailsCard({ data, onSave }: PersonalDetailsCar
                             value={formData.firstName}
                             onChange={handleChange}
                             placeholder="First Name"
-                            className={`w-full px-4 py-3 rounded-lg border ${errors.firstName ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-[#6D28D9] focus:border-[#6D28D9]'} focus:ring-2 outline-none transition-all`}
+                            className={`w-full px-4 py-3 rounded-lg border ${errors.firstName ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-brand-green focus:border-brand-green'} focus:ring-2 outline-none transition-all`}
                         />
                         {errors.firstName && <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>}
                     </div>
@@ -101,7 +126,7 @@ export default function PersonalDetailsCard({ data, onSave }: PersonalDetailsCar
                             value={formData.lastName}
                             onChange={handleChange}
                             placeholder="Last Name"
-                            className={`w-full px-4 py-3 rounded-lg border ${errors.lastName ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-[#6D28D9] focus:border-[#6D28D9]'} focus:ring-2 outline-none transition-all`}
+                            className={`w-full px-4 py-3 rounded-lg border ${errors.lastName ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-brand-green focus:border-brand-green'} focus:ring-2 outline-none transition-all`}
                         />
                         {errors.lastName && <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>}
                     </div>
@@ -117,7 +142,7 @@ export default function PersonalDetailsCard({ data, onSave }: PersonalDetailsCar
                             readOnly
                             className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed"
                         />
-                        <button className="px-4 py-2 text-sm font-medium text-[#6D28D9] hover:bg-purple-50 rounded-lg transition-colors whitespace-nowrap">
+                        <button className="px-4 py-2 text-sm font-medium text-brand-green hover:bg-green-50 rounded-lg transition-colors whitespace-nowrap">
                             Change email
                         </button>
                     </div>
@@ -133,7 +158,7 @@ export default function PersonalDetailsCard({ data, onSave }: PersonalDetailsCar
                         value={formData.phone}
                         onChange={handleChange}
                         placeholder="+234 801 234 5678"
-                        className={`w-full px-4 py-3 rounded-lg border ${errors.phone ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-[#6D28D9] focus:border-[#6D28D9]'} focus:ring-2 outline-none transition-all`}
+                        className={`w-full px-4 py-3 rounded-lg border ${errors.phone ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-brand-green focus:border-brand-green'} focus:ring-2 outline-none transition-all`}
                     />
                     {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
                     <p className="mt-1 text-xs text-gray-500">Used for OTP and payment alerts.</p>
@@ -148,7 +173,7 @@ export default function PersonalDetailsCard({ data, onSave }: PersonalDetailsCar
                             name="dob"
                             value={formData.dob}
                             onChange={handleChange}
-                            className={`w-full px-4 py-3 rounded-lg border ${errors.dob ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-[#6D28D9] focus:border-[#6D28D9]'} focus:ring-2 outline-none transition-all`}
+                            className={`w-full px-4 py-3 rounded-lg border ${errors.dob ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-brand-green focus:border-brand-green'} focus:ring-2 outline-none transition-all`}
                         />
                         {errors.dob && <p className="mt-1 text-sm text-red-500">{errors.dob}</p>}
                     </div>
@@ -158,7 +183,7 @@ export default function PersonalDetailsCard({ data, onSave }: PersonalDetailsCar
                             name="gender"
                             value={formData.gender}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#6D28D9] focus:border-[#6D28D9] outline-none transition-all bg-white"
+                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none transition-all bg-white"
                         >
                             <option value="">Select gender</option>
                             <option value="Male">Male</option>
@@ -176,7 +201,7 @@ export default function PersonalDetailsCard({ data, onSave }: PersonalDetailsCar
                         name="maritalStatus"
                         value={formData.maritalStatus}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all bg-white"
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none transition-all bg-white"
                     >
                         <option value="">Select status</option>
                         <option value="Single">Single</option>
@@ -195,7 +220,7 @@ export default function PersonalDetailsCard({ data, onSave }: PersonalDetailsCar
                         value={formData.address}
                         onChange={handleChange}
                         rows={3}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#6D28D9] focus:border-[#6D28D9] outline-none transition-all resize-none"
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none transition-all resize-none"
                         placeholder="Enter your full address"
                     />
                     <p className="mt-1 text-xs text-gray-500">We may use this to verify your proof of address document.</p>
@@ -209,7 +234,7 @@ export default function PersonalDetailsCard({ data, onSave }: PersonalDetailsCar
                         name="state"
                         value={formData.state}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#6D28D9] focus:border-[#6D28D9] outline-none transition-all"
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none transition-all"
                     />
                 </div>
 
@@ -219,8 +244,8 @@ export default function PersonalDetailsCard({ data, onSave }: PersonalDetailsCar
                         onClick={handleSubmit}
                         disabled={!isEditing}
                         className={`px-6 py-3 rounded-lg font-medium transition-all ${isEditing
-                                ? 'bg-[#6D28D9] text-white hover:bg-purple-700 shadow-md'
-                                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            ? 'bg-brand-green text-white hover:bg-green-700 shadow-md'
+                            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                             }`}
                     >
                         Save changes
