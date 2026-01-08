@@ -1,32 +1,113 @@
-'use client';
-
-import React from 'react';
-import UserList from '@/components/dashboard/admin/users/UserList';
-import { User } from '@/lib/mockSecurityData';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useAdminStore } from '@/store/adminStore';
+import AdminUserTable from '@/components/dashboard/admin/superrole/AdminUserTable';
+import { FiUsers, FiHome, FiTrendingUp, FiActivity, FiShield, FiPlus } from 'react-icons/fi';
 
 export default function AdminUsersPage() {
-    const handleEditUser = (user: User) => {
-        // In a real app, this would open a modal or navigate to an edit page
-        console.log('Edit user:', user);
-        alert(`Edit user: ${user.firstName} ${user.lastName}`);
-    };
+    const searchParams = useSearchParams();
+    const queryTab = searchParams.get('tab');
+
+    const [activeTab, setActiveTab] = useState<'ecosystem' | 'tenants' | 'investors' | 'landlords' | 'agents' | 'caretakers'>('ecosystem');
+
+    // URL Sync
+    useEffect(() => {
+        if (queryTab) {
+            setActiveTab(queryTab as any);
+        }
+    }, [queryTab]);
+
+    const { users } = useAdminStore();
+
+    // Mapping of tabs and hierarchy
+    const tabs = [
+        { id: 'ecosystem', label: 'Service Network', icon: FiActivity },
+        { id: 'tenants', label: 'Resident Registry', icon: FiHome },
+        { id: 'investors', label: 'Venture Investors', icon: FiTrendingUp },
+    ];
+
+    const isEcosystemActive = ['ecosystem', 'landlords', 'agents', 'caretakers'].includes(activeTab);
 
     return (
-        <div className="pb-20">
-            <div className="mb-8 flex justify-between items-end">
+        <div className="pb-20 space-y-6">
+            <div className="flex justify-between items-end">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-                    <p className="text-gray-500">Manage system users, assign roles, and monitor status.</p>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Organization Control</h1>
+                    <p className="text-slate-500 font-medium">Coordinate the Help2Home stakeholder ecosystem.</p>
                 </div>
-                <button className="px-4 py-2 bg-[#00853E] text-white rounded-lg font-medium hover:bg-green-700 transition-colors shadow-sm flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add User
+                <button className="px-6 py-3 bg-emerald-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg active:scale-95 flex items-center gap-2">
+                    <FiPlus size={18} /> Add New Member
                 </button>
             </div>
 
-            <UserList onEditUser={handleEditUser} />
+            {/* Hierarchy Tabs */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="flex border-b border-slate-100 bg-slate-50/50">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id as any)}
+                            className={`flex-1 flex items-center justify-center gap-3 py-4 text-xs font-black uppercase tracking-widest transition-all ${(activeTab === tab.id || (tab.id === 'ecosystem' && isEcosystemActive))
+                                    ? 'bg-white text-emerald-600 border-b-2 border-emerald-500'
+                                    : 'text-slate-400 hover:text-slate-600'
+                                }`}
+                        >
+                            <tab.icon size={16} />
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Sub-tabs for Ecosystem */}
+                {isEcosystemActive && (activeTab !== 'tenants' && activeTab !== 'investors') && (
+                    <div className="px-6 py-3 bg-white flex gap-4 border-b border-slate-100 overflow-x-auto no-scrollbar">
+                        {[
+                            { id: 'ecosystem', label: 'Whole Network' },
+                            { id: 'landlords', label: 'Landlords' },
+                            { id: 'agents', label: 'Agents' },
+                            { id: 'caretakers', label: 'Caretakers' },
+                        ].map((sub) => (
+                            <button
+                                key={sub.id}
+                                onClick={() => setActiveTab(sub.id as any)}
+                                className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${activeTab === sub.id
+                                        ? 'bg-slate-900 text-white'
+                                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+                                    }`}
+                            >
+                                {sub.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
+
+                <div className="p-1">
+                    {/* Dynamic Rendering Based on Selection */}
+                    {(activeTab === 'ecosystem' || isEcosystemActive) && (activeTab !== 'tenants' && activeTab !== 'investors') && (
+                        <AdminUserTable
+                            title={activeTab === 'ecosystem' ? "All Service Network Partners" : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} List`}
+                            users={users.filter(u => {
+                                if (activeTab === 'ecosystem') return ['Landlord', 'Agent', 'Caretaker'].includes(u.role);
+                                return u.role.toLowerCase() === activeTab.slice(0, -1); // Simple mapping landlords -> Landlord
+                            }).map(u => ({ ...u, role: u.role as any }))}
+                        />
+                    )}
+
+                    {activeTab === 'tenants' && (
+                        <AdminUserTable
+                            title="Resident Tenants"
+                            users={users.filter(u => u.role === 'Tenant')}
+                        />
+                    )}
+
+                    {activeTab === 'investors' && (
+                        <AdminUserTable
+                            title="Venture Investors"
+                            users={users.filter(u => u.role === 'Investor')}
+                        />
+                    )}
+                </div>
+            </div>
         </div>
     );
 }
