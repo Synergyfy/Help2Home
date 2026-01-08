@@ -1,8 +1,18 @@
-'use client';
-
 import { ProfileData } from '@/lib/mockLandlordData';
+import { useUserStore } from '@/store/userStore';
 
-export default function ProfileSummaryCard({ profile }: { profile: ProfileData }) {
+export default function ProfileSummaryCard({ profile: initialProfile }: { profile: ProfileData }) {
+    const { profile: storeProfile, activeRole } = useUserStore();
+
+    const profile = {
+        ...initialProfile,
+        firstName: storeProfile.firstName || initialProfile.firstName,
+        lastName: storeProfile.lastName || initialProfile.lastName,
+        displayName: storeProfile.firstName ? `${storeProfile.firstName} ${storeProfile.lastName}` : initialProfile.displayName,
+        role: activeRole || initialProfile.role,
+        avatarUrl: storeProfile.image || initialProfile.avatarUrl
+    };
+
     const getStatusColor = (status: ProfileData['verificationStatus']) => {
         switch (status) {
             case 'verified': return 'bg-green-100 text-green-700';
@@ -67,7 +77,7 @@ export default function ProfileSummaryCard({ profile }: { profile: ProfileData }
                         Edit profile
                     </button>
                     {profile.verificationStatus !== 'verified' && (
-                        <button className="w-full bg-[#00853E] text-white py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
+                        <button className="w-full bg-brand-green text-white py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
                             Complete verification
                         </button>
                     )}

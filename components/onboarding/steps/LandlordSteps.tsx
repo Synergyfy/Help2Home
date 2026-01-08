@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FiHome, FiSettings, FiTool, FiArrowRight, FiArrowLeft, FiCheck } from "react-icons/fi";
 import { useOnboardingStore, LandlordData } from "@/store/onboardingStore";
+import { useUserStore } from "@/store/userStore";
 
 const propertyCountOptions = ["1 property", "2-5 properties", "6-10 properties", "10+ properties"];
 const propertyTypes = ["Apartments", "Houses", "Duplexes", "Commercial", "Land", "Mixed"];
@@ -35,6 +36,7 @@ const LandlordStep = ({ stepNumber }: LandlordStepProps) => {
 
   const handleComplete = () => {
     updateRoleData("landlord", formData);
+    useUserStore.getState().updateRoleProfileData("landlord", formData);
     completeRoleOnboarding("landlord");
 
     // Check if there are other roles selected that haven't been completed yet

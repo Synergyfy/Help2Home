@@ -8,9 +8,9 @@ import { useUserStore } from "@/store/userStore";
 
 const ProfileStep = () => {
   const { getCurrentUser, nextStep, prevStep } = useOnboardingStore();
-  const {setUser} = useUserStore()
+  const { setUser } = useUserStore()
   const user = getCurrentUser();
-  
+
   const [fullName, setFullName] = useState(user?.fullName || "");
   const [phone, setPhone] = useState(user?.phone || "");
   const [errors, setErrors] = useState<{ fullName?: string; phone?: string }>({});
@@ -32,7 +32,13 @@ const ProfileStep = () => {
       return;
     }
 
+    const nameParts = fullName.trim().split(/\s+/);
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || "";
+
     setUser({ fullName: fullName.trim(), phone: phone.trim() });
+    useUserStore.getState().updateProfile({ firstName, lastName });
+
     nextStep();
   };
 
@@ -62,9 +68,9 @@ const ProfileStep = () => {
               Full Name
             </label>
             <div className="relative group">
-              <FiUser 
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors" 
-                size={20} 
+              <FiUser
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors"
+                size={20}
               />
               <input
                 type="text"
@@ -87,9 +93,9 @@ const ProfileStep = () => {
               Phone Number
             </label>
             <div className="relative group">
-              <FiPhone 
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors" 
-                size={20} 
+              <FiPhone
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors"
+                size={20}
               />
               <input
                 type="tel"

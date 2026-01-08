@@ -1,9 +1,43 @@
+import React from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export type Role = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor' | 'admin' | 'superAdmin';
 
 
+
+export interface CommonProfile {
+  firstName: string;
+  lastName: string;
+  dob: string;
+  gender: string;
+  maritalStatus: string;
+  address: string;
+  state: string;
+  image: string;
+}
+
+export interface TenantProfileData {
+  preferredLocation: string;
+  budgetRange: string;
+  moveInDate: string;
+  propertyType: string;
+  bedrooms: string;
+  amenities: string[];
+  employmentStatus?: string;
+  employerName?: string;
+  jobTitle?: string;
+  monthlySalary?: string;
+}
+
+export interface LandlordProfileData {
+  propertyCount: string;
+  propertyTypes: string[];
+  managementStyle: string;
+  services: string[];
+  experience: string;
+  bankAccounts?: any[];
+}
 
 interface UserState {
   id: string;
@@ -17,12 +51,21 @@ interface UserState {
   hasHydrated: boolean;
   onboardingCompleted: boolean;
   roleOnboardingCompleted: Record<Role, boolean>;
+  profile: CommonProfile;
+  roleData: {
+    tenant?: TenantProfileData;
+    landlord?: LandlordProfileData;
+    caretaker?: any;
+    agent?: any;
+    investor?: any;
+  };
   draftData: Record<string, any>;
   
   
   // Actions
   setUser: (data: Partial<UserState>) => void;
-  updateProfileData: (role: Role, data: any) => void;
+  updateProfile: (data: Partial<CommonProfile>) => void;
+  updateRoleProfileData: (role: Role, data: any) => void;
   setActiveRole: (role: Role) => void;
   setEmailVerified: (status: boolean) => void;
   setHasHydrated: (value: boolean) => void;
@@ -52,17 +95,36 @@ export const useUserStore = create<UserState>()(
         admin: false,
         superAdmin: false,
       },
+      profile: {
+        firstName: '',
+        lastName: '',
+        dob: '',
+        gender: '',
+        maritalStatus: '',
+        address: '',
+        state: '',
+        image: '/assets/dashboard/profile-placeholder.png',
+      },
+      roleData: {},
       draftData: {},
 
       setUser: (data) => set((state) => ({ ...state, ...data })),
-      updateProfileData: (role, data) => set((state) => ({
-    draftData: { ...state.draftData, [role]: { ...state.draftData[role], ...data } }
-})),
+      updateProfile: (data) => set((state) => ({
+        profile: { ...state.profile, ...data }
+      })),
+      updateRoleProfileData: (role, data) => set((state) => ({
+        roleData: { 
+          ...state.roleData, 
+          [role]: { ...state.roleData[role as keyof typeof state.roleData], ...data }
+        }
+      })),
       setActiveRole: (activeRole) => set({ activeRole }),
       setEmailVerified: (verified) => set({ verified }),
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
       resetUser: () => set({ 
-       id: '', email: '', roles: [], activeRole: null, verified: false, fullName: '', phone: '',token: null
+       id: '', email: '', roles: [], activeRole: null, verified: false, fullName: '', phone: '',token: null,
+       profile: { firstName: '', lastName: '', dob: '', gender: '', maritalStatus: '', address: '', state: '', image: '/assets/dashboard/profile-placeholder.png' },
+       roleData: {}
       }),
     }),
     {
