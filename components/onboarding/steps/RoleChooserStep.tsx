@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from "framer-motion";
-import { FiKey, FiBriefcase, FiArrowRight, FiArrowLeft, FiCheck, FiUsers, FiHome, FiTrendingUp,FiStar } from "react-icons/fi";
+import { FiKey, FiBriefcase, FiArrowRight, FiArrowLeft, FiCheck, FiUsers, FiHome, FiTrendingUp, FiStar, FiShield } from "react-icons/fi";
 import { useOnboardingStore, UserRole } from "@/store/onboardingStore";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
@@ -12,7 +12,8 @@ const roleIcons: Record<UserRole, React.ReactNode> = {
   caretaker: <FiUsers size={24} />,
   agent: <FiBriefcase size={24} />,
   investor: <FiTrendingUp size={24} />,
-  admin:<FiStar size={24}/>
+  admin: <FiStar size={24} />,
+  superAdmin: <FiShield size={24} />
 };
 
 const roleNames: Record<UserRole, string> = {
@@ -21,13 +22,13 @@ const roleNames: Record<UserRole, string> = {
   caretaker: "Caretaker",
   agent: "Real Estate Agent",
   investor: "Investor",
-  admin:"adminstrator",
+  admin: "Administrator",
+  superAdmin: "Super Admin",
 };
 
 const RoleChooserStep = () => {
   const router = useRouter();
-  const { getCurrentUser, nextStep, prevStep } = useOnboardingStore();
-  const {setActiveRole} = useUserStore()
+  const { getCurrentUser, nextStep, prevStep, goToStep, setActiveRole } = useOnboardingStore();
   const user = getCurrentUser();
   const selectedRoles = user?.roles || [];
 
@@ -45,8 +46,8 @@ const RoleChooserStep = () => {
   };
 
   const handleFinish = () => {
-    // Navigate to signin as requested upon completion
-    router.push("/signin");
+    // Proceed to success step (Step 8) regardless of pending roles
+    goToStep(8);
   };
 
   const allRolesCompleted = incompleteRoles.length === 0;
@@ -147,7 +148,7 @@ const RoleChooserStep = () => {
             onClick={handleFinish}
             className="flex-1 py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-[0.98]"
           >
-            {allRolesCompleted ? "Complete & Sign In" : "Finish Now"}
+            {incompleteRoles.length > 0 ? "Finish Now (Optional)" : "Complete Setup"}
             <FiArrowRight size={20} />
           </button>
         )}

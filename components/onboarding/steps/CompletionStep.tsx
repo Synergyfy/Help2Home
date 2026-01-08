@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { FiCheck, FiHome, FiKey, FiBriefcase, FiTrendingUp, FiUsers, FiLogIn } from "react-icons/fi";
 import { FiShield } from 'react-icons/fi';
 import { useOnboardingStore, UserRole } from "@/store/onboardingStore";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const roleIcons: Record<UserRole, React.ReactNode> = {
   tenant: <FiHome size={32} />,
@@ -14,6 +14,7 @@ const roleIcons: Record<UserRole, React.ReactNode> = {
   agent: <FiBriefcase size={32} />,
   investor: <FiTrendingUp size={32} />,
   admin: <FiShield size={32} />,
+  superAdmin: <FiShield size={32} />,
 };
 
 const roleNames: Record<UserRole, string> = {
@@ -23,11 +24,14 @@ const roleNames: Record<UserRole, string> = {
   agent: "Real Estate Agent",
   investor: "Investor",
   admin: "Administrator",
+  superAdmin: "Super Administrator",
 };
 
 const CompletionStep = () => {
   const router = useRouter();
-  const { getCurrentUser, resetOnboarding,setOnboardingCompleted } = useOnboardingStore();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect');
+  const { getCurrentUser, resetOnboarding, setOnboardingCompleted } = useOnboardingStore();
   const user = getCurrentUser();
 
   useEffect(() => {
@@ -39,7 +43,8 @@ const CompletionStep = () => {
   const completedRoles = user?.roles?.filter(role => user.roleOnboardingCompleted?.[role]) || [];
 
   const handleSignIn = () => {
-    router.push("/signin");
+    const target = redirect ? `/signin?redirect=${encodeURIComponent(redirect)}` : '/signin';
+    router.push(target);
   };
 
   const getRoleMessage = () => {
@@ -73,7 +78,7 @@ const CompletionStep = () => {
         <div className="w-16 h-16 rounded-full bg-brand-green flex items-center justify-center text-white shadow-xl shadow-brand-green/20">
           {primaryRole ? roleIcons[primaryRole] : <FiCheck size={32} />}
         </div>
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.5 }}
@@ -105,14 +110,14 @@ const CompletionStep = () => {
         transition={{ delay: 0.4 }}
         className="w-full max-w-sm space-y-4"
       >
-        <button 
+        <button
           onClick={handleSignIn}
           className="w-full py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-3 active:scale-[0.98]"
         >
           <FiLogIn size={20} />
           Sign In to Your Account
         </button>
-        
+
         <button
           onClick={() => {
             resetOnboarding();

@@ -10,7 +10,6 @@ import { ActivityLog } from '@/components/dashboard/admin/profile/ActvityLog';
 export default function AdminProfilePage() {
   const [activeTab, setActiveTab] = useState('personal');
 
-  // Map IDs to Components
   const renderContent = () => {
     switch (activeTab) {
       case 'personal': return <PersonalInfoForm />;

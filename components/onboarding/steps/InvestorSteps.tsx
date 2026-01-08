@@ -36,16 +36,16 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
   const handleComplete = () => {
     updateRoleData("investor", formData);
     completeRoleOnboarding("investor");
-    
+
     // Check if other selected roles need onboarding
     const remainingRoles = user?.roles?.filter(
       r => !user.roleOnboardingCompleted?.[r] && r !== 'investor'
     ) || [];
-    
+
     if (remainingRoles.length > 0) {
       goToStep(4); // Back to chooser
     } else {
-      nextStep(); // Proceed to completion screen
+      goToStep(8); // Proceed to completion screen
     }
   };
 
@@ -74,7 +74,7 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
 
         <div className="space-y-6 flex-1">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
+            <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
               <FiDollarSign className="text-brand-green" /> Investment budget range
             </label>
             <div className="grid grid-cols-1 gap-3">
@@ -83,11 +83,10 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
                   key={range}
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, investmentBudget: range }))}
-                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all text-left ${
-                    formData.investmentBudget === range
-                      ? "border-brand-green bg-brand-green/5 text-brand-green"
-                      : "border-gray-100 hover:border-gray-300 text-gray-500"
-                  }`}
+                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all text-left ${formData.investmentBudget === range
+                    ? "border-brand-green bg-brand-green/5 text-brand-green"
+                    : "border-gray-100 hover:border-gray-300 text-gray-500"
+                    }`}
                 >
                   {range}
                 </button>
@@ -131,7 +130,7 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
 
         <div className="space-y-8 flex-1">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
+            <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
               <FiTrendingUp className="text-brand-green" /> Investment types
             </label>
             <div className="grid grid-cols-2 gap-3">
@@ -140,11 +139,10 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
                   key={type}
                   type="button"
                   onClick={() => toggleInvestmentType(type)}
-                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${
-                    formData.investmentType.includes(type)
-                      ? "border-brand-green bg-brand-green/5 text-brand-green"
-                      : "border-gray-100 hover:border-gray-300 text-gray-500"
-                  }`}
+                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${formData.investmentType.includes(type)
+                    ? "border-brand-green bg-brand-green/5 text-brand-green"
+                    : "border-gray-100 hover:border-gray-300 text-gray-500"
+                    }`}
                 >
                   {type} {formData.investmentType.includes(type) && <FiCheck size={16} />}
                 </button>
@@ -160,11 +158,10 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
                   key={level}
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, riskTolerance: level }))}
-                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all ${
-                    formData.riskTolerance === level
-                      ? "border-brand-green bg-brand-green/5 text-brand-green"
-                      : "border-gray-100 hover:border-gray-300 text-gray-500"
-                  }`}
+                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all ${formData.riskTolerance === level
+                    ? "border-brand-green bg-brand-green/5 text-brand-green"
+                    : "border-gray-100 hover:border-gray-300 text-gray-500"
+                    }`}
                 >
                   {level}
                 </button>
@@ -204,7 +201,7 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
 
       <div className="space-y-8 flex-1">
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
+          <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
             <FiTrendingUp className="text-brand-green" /> Expected annual returns
           </label>
           <div className="grid grid-cols-2 gap-3">
@@ -213,11 +210,10 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
                 key={expectation}
                 type="button"
                 onClick={() => setFormData(prev => ({ ...prev, expectedReturns: expectation }))}
-                className={`p-4 rounded-xl border-2 text-sm font-bold transition-all ${
-                  formData.expectedReturns === expectation
-                    ? "border-brand-green bg-brand-green/5 text-brand-green"
-                    : "border-gray-100 hover:border-gray-300 text-gray-500"
-                }`}
+                className={`p-4 rounded-xl border-2 text-sm font-bold transition-all ${formData.expectedReturns === expectation
+                  ? "border-brand-green bg-brand-green/5 text-brand-green"
+                  : "border-gray-100 hover:border-gray-300 text-gray-500"
+                  }`}
               >
                 {expectation}
               </button>
@@ -226,7 +222,7 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
+          <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
             <FiClock className="text-brand-green" /> Investment timeline
           </label>
           <div className="grid grid-cols-1 gap-3">
@@ -235,11 +231,10 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
                 key={timeline}
                 type="button"
                 onClick={() => setFormData(prev => ({ ...prev, investmentTimeline: timeline }))}
-                className={`p-4 rounded-xl border-2 text-sm font-bold transition-all text-left ${
-                  formData.investmentTimeline === timeline
-                    ? "border-brand-green bg-brand-green/5 text-brand-green"
-                    : "border-gray-100 hover:border-gray-300 text-gray-500"
-                }`}
+                className={`p-4 rounded-xl border-2 text-sm font-bold transition-all text-left ${formData.investmentTimeline === timeline
+                  ? "border-brand-green bg-brand-green/5 text-brand-green"
+                  : "border-gray-100 hover:border-gray-300 text-gray-500"
+                  }`}
               >
                 {timeline}
               </button>

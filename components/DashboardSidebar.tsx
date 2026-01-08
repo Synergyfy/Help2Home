@@ -114,15 +114,19 @@ const NAV_CONFIG = {
 
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront }, { label: 'Settings', href: '/dashboard/agent/settings', icon: MdSettings },
 
+    ],
+    superAdmin: [
+        { label: 'Admin Dashboard', href: '/dashboard/admin', icon: RxDashboard },
+        { label: 'Systems Health', href: '/dashboard/admin/health', icon: MdSecurity },
+        { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
     ]
-
 };
 
 export default function DashboardSidebar({ isOpen = false, onClose }: { isOpen?: boolean, onClose?: () => void }) {
     const pathname = usePathname();
     const router = useRouter();
 
-    const { activeRole, resetUser,roles } = useUserStore();
+    const { activeRole, resetUser, roles } = useUserStore();
     // 1. Authorization Protection
     useEffect(() => {
         const isPathAdmin = pathname.startsWith('/dashboard/admin');

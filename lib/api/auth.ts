@@ -28,7 +28,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: true, landlord: true, caretaker: true, agent: true, investor: true,admin:true },
+      roleOnboardingCompleted: { tenant: true, landlord: true, caretaker: true, agent: true, investor: true, admin: true, superAdmin: true },
       draftData: {},
       onboardingCompleted: true,
     }
@@ -43,7 +43,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: true, investor:false,admin:false },
+      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: true, investor: false, admin: false, superAdmin: false },
       draftData: { 
         agent: { licenseNumber: 'AG-9920', specialization: ['Residential'], yearsExperience: '5+' } 
       },
@@ -61,7 +61,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: true, caretaker: false, agent: false, investor:false,admin:false },
+      roleOnboardingCompleted: { tenant: false, landlord: true, caretaker: false, agent: false, investor: false, admin: false, superAdmin: false },
       draftData: { 
         landlord: { propertyCount: '2-5 properties', propertyTypes: ['Apartments'], managementStyle: 'Self-managed' } 
       },
@@ -79,7 +79,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: false, investor: true,admin:false},
+      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: false, investor: true, admin: false, superAdmin: false },
       draftData: { 
         investor: { investmentBudget: '$100k - $500k', investmentType: ['Buy-to-let'], riskTolerance: 'Moderate' } 
       },
@@ -97,7 +97,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: true, agent: false, investor:false,admin:false },
+      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: true, agent: false, investor: false, admin: false, superAdmin: false },
       draftData: { 
         caretaker: { propertiesManaged: '10+', managementExperience: '8 years', availableHours: 'Full-time' } 
       },
@@ -115,7 +115,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: true, landlord: false, caretaker: false, agent: false, investor:false,admin:false },
+      roleOnboardingCompleted: { tenant: true, landlord: false, caretaker: false, agent: false, investor: false, admin: false, superAdmin: false },
       draftData: { 
         tenant: { preferredLocation: 'Downtown', budgetRange: '$1500 - $2500', moveInDate: '2026-02-01' } 
       },
@@ -133,7 +133,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: true, caretaker: false, agent: false, investor: true,admin:false },
+      roleOnboardingCompleted: { tenant: false, landlord: true, caretaker: false, agent: false, investor: true, admin: false, superAdmin: false },
       draftData: { 
         landlord: { propertyCount: '6-10 properties' },
         investor: { investmentBudget: '$1M+' }
@@ -152,7 +152,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: false, investor:false,admin:false },
+      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: false, investor: false, admin: false, superAdmin: false },
       draftData: {},
       onboardingCompleted: false,
     }

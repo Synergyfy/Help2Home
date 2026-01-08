@@ -161,6 +161,11 @@ export interface Tenant {
     leaseEnd: string;
     paymentStatus: 'Up to date' | 'Late' | 'Pending';
     avatarUrl?: string;
+    details?: {
+        employmentStatus: string;
+        employerName: string;
+        monthlySalary: string;
+    };
 }
 
 export const MOCK_TENANTS: Tenant[] = [

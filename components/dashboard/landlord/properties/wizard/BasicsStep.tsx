@@ -22,7 +22,7 @@ export default function BasicsStep() {
                             type="text"
                             {...register('title')}
                             placeholder="e.g., Modern 2-Bedroom Apartment in Lekki Phase 1"
-                            className={`w-full px-4 py-2 border rounded-lg focus:ring-[#00853E] focus:border-[#00853E] ${errors.title ? 'border-red-500' : 'border-gray-300'}`}
+                            className={`w-full px-4 py-2 border rounded-lg focus:ring-brand-green focus:border-brand-green ${errors.title ? 'border-red-500' : 'border-gray-300'}`}
                         />
                         {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title.message}</p>}
                         <p className="text-xs text-gray-500 mt-1">Keep it short and descriptive — location and size help renters.</p>
@@ -36,7 +36,7 @@ export default function BasicsStep() {
                             </label>
                             <select
                                 {...register('type')}
-                                className={`w-full px-4 py-2 border rounded-lg focus:ring-[#00853E] focus:border-[#00853E] bg-white ${errors.type ? 'border-red-500' : 'border-gray-300'}`}
+                                className={`w-full px-4 py-2 border rounded-lg focus:ring-brand-green focus:border-brand-green bg-white ${errors.type ? 'border-red-500' : 'border-gray-300'}`}
                             >
                                 <option value="">Select type</option>
                                 <option value="Apartment">Apartment</option>
@@ -60,7 +60,7 @@ export default function BasicsStep() {
                                         type="radio"
                                         value="Rent"
                                         {...register('listingType')}
-                                        className="text-[#00853E] focus:ring-[#00853E]"
+                                        className="text-brand-green focus:ring-brand-green"
                                     />
                                     <span>For Rent</span>
                                 </label>
@@ -69,7 +69,7 @@ export default function BasicsStep() {
                                         type="radio"
                                         value="Sale"
                                         {...register('listingType')}
-                                        className="text-[#00853E] focus:ring-[#00853E]"
+                                        className="text-brand-green focus:ring-brand-green"
                                     />
                                     <span>For Sale</span>
                                 </label>
@@ -93,7 +93,7 @@ export default function BasicsStep() {
                                 type="text"
                                 {...register('address.street')}
                                 placeholder="Start typing address..."
-                                className={`w-full pl-10 px-4 py-2 border rounded-lg focus:ring-[#00853E] focus:border-[#00853E] ${errors.address?.street ? 'border-red-500' : 'border-gray-300'}`}
+                                className={`w-full pl-10 px-4 py-2 border rounded-lg focus:ring-brand-green focus:border-brand-green ${errors.address?.street ? 'border-red-500' : 'border-gray-300'}`}
                             />
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -109,7 +109,7 @@ export default function BasicsStep() {
                             <input
                                 type="text"
                                 {...register('address.city')}
-                                className={`w-full px-4 py-2 border rounded-lg focus:ring-[#00853E] focus:border-[#00853E] ${errors.address?.city ? 'border-red-500' : 'border-gray-300'}`}
+                                className={`w-full px-4 py-2 border rounded-lg focus:ring-brand-green focus:border-brand-green ${errors.address?.city ? 'border-red-500' : 'border-gray-300'}`}
                             />
                             {errors.address?.city && <p className="text-xs text-red-500 mt-1">{errors.address.city.message}</p>}
                         </div>
@@ -118,7 +118,7 @@ export default function BasicsStep() {
                             <input
                                 type="text"
                                 {...register('address.state')}
-                                className={`w-full px-4 py-2 border rounded-lg focus:ring-[#00853E] focus:border-[#00853E] ${errors.address?.state ? 'border-red-500' : 'border-gray-300'}`}
+                                className={`w-full px-4 py-2 border rounded-lg focus:ring-brand-green focus:border-brand-green ${errors.address?.state ? 'border-red-500' : 'border-gray-300'}`}
                             />
                             {errors.address?.state && <p className="text-xs text-red-500 mt-1">{errors.address.state.message}</p>}
                         </div>

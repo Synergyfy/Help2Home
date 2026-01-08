@@ -1,17 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTenants } from '@/hooks/useTenants';
+import { useLandlordProperties } from '@/hooks/useLandlordQueries';
 import { Tenant } from '@/lib/mockLandlordData';
-import { FiX, FiUser, FiHome, FiDollarSign, FiCalendar } from 'react-icons/fi';
+import { FiX, FiUser, FiHome, FiDollarSign, FiCalendar, FiBriefcase } from 'react-icons/fi';
 
 interface AddTenantModalProps {
     isOpen: boolean;
     onClose: () => void;
+    initialData?: any;
 }
 
-export default function AddTenantModal({ isOpen, onClose }: AddTenantModalProps) {
+export default function AddTenantModal({ isOpen, onClose, initialData }: AddTenantModalProps) {
     const { addTenant, isAdding } = useTenants();
+    const { data: properties = [] } = useLandlordProperties();
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -21,7 +25,28 @@ export default function AddTenantModal({ isOpen, onClose }: AddTenantModalProps)
         rentAmount: '',
         leaseStart: '',
         leaseEnd: '',
+        employmentStatus: 'Employed',
+        employerName: '',
+        monthlySalary: '',
     });
+
+    useEffect(() => {
+        if (initialData && isOpen) {
+            setFormData({
+                name: initialData.name || '',
+                email: initialData.email || '',
+                phone: initialData.phone || '',
+                propertyId: initialData.propertyId || '',
+                propertyName: initialData.propertyName || '',
+                rentAmount: initialData.rentAmount?.toString() || '',
+                leaseStart: initialData.leaseStart || '',
+                leaseEnd: initialData.leaseEnd || '',
+                employmentStatus: initialData.employmentStatus || 'Employed',
+                employerName: initialData.employerName || '',
+                monthlySalary: initialData.monthlySalary?.toString() || '',
+            });
+        }
+    }, [initialData, isOpen]);
 
     if (!isOpen) return null;
 
@@ -35,10 +60,16 @@ export default function AddTenantModal({ isOpen, onClose }: AddTenantModalProps)
             propertyId: formData.propertyId || 'manual',
             propertyName: formData.propertyName,
             status: 'Active',
-            rentAmount: Number(formData.rentAmount),
+            rentAmount: Number(formData.rentAmount.toString().replace(/,/g, '')),
             leaseStart: formData.leaseStart,
             leaseEnd: formData.leaseEnd,
             paymentStatus: 'Up to date',
+            // Extended details for consistency with applications
+            details: {
+                employmentStatus: formData.employmentStatus,
+                employerName: formData.employerName,
+                monthlySalary: formData.monthlySalary,
+            }
         };
 
         addTenant(newTenant, {
@@ -53,6 +84,9 @@ export default function AddTenantModal({ isOpen, onClose }: AddTenantModalProps)
                     rentAmount: '',
                     leaseStart: '',
                     leaseEnd: '',
+                    employmentStatus: 'Employed',
+                    employerName: '',
+                    monthlySalary: '',
                 });
             }
         });
@@ -107,21 +141,37 @@ export default function AddTenantModal({ isOpen, onClose }: AddTenantModalProps)
                             </div>
                         </div>
 
-                        {/* Lease Info */}
+                        {/* Property Selection */}
                         <div className="space-y-4">
                             <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Lease & Property</h3>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                                    <FiHome size={14} /> Property Name
+                                    <FiHome size={14} /> Select Property
                                 </label>
-                                <input
+                                <select
                                     required
-                                    type="text"
-                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-green outline-none"
-                                    value={formData.propertyName}
-                                    onChange={e => setFormData({ ...formData, propertyName: e.target.value })}
-                                />
+                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-green outline-none bg-white font-medium"
+                                    value={formData.propertyId}
+                                    onChange={e => {
+                                        const propId = e.target.value;
+                                        const prop = properties.find((p: any) => p.id.toString() === propId);
+                                        setFormData({
+                                            ...formData,
+                                            propertyId: propId,
+                                            propertyName: prop ? prop.title : '',
+                                            rentAmount: prop ? prop.price.toString() : formData.rentAmount
+                                        });
+                                    }}
+                                >
+                                    <option value="">Choose a property...</option>
+                                    {properties.map((prop: any) => (
+                                        <option key={prop.id} value={prop.id}>
+                                            {prop.title} - ₦{prop.price.toLocaleString()}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
+
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                                     <FiDollarSign size={14} /> Rent Amount (Annual)
@@ -140,10 +190,51 @@ export default function AddTenantModal({ isOpen, onClose }: AddTenantModalProps)
                                     }}
                                 />
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                        </div>
+
+                        {/* Additional Information */}
+                        <div className="space-y-4 md:col-span-2 border-t border-gray-100 pt-6">
+                            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                                <FiBriefcase size={14} /> Employment & Income
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">Employment Status</label>
+                                    <select
+                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-green outline-none bg-white"
+                                        value={formData.employmentStatus}
+                                        onChange={e => setFormData({ ...formData, employmentStatus: e.target.value })}
+                                    >
+                                        <option value="Employed">Employed</option>
+                                        <option value="Self-Employed">Self-Employed</option>
+                                        <option value="Unemployed">Unemployed</option>
+                                        <option value="Student">Student</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">Employer Name</label>
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-green outline-none"
+                                        value={formData.employerName}
+                                        onChange={e => setFormData({ ...formData, employerName: e.target.value })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">Monthly Salary</label>
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-green outline-none"
+                                        value={formData.monthlySalary}
+                                        onChange={e => setFormData({ ...formData, monthlySalary: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                                        <FiCalendar size={14} /> Lease Start
+                                        <FiCalendar size={14} /> Lease Start Date
                                     </label>
                                     <input
                                         required
@@ -155,7 +246,7 @@ export default function AddTenantModal({ isOpen, onClose }: AddTenantModalProps)
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                                        <FiCalendar size={14} /> Lease End
+                                        <FiCalendar size={14} /> Lease End Date
                                     </label>
                                     <input
                                         required

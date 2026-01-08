@@ -121,12 +121,21 @@ export default function PropertyDetailsPage() {
                                 >
                                     Book a Viewing
                                 </button>
-                                <Link
-                                    href="/signin"
-                                    className="block w-full text-center border-2 border-brand-green text-brand-green font-bold py-4 rounded-xl hover:bg-green-50 transition-colors mt-3"
-                                >
-                                    Rent Now
-                                </Link>
+
+                                {/* Rent Now Button - Only for Rental Property Types */}
+                                {(property.propertyType === 'rent' || property.propertyType === 'service-apartment' || property.propertyType === 'rent-to-own') && (
+                                    <Link
+                                        href={propertyId ? `/dashboard/tenant/apply?propertyId=${propertyId}` : '/signup'}
+                                        onClick={(e) => {
+                                            // Optional: If we want to handle the "redirect" logic manually for non-Link transitions
+                                            // But for Link, we can just ensure they land on Apply which should be protected by middleware or an internal check
+                                        }}
+                                        className="block w-full text-center border-2 border-brand-green text-brand-green font-bold py-4 rounded-xl hover:bg-green-50 transition-colors mt-3"
+                                    >
+                                        Rent Now
+                                    </Link>
+                                )}
+
                                 <Link
                                     href={`/tenant-rent-calculator?amount=${property.price}&propertyId=${property.id}`}
                                     className="block w-full bg-brand-green text-white font-bold py-4 mt-3 text-center rounded-xl hover:bg-green-600 transition-colors shadow-md"

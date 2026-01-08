@@ -37,7 +37,17 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
   const handleComplete = () => {
     updateRoleData("tenant", formData);
     completeRoleOnboarding("tenant");
-    goToStep(4);
+
+    // Check if there are other roles selected that haven't been completed yet
+    const remainingRoles = user?.roles?.filter(
+      r => !user.roleOnboardingCompleted?.[r] && r !== 'tenant'
+    ) || [];
+
+    if (remainingRoles.length > 0) {
+      goToStep(4); // Return to Role Chooser
+    } else {
+      goToStep(8); // Proceed to final completion screen (instead of nextStep to be safe)
+    }
   };
 
   const toggleAmenity = (amenity: string) => {
@@ -63,11 +73,10 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
     <button
       type="button"
       onClick={onClick}
-      className={`p-4 rounded-xl border-2 text-sm font-bold transition-all duration-200 active:scale-[0.97] ${
-        isSelected
-          ? "border-brand-green bg-brand-green/5 text-brand-green shadow-sm"
-          : "border-gray-100 bg-white text-gray-500 hover:border-gray-300"
-      }`}
+      className={`p-4 rounded-xl border-2 text-sm font-bold transition-all duration-200 active:scale-[0.97] ${isSelected
+        ? "border-brand-green bg-brand-green/5 text-brand-green shadow-sm"
+        : "border-gray-100 bg-white text-gray-500 hover:border-gray-300"
+        }`}
     >
       {label}
     </button>
@@ -81,7 +90,7 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
         animate={{ opacity: 1, x: 0 }}
         className="flex-1 flex flex-col"
       >
-        <Header 
+        <Header
           step={1}
           title="Where do you want to live?"
           description="Select your preferred location and budget range."
@@ -89,7 +98,7 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
 
         <div className="space-y-8 flex-1">
           <div>
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4">
+            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4">
               <FiMapPin className="inline mr-2 text-brand-green" />
               Preferred Location
             </label>
@@ -106,7 +115,7 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
           </div>
 
           <div>
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4">
+            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4">
               <FiDollarSign className="inline mr-2 text-brand-green" />
               Monthly Budget
             </label>
@@ -150,7 +159,7 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
         animate={{ opacity: 1, x: 0 }}
         className="flex-1 flex flex-col"
       >
-        <Header 
+        <Header
           step={2}
           title="What type of property?"
           description="Tell us about your ideal home requirements."
@@ -158,7 +167,7 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
 
         <div className="space-y-8 flex-1">
           <div>
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4">
+            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4">
               <FiHome className="inline mr-2 text-brand-green" />
               Property Type
             </label>
@@ -212,7 +221,7 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
       animate={{ opacity: 1, x: 0 }}
       className="flex-1 flex flex-col"
     >
-      <Header 
+      <Header
         step={3}
         title="Final Details"
         description="Select must-have amenities and your move-in timeline."
@@ -243,11 +252,10 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
                 <button
                   key={amenity}
                   onClick={() => toggleAmenity(amenity)}
-                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${
-                    active 
-                      ? "border-brand-green bg-brand-green/5 text-brand-green shadow-sm" 
-                      : "border-gray-100 bg-white text-gray-500 hover:border-gray-300"
-                  }`}
+                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${active
+                    ? "border-brand-green bg-brand-green/5 text-brand-green shadow-sm"
+                    : "border-gray-100 bg-white text-gray-500 hover:border-gray-300"
+                    }`}
                 >
                   {amenity}
                   {active && <FiCheck size={16} className="text-brand-green" />}

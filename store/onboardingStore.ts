@@ -44,7 +44,7 @@ export interface InvestorData {
 }
 
 export const MULTI_SELECT_ROLES: Role[] = ['landlord', 'caretaker', 'agent'];
-export type UserRole = Role;
+export type UserRole = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor' | 'admin' | 'superAdmin';
 
 interface OnboardingStore {
   currentStep: number;
@@ -89,7 +89,10 @@ export const useOnboardingStore = create<OnboardingStore>()(
       onboardingCompleted: false,
       draftData: {},
       roleOnboardingCompleted: {
-        tenant: false, landlord: false, caretaker: false, agent: false, investor: false,admin:false,
+        tenant: false, landlord: false, caretaker: false, agent: false,
+        investor: false,
+        admin: false,
+        superAdmin: false,
       },
 
       getCurrentUser: () => {
@@ -110,10 +113,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
       setStep: (currentStep) => set({ currentStep }),
       goToStep: (step) => set({ currentStep: step }),
       getTotalSteps: () => {
-        const { selectedRoles } = get();
-        // Base steps: Email, OTP, Profile, Role Selection, Role Chooser
-        const baseSteps = 5; 
-        return baseSteps + selectedRoles.length;
+        return 9;
       },
       nextStep: () => set((state) => ({ currentStep: state.currentStep + 1 })),
       prevStep: () => set((state) => ({ currentStep: Math.max(0, state.currentStep - 1) })),
@@ -148,7 +148,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
         draftData: {},
         onboardingCompleted: false,
         roleOnboardingCompleted: {
-          tenant: false, landlord: false, caretaker: false, agent: false, investor: false,admin:false
+          tenant: false, landlord: false, caretaker: false, agent: false, investor: false, admin: false, superAdmin: false
         }
       }),
     }),
