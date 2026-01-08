@@ -22,6 +22,7 @@ const NAV_CONFIG = {
         { label: 'Role Permissions', href: '/dashboard/admin/roles', icon: MdSecurity },
         { label: 'Audit Logs', href: '/dashboard/admin/audit', icon: MdHistory },
         { label: 'Support Tickets', href: '/dashboard/admin/support', icon: MdSupportAgent },
+        { label: 'Super Admin', href: '/dashboard/admin/superrole', icon: MdSecurity },
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
     ],
 

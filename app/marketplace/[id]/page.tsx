@@ -40,7 +40,7 @@ export default function PropertyDetailsPage() {
 
 
     // Optional chaining for images array
-    const images = property.images && property.images.length > 0 ? [property.images[0]] : [];
+    const images = property.images && property.images.length > 0 ? property.images : [];
 
 
     return (
@@ -106,6 +106,66 @@ export default function PropertyDetailsPage() {
                                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                                     <span className="text-2xl"><FaShower className='w-4 h-4 text-green-700' /></span>
                                     <span className="text-sm font-medium text-gray-700">{property.bathrooms} Bathrooms</span>
+                                </div>
+                                {property.floorSize && (
+                                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                        <span className="text-2xl">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                                            </svg>
+                                        </span>
+                                        <span className="text-sm font-medium text-gray-700">{property.floorSize} sqft</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Key Features / Amenities */}
+                            {((property.amenities && property.amenities.length > 0) || property.pool || property.gym || property.garden || property.parking || property.serviced) && (
+                                <div className="mb-8">
+                                    <h2 className="text-xl font-bold text-gray-900 mb-4">Key Features & Amenities</h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {property.amenities?.map((amenity, idx) => (
+                                            <div key={idx} className="flex items-center gap-2 text-gray-700">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-brand-green"></div>
+                                                <span>{amenity}</span>
+                                            </div>
+                                        ))}
+                                        {property.pool && <div className="flex items-center gap-2 text-gray-700"><div className="w-1.5 h-1.5 rounded-full bg-brand-green"></div><span>Swimming Pool</span></div>}
+                                        {property.gym && <div className="flex items-center gap-2 text-gray-700"><div className="w-1.5 h-1.5 rounded-full bg-brand-green"></div><span>Fitness Center / Gym</span></div>}
+                                        {property.garden && <div className="flex items-center gap-2 text-gray-700"><div className="w-1.5 h-1.5 rounded-full bg-brand-green"></div><span>Private Garden</span></div>}
+                                        {property.parking && <div className="flex items-center gap-2 text-gray-700"><div className="w-1.5 h-1.5 rounded-full bg-brand-green"></div><span>Ample Parking</span></div>}
+                                        {property.serviced && <div className="flex items-center gap-2 text-gray-700"><div className="w-1.5 h-1.5 rounded-full bg-brand-green"></div><span>Fully Serviced</span></div>}
+                                        {property.security && <div className="flex items-center gap-2 text-gray-700"><div className="w-1.5 h-1.5 rounded-full bg-brand-green"></div><span>24/7 Security</span></div>}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Property Details Grid */}
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900 mb-4">Property Facts</h2>
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <p className="text-sm text-gray-500 mb-1">Status</p>
+                                        <p className="font-medium text-gray-900 capitalize">{property.status || 'Available'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-500 mb-1">Ownership</p>
+                                        <p className="font-medium text-gray-900 capitalize">{property.ownership}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-500 mb-1">Added</p>
+                                        <p className="font-medium text-gray-900">{property.listingAge === '24h' ? 'Last 24 hours' : property.listingAge}</p>
+                                    </div>
+                                    {property.furnished !== undefined && (
+                                        <div>
+                                            <p className="text-sm text-gray-500 mb-1">Furnishing</p>
+                                            <p className="font-medium text-gray-900">{property.furnished ? 'Furnished' : 'Unfurnished'}</p>
+                                        </div>
+                                    )}
+                                    <div>
+                                        <p className="text-sm text-gray-500 mb-1">Category</p>
+                                        <p className="font-medium text-gray-900 capitalize">{property.category.replace(/-/g, ' ')}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
