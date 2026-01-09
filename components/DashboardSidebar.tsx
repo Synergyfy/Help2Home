@@ -101,7 +101,6 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
     ]
 };
 
-// Moving the config outside components for cleaner rendering
 const NavLink = ({ item, pathname, depth = 0, onClose }: { item: NavItem, pathname: string, depth?: number, onClose?: () => void }) => {
     const [isOpen, setIsOpen] = useState(false);
     const hasSubItems = item.subItems && item.subItems.length > 0;
