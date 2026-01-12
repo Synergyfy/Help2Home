@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { use } from 'react';
 import Link from 'next/link';
 import { getMockProperties } from '@/utils/properties';
 
-export default function PropertyDetailsPage({ params }: { params: { id: string } }) {
+export default function PropertyDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
     // Find property by ID or fallback
-    const property = getMockProperties().find(p => p.id.toString() === params.id) || getMockProperties()[0];
+    const property = getMockProperties().find(p => p.id.toString() === id) || getMockProperties()[0];
 
     // Updated to handle flat price number and currency
     const formatPrice = (price: number, currency: string = 'NGN') => {

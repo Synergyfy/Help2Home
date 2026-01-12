@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
+import { useRouter, usePathname } from 'next/navigation';
+import { useForm, FormProvider, SubmitHandler, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { propertySchema, PropertySchema } from '@/lib/validations/propertySchema';
 import StepIndicator from './StepIndicator';
@@ -28,8 +28,17 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
     const { activeRole } = useUserStore();
     const [currentStep, setCurrentStep] = useState(0);
 
+    const pathname = usePathname();
+
+    // Derive role from URL to support deep linking and immediate context switching
+    // /dashboard/[role]/properties/add
+    const pathSegments = pathname?.split('/') || [];
+    const urlRole = pathSegments[2]; // dashboard is 1, role is 2
+
     // Determine available steps based on role, default to landlord if undefined
-    const roleKey = (activeRole || 'landlord') as 'landlord' | 'agent' | 'caretaker';
+    const roleKey = (urlRole && ['landlord', 'agent', 'caretaker'].includes(urlRole)
+        ? urlRole
+        : activeRole || 'landlord') as 'landlord' | 'agent' | 'caretaker';
     const availableStepsKeys = STEP_CONFIG[activeRole as string] || STEP_CONFIG['landlord'];
 
     // Map keys to readable labels and component indices
@@ -54,7 +63,7 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
     const { mutate: createProperty, isPending } = useCreateProperty();
 
     const methods = useForm<PropertySchema>({
-        resolver: zodResolver(propertySchema),
+        resolver: zodResolver(propertySchema) as Resolver<PropertySchema>,
         defaultValues: initialData || {
             title: '',
             posterRole: roleKey as 'landlord' | 'agent' | 'caretaker',

@@ -28,7 +28,7 @@ export const PROPERTY_CATEGORIES = [
 export const STEP_CONFIG: Record<string, string[]> = {
   landlord: ['basics', 'location', 'details', 'financials', 'media'],
   agent: ['basics', 'location', 'details', 'financials', 'media', 'client-info'],
-  caretaker: ['basics', 'location', 'media', 'repair-notes'], // Example of different flow
+  caretaker: ['basics', 'location', 'details', 'financials', 'media'],
 };
 
 export const ROLE_ACTIONS: Record<string, { submitLabel: string; successMessage: string }> = {
@@ -41,7 +41,7 @@ export const ROLE_ACTIONS: Record<string, { submitLabel: string; successMessage:
     successMessage: 'Listing published successfully!'
   },
   caretaker: {
-    submitLabel: 'Send Request',
-    successMessage: 'Property update request sent to Landlord!'
+    submitLabel: 'List Property',
+    successMessage: 'Property listed successfully!'
   }
 };

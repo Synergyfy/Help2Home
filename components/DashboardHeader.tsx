@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 import { usePathname } from 'next/navigation';
 import { useUserStore, Role } from '@/store/userStore';
 import NotificationBell from '@/components/notifications/NotificationBell';
-import RoleSwitchModal from '@/components/lib/RoleSwitchModal';
+import RoleSwitchModal from '@/components/dashboard/shared/RoleSwitchModal';
 
 interface DashboardHeaderProps {
     onMenuClick: () => void;
@@ -73,7 +73,7 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
                 isOpen={showRoleModal}
                 targetRole={targetRole || ''}
                 onClose={() => setShowRoleModal(false)}
-                onConfirm={confirmRoleSwitch}
+                onConfirmSwitch={confirmRoleSwitch}
             />
 
             <header className="bg-white h-20 border-b border-gray-100 flex items-center justify-between px-4 md:px-8 sticky top-0 z-20 w-full">

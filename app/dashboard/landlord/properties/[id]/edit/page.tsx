@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { use } from 'react';
 import PropertyWizard from '@/components/dashboard/shared/Wizard/PropertyWizard'
 import { mockProperties } from '@/utils/properties';
 
-export default function EditPropertyPage({ params }: { params: { id: string } }) {
+export default function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
     // 1. Convert string param to number to fix the comparison error
-    const propertyId = Number(params.id);
+    const propertyId = Number(id);
 
     // 2. Find the property in the mock database
     const property = mockProperties.find(p => p.id === propertyId);

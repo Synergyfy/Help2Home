@@ -9,8 +9,15 @@ import FilterBar from '@/components/dashboard/landlord/properties/FilterBar';
 import { Property } from '@/utils/properties';
 import { useLandlordProperties } from '@/hooks/useLandlordQueries';
 
+import { useParams } from 'next/navigation';
+
 export default function PropertiesPage() {
+    const params = useParams();
+    const roleFromUrl = params?.role as string;
     const { activeRole } = useUserStore();
+
+    // Use URL role if available (safer for deep linking), fallback to store
+    const currentRole = roleFromUrl || activeRole || 'landlord';
     const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
@@ -44,10 +51,10 @@ export default function PropertiesPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Properties</h1>
-                    <p className="text-gray-500">Manage your {activeRole} listings and view their performance.</p>
+                    <p className="text-gray-500">Manage your {currentRole} listings and view their performance.</p>
                 </div>
                 <Link
-                    href={`/dashboard/${activeRole}/properties/add`}
+                    href={`/dashboard/${currentRole}/properties/add`}
                     className="px-4 py-2 bg-brand-green text-white rounded-lg hover:bg-green-700 font-medium transition-colors flex items-center gap-2 w-fit"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
