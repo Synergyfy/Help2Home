@@ -1,22 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import ProfileSummaryCard from './ProfileSummaryCard';
-import BasicInfoTab from './BasicInfoTab';
-import VerificationTab from './VerificationTab';
-import BankPayoutsTab from './BankPayoutsTab';
-import PrivacySecurityTab from './PrivacySecurityTab';
-import { MOCK_PROFILE, MOCK_DOCUMENTS, MOCK_BANK_ACCOUNTS } from '@/lib/mockLandlordData';
 import { useProfile } from '@/hooks/useProfile';
+import InvestorStrategyTab from './InvestorStrategyTab';
+import VerificationTab from '@/components/dashboard/landlord/profile/VerificationTab';
+import PrivacySecurityTab from '@/components/dashboard/landlord/profile/PrivacySecurityTab'; // Sharing is caring
+import { MOCK_DOCUMENTS } from '@/lib/mockLandlordData'; // Reusing for now
+import ProfileSummaryCard from '@/components/dashboard/landlord/profile/ProfileSummaryCard';
 
-export default function LandlordProfile() {
-    const [activeTab, setActiveTab] = useState<'info' | 'verification' | 'bank' | 'security'>('info');
-    const { data, isLoading } = useProfile('landlord');
+export default function InvestorProfile() {
+    const [activeTab, setActiveTab] = useState<'strategy' | 'verification' | 'security'>('strategy');
+    const { data, isLoading } = useProfile('investor');
 
     const tabs = [
-        { id: 'info', label: 'Basic Info' },
-        { id: 'verification', label: 'Verification Documents' },
-        { id: 'bank', label: 'Bank & Payouts' },
+        { id: 'strategy', label: 'Investment Strategy' },
+        { id: 'verification', label: 'KYC & Verification' },
         { id: 'security', label: 'Privacy & Security' },
     ];
 
@@ -28,13 +26,13 @@ export default function LandlordProfile() {
         );
     }
 
-    const profileData = data?.data || MOCK_PROFILE;
+    const profileData = data?.data || {};
 
     return (
         <div className="min-h-screen bg-gray-50/50 pb-12">
             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-900">Profile & Verification</h1>
-                <p className="text-gray-500 text-sm">Manage your personal details and verification status.</p>
+                <h1 className="text-2xl font-bold text-gray-900">Investor Profile</h1>
+                <p className="text-gray-500 text-sm">Manage your investment preferences and portfolio settings.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -63,9 +61,8 @@ export default function LandlordProfile() {
 
                     {/* Tab Content */}
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                        {activeTab === 'info' && <BasicInfoTab profile={profileData} />}
+                        {activeTab === 'strategy' && <InvestorStrategyTab profile={profileData} />}
                         {activeTab === 'verification' && <VerificationTab documents={MOCK_DOCUMENTS} />}
-                        {activeTab === 'bank' && <BankPayoutsTab accounts={MOCK_BANK_ACCOUNTS} />}
                         {activeTab === 'security' && <PrivacySecurityTab />}
                     </div>
                 </div>

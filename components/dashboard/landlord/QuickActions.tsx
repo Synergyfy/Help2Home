@@ -1,12 +1,15 @@
 'use client';
 
 import { useRouter } from 'next/navigation'
+import { useUserStore } from '@/store/userStore';
+
 export default function QuickActions() {
 
     const router = useRouter()
+    const { activeRole } = useUserStore();
 
     const handleNavigate = () => {
-        router.push('/dashboard/landlord/properties/add')
+        router.push(`/dashboard/${activeRole || 'landlord'}/properties/add`)
     }
 
 

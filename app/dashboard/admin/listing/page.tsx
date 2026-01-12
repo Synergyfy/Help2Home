@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import PropertyWizard from '@/components/dashboard/landlord/properties/wizard/PropertyWizard';
+import PropertyWizard from '@/components/dashboard/shared/Wizard/PropertyWizard';
 import { FiArrowLeft } from 'react-icons/fi';
 import Link from 'next/link';
 

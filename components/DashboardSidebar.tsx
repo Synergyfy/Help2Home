@@ -11,6 +11,7 @@ import {
     MdFolder, MdStorefront, MdAssignment, MdLogout, MdClose, MdSecurity,
     MdChevronRight, MdExpandMore
 } from 'react-icons/md';
+import { GoChecklist } from "react-icons/go";
 import { RxDashboard } from "react-icons/rx";
 import { useState } from 'react';
 
@@ -44,6 +45,7 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
             ]
         },
         { label: 'Super Admin Tools', href: '/dashboard/admin/superrole', icon: MdSecurity },
+        { label: 'Listings', href: '/dashboard/admin/listing', icon: GoChecklist },
         { label: 'Audit Logs', href: '/dashboard/admin/audit', icon: MdHistory },
         { label: 'Support Tickets', href: '/dashboard/admin/support', icon: MdSupportAgent },
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
@@ -80,12 +82,13 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
     ],
     caretaker: [
         { label: 'Dashboard', href: '/dashboard/caretaker', icon: MdDashboard },
+        { label: 'Properties', href: '/dashboard/caretaker/properties', icon: MdHomeWork },
         { label: 'My Tasks', href: '/dashboard/caretaker/tasks', icon: MdAssignment },
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
     ],
     agent: [
         { label: 'Dashboard', href: '/dashboard/agent', icon: RxDashboard },
-        { label: 'My Listings', href: '/dashboard/agent/listings', icon: MdHomeWork },
+        { label: 'My Listings', href: '/dashboard/agent/properties', icon: MdHomeWork },
         { label: 'Leads & Clients', href: '/dashboard/agent/leads', icon: MdGroup },
         { label: 'Viewings/Schedule', href: '/dashboard/agent/schedule', icon: MdAssignment },
         { label: 'Transactions', href: '/dashboard/agent/transactions', icon: MdPayment },

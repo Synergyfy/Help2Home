@@ -13,7 +13,7 @@ export default function StepIndicator({ steps, currentStep }: StepIndicatorProps
             <div className="flex items-center justify-between relative">
                 <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-gray-200 -z-10"></div>
                 <div
-                    className="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-[#00853E] -z-10 transition-all duration-300"
+                    className="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-brand-green -z-10 transition-all duration-300"
                     style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
                 ></div>
 
@@ -24,8 +24,8 @@ export default function StepIndicator({ steps, currentStep }: StepIndicatorProps
                     return (
                         <div key={step} className="flex flex-col items-center bg-white px-2">
                             <div
-                                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors duration-300 ${isCompleted ? 'bg-[#00853E] border-[#00853E] text-white' :
-                                        isCurrent ? 'bg-white border-[#00853E] text-[#00853E]' :
+                                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors duration-300 ${isCompleted ? 'bg-brand-green border-brand-green text-white' :
+                                        isCurrent ? 'bg-white border-brand-green text-brand-green' :
                                             'bg-white border-gray-300 text-gray-400'
                                     }`}
                             >
@@ -37,7 +37,7 @@ export default function StepIndicator({ steps, currentStep }: StepIndicatorProps
                                     index + 1
                                 )}
                             </div>
-                            <span className={`text-xs mt-2 font-medium ${isCurrent ? 'text-[#00853E]' : 'text-gray-500'}`}>
+                            <span className={`text-xs mt-2   font-medium ${isCurrent ? 'text-brand-green' : 'text-gray-500'}`}>
                                 {step}
                             </span>
                         </div>

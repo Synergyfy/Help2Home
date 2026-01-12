@@ -5,6 +5,8 @@ import {
     MdSchedule, MdMoreVert, MdArrowForward
 } from 'react-icons/md';
 
+import { useRouter } from 'next/navigation'
+
 // Professional Summary Component
 const StatCard = ({ label, value, trend, icon: Icon, color }: any) => (
     <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
@@ -26,6 +28,12 @@ const StatCard = ({ label, value, trend, icon: Icon, color }: any) => (
 );
 
 export default function AgentDashboard() {
+
+    const router = useRouter();
+
+    const handleAddProperty = () => {
+        router.push('/dashboard/agent/properties/add')
+    }
     return (
         <div className="space-y-6 pb-12">
             {/* Top Bar - Responsive Header */}
@@ -34,7 +42,7 @@ export default function AgentDashboard() {
                     <h1 className="text-2xl font-bold text-gray-900">Developer Portfolio</h1>
                     <p className="text-sm text-gray-500">Managing 12 active projects across Lagos.</p>
                 </div>
-                <button className="bg-[#00853E] text-white px-6 py-2.5 rounded-xl font-medium text-sm shadow-lg shadow-green-900/20 hover:bg-green-700 transition-all w-full md:w-auto">
+                <button onClick={handleAddProperty} className="bg-brand-green text-white px-6 py-2.5 rounded-xl font-medium text-sm shadow-lg shadow-green-900/20 hover:bg-green-700 transition-all w-full md:w-auto">
                     + New Listing
                 </button>
             </div>
@@ -53,7 +61,7 @@ export default function AgentDashboard() {
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                         <div className="p-6 border-b border-gray-50 flex justify-between items-center">
                             <h2 className="font-bold text-gray-900">High-Performance Listings</h2>
-                            <button className="text-[#00853E] text-sm font-semibold hover:underline">View All</button>
+                            <button className="text-brand-green text-sm font-semibold hover:underline">View All</button>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
@@ -94,7 +102,7 @@ export default function AgentDashboard() {
                     {/* Upcoming Viewings */}
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                         <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <MdSchedule className="text-[#00853E]" /> Scheduled Inspections
+                            <MdSchedule className="text-brand-green" /> Scheduled Inspections
                         </h2>
                         <div className="space-y-4">
                             {[1, 2].map((_, i) => (
@@ -120,13 +128,13 @@ export default function AgentDashboard() {
 
                 {/* Side Rail - Marketing & Leads */}
                 <div className="space-y-6">
-                    <div className="bg-[#00853E] text-white p-6 rounded-3xl shadow-xl relative overflow-hidden group">
+                    <div className="bg-brand-green text-white p-6 rounded-3xl shadow-xl relative overflow-hidden group">
                         <div className="relative z-10">
                             <h3 className="font-bold text-lg">Marketing Boost</h3>
                             <p className="text-white/80 text-xs mt-2 leading-relaxed">
                                 Your listings are currently reaching 40% more people this week.
                             </p>
-                            <button className="mt-4 bg-white text-[#00853E] px-4 py-2 rounded-xl text-xs font-bold hover:bg-opacity-90 transition-all">
+                            <button className="mt-4 bg-white text-brand-green px-4 py-2 rounded-xl text-xs font-bold hover:bg-opacity-90 transition-all">
                                 Run Campaign
                             </button>
                         </div>

@@ -1,30 +1,25 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { ProfileData } from '@/lib/mockLandlordData';
-import { useUserStore } from '@/store/userStore';
+import { useUpdateProfile } from '@/hooks/useProfile';
+import { FiEdit2, FiSave, FiX } from 'react-icons/fi';
 
 export default function BasicInfoTab({ profile: initialProfile }: { profile: ProfileData }) {
-    const { profile: storeProfile, updateProfile, email, phone } = useUserStore();
     const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState({
-        ...initialProfile,
-        firstName: storeProfile.firstName || initialProfile.firstName,
-        lastName: storeProfile.lastName || initialProfile.lastName,
-        email: email || initialProfile.email,
-        phone: phone || initialProfile.phone,
-        address: storeProfile.address || initialProfile.address
+    const { mutate: updateProfile, isPending } = useUpdateProfile('landlord');
+
+    const { register, handleSubmit, reset, formState: { errors } } = useForm({
+        defaultValues: initialProfile
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+    const onSubmit = (data: any) => {
+        updateProfile(data, {
+            onSuccess: () => setIsEditing(false)
+        });
     };
 
-    const handleSave = () => {
-        updateProfile({
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            address: formData.address
-        });
+    const handleCancel = () => {
+        reset(initialProfile);
         setIsEditing(false);
     };
 
@@ -35,49 +30,39 @@ export default function BasicInfoTab({ profile: initialProfile }: { profile: Pro
                 {!isEditing ? (
                     <button
                         onClick={() => setIsEditing(true)}
-                        className="text-brand-green text-sm font-medium hover:underline"
+                        className="flex items-center gap-2 text-brand-green text-sm font-medium hover:underline transition-all"
                     >
-                        Edit
+                        <FiEdit2 /> Edit
                     </button>
                 ) : (
                     <div className="flex gap-3">
                         <button
-                            onClick={() => {
-                                setFormData({
-                                    ...initialProfile,
-                                    firstName: storeProfile.firstName || initialProfile.firstName,
-                                    lastName: storeProfile.lastName || initialProfile.lastName,
-                                    email: email || initialProfile.email,
-                                    phone: phone || initialProfile.phone,
-                                    address: storeProfile.address || initialProfile.address
-                                });
-                                setIsEditing(false);
-                            }}
-                            className="text-gray-500 text-sm font-medium hover:text-gray-700"
+                            onClick={handleCancel}
+                            className="flex items-center gap-2 text-gray-500 text-sm font-medium hover:text-gray-700 bg-gray-100 px-3 py-1.5 rounded-lg transition-colors"
                         >
-                            Cancel
+                            <FiX /> Cancel
                         </button>
                         <button
-                            onClick={handleSave}
-                            className="text-brand-green text-sm font-bold hover:underline"
+                            onClick={handleSubmit(onSubmit)}
+                            disabled={isPending}
+                            className="flex items-center gap-2 bg-brand-green text-white px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm hover:bg-green-700 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            Save
+                            {isPending ? 'Saving...' : <><FiSave /> Save</>}
                         </button>
                     </div>
                 )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">Display Name</label>
                     <input
                         type="text"
-                        name="displayName"
-                        value={formData.displayName}
-                        onChange={handleChange}
+                        {...register('displayName', { required: 'Display name is required' })}
                         disabled={!isEditing}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-green focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500"
+                        className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-brand-green focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500 transition-colors ${errors.displayName ? 'border-red-500' : 'border-gray-200'}`}
                     />
+                    {errors.displayName && <p className="text-xs text-red-500 mt-1">{errors.displayName.message as string}</p>}
                     <p className="text-xs text-gray-500 mt-1">This is how you'll appear to tenants.</p>
                 </div>
 
@@ -85,9 +70,7 @@ export default function BasicInfoTab({ profile: initialProfile }: { profile: Pro
                     <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                     <input
                         type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
+                        {...register('firstName')}
                         disabled={!isEditing}
                         className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-green focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500"
                     />
@@ -97,9 +80,7 @@ export default function BasicInfoTab({ profile: initialProfile }: { profile: Pro
                     <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
                     <input
                         type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
+                        {...register('lastName')}
                         disabled={!isEditing}
                         className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-green focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500"
                     />
@@ -110,16 +91,14 @@ export default function BasicInfoTab({ profile: initialProfile }: { profile: Pro
                     <div className="relative">
                         <input
                             type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            disabled={initialProfile.verificationStatus === 'verified'} // Read-only if verified
+                            {...register('email')}
+                            disabled={initialProfile.verificationStatus === 'verified'} // Always strictly locked if verified
                             className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-green focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500 pr-10"
                         />
                         {initialProfile.verificationStatus === 'verified' && (
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-green" title="Verified">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
                             </div>
                         )}
@@ -130,9 +109,7 @@ export default function BasicInfoTab({ profile: initialProfile }: { profile: Pro
                     <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
                     <input
                         type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
+                        {...register('phone')}
                         disabled={!isEditing}
                         className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-green focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500"
                     />
@@ -142,9 +119,7 @@ export default function BasicInfoTab({ profile: initialProfile }: { profile: Pro
                     <label className="block text-sm font-medium text-gray-700 mb-1">Business / Agency Name</label>
                     <input
                         type="text"
-                        name="businessName"
-                        value={formData.businessName}
-                        onChange={handleChange}
+                        {...register('businessName')}
                         disabled={!isEditing}
                         className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-green focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500"
                     />
@@ -153,9 +128,7 @@ export default function BasicInfoTab({ profile: initialProfile }: { profile: Pro
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Payout Frequency</label>
                     <select
-                        name="payoutFrequency"
-                        value={formData.payoutFrequency}
-                        onChange={handleChange}
+                        {...register('payoutFrequency')}
                         disabled={!isEditing}
                         className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-green focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500"
                     >
@@ -168,9 +141,7 @@ export default function BasicInfoTab({ profile: initialProfile }: { profile: Pro
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
                     <select
-                        name="currency"
-                        value={formData.currency}
-                        onChange={handleChange}
+                        {...register('currency')}
                         disabled={!isEditing}
                         className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-green focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500"
                     >
@@ -182,15 +153,13 @@ export default function BasicInfoTab({ profile: initialProfile }: { profile: Pro
                 <div className="col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">Office Address</label>
                     <textarea
-                        name="address"
-                        value={formData.address}
-                        onChange={handleChange}
+                        {...register('address')}
                         disabled={!isEditing}
                         rows={3}
                         className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-green focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500 resize-none"
                     />
                 </div>
-            </div>
+            </form>
         </div>
     );
 }

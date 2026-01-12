@@ -2,25 +2,32 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { useUserStore, Role } from '@/store/userStore';
+import { useUserStore } from '@/store/userStore';
 import PropertiesTable from '@/components/dashboard/landlord/properties/PropertiesTable';
 import PropertyCard from '@/components/dashboard/landlord/properties/PropertyCard';
 import FilterBar from '@/components/dashboard/landlord/properties/FilterBar';
 import { Property } from '@/utils/properties';
 import { useLandlordProperties } from '@/hooks/useLandlordQueries';
 
+import { useParams } from 'next/navigation';
+
 export default function PropertiesPage() {
+    const params = useParams();
+    const roleFromUrl = params?.role as string;
+    const { activeRole } = useUserStore();
+
+    // Use URL role if available (safer for deep linking), fallback to store
+    const currentRole = roleFromUrl || activeRole || 'landlord';
     const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
 
-    // Uses your existing hook which already filters by userId
+    // Using existing hook for now - assumes backend handles role-based filtering based on auth token
     const { data: properties = [], isLoading } = useLandlordProperties();
 
     const filteredProperties = useMemo(() => {
         return properties
             .filter((property: Property) => {
-                // Search flat city and title
                 const matchesSearch =
                     property.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     property.city.toLowerCase().includes(searchQuery.toLowerCase());
@@ -44,10 +51,10 @@ export default function PropertiesPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Properties</h1>
-                    <p className="text-gray-500">Manage your listings and view their performance.</p>
+                    <p className="text-gray-500">Manage your {currentRole} listings and view their performance.</p>
                 </div>
                 <Link
-                    href="/dashboard/landlord/properties/add"
+                    href={`/dashboard/${currentRole}/properties/add`}
                     className="px-4 py-2 bg-brand-green text-white rounded-lg hover:bg-green-700 font-medium transition-colors flex items-center gap-2 w-fit"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -69,6 +76,7 @@ export default function PropertiesPage() {
             {filteredProperties.length === 0 ? (
                 <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
                     <h3 className="text-lg font-medium text-gray-900">No properties found</h3>
+                    <p className="text-gray-500 mt-2">Get started by creating your first listing.</p>
                 </div>
             ) : (
                 <>

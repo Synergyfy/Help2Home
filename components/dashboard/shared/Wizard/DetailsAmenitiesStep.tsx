@@ -12,7 +12,11 @@ const AMENITIES_LIST = [
     'Garden', 'Boys Quarters (BQ)', 'CCTV', 'Waste Disposal'
 ];
 
-export default function DetailsAmenitiesStep() {
+interface DetailsAmenitiesStepProps {
+    role?: 'landlord' | 'agent' | 'caretaker';
+}
+
+export default function DetailsAmenitiesStep({ role }: DetailsAmenitiesStepProps = {}) {
     const { register, setValue } = useFormContext<PropertySchema>();
     const amenities = useWatch({ name: 'amenities' }) || [];
 
@@ -35,7 +39,7 @@ export default function DetailsAmenitiesStep() {
                             type="number"
                             min="0"
                             {...register('specs.bedrooms', { valueAsNumber: true })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E]"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green"
                         />
                     </div>
                     <div>
@@ -45,7 +49,7 @@ export default function DetailsAmenitiesStep() {
                             min="0"
                             step="0.5"
                             {...register('specs.bathrooms', { valueAsNumber: true })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E]"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green"
                         />
                     </div>
                     <div>
@@ -59,7 +63,7 @@ export default function DetailsAmenitiesStep() {
                                     type="number"
                                     min="0"
                                     {...register('specs.area', { valueAsNumber: true })}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-[#00853E] focus:border-[#00853E]"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-brand-green focus:border-brand-green"
                                     placeholder="0"
                                 />
                                 <select
@@ -76,7 +80,7 @@ export default function DetailsAmenitiesStep() {
                         <label className="block text-sm font-medium text-gray-700 mb-1">Furnishing</label>
                         <select
                             {...register('specs.furnishing')}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E] bg-white"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green bg-white"
                         >
                             <option value="">Select...</option>
                             <option value="Furnished">Furnished</option>
@@ -98,7 +102,7 @@ export default function DetailsAmenitiesStep() {
                                 type="checkbox"
                                 checked={amenities.includes(amenity)}
                                 onChange={() => toggleAmenity(amenity)}
-                                className="rounded text-[#00853E] focus:ring-[#00853E]"
+                                className="rounded text-brand-green focus:ring-brand-green"
                             />
                             <span className="text-sm text-gray-700">{amenity}</span>
                         </label>
