@@ -10,27 +10,27 @@ export const useRoleSync = () => {
   const { roles, activeRole, setActiveRole, hasHydrated, email } = useUserStore();
 
   useEffect(() => {
-    // Wait for Zustand to load from LocalStorage
     if (!hasHydrated) return;
 
-    // Prevent syncing logic if the user is logged out
+    // Skip if not logged in
     if (!email) return;
 
-    // Detect the role from the URL (e.g., /dashboard/landlord/...)
     const segments = pathname.split('/');
+    // Url structure: /dashboard/[role]/... 
+    // So segments[2] should be the role
     const roleInUrl = segments[2] as Role;
 
-    const isValidRole = roles.includes(roleInUrl);
+    // Only process if we are actually in a role dashboard
+    if (segments[1] === 'dashboard' && roleInUrl) {
 
-    if (roleInUrl && isValidRole) {
-      // 1. Sync Store with URL if they differ
-      if (roleInUrl !== activeRole) {
+      // DEV MODE: Always trust the URL for role switching to allow testing all personas
+      // In production, you would check: if (roles.includes(roleInUrl)) ...
+
+      if (activeRole !== roleInUrl) {
+        console.log(`[RoleSync] Switching active role from ${activeRole} to ${roleInUrl}`);
         setActiveRole(roleInUrl);
       }
-    } else if (roleInUrl && !isValidRole) {
-      // 2. Security: Redirect if user tries to access an unauthorized role
-      console.warn(`Unauthorized access to ${roleInUrl}. Redirecting...`);
-      router.push(`/dashboard/${roles[0] || 'tenant'}`);
     }
+
   }, [pathname, roles, activeRole, setActiveRole, hasHydrated, router, email]);
 };

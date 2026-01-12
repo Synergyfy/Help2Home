@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import PropertyWizard from '@/components/dashboard/landlord/properties/wizard/PropertyWizard';
+import PropertyWizard from '@/components/dashboard/shared/Wizard/PropertyWizard'
 import { mockProperties } from '@/utils/properties';
 
 export default function EditPropertyPage({ params }: { params: { id: string } }) {

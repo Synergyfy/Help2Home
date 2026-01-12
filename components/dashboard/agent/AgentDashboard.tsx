@@ -5,6 +5,8 @@ import {
     MdSchedule, MdMoreVert, MdArrowForward
 } from 'react-icons/md';
 
+import {useRouter} from 'next/navigation'
+
 // Professional Summary Component
 const StatCard = ({ label, value, trend, icon: Icon, color }: any) => (
     <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
@@ -26,6 +28,12 @@ const StatCard = ({ label, value, trend, icon: Icon, color }: any) => (
 );
 
 export default function AgentDashboard() {
+
+    const router = useRouter();
+
+    const handleAddProperty = ()=>{
+        router.push('/dashboard/landlord/properties/add')
+    }
     return (
         <div className="space-y-6 pb-12">
             {/* Top Bar - Responsive Header */}
@@ -34,7 +42,7 @@ export default function AgentDashboard() {
                     <h1 className="text-2xl font-bold text-gray-900">Developer Portfolio</h1>
                     <p className="text-sm text-gray-500">Managing 12 active projects across Lagos.</p>
                 </div>
-                <button className="bg-[#00853E] text-white px-6 py-2.5 rounded-xl font-medium text-sm shadow-lg shadow-green-900/20 hover:bg-green-700 transition-all w-full md:w-auto">
+                <button onClick={handleAddProperty} className="bg-[#00853E] text-white px-6 py-2.5 rounded-xl font-medium text-sm shadow-lg shadow-green-900/20 hover:bg-green-700 transition-all w-full md:w-auto">
                     + New Listing
                 </button>
             </div>

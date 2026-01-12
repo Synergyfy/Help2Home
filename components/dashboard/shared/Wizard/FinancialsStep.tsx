@@ -36,11 +36,11 @@ export default function FinancialsStep() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Price <span className="text-red-500">*</span>
+                            {listingType === 'Sale' ? 'Purchase Price' : listingType === 'Service-Apt' ? 'Daily Rate' : 'Rent Amount'} <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
                             <span className="absolute left-3 top-2 text-gray-500">
-                                {price?.currency === 'USD' ? '$' : '₦'}
+                                ₦
                             </span>
                             <input
                                 type="text"
@@ -52,7 +52,7 @@ export default function FinancialsStep() {
                                     }
                                 }}
                                 value={price?.amount ? formatNumber(price.amount) : ''}
-                                className={`w-full pl-8 px-4 py-2 border rounded-lg focus:ring-[#00853E] focus:border-[#00853E] ${errors.price?.amount ? 'border-red-500' : 'border-gray-300'}`}
+                                className={`w-full pl-8 px-4 py-2 border rounded-lg focus:ring-brand-green focus:border-brand-green ${errors.price?.amount ? 'border-red-500' : 'border-gray-300'}`}
                             />
                         </div>
                         {errors.price?.amount && <p className="text-xs text-red-500 mt-1">{errors.price.amount.message}</p>}
@@ -64,29 +64,93 @@ export default function FinancialsStep() {
                         </label>
                         <select
                             {...register('price.currency')}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E] bg-white"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green bg-white"
                         >
                             <option value="NGN">Nigerian Naira (NGN)</option>
-                            <option value="USD">US Dollar (USD)</option>
                         </select>
                     </div>
 
                     {listingType === 'Rent' && (
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Payment Period
-                            </label>
-                            <select
-                                {...register('price.period')}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E] bg-white"
-                            >
-                                <option value="year">Per Year</option>
-                                <option value="month">Per Month</option>
-                            </select>
-                        </div>
+                        <>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Payment Period
+                                </label>
+                                <select
+                                    {...register('price.period')}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green bg-white"
+                                >
+                                    <option value="year">Per Year</option>
+                                    <option value="month">Per Month</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Service Charge (Annual)
+                                </label>
+                                <input
+                                    type="number"
+                                    {...register('price.serviceCharge', { valueAsNumber: true })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green"
+                                    placeholder="0"
+                                />
+                            </div>
+                        </>
+                    )}
+
+                    {listingType === 'Service-Apt' && (
+                        <>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Security Deposit
+                                </label>
+                                <input
+                                    type="number"
+                                    {...register('shortLetDetails.securityDeposit', { valueAsNumber: true })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green"
+                                    placeholder="0"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Cleaning Fee
+                                </label>
+                                <input
+                                    type="number"
+                                    {...register('shortLetDetails.cleaningFee', { valueAsNumber: true })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green"
+                                    placeholder="0"
+                                />
+                            </div>
+                        </>
                     )}
                 </div>
+
+                {listingType === 'Sale' && (
+                    <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex items-center gap-2">
+                            <input type="checkbox" {...register('isMortgageAvailable')} id="mortgage" className="rounded text-brand-green focus:ring-brand-green" />
+                            <label htmlFor="mortgage" className="text-sm font-medium text-gray-700">Mortgage Available</label>
+                        </div>
+                    </div>
+                )}
             </div>
+
+            {listingType === 'Service-Apt' && (
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h2 className="text-xl font-bold text-gray-900 mb-4">Check-in / Out</h2>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Check-in Time</label>
+                            <input type="time" {...register('shortLetDetails.checkInTime')} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Check-out Time</label>
+                            <input type="time" {...register('shortLetDetails.checkOutTime')} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green" />
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Installment Configuration */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
@@ -101,7 +165,7 @@ export default function FinancialsStep() {
                             {...register('installments.enabled')}
                             className="sr-only peer"
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00853E]"></div>
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-green"></div>
                     </label>
                 </div>
 
@@ -116,7 +180,7 @@ export default function FinancialsStep() {
                                 min="0"
                                 max="100"
                                 {...register('installments.depositPercent', { valueAsNumber: true })}
-                                className="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E]"
+                                className="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green"
                             />
                             <p className="text-xs text-gray-500 mt-1">Percentage of total rent required upfront.</p>
                         </div>
@@ -132,7 +196,7 @@ export default function FinancialsStep() {
                                             type="checkbox"
                                             checked={installments.tenures?.includes(months) || false}
                                             onChange={() => handleTenureToggle(months)}
-                                            className="text-[#00853E] focus:ring-[#00853E]"
+                                            className="text-brand-green focus:ring-brand-green"
                                         />
                                         <span>{months} Months</span>
                                     </label>
@@ -144,8 +208,8 @@ export default function FinancialsStep() {
                         <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-800">
                             <strong>Live Breakdown:</strong> Based on {price?.currency || 'NGN'} {formatNumber(propertyPrice)}
                             <ul className="list-disc list-inside mt-1 ml-2">
-                                <li>Upfront Deposit ({depositPercent}%): {price?.currency === 'USD' ? '$' : '₦'}{formatNumber(upfrontDeposit)}</li>
-                                <li>Monthly Payment ({selectedTenure} months): {price?.currency === 'USD' ? '$' : '₦'}{formatNumber(Math.round(monthlyPayment))}</li>
+                                <li>Upfront Deposit ({depositPercent}%): ₦{formatNumber(upfrontDeposit)}</li>
+                                <li>Monthly Payment ({selectedTenure} months): ₦{formatNumber(Math.round(monthlyPayment))}</li>
                             </ul>
                         </div>
                     </div>

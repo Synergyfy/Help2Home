@@ -12,3 +12,5 @@
 --when adding properties add the sepcifications
 
 --in add property Make sure that they can also add videos as well, and accept both Portrait and Landscape videos and pictures size in the add property
+
+--extra charges for specifications with note are paid alongside 

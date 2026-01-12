@@ -59,7 +59,6 @@ export default function LandlordDashboard() {
 
   return (
     <div className="pb-12">
-      {/* Local Filters - Role Switcher removed as it is now in the global ContextBar */}
       <div className="flex justify-end items-center mb-8">
         <select
           value={dateRange}
@@ -84,7 +83,7 @@ export default function LandlordDashboard() {
           <RecentPayments payments={data.payments} />
         </div>
 
-        {/* Right Column (Side Rail) */}
+        {/* Right Column */}
         <div className="space-y-6">
           <QuickActions />
           <VerificationStatus items={data.verification} />
