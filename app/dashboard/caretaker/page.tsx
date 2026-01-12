@@ -31,15 +31,26 @@ export default function CaretakerDashboardPage() {
                     <h1 className="text-2xl font-bold text-gray-900">Caretaker Dashboard</h1>
                     <p className="text-gray-500">Welcome back, John</p>
                 </div>
-                <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold">
-                    JD
+                <div className="flex items-center gap-3">
+                    <Link
+                        href="/dashboard/caretaker/properties/add"
+                        className="px-4 py-2 bg-brand-green text-white rounded-lg hover:bg-green-700 font-medium transition-colors flex items-center gap-2"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        <span className="hidden sm:inline">Add Property</span>
+                    </Link>
+                    <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold">
+                        JD
+                    </div>
                 </div>
             </div>
 
             {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-4 mb-8">
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center">
-                    <div className="text-2xl font-bold text-[#00853E]">{assignedTasks.length}</div>
+                    <div className="text-2xl font-bold text-brand-green">{assignedTasks.length}</div>
                     <div className="text-xs text-gray-500">Assigned</div>
                 </div>
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center">
@@ -90,7 +101,7 @@ export default function CaretakerDashboardPage() {
 
             {/* Floating Action Button for Mobile */}
             <div className="fixed bottom-6 right-6 md:hidden">
-                <button className="h-14 w-14 bg-[#00853E] rounded-full shadow-lg flex items-center justify-center text-white hover:bg-green-700 transition-colors">
+                <button className="h-14 w-14 bg-brand-green rounded-full shadow-lg flex items-center justify-center text-white hover:bg-green-700 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>

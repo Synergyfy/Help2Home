@@ -32,7 +32,11 @@ const PropertyMap = dynamic(() => import('./PropertyMap'), {
     loading: () => <div className="h-64 w-full bg-gray-100 animate-pulse rounded-xl flex items-center justify-center text-gray-400">Loading Map...</div>
 });
 
-export default function BasicsStep() {
+interface BasicsStepProps {
+    role?: 'landlord' | 'agent' | 'caretaker';
+}
+
+export default function BasicsStep({ role }: BasicsStepProps = {}) {
     const { register, setValue, control } = useFormContext<PropertySchema>();
     const { activeRole, setActiveRole } = useUserStore();
     const { draftData, roleOnboardingCompleted } = useOnboardingStore();

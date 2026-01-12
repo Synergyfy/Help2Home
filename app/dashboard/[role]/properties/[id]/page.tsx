@@ -2,10 +2,14 @@
 
 import React, { use } from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { getMockProperties } from '@/utils/properties';
 
 export default function PropertyDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
+    const urlParams = useParams();
+    const role = urlParams?.role as string || 'landlord';
+
     // Find property by ID or fallback
     const property = getMockProperties().find(p => p.id.toString() === id) || getMockProperties()[0];
 
@@ -18,13 +22,24 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
         }).format(price);
     };
 
+    // Service charges for amenities/utilities (paid upfront, not part of rent)
+    const serviceCharges = [
+        { name: 'Security', amount: 50000, included: property.security },
+        { name: 'Waste Management', amount: 15000, included: true },
+        { name: 'Estate Maintenance', amount: 30000, included: property.serviced },
+        { name: 'Generator/Power', amount: 25000, included: property.electricity },
+    ].filter(charge => charge.included);
+
+    const totalServiceCharges = serviceCharges.reduce((sum, charge) => sum + charge.amount, 0);
+    const totalUpfront = property.price + totalServiceCharges;
+
     return (
         <div className="space-y-6 pb-20">
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <div className="flex items-center gap-2 mb-1">
-                        <Link href="/dashboard/landlord/properties" className="text-gray-500 hover:text-gray-700 text-sm">
+                        <Link href={`/dashboard/${role}/properties`} className="text-gray-500 hover:text-gray-700 text-sm">
                             Properties
                         </Link>
                         <span className="text-gray-400">/</span>
@@ -36,7 +51,7 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                 </div>
                 <div className="flex gap-3">
                     <Link
-                        href={`/dashboard/landlord/properties/${property.id}/edit`}
+                        href={`/dashboard/${role}/properties/${property.id}/edit`}
                         className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors"
                     >
                         Edit Listing
@@ -198,6 +213,53 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                                 <span className="text-gray-600">Category</span>
                                 <span className="font-medium text-gray-900 capitalize text-xs">{property.category?.replace(/-/g, ' ')}</span>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Service Charges Card */}
+                    <div className="bg-blue-50 p-6 rounded-xl shadow-sm border border-blue-100">
+                        <div className="flex items-center gap-2 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <h3 className="font-bold text-blue-900">Service Charges</h3>
+                        </div>
+                        <p className="text-xs text-blue-700 mb-4">
+                            The following charges cover utilities and amenities. Paid upfront (not part of monthly rent).
+                        </p>
+                        <div className="space-y-2">
+                            {serviceCharges.map(charge => (
+                                <div key={charge.name} className="flex justify-between text-sm">
+                                    <span className="text-blue-800">{charge.name}</span>
+                                    <span className="font-semibold text-blue-900">{formatPrice(charge.amount, property.currency)}</span>
+                                </div>
+                            ))}
+                            <div className="flex justify-between text-sm pt-2 border-t border-blue-200">
+                                <span className="font-bold text-blue-900">Total Service Charges</span>
+                                <span className="font-bold text-blue-900">{formatPrice(totalServiceCharges, property.currency)}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Total Upfront Payment Card */}
+                    <div className="bg-linear-to-br from-brand-green to-green-700 p-6 rounded-xl shadow-lg text-white">
+                        <h3 className="font-bold text-lg mb-2">Total Upfront Payment</h3>
+                        <p className="text-white/80 text-xs mb-4">
+                            First payment includes rent + service charges
+                        </p>
+                        <div className="space-y-2 mb-4">
+                            <div className="flex justify-between text-sm">
+                                <span className="text-white/90">Rent</span>
+                                <span className="font-medium">{formatPrice(property.price, property.currency)}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                                <span className="text-white/90">Service Charges</span>
+                                <span className="font-medium">{formatPrice(totalServiceCharges, property.currency)}</span>
+                            </div>
+                        </div>
+                        <div className="flex justify-between items-center pt-3 border-t border-white/20">
+                            <span className="font-bold text-lg">Total</span>
+                            <span className="font-bold text-2xl">{formatPrice(totalUpfront, property.currency)}</span>
                         </div>
                     </div>
 

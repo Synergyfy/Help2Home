@@ -39,18 +39,18 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
     const roleKey = (urlRole && ['landlord', 'agent', 'caretaker'].includes(urlRole)
         ? urlRole
         : activeRole || 'landlord') as 'landlord' | 'agent' | 'caretaker';
-    const availableStepsKeys = STEP_CONFIG[activeRole as string] || STEP_CONFIG['landlord'];
+    const availableStepsKeys = STEP_CONFIG[roleKey] || STEP_CONFIG['landlord'];
 
     // Map keys to readable labels and component indices
     // We keep a mapping of all possible steps to their components/labels
     const ALL_STEPS_MAP: Record<string, { label: string; component: React.ReactNode }> = {
-        'basics': { label: 'Basics', component: <BasicsStep /> },
-        'location': { label: 'Location', component: <BasicsStep /> }, // Reusing Basics for now
-        'financials': { label: 'Financials', component: <FinancialsStep /> },
-        'details': { label: 'Details', component: <DetailsAmenitiesStep /> },
-        'media': { label: 'Media', component: <MediaStep /> },
-        'preview': { label: 'Preview', component: <TermsPreviewStep /> },
-        'client-info': { label: 'Client Info', component: <BasicsStep /> }, // Placeholder for Agent
+        'basics': { label: 'Basics', component: <BasicsStep role={roleKey} /> },
+        'location': { label: 'Location', component: <BasicsStep role={roleKey} /> }, 
+        'financials': { label: 'Financials', component: <FinancialsStep role={roleKey} /> },
+        'details': { label: 'Details', component: <DetailsAmenitiesStep role={roleKey} /> },
+        'media': { label: 'Media', component: <MediaStep role={roleKey} /> },
+        'preview': { label: 'Preview', component: <TermsPreviewStep role={roleKey} /> },
+        'client-info': { label: 'Client Info', component: <BasicsStep role={roleKey} /> }, // Placeholder for Agent
     };
 
     // Filter valid steps
@@ -93,6 +93,7 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
         // This mapping needs to cover all keys used in ALL_STEPS_MAP
         const validationFields: Record<string, any[]> = {
             'basics': ['title', 'listingType', 'propertyCategory', 'propertyType', 'address'],
+            'location': ['address'], // Add location validation
             'financials': ['price', 'installments'],
             'details': ['specs', 'amenities'],
             'media': ['images'],

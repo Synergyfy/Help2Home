@@ -5,7 +5,11 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { PropertySchema } from '@/lib/validations/propertySchema';
 import { formatNumber } from '@/utils/helpers';
 
-export default function TermsPreviewStep() {
+interface TermsPreviewStepProps {
+    role?: 'landlord' | 'agent' | 'caretaker';
+}
+
+export default function TermsPreviewStep({ role }: TermsPreviewStepProps = {}) {
     const { register, watch } = useFormContext<PropertySchema>();
     const data = watch(); // Watch all data for preview
 
@@ -27,7 +31,7 @@ export default function TermsPreviewStep() {
                         <input
                             type="date"
                             {...register('terms.availableFrom')}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E]"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green"
                         />
                     </div>
 
@@ -39,7 +43,7 @@ export default function TermsPreviewStep() {
                             {...register('description.long')}
                             rows={4}
                             placeholder="Describe the property, neighborhood, and unique features..."
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#00853E] focus:border-[#00853E]"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green"
                         ></textarea>
                     </div>
                 </div>
@@ -73,12 +77,12 @@ export default function TermsPreviewStep() {
                         </div>
 
                         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                            <span className="text-[#00853E] font-bold">
+                            <span className="text-brand-green font-bold">
                                 {data.price?.currency} {formatNumber(data.price?.amount || 0)}
                                 {data.listingType === 'Rent' && <span className="text-gray-500 text-xs font-normal">/{data.price?.period}</span>}
                             </span>
                             {data.installments?.enabled && (
-                                <span className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">Installments</span>
+                                <span className="text-xs bg-brand-green/10 text-brand-green px-2 py-1 rounded">Installments</span>
                             )}
                         </div>
                     </div>

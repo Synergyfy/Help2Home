@@ -40,7 +40,6 @@ export default function LandlordDashboard() {
 
   if (isError) return <div className="p-10 text-red-500">Failed to load {activeRole} data.</div>;
 
-  // Derive application stats for landlord
   const pendingAppsCount = applications.filter((a: Application) => a.status === 'Pending' || a.status === 'Under Review').length;
 
   const enrichedSummary = [

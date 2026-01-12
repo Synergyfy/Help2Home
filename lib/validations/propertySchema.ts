@@ -62,6 +62,13 @@ export const propertySchema = z.object({
     isPrimary: z.boolean(),
     file: z.any().optional(),
   })).min(1, 'At least one image is required'),
+  
+  video: z.object({
+    id: z.string(),
+    url: z.string(),
+    file: z.any().optional(),
+    thumbnail: z.string().optional(),
+  }).optional(),
 
   installments: z.object({
     enabled: z.boolean().default(false),
