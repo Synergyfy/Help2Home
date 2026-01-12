@@ -141,6 +141,25 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                                     <MdOutlineAssignmentInd className="text-brand-green" size={20} />
                                     You are submitting a property update/request on behalf of the owner. This will be sent for review.
                                 </p>
+
+                                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-white rounded-xl border border-gray-100 shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
+                                    <div className="md:col-span-2">
+                                        <h4 className="text-sm font-bold text-brand-green uppercase tracking-wider mb-1">Landlord Information</h4>
+                                        <p className="text-xs text-gray-500 mb-4">Provide the owner's details to automatically invite them to the platform.</p>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className={labelClasses}>Landlord Full Name</label>
+                                        <input {...register('landlord.fullName')} className={inputClasses} placeholder="e.g. John Doe" />
+                                    </div>
+                                    <div>
+                                        <label className={labelClasses}>Landlord Email</label>
+                                        <input {...register('landlord.email')} className={inputClasses} placeholder="landlord@example.com" />
+                                    </div>
+                                    <div>
+                                        <label className={labelClasses}>Landlord Phone</label>
+                                        <input {...register('landlord.phone')} className={inputClasses} placeholder="+234 ..." />
+                                    </div>
+                                </div>
                             </div>
                         ) : (
                             <div className="p-4 bg-gray-50 rounded-xl border border-dashed border-gray-200 animate-in slide-in-from-right duration-300">

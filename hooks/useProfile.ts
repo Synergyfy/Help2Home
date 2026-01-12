@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchProfile, updateProfile } from '@/lib/api/profile';
 import { Role } from '@/store/userStore';
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 export const useProfile = (role: Role) => {
   return useQuery({

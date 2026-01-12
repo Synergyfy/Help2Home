@@ -45,7 +45,7 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
     // We keep a mapping of all possible steps to their components/labels
     const ALL_STEPS_MAP: Record<string, { label: string; component: React.ReactNode }> = {
         'basics': { label: 'Basics', component: <BasicsStep role={roleKey} /> },
-        'location': { label: 'Location', component: <BasicsStep role={roleKey} /> }, 
+        'location': { label: 'Location', component: <BasicsStep role={roleKey} /> },
         'financials': { label: 'Financials', component: <FinancialsStep role={roleKey} /> },
         'details': { label: 'Details', component: <DetailsAmenitiesStep role={roleKey} /> },
         'media': { label: 'Media', component: <MediaStep role={roleKey} /> },
@@ -92,7 +92,7 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
         // Dynamic validation based on the current step key
         // This mapping needs to cover all keys used in ALL_STEPS_MAP
         const validationFields: Record<string, any[]> = {
-            'basics': ['title', 'listingType', 'propertyCategory', 'propertyType', 'address'],
+            'basics': ['title', 'listingType', 'propertyCategory', 'propertyType', 'address', 'landlord'],
             'location': ['address'], // Add location validation
             'financials': ['price', 'installments'],
             'details': ['specs', 'amenities'],
@@ -139,7 +139,7 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
 
         const submissionData = { ...data };
         if (roleKey === 'caretaker') {
-            submissionData.status = 'pending_review' as any; // Assuming schema allows or we cast
+            submissionData.status = 'pending_review' as any;
         }
 
         createProperty(submissionData, {

@@ -47,6 +47,31 @@ export async function createProperty(
     status: newPropertyData.status || 'available',
   } as Property;
 
+  // Simulate sending invitation email if landlord details are provided
+  if (newPropertyData.landlord?.email && newPropertyData.posterRole === 'caretaker') {
+    console.log(`
+      --- EMAIL SIMULATION ---
+      TO: ${newPropertyData.landlord.email}
+      SUBJECT: Your property "${newPropertyData.title}" has been listed!
+      BODY: 
+      Hello ${newPropertyData.landlord.fullName || 'Landlord'},
+      
+      A caretaker (${userId}) has listed your property on Help2Home.
+      You have been automatically signed up for an account. 
+      
+      Listing Details:
+      - Title: ${newPropertyData.title}
+      - Address: ${newPropertyData.address?.street}, ${newPropertyData.address?.city}
+      - Price: ${newPropertyData.price?.amount} ${newPropertyData.price?.currency || 'NGN'}
+      
+      Click here to access your dashboard and manage your property:
+      https://help2home.com/dashboard/landlord/login?email=${encodeURIComponent(newPropertyData.landlord.email)}
+      
+      Welcome to Help2Home!
+      ------------------------
+    `);
+  }
+
   addPropertyToMockDb(newProperty);
   console.log('[createProperty] Added property to mock DB:', newProperty);
   // Replaced require with direct import usage

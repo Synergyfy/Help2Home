@@ -86,8 +86,33 @@ export const propertySchema = z.object({
     minTenancy: z.string().optional(),
   }).optional(),
 
+  // Landlord Details (Required for Caretakers)
+  landlord: z.object({
+    fullName: z.string().optional(),
+    email: z.string().email('Invalid email address').optional().or(z.literal('')),
+    phone: z.string().optional(),
+  }).optional(),
+
   status: z.enum(['available', 'sold', 'let-agreed', 'draft']).default('draft'),
 }).superRefine((data, ctx) => {
+  // Caretaker: Landlord details are required
+  if (data.posterRole === 'caretaker') {
+    if (!data.landlord?.fullName || data.landlord.fullName.trim().length < 3) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Landlord's full name is required for caretaker listings",
+        path: ["landlord", "fullName"]
+      });
+    }
+    if (!data.landlord?.email || data.landlord.email.trim().length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Landlord's email is required for automatically signing them in",
+        path: ["landlord", "email"]
+      });
+    }
+  }
+
   // Rent: Period is required
   if (data.listingType === 'Rent') {
     if (!data.price.period) {

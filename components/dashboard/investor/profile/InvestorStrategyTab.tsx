@@ -132,7 +132,7 @@ export default function InvestorStrategyTab({ profile: initialProfile }: { profi
                         className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-green focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500"
                     >
                         <option value="">Select Duration</option>
-                        <option value="Short Term">Short Term (< 2 Years)</option>
+                        <option value="Short Term">Short Term (&lt; 2 Years)</option>
                         <option value="Medium Term">Medium Term (2-5 Years)</option>
                         <option value="Long Term">Long Term (5+ Years)</option>
                     </select>
