@@ -4,88 +4,198 @@ import React from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { PropertySchema } from '@/lib/validations/propertySchema';
 import { formatNumber } from '@/utils/helpers';
+import {
+    HiOutlineHome,
+    HiOutlineCreditCard,
+    HiOutlineUserCircle,
+    HiOutlinePhoto,
+    HiOutlineCheckBadge,
+    HiOutlineExclamationTriangle
+} from 'react-icons/hi2';
 
 interface TermsPreviewStepProps {
     role?: 'landlord' | 'agent' | 'caretaker';
+    onEditStep?: (step: number) => void;
 }
 
-export default function TermsPreviewStep({ role }: TermsPreviewStepProps = {}) {
-    const { register, watch } = useFormContext<PropertySchema>();
-    const data = watch(); // Watch all data for preview
+export default function TermsPreviewStep({ role, onEditStep }: TermsPreviewStepProps = {}) {
+    const { watch, register } = useFormContext<PropertySchema>();
+    const data = watch();
 
-    // Helper to safely get the cover image
-    const coverImage = data.images?.find(img => img.isPrimary)?.url || data.images?.[0]?.url;
+    const sectionClasses = "bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm mb-6";
+    const headerClasses = "border-b border-gray-100 p-4 bg-gray-50/50 flex justify-between items-center";
+    const labelClasses = "text-gray-500 text-xs font-bold uppercase tracking-wider mb-1";
+    const valueClasses = "text-gray-900 text-base font-semibold leading-relaxed";
 
     return (
-        <div className="space-y-8 max-w-3xl mx-auto">
-
-            {/* Terms Section */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Terms & Description</h2>
-
-                <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Available From
-                        </label>
-                        <input
-                            type="date"
-                            {...register('terms.availableFrom')}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Description
-                        </label>
-                        <textarea
-                            {...register('description.long')}
-                            rows={4}
-                            placeholder="Describe the property, neighborhood, and unique features..."
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-brand-green focus:border-brand-green"
-                        ></textarea>
-                    </div>
-                </div>
+        <div className="max-w-4xl mx-auto pt-4 pb-20">
+            <div className="text-center mb-12">
+                <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-2">Review Your Listing</h1>
+                <p className="text-gray-500">Almost there! Please review all details before submitting. Once submitted, we will contact the landlord for final verification.</p>
             </div>
 
-            {/* Preview Section */}
-            <div>
-                <h2 className="text-xl font-bold text-gray-900 mb-4 px-2">Preview Listing</h2>
-                <div className="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100 max-w-md mx-auto md:mx-0">
-                    <div className="h-48 w-full bg-gray-200 relative">
-                        {coverImage ? (
-                            <img src={coverImage} alt={data.title} className="w-full h-full object-cover" />
-                        ) : (
-                            <div className="flex items-center justify-center h-full text-gray-400">No Image</div>
-                        )}
-                        <span className="absolute top-3 right-3 bg-green-100 text-green-800 text-[10px] font-bold px-2 py-1 rounded uppercase">
-                            {data.status || 'Available'}
-                        </span>
+            <div className="space-y-6">
+                {/* 1. Property Basics */}
+                <div className={sectionClasses}>
+                    <div className={headerClasses}>
+                        <div className="flex items-center gap-2">
+                            <HiOutlineHome className="text-brand-green text-xl" />
+                            <h2 className="font-bold text-gray-800">1. Property Basics</h2>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => onEditStep?.(0)}
+                            className="text-brand-green text-sm font-bold hover:underline"
+                        >
+                            Edit
+                        </button>
                     </div>
-
-                    <div className="p-4">
-                        <div className="flex justify-between items-start mb-2">
-                            <h3 className="text-lg font-bold text-gray-900 line-clamp-1">{data.title || 'Untitled Property'}</h3>
+                    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
+                        <div>
+                            <p className={labelClasses}>Property Title</p>
+                            <p className={valueClasses}>{data.title || 'Untitled Property'}</p>
                         </div>
-                        <p className="text-sm text-gray-500 mb-3">{data.address?.city}, {data.address?.state}</p>
-
-                        <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                            <span>{data.specs?.bedrooms} Beds</span>
-                            <span>{data.specs?.bathrooms} Baths</span>
-                            <span>{data.specs?.area} {data.specs?.areaUnit}</span>
+                        <div>
+                            <p className={labelClasses}>Property Type / Listing</p>
+                            <p className={valueClasses}>{data.propertyType} ({data.listingType})</p>
                         </div>
+                        <div className="md:col-span-2">
+                            <p className={labelClasses}>Location</p>
+                            <p className={valueClasses}>
+                                {data.address?.street}, {data.address?.city}, {data.address?.state}
+                            </p>
+                        </div>
+                        <div>
+                            <p className={labelClasses}>Bedrooms / Bathrooms</p>
+                            <p className={valueClasses}>{data.specs?.bedrooms} Beds, {data.specs?.bathrooms} Baths</p>
+                        </div>
+                        <div>
+                            <p className={labelClasses}>Space Area</p>
+                            <p className={valueClasses}>{data.specs?.area} {data.specs?.areaUnit}</p>
+                        </div>
+                    </div>
+                </div>
 
-                        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                            <span className="text-brand-green font-bold">
-                                {data.price?.currency} {formatNumber(data.price?.amount || 0)}
-                                {data.listingType === 'Rent' && <span className="text-gray-500 text-xs font-normal">/{data.price?.period}</span>}
-                            </span>
-                            {data.installments?.enabled && (
-                                <span className="text-xs bg-brand-green/10 text-brand-green px-2 py-1 rounded">Installments</span>
+                {/* 2. Financials */}
+                <div className={sectionClasses}>
+                    <div className={headerClasses}>
+                        <div className="flex items-center gap-2">
+                            <HiOutlineCreditCard className="text-brand-green text-xl" />
+                            <h2 className="font-bold text-gray-800">2. Financials</h2>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => onEditStep?.(3)}
+                            className="text-brand-green text-sm font-bold hover:underline"
+                        >
+                            Edit
+                        </button>
+                    </div>
+                    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
+                        <div>
+                            <p className={labelClasses}>Base Rate</p>
+                            <p className={`${valueClasses} text-brand-green font-black`}>
+                                ₦{formatNumber(data.price?.amount || 0)} / {data.price?.period}
+                            </p>
+                        </div>
+                        <div>
+                            <p className={labelClasses}>Installments</p>
+                            <p className={valueClasses}>{data.installments?.enabled ? 'Supported' : 'No'}</p>
+                        </div>
+                        <div>
+                            <p className={labelClasses}>Available From</p>
+                            <p className={valueClasses}>{data.terms?.availableFrom || 'ASAP'}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 3. Landlord & Access (Conditional for Caretaker/Agent) */}
+                <div className={sectionClasses}>
+                    <div className={headerClasses}>
+                        <div className="flex items-center gap-2">
+                            <HiOutlineUserCircle className="text-brand-green text-xl" />
+                            <h2 className="font-bold text-gray-800">3. Landlord & Access</h2>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => onEditStep?.(0)} // Landlord info is usually in Basics for Caretakers
+                            className="text-brand-green text-sm font-bold hover:underline"
+                        >
+                            Edit
+                        </button>
+                    </div>
+                    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
+                        <div>
+                            <p className={labelClasses}>Landlord Name</p>
+                            <p className={valueClasses}>{data.landlord?.fullName || 'Self'}</p>
+                        </div>
+                        <div>
+                            <p className={labelClasses}>Landlord Contact</p>
+                            <p className={valueClasses}>{data.landlord?.email || 'N/A'}</p>
+                        </div>
+                        <div className="md:col-span-2">
+                            <p className={labelClasses}>Listing Authority</p>
+                            <p className={valueClasses}>Verified {data.posterRole}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 4. Media & Photos */}
+                <div className={sectionClasses}>
+                    <div className={headerClasses}>
+                        <div className="flex items-center gap-2">
+                            <HiOutlinePhoto className="text-brand-green text-xl" />
+                            <h2 className="font-bold text-gray-800">4. Media & Photos</h2>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => onEditStep?.(4)}
+                            className="text-brand-green text-sm font-bold hover:underline"
+                        >
+                            Edit
+                        </button>
+                    </div>
+                    <div className="p-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                            {data.images?.length > 0 ? (
+                                data.images.map((img, idx) => (
+                                    <div key={idx} className="aspect-square rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+                                        <img src={img.url} className="w-full h-full object-cover" alt="Property" />
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-gray-400 italic text-sm">No images uploaded yet.</p>
                             )}
                         </div>
                     </div>
+                </div>
+
+                {/* Verification Notice */}
+                <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 flex gap-4">
+                    <HiOutlineExclamationTriangle className="text-blue-600 size-6 shrink-0" />
+                    <div>
+                        <p className="text-sm font-bold text-blue-900 mb-1">Verification Process</p>
+                        <p className="text-xs text-blue-700/80 leading-relaxed font-medium">
+                            Upon submission, an automated verification request will be sent to the Landlord
+                            {data.landlord?.fullName ? ` (${data.landlord.fullName})` : ''}.
+                            The listing will remain in "Pending" status until they confirm your authorization.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Confirmation Checkbox */}
+                <div className="pt-8 flex flex-col items-center gap-6">
+                    <label className="flex items-start gap-4 cursor-pointer max-w-2xl group">
+                        <input
+                            type="checkbox"
+                            required
+                            className="size-5 mt-1 rounded border-gray-300 text-brand-green focus:ring-brand-green bg-white transition-all cursor-pointer"
+                        />
+                        <span className="text-sm text-gray-500 font-medium leading-relaxed group-hover:text-gray-700">
+                            I confirm that all information provided is accurate and I have the legal right to manage this property
+                            on behalf of the owner. I agree to the <a href="#" className="text-brand-green font-bold hover:underline">Terms of Service</a>.
+                        </span>
+                    </label>
                 </div>
             </div>
         </div>

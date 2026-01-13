@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useTenants } from '@/hooks/useTenants';
 import { useLandlordProperties } from '@/hooks/useLandlordQueries';
 import { Tenant } from '@/lib/mockLandlordData';
-import { FiX, FiUser, FiHome, FiDollarSign, FiCalendar } from 'react-icons/fi';
+import { FiX, FiUser, FiHome, FiCalendar } from 'react-icons/fi';
+import { HiOutlineBanknotes } from 'react-icons/hi2';
 
 interface AddTenantModalProps {
     isOpen: boolean;
@@ -230,7 +231,7 @@ export default function AddTenantModal({ isOpen, onClose, initialData }: AddTena
 
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                                            <FiDollarSign size={14} /> Rent Amount (Annual)
+                                            <HiOutlineBanknotes size={14} className="text-brand-green" /> Rent Amount (Annual)
                                         </label>
                                         <input
                                             required

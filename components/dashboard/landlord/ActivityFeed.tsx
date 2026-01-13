@@ -2,7 +2,8 @@
 
 import { useNotifications } from '@/hooks/useNotifications';
 import { useRouter } from 'next/navigation';
-import { FiFileText, FiDollarSign, FiEdit, FiTool, FiUpload, FiBell } from 'react-icons/fi';
+import { FiFileText, FiEdit, FiTool, FiUpload, FiBell } from 'react-icons/fi';
+import { HiOutlineBanknotes } from 'react-icons/hi2';
 
 const ActivityIcon = ({ type }: { type: string }) => {
     const iconClass = 'w-4 h-4';
@@ -17,7 +18,7 @@ const ActivityIcon = ({ type }: { type: string }) => {
         case 'payment':
             return (
                 <div className="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
-                    <FiDollarSign className={iconClass} />
+                    <HiOutlineBanknotes className={iconClass} />
                 </div>
             );
         case 'contract':
@@ -69,7 +70,7 @@ export default function ActivityFeed() {
                 <h3 className="text-lg font-bold text-gray-900">Recent activity</h3>
                 <button
                     onClick={() => router.push('/dashboard/landlord/notifications')}
-                    className="text-sm text-[#00853E] font-medium hover:underline"
+                    className="text-sm text-brand-green font-medium hover:underline"
                 >
                     View all
                 </button>
@@ -94,13 +95,13 @@ export default function ActivityFeed() {
                         >
                             <ActivityIcon type={item.type} />
                             <div className="flex-1">
-                                <p className={`text-sm ${item.isRead ? 'text-gray-900' : 'text-gray-900 font-semibold'} group-hover:text-[#00853E] transition-colors`}>
+                                <p className={`text-sm ${item.isRead ? 'text-gray-900' : 'text-gray-900 font-semibold'} group-hover:text-brand-green transition-colors`}>
                                     {item.message}
                                 </p>
                                 <p className="text-xs text-gray-500 mt-1">{item.timestamp}</p>
                             </div>
                             {!item.isRead && (
-                                <div className="w-2 h-2 bg-brand-green rounded-full mt-2 flex-shrink-0" />
+                                <div className="w-2 h-2 bg-brand-green rounded-full mt-2 shrink-0" />
                             )}
                         </div>
                     ))}

@@ -15,6 +15,12 @@ export type Property = {
   postcode?: string;
   images: string[];
   createdBy?: string;
+  posterRole: 'landlord' | 'agent' | 'caretaker';
+  listerName?: string;
+  listerImage?: string;
+  listerVerified?: boolean;
+  videoUrl?: string;
+  floorPlanUrl?: string;
 
   // --- Specifications ---
   bedrooms: number;
@@ -22,7 +28,7 @@ export type Property = {
   floorSize?: number;
 
   // --- Amenities ---
-  amenities?: string[]; 
+  amenities?: (string | { name: string; price: number })[]; 
   furnished?: boolean;
   parking?: boolean;
   garden?: boolean;
@@ -37,6 +43,11 @@ export type Property = {
   fees?: number;
   currency?: string;
   isInstallmentAllowed?: boolean;
+  serviceCharge?: number;
+  installmentConfig?: {
+    depositPercent?: number;
+    period?: string;
+  };
 
   serviced?: boolean;
   electricity?: boolean;
@@ -82,7 +93,6 @@ export type Property = {
   isUnderOffer: boolean;
 };
 const initialProperties: Property[] = [
-  
   {
     id: 1,
     title: "The Glass House - 5 Bed Detached",
@@ -124,11 +134,24 @@ const initialProperties: Property[] = [
     hasReducedPrice: false,
     isUnderOffer: false,
     keywords: ['luxury', 'automated', 'waterfront'],
-    // Added fields
-    amenities: ['Private Cinema', 'Smart Home System', 'Elevator', 'Wine Cellar'],
+    amenities: [
+      { name: 'Legal Fees (Standard)', price: 30000000 },
+      { name: 'Private Garden', price: 150000 },
+      { name: 'Ample Parking', price: 50000 },
+      { name: '24/7 Security', price: 100000 },
+      { name: 'Private Cinema', price: 500000 },
+      { name: 'Smart Home System', price: 300000 },
+      { name: 'Elevator', price: 400000 },
+      { name: 'Wine Cellar', price: 200000 }
+    ],
     isInstallmentAllowed: true,
+    serviceCharge: 0,
     views: 1240,
-    inquiries: 18
+    inquiries: 18,
+    posterRole: 'landlord',
+    listerName: "Chief Lawrence Okoro",
+    listerVerified: true,
+    listerImage: "https://i.pravatar.cc/150?u=lawrence"
   },
   {
     id: 2,
@@ -165,13 +188,21 @@ const initialProperties: Property[] = [
     isChainFree: false,
     hasReducedPrice: false,
     isUnderOffer: false,
-    // Added fields
-    amenities: ['Fiber Optic Internet', 'CCTV', 'Central AC', 'Ample Parking'],
+    amenities: [
+      { name: 'Legal Fees (Standard)', price: 140000000 },
+      { name: 'Fiber Optic Internet', price: 75000 },
+      { name: 'CCTV Security', price: 120000 },
+      { name: 'Central AC', price: 250000 },
+      { name: 'Ample Parking', price: 100000 }
+    ],
     isInstallmentAllowed: false,
     views: 850,
-    inquiries: 5
+    inquiries: 5,
+    posterRole: 'agent',
+    listerName: "Musa Ibrahim",
+    listerVerified: true,
+    listerImage: "https://i.pravatar.cc/150?u=musa"
   },
-  // ... remaining properties (3-12)
   {
     id: 3,
     title: "3 Bedroom Modern Terrace",
@@ -207,7 +238,22 @@ const initialProperties: Property[] = [
     isAuction: false,
     isChainFree: true,
     hasReducedPrice: false,
-    isUnderOffer: false
+    isUnderOffer: false,
+    amenities: [
+        { name: 'Service Charge', price: 150000 },
+        { name: 'Legal Fees (Standard)', price: 450000 },
+        { name: 'Tenancy Agreement', price: 450000 },
+        { name: '24/7 Security', price: 45000 },
+        { name: 'Ample Parking', price: 20000 },
+        { name: 'Stable Electricity', price: 60000 },
+        { name: 'Water Treatment', price: 35000 }
+    ],
+    serviceCharge: 0,
+    isInstallmentAllowed: false,
+    posterRole: 'caretaker',
+    listerName: "Sarah Adeniran",
+    listerVerified: true,
+    listerImage: "https://i.pravatar.cc/150?u=sarah"
   },
   {
     id: 4,
@@ -225,7 +271,7 @@ const initialProperties: Property[] = [
     price: 1200000,
     monthlyPrice: 100000,
     featured: false,
-    verified: false, // Changed to false for testing
+    verified: false, 
     isNew: true,
     isOffPlan: false,
     isNewBuild: true,
@@ -241,7 +287,22 @@ const initialProperties: Property[] = [
     isAuction: false,
     isChainFree: false,
     hasReducedPrice: false,
-    isUnderOffer: false
+    isUnderOffer: false,
+    amenities: [
+        { name: 'Service Charge', price: 50000 },
+        { name: 'Legal Fees (Standard)', price: 120000 },
+        { name: 'Tenancy Agreement', price: 120000 },
+        { name: 'Power Backup', price: 40000 },
+        { name: 'Water Supply', price: 15000 },
+        { name: 'Security Patrol', price: 25000 },
+        { name: 'Waste Disposal', price: 10000 }
+    ],
+    serviceCharge: 0,
+    isInstallmentAllowed: false,
+    posterRole: 'agent',
+    listerName: "Samuel Nwosu",
+    listerVerified: false,
+    listerImage: "https://i.pravatar.cc/150?u=samuel"
   },
   {
     id: 5,
@@ -279,7 +340,20 @@ const initialProperties: Property[] = [
     isAuction: false,
     isChainFree: false,
     hasReducedPrice: false,
-    isUnderOffer: false
+    isUnderOffer: false,
+    amenities: [
+        { name: 'Service Charge', price: 2500000 },
+        { name: 'Legal Fees (Standard)', price: 3500000 },
+        { name: 'Tenancy Agreement', price: 3500000 },
+        { name: '24/7 Elite Security', price: 500000 },
+        { name: 'Executive Lounge', price: 1000000 }
+    ],
+    serviceCharge: 0,
+    isInstallmentAllowed: false,
+    posterRole: 'landlord',
+    listerName: "Madam Ngozi",
+    listerVerified: true,
+    listerImage: "https://i.pravatar.cc/150?u=ngozi"
   },
   {
     id: 6,
@@ -291,7 +365,7 @@ const initialProperties: Property[] = [
     location: "Maitama",
     city: "Abuja",
     state: "FCT",
-    images: [Img1.src,Img2.src],
+    images: [Img1.src, Img2.src],
     bedrooms: 2,
     bathrooms: 2,
     price: 150000,
@@ -316,7 +390,17 @@ const initialProperties: Property[] = [
     isAuction: false,
     isChainFree: true,
     hasReducedPrice: false,
-    isUnderOffer: false
+    isUnderOffer: false,
+    amenities: [
+      { name: 'Caution Deposit (Refundable)', price: 50000 },
+      { name: 'Cleaning Fee', price: 15000 },
+      { name: 'Concierge Service', price: 25000 }
+    ],
+    isInstallmentAllowed: false,
+    posterRole: 'caretaker',
+    listerName: "Benson Ogundipe",
+    listerVerified: true,
+    listerImage: "https://i.pravatar.cc/150?u=benson"
   },
   {
     id: 7,
@@ -351,7 +435,18 @@ const initialProperties: Property[] = [
     isAuction: false,
     isChainFree: true,
     hasReducedPrice: false,
-    isUnderOffer: false
+    isUnderOffer: false,
+    amenities: [
+        { name: 'Processing Fee', price: 250000 },
+        { name: 'Legal Fees (Standard)', price: 1500000 }
+    ],
+    isInstallmentAllowed: true,
+    posterRole: 'agent',
+    listerName: "Grace Emeka",
+    listerVerified: true,
+    listerImage: "https://i.pravatar.cc/150?u=grace",
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    floorPlanUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800"
   },
   {
     id: 8,
@@ -383,7 +478,16 @@ const initialProperties: Property[] = [
     isAuction: false,
     isChainFree: false,
     hasReducedPrice: false,
-    isUnderOffer: false
+    isUnderOffer: false,
+    amenities: [
+        { name: 'Agency Fee', price: 225000000 },
+        { name: 'Legal Fees (Standard)', price: 225000000 }
+    ],
+    isInstallmentAllowed: false,
+    posterRole: 'caretaker',
+    listerName: "Philip Adams",
+    listerVerified: false,
+    listerImage: "https://i.pravatar.cc/150?u=philip"
   },
   {
     id: 9,
@@ -420,7 +524,18 @@ const initialProperties: Property[] = [
     isAuction: false,
     isChainFree: false,
     hasReducedPrice: true,
-    isUnderOffer: false
+    isUnderOffer: false,
+    amenities: [
+        { name: 'Security Deposit', price: 50000 },
+        { name: 'Cleaning Fee', price: 10000 }
+    ],
+    isInstallmentAllowed: false,
+    posterRole: 'landlord',
+    listerName: "Chief Dr. Ezeribe",
+    listerVerified: true,
+    listerImage: "https://i.pravatar.cc/150?u=ezeribe",
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    floorPlanUrl: "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?auto=format&fit=crop&q=80&w=800"
   },
   {
     id: 10,
@@ -454,7 +569,16 @@ const initialProperties: Property[] = [
     isAuction: false,
     isChainFree: true,
     hasReducedPrice: false,
-    isUnderOffer: false
+    isUnderOffer: false,
+    amenities: [
+        { name: 'Legal Fees (Standard)', price: 4250000 },
+        { name: 'Agency Fee', price: 4250000 }
+    ],
+    isInstallmentAllowed: false,
+    posterRole: 'agent',
+    listerName: "Tunde Bakare",
+    listerVerified: true,
+    listerImage: "https://i.pravatar.cc/150?u=tunde"
   },
   {
     id: 11,
@@ -496,7 +620,16 @@ const initialProperties: Property[] = [
     isChainFree: true,
     hasReducedPrice: false,
     isUnderOffer: false,
-    keywords: ['luxury', 'automated', 'waterfront']
+    keywords: ['luxury', 'automated', 'waterfront'],
+    amenities: [
+        { name: 'Legal Fees (Standard)', price: 30000000 },
+        { name: 'Smart Home Hub', price: 150000 }
+    ],
+    isInstallmentAllowed: true,
+    posterRole: 'landlord',
+    listerName: "Chief Lawrence Okoro",
+    listerVerified: true,
+    listerImage: "https://i.pravatar.cc/150?u=lawrence"
   },
   {
     id: 12,
@@ -533,7 +666,17 @@ const initialProperties: Property[] = [
     isAuction: false,
     isChainFree: true,
     hasReducedPrice: false,
-    isUnderOffer: false
+    isUnderOffer: false,
+    amenities: [
+        { name: 'Service Charge', price: 200000 },
+        { name: 'Legal Fees (Standard)', price: 450000 },
+        { name: 'Tenancy Agreement', price: 450000 }
+    ],
+    isInstallmentAllowed: false,
+    posterRole: 'landlord',
+    listerName: "Chief Lawrence Okoro",
+    listerVerified: true,
+    listerImage: "https://i.pravatar.cc/150?u=lawrence"
   },
 ];
 

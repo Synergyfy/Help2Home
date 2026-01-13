@@ -1,10 +1,4 @@
  
- --- super admin roles, sub admins for diffrnet part 
-
- --landlord,agent,caretaker can create properties but agents  and caretakers will have diffrent qustions
-
- --email will be collected and sent to landlord via a link for that particular property
-
 -- diffrent sub property types will have diffrent questions
 
 --user maagement,landlord,caretaker,agent, investor,tenant seprate
@@ -13,4 +7,38 @@
 
 --in add property Make sure that they can also add videos as well, and accept both Portrait and Landscape videos and pictures size in the add property
 
+
 --extra charges for specifications with note are paid alongside 
+
+
+----- new tassk
+
+--featured listings 
+--default additional charges
+---service charges, legal and charges
+tenancy agreement,
+--preview of properties todo,
+
+--*make some fields required
+
+-- how do we certify an agent by providing the owner details and make sure that the owner is aware but make it optional.
+
+--properties should have the role that uploaded it.
+
+--card to warn users that dealings outside the bussiness is not recommmended 
+
+-- when a user clicks the property the user listed should be able to see the person who listed 
+
+-- integrated messaging for properties should reach out
+
+-- lister profile  should be verfied /not verfied
+
+--carousel,
+
+-- for sale property encourage to upload property plan 
+
+--google earth..
+
+--landlord should be able to assign caretaker, agent can assign caretaker too, invite landlord and list them ,
+
+--support for properties 

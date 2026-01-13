@@ -35,12 +35,15 @@ export default function FeaturedProperties({ properties, label }: FeaturedProper
                         bathrooms={property.bathrooms}
                         description={property.description}
                         price={`₦${property.price.toLocaleString()}`}
+                        rawPrice={property.price}
+                        serviceCharge={property.serviceCharge}
+                        amenities={property.amenities}
+                        isInstallmentAllowed={property.isInstallmentAllowed}
                         monthlyPrice={
                             typeof property.monthlyPrice === 'number' && property.monthlyPrice > 0
                                 ? `₦${property.monthlyPrice.toLocaleString()}`
                                 : undefined
                         }
-
                         featured={property.featured}
                         verified={property.verified}
                         isNew={property.isNew}

@@ -2,7 +2,8 @@
 
 import { Notification } from '@/lib/api/notifications';
 import { formatDistanceToNow } from 'date-fns';
-import { FiFileText, FiDollarSign, FiEdit, FiTool, FiUpload, FiBell, FiX } from 'react-icons/fi';
+import { FiFileText, FiEdit, FiTool, FiUpload, FiBell, FiX } from 'react-icons/fi';
+import { HiOutlineBanknotes } from 'react-icons/hi2';
 import { motion } from 'framer-motion';
 
 interface NotificationItemProps {
@@ -19,7 +20,7 @@ const getNotificationIcon = (type: Notification['type']) => {
         case 'application':
             return <FiFileText className={iconClass} />;
         case 'payment':
-            return <FiDollarSign className={iconClass} />;
+            return <HiOutlineBanknotes className={iconClass} />;
         case 'contract':
             return <FiEdit className={iconClass} />;
         case 'maintenance':
@@ -81,7 +82,7 @@ export default function NotificationItem({
         >
             <div className="flex gap-3 items-start">
                 {/* Icon */}
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${getNotificationColor(notification.type)}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${getNotificationColor(notification.type)}`}>
                     {getNotificationIcon(notification.type)}
                 </div>
 

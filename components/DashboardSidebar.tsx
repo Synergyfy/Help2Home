@@ -27,6 +27,7 @@ interface NavItem {
 const NAV_CONFIG: Record<string, NavItem[]> = {
     admin: [
         { label: 'Dashboard', href: '/dashboard/admin', icon: RxDashboard },
+        { label: 'My Profile', href: '/dashboard/admin/profile', icon: MdPerson },
         {
             label: 'User Management',
             icon: MdGroup,
@@ -63,6 +64,7 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
     ],
     landlord: [
         { label: 'Dashboard', href: '/dashboard/landlord', icon: MdDashboard },
+        { label: 'My Profile', href: '/dashboard/landlord/profile', icon: MdPerson },
         { label: 'Properties', href: '/dashboard/landlord/properties', icon: MdHomeWork },
         { label: 'Tenants', href: '/dashboard/landlord/tenants', icon: MdGroup },
         { label: 'Applications', href: '/dashboard/landlord/applications', icon: MdAssignment },
@@ -73,6 +75,7 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
     ],
     investor: [
         { label: 'Dashboard', href: '/dashboard/investor', icon: MdDashboard },
+        { label: 'My Profile', href: '/dashboard/investor/profile', icon: MdPerson },
         { label: 'Opportunities', href: '/dashboard/investor/opportunities', icon: MdTrendingUp },
         { label: 'Portfolio', href: '/dashboard/investor/portfolio', icon: MdPieChart },
         { label: 'Reports', href: '/dashboard/investor/reports', icon: MdDescription },
@@ -82,12 +85,14 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
     ],
     caretaker: [
         { label: 'Dashboard', href: '/dashboard/caretaker', icon: MdDashboard },
+        { label: 'My Profile', href: '/dashboard/caretaker/profile', icon: MdPerson },
         { label: 'Properties', href: '/dashboard/caretaker/properties', icon: MdHomeWork },
         { label: 'My Tasks', href: '/dashboard/caretaker/tasks', icon: MdAssignment },
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
     ],
     agent: [
         { label: 'Dashboard', href: '/dashboard/agent', icon: RxDashboard },
+        { label: 'My Profile', href: '/dashboard/agent/profile', icon: MdPerson },
         { label: 'My Listings', href: '/dashboard/agent/properties', icon: MdHomeWork },
         { label: 'Leads & Clients', href: '/dashboard/agent/leads', icon: MdGroup },
         { label: 'Viewings/Schedule', href: '/dashboard/agent/schedule', icon: MdAssignment },

@@ -22,15 +22,16 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
     const router = useRouter();
 
     // Get data directly from your store definition
-    const { fullName, activeRole, email, resetUser, hasHydrated, roles } = useUserStore();
+    const { fullName, activeRole, email, resetUser, hasHydrated, roles, setActiveRole } = useUserStore();
 
     // Prevent component from returning null during hydration to stop layout shifts
     if (!hasHydrated) {
         return <header className="bg-white h-20 border-b border-gray-100 w-full" />;
     }
 
-    // Determine the path based on the actual activeRole from store
-    const rolePath = activeRole || 'tenant';
+    // Determine the path based on the URL or the store
+    const urlRole = pathname.split('/')[2] as Role;
+    const rolePath = (urlRole && ['landlord', 'agent', 'caretaker', 'tenant', 'investor', 'admin'].includes(urlRole) ? urlRole : activeRole || 'tenant') as Role;
     const profileLink = `/dashboard/${rolePath}/profile`;
     const settingsLink = `/dashboard/${rolePath}/settings`;
 
@@ -48,18 +49,26 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
         setIsProfileOpen(false);
     }
 
-    const confirmRoleSwitch = () => {
+    const confirmRoleSwitch = (shouldRedirect: boolean) => {
         if (!targetRole) return;
 
-        // Smart Redirect: Preserve the current sub-path
-        // e.g., /dashboard/landlord/properties/add -> /dashboard/agent/properties/add
-        const currentPath = window.location.pathname;
-        const newPath = currentPath.includes(`/dashboard/${activeRole}`)
-            ? currentPath.replace(`/dashboard/${activeRole}`, `/dashboard/${targetRole}`)
-            : `/dashboard/${targetRole}`;
+        // 1. Update the Store (Persistence)
+        setActiveRole(targetRole);
 
-        toast.info(`Switching to ${targetRole}...`);
-        router.push(newPath);
+        if (shouldRedirect) {
+            // Smart Redirect: Preserve the current sub-path
+            // e.g., /dashboard/landlord/properties/add -> /dashboard/agent/properties/add
+            const currentPath = window.location.pathname;
+            const newPath = currentPath.includes(`/dashboard/${activeRole}`)
+                ? currentPath.replace(`/dashboard/${activeRole}`, `/dashboard/${targetRole}`)
+                : `/dashboard/${targetRole}`;
+
+            toast.info(`Switching view to ${targetRole}...`);
+            router.push(newPath);
+        } else {
+            toast.success(`Role switched to ${targetRole}`);
+        }
+
         setShowRoleModal(false);
     };
 

@@ -10,7 +10,7 @@ export const propertySchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
   propertyCategory: z.enum(['Residential', 'Commercial', 'Land', 'Industrial']),
   propertyType: z.string().min(1, 'Property type is required'), // Apartment, House, Shop, etc.
-  listingType: z.enum(['Rent', 'Sale', 'Short-Let']),
+  listingType: z.enum(['Rent', 'Sale', 'Service-Apartment', 'Rent-to-Own']),
   
   // Location
   address: z.object({
@@ -55,7 +55,10 @@ export const propertySchema = z.object({
   }),
 
   // Media & Extras
-  amenities: z.array(z.string()).default([]),
+  amenities: z.array(z.object({
+    name: z.string(),
+    price: z.coerce.number().optional().default(0),
+  })).default([]),
   images: z.array(z.object({
     id: z.string(),
     url: z.string(),
@@ -68,6 +71,12 @@ export const propertySchema = z.object({
     url: z.string(),
     file: z.any().optional(),
     thumbnail: z.string().optional(),
+  }).optional(),
+
+  floorPlan: z.object({
+    id: z.string(),
+    url: z.string(),
+    file: z.any().optional(),
   }).optional(),
 
   installments: z.object({
@@ -88,6 +97,13 @@ export const propertySchema = z.object({
 
   // Landlord Details (Required for Caretakers)
   landlord: z.object({
+    fullName: z.string().optional(),
+    email: z.string().email('Invalid email address').optional().or(z.literal('')),
+    phone: z.string().optional(),
+  }).optional(),
+
+  // Caretaker Details (Option for Landlords/Agents)
+  caretaker: z.object({
     fullName: z.string().optional(),
     email: z.string().email('Invalid email address').optional().or(z.literal('')),
     phone: z.string().optional(),

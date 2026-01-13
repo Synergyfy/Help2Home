@@ -131,14 +131,25 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                             <h2 className="text-xl font-bold text-gray-900 mb-4">Amenities</h2>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                {property.amenities.map(amenity => (
-                                    <div key={amenity} className="flex items-center gap-2 text-gray-700">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        <span className="capitalize">{amenity.replace(/-/g, ' ')}</span>
-                                    </div>
-                                ))}
+                                {property.amenities.map((amenity, idx) => {
+                                    const name = typeof amenity === 'string' ? amenity : amenity.name;
+                                    const price = typeof amenity === 'string' ? 0 : amenity.price;
+                                    return (
+                                        <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                                            <div className="flex items-center gap-2 text-gray-700">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                <span className="capitalize text-sm font-medium">{name.replace(/-/g, ' ')}</span>
+                                            </div>
+                                            {price > 0 && (
+                                                <span className="text-[10px] font-bold text-brand-green bg-white px-2 py-0.5 rounded shadow-sm border border-brand-green/10">
+                                                    +₦{price.toLocaleString()}
+                                                </span>
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
