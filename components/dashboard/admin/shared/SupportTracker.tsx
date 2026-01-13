@@ -11,25 +11,25 @@ const TICKETS = [
 
 export default function SupportTracker() {
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-50">
-        <h3 className="text-slate-900 text-lg font-bold">Support Requests</h3>
+    <div className="bg-white rounded-2xl border border-brand-green-100 shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-brand-green-50">
+        <h3 className="text-brand-green-900 text-lg font-bold">Support Requests</h3>
         <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">3 New</span>
       </div>
-      <div className="divide-y divide-slate-50">
+      <div className="divide-y divide-brand-green-50">
         {TICKETS.map((ticket) => (
-          <div key={ticket.id} className="p-4 hover:bg-slate-50 cursor-pointer transition-colors group">
+          <div key={ticket.id} className="p-4 hover:bg-brand-green-50 cursor-pointer transition-colors group">
             <div className="flex justify-between items-start mb-1">
-              <p className="text-sm font-bold text-slate-900">Ticket #{ticket.id}</p>
+              <p className="text-sm font-bold text-brand-green-900">Ticket #{ticket.id}</p>
               <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${ticket.statusColor}`}>
                 {ticket.priority}
               </span>
             </div>
-            <p className="text-xs text-slate-500 line-clamp-1 group-hover:text-slate-700">{ticket.title}</p>
+            <p className="text-xs text-brand-green-500 line-clamp-1 group-hover:text-brand-green-700">{ticket.title}</p>
           </div>
         ))}
       </div>
-      <button className="w-full py-3 bg-slate-50 text-xs font-bold text-brand-green hover:bg-brand-green/5 transition-colors">
+      <button className="w-full py-3 bg-brand-green-50 text-xs font-bold text-brand-green hover:bg-brand-green/5 transition-colors">
         View All Tickets
       </button>
     </div>

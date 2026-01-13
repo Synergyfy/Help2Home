@@ -19,14 +19,14 @@ export default function AdminOverview() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-slate-900 text-3xl font-extrabold tracking-tight">Dashboard Overview</h1>
-          <p className="text-slate-500 mt-1">Platform performance and moderation alerts.</p>
+          <h1 className="text-brand-green-900 text-3xl font-extrabold tracking-tight">Dashboard Overview</h1>
+          <p className="text-brand-green-500 mt-1">Platform performance and moderation alerts.</p>
         </div>
         
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex bg-white rounded-lg border border-slate-200 p-1 shadow-sm">
+          <div className="hidden sm:flex bg-white rounded-lg border border-brand-green-200 p-1 shadow-sm">
             {['7D', '30D', '3M', 'YTD'].map((range, i) => (
-              <button key={range} className={`px-3 py-1.5 rounded text-xs font-bold transition-colors ${i === 0 ? 'bg-slate-100 text-slate-900' : 'hover:bg-slate-50 text-slate-600'}`}>
+              <button key={range} className={`px-3 py-1.5 rounded text-xs font-bold transition-colors ${i === 0 ? 'bg-brand-green-100 text-brand-green-900' : 'hover:bg-brand-green-50 text-brand-green-600'}`}>
                 {range}
               </button>
             ))}
@@ -68,7 +68,7 @@ export default function AdminOverview() {
               <ActionButton icon={HiOutlinePlus} label="Add User" color="text-blue-600 bg-blue-50" />
               <ActionButton icon={HiOutlineHome} label="New Listing" color="text-emerald-600 bg-emerald-50" />
               <ActionButton icon={HiOutlineReceiptTax} label="Refunds" color="text-purple-600 bg-purple-50" />
-              <ActionButton icon={HiOutlineCog} label="Settings" color="text-slate-600 bg-slate-50" />
+              <ActionButton icon={HiOutlineCog} label="Settings" color="text-brand-green-600 bg-brand-green-50" />
             </div>
           </section>
 
@@ -113,7 +113,7 @@ function HealthBar({ label, value, customText, isWarning }: { label: string, val
     <div>
       <div className="flex justify-between text-xs font-bold text-gray-500 mb-2 uppercase tracking-tight">
         <span>{label}</span>
-        <span className={isWarning ? 'text-amber-600' : 'text-slate-900'}>{customText || `${value}%`}</span>
+        <span className={isWarning ? 'text-amber-600' : 'text-brand-green-900'}>{customText || `${value}%`}</span>
       </div>
       <div className="w-full bg-gray-100 rounded-full h-2">
         <div 

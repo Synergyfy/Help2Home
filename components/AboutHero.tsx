@@ -17,7 +17,7 @@ export default function AboutHero() {
             </div>
 
             {/* Decorative circle/pattern if needed to match design */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -tranbrand-green-y-1/2 tranbrand-green-x-1/2 blur-3xl"></div>
         </section>
     );
 }

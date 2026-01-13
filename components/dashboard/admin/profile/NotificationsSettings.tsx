@@ -2,10 +2,10 @@ import { HiOutlineBell, HiOutlineMail, HiOutlineDeviceMobile } from 'react-icons
 
 export function NotificationSettings() {
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden animate-in fade-in duration-500">
-      <div className="p-6 border-b border-slate-50 bg-white">
-        <h3 className="text-lg font-black text-slate-900 tracking-tight">Notification Settings</h3>
-        <p className="text-sm text-slate-500 font-medium">Choose how you want to be notified about account activity.</p>
+    <div className="bg-white rounded-2xl border border-brand-green-100 shadow-sm overflow-hidden animate-in fade-in duration-500">
+      <div className="p-6 border-b border-brand-green-50 bg-white">
+        <h3 className="text-lg font-black text-brand-green-900 tracking-tight">Notification Settings</h3>
+        <p className="text-sm text-brand-green-500 font-medium">Choose how you want to be notified about account activity.</p>
       </div>
 
       <div className="p-8 space-y-6">
@@ -14,14 +14,14 @@ export function NotificationSettings() {
           { title: "Push Notifications", desc: "Get instant alerts on your mobile or desktop.", icon: HiOutlineDeviceMobile },
           { title: "System Updates", desc: "News about new features and maintenance.", icon: HiOutlineBell }
         ].map((item, i) => (
-          <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-slate-50/50 border border-slate-100/50">
+          <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-brand-green-50/50 border border-brand-green-100/50">
             <div className="flex gap-4 items-center">
               <div className="p-2 bg-white rounded-xl shadow-sm text-brand-green">
                 <item.icon size={20} />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900">{item.title}</h4>
-                <p className="text-xs text-slate-500 font-medium">{item.desc}</p>
+                <h4 className="text-sm font-bold text-brand-green-900">{item.title}</h4>
+                <p className="text-xs text-brand-green-500 font-medium">{item.desc}</p>
               </div>
             </div>
             {/* Simple Toggle Mockup */}

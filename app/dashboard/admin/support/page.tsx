@@ -69,11 +69,11 @@ export default function SupportRequestsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-slate-900 text-3xl font-extrabold tracking-tight">Support Requests</h1>
-          <p className="text-slate-500 mt-1">Manage and respond to user inquiries and technical issues.</p>
+          <h1 className="text-brand-green-900 text-3xl font-extrabold tracking-tight">Support Requests</h1>
+          <p className="text-brand-green-500 mt-1">Manage and respond to user inquiries and technical issues.</p>
         </div>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition-all">
+          <button className="flex items-center gap-2 bg-white border border-brand-green-200 text-brand-green-700 px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-brand-green-50 transition-all">
             <HiOutlineFilter size={18} /> Filters
           </button>
           <button className="flex items-center gap-2 bg-emerald-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all">
@@ -90,24 +90,24 @@ export default function SupportRequestsPage() {
         <SupportStat label="Resolved Today" value="45" icon={HiOutlineCheckCircle} color="text-emerald-600 bg-emerald-50" />
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-brand-green-100 shadow-sm overflow-hidden">
         {/* Table Toolbar */}
-        <div className="p-6 border-b border-slate-50 flex flex-col md:flex-row gap-4 justify-between items-center">
+        <div className="p-6 border-b border-brand-green-50 flex flex-col md:flex-row gap-4 justify-between items-center">
           <div className="relative w-full md:w-96">
-            <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <HiOutlineSearch className="absolute left-3 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400" size={20} />
             <input 
               type="text" 
               placeholder="Search by ticket ID..." 
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-brand-green-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
             />
           </div>
-          <div className="flex bg-slate-50 p-1 rounded-xl w-full md:w-auto">
+          <div className="flex bg-brand-green-50 p-1 rounded-xl w-full md:w-auto">
             {['All', 'Open', 'In Progress', 'Resolved'].map((item) => (
               <button
                 key={item}
                 onClick={() => setFilter(item)}
                 className={`flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  filter === item ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                  filter === item ? 'bg-white text-brand-green-900 shadow-sm' : 'text-brand-green-500 hover:text-brand-green-700'
                 }`}
               >
                 {item}
@@ -120,26 +120,26 @@ export default function SupportRequestsPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Ticket ID</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">User</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Subject & Category</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Priority</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Action</th>
+              <tr className="bg-brand-green-50/50 border-b border-brand-green-100">
+                <th className="px-6 py-4 text-xs font-bold text-brand-green-500 uppercase tracking-wider">Ticket ID</th>
+                <th className="px-6 py-4 text-xs font-bold text-brand-green-500 uppercase tracking-wider">User</th>
+                <th className="px-6 py-4 text-xs font-bold text-brand-green-500 uppercase tracking-wider">Subject & Category</th>
+                <th className="px-6 py-4 text-xs font-bold text-brand-green-500 uppercase tracking-wider">Priority</th>
+                <th className="px-6 py-4 text-xs font-bold text-brand-green-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-xs font-bold text-brand-green-500 uppercase tracking-wider text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-brand-green-50">
               {TICKETS.map((ticket) => (
-                <tr key={ticket.id} className="hover:bg-slate-50/50 transition-colors group">
-                  <td className="px-6 py-5 whitespace-nowrap text-sm font-bold text-slate-900">{ticket.id}</td>
+                <tr key={ticket.id} className="hover:bg-brand-green-50/50 transition-colors group">
+                  <td className="px-6 py-5 whitespace-nowrap text-sm font-bold text-brand-green-900">{ticket.id}</td>
                   <td className="px-6 py-5 whitespace-nowrap">
-                    <div className="text-sm font-semibold text-slate-900">{ticket.user}</div>
-                    <div className="text-[10px] text-slate-400">{ticket.date}</div>
+                    <div className="text-sm font-semibold text-brand-green-900">{ticket.user}</div>
+                    <div className="text-[10px] text-brand-green-400">{ticket.date}</div>
                   </td>
                   <td className="px-6 py-5 max-w-xs">
-                    <div className="text-sm font-medium text-slate-900 line-clamp-1">{ticket.subject}</div>
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-500 font-bold uppercase tracking-tight">
+                    <div className="text-sm font-medium text-brand-green-900 line-clamp-1">{ticket.subject}</div>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-brand-green-100 text-brand-green-500 font-bold uppercase tracking-tight">
                       {ticket.category}
                     </span>
                   </td>
@@ -157,7 +157,7 @@ export default function SupportRequestsPage() {
                         ticket.status === 'Open' ? 'bg-red-500' : 
                         ticket.status === 'In Progress' ? 'bg-amber-500' : 'bg-emerald-500'
                       }`} />
-                      <span className="text-sm font-medium text-slate-700">{ticket.status}</span>
+                      <span className="text-sm font-medium text-brand-green-700">{ticket.status}</span>
                     </div>
                   </td>
                   <td className="px-6 py-5 whitespace-nowrap text-right">
@@ -186,13 +186,13 @@ export default function SupportRequestsPage() {
 
 function SupportStat({ label, value, icon: Icon, color }: { label: string, value: string, icon: any, color: string }) {
   return (
-    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+    <div className="bg-white p-6 rounded-2xl border border-brand-green-100 shadow-sm flex items-center gap-4">
       <div className={`p-3 rounded-xl ${color}`}>
         <Icon size={24} />
       </div>
       <div>
-        <p className="text-xs font-bold text-slate-500 uppercase tracking-tight">{label}</p>
-        <p className="text-2xl font-black text-slate-900">{value}</p>
+        <p className="text-xs font-bold text-brand-green-500 uppercase tracking-tight">{label}</p>
+        <p className="text-2xl font-black text-brand-green-900">{value}</p>
       </div>
     </div>
   );

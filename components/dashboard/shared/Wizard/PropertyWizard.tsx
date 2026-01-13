@@ -93,12 +93,12 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
         // Dynamic validation based on the current step key
         // This mapping needs to cover all keys used in ALL_STEPS_MAP
         const validationFields: Record<string, any[]> = {
-            'basics': ['title', 'listingType', 'propertyCategory', 'propertyType', 'address', 'landlord'],
-            'location': ['address'], // Add location validation
+            'basics': ['title', 'listingType', 'propertyCategory', 'propertyType'], // Removed address and landlord
+            'location': ['address'],
             'financials': ['price', 'installments'],
             'details': ['specs', 'amenities'],
             'media': ['images'],
-            'preview': [], // No validation needed for preview usually
+            'preview': [],
         };
 
         const fieldsToValidate = validationFields[currentStepKey];

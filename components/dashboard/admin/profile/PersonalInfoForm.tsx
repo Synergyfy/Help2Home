@@ -26,12 +26,12 @@ export function PersonalInfoForm({ profile }: { profile: any }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-2xl border border-brand-green-100 shadow-sm overflow-hidden">
       {/* Card Header */}
-      <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-white">
+      <div className="p-6 border-b border-brand-green-50 flex justify-between items-center bg-white">
         <div>
-          <h3 className="text-lg font-black text-slate-900 tracking-tight">Personal Information</h3>
-          <p className="text-sm text-slate-500 font-medium">Update your profile details and contact information.</p>
+          <h3 className="text-lg font-black text-brand-green-900 tracking-tight">Personal Information</h3>
+          <p className="text-sm text-brand-green-500 font-medium">Update your profile details and contact information.</p>
         </div>
         {!isEditing ? (
           <button
@@ -45,7 +45,7 @@ export function PersonalInfoForm({ profile }: { profile: any }) {
               reset(defaultValues);
               setIsEditing(false);
             }}
-            className="text-slate-400 hover:text-slate-600 text-xs font-bold uppercase tracking-widest transition-colors">
+            className="text-brand-green-400 hover:text-brand-green-600 text-xs font-bold uppercase tracking-widest transition-colors">
             Cancel
           </button>
         )}
@@ -54,54 +54,54 @@ export function PersonalInfoForm({ profile }: { profile: any }) {
       {/* Form Content */}
       <form onSubmit={handleSubmit(onSubmit)} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">First Name</label>
+          <label className="text-[10px] font-black text-brand-green-500 uppercase tracking-widest px-1">First Name</label>
           <input
             {...register('firstName')}
             disabled={!isEditing}
-            className="w-full bg-slate-50 border-none rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-brand-green/20 outline-none transition-all disabled:text-gray-500"
+            className="w-full bg-brand-green-50 border-none rounded-xl px-4 py-3 text-sm font-bold text-brand-green-900 focus:ring-2 focus:ring-brand-green/20 outline-none transition-all disabled:text-gray-500"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Last Name</label>
+          <label className="text-[10px] font-black text-brand-green-500 uppercase tracking-widest px-1">Last Name</label>
           <input
             {...register('lastName')}
             disabled={!isEditing}
-            className="w-full bg-slate-50 border-none rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-brand-green/20 outline-none transition-all disabled:text-gray-500"
+            className="w-full bg-brand-green-50 border-none rounded-xl px-4 py-3 text-sm font-bold text-brand-green-900 focus:ring-2 focus:ring-brand-green/20 outline-none transition-all disabled:text-gray-500"
           />
         </div>
 
         <div className="md:col-span-2 space-y-2">
-          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Email Address</label>
+          <label className="text-[10px] font-black text-brand-green-500 uppercase tracking-widest px-1">Email Address</label>
           <div className="relative">
-            <HiOutlineMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <HiOutlineMail className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400" size={18} />
             <input
               {...register('email')}
               disabled={!isEditing}
-              className="w-full bg-slate-50 border-none rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-brand-green/20 outline-none transition-all disabled:text-gray-500"
+              className="w-full bg-brand-green-50 border-none rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-brand-green-900 focus:ring-2 focus:ring-brand-green/20 outline-none transition-all disabled:text-gray-500"
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Phone Number</label>
+          <label className="text-[10px] font-black text-brand-green-500 uppercase tracking-widest px-1">Phone Number</label>
           <div className="relative">
-            <HiOutlinePhone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <HiOutlinePhone className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400" size={18} />
             <input
               {...register('phone')}
               disabled={!isEditing}
-              className="w-full bg-slate-50 border-none rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-brand-green/20 outline-none transition-all disabled:text-gray-500"
+              className="w-full bg-brand-green-50 border-none rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-brand-green-900 focus:ring-2 focus:ring-brand-green/20 outline-none transition-all disabled:text-gray-500"
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Admin Role</label>
+          <label className="text-[10px] font-black text-brand-green-500 uppercase tracking-widest px-1">Admin Role</label>
           <div className="relative">
-            <HiOutlineBadgeCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500" size={18} />
+            <HiOutlineBadgeCheck className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 text-emerald-500" size={18} />
             <input
               disabled
-              className="w-full bg-slate-100 border-none rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-slate-500 cursor-not-allowed"
+              className="w-full bg-brand-green-100 border-none rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-brand-green-500 cursor-not-allowed"
               defaultValue="Super Admin"
             />
           </div>

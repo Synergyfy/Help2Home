@@ -160,7 +160,7 @@ export default function DetailsAmenitiesStep({ role }: DetailsAmenitiesStepProps
                                         </div>
                                         {selected && (
                                             <div className="relative grow max-w-[140px]">
-                                                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-brand-green/50">₦</span>
+                                                <span className="absolute left-2.5 top-1/2 -tranbrand-green-y-1/2 text-[10px] font-bold text-brand-green/50">₦</span>
                                                 <input
                                                     type="number"
                                                     value={getAmenityPrice(fee)}
@@ -206,7 +206,7 @@ export default function DetailsAmenitiesStep({ role }: DetailsAmenitiesStepProps
                                         <div className="mt-4 pt-4 border-t border-brand-green/10">
                                             <label className="block text-[10px] font-black uppercase tracking-tighter text-gray-400 mb-1.5">Optional Upfront Charge (₦)</label>
                                             <div className="relative">
-                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400">₦</span>
+                                                <span className="absolute left-3 top-1/2 -tranbrand-green-y-1/2 text-sm font-bold text-gray-400">₦</span>
                                                 <input type="number" min="0" value={getAmenityPrice(amenity)} onChange={(e) => updateAmenityPrice(amenity, Number(e.target.value))} className="w-full h-10 pl-8 pr-3 rounded-xl border border-brand-green/20 bg-white text-sm font-bold text-brand-green focus:ring-1 focus:ring-brand-green outline-none" placeholder="0.00" />
                                             </div>
                                         </div>
@@ -235,7 +235,7 @@ export default function DetailsAmenitiesStep({ role }: DetailsAmenitiesStepProps
                             <div>
                                 <label className={labelClasses}>Amount (₦)</label>
                                 <div className="relative">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gray-400">₦</span>
+                                    <span className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 font-bold text-gray-400">₦</span>
                                     <input
                                         type="number"
                                         value={customPrice}

@@ -69,7 +69,7 @@ const ProfileStep = () => {
             </label>
             <div className="relative group">
               <FiUser
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors"
+                className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors"
                 size={20}
               />
               <input
@@ -94,7 +94,7 @@ const ProfileStep = () => {
             </label>
             <div className="relative group">
               <FiPhone
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors"
+                className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors"
                 size={20}
               />
               <input

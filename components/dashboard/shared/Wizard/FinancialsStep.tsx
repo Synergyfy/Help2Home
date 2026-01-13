@@ -66,7 +66,7 @@ export default function FinancialsStep({ role }: FinancialsStepProps = {}) {
                                 {listingType === 'Sale' ? 'Purchase Price (₦)' : listingType === 'Service-Apartment' ? 'Daily Rate (₦)' : 'Rent Amount (₦)'}
                             </label>
                             <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-gray-900">₦</span>
+                                <span className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 text-2xl font-bold text-gray-900">₦</span>
                                 <input
                                     type="text"
                                     placeholder="0.00"
@@ -132,7 +132,7 @@ export default function FinancialsStep({ role }: FinancialsStepProps = {}) {
                                     {...register('installments.enabled')}
                                     className="sr-only peer"
                                 />
-                                <div className="w-12 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-green shadow-inner"></div>
+                                <div className="w-12 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:tranbrand-green-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-green shadow-inner"></div>
                             </label>
                         </div>
 
@@ -210,7 +210,7 @@ export default function FinancialsStep({ role }: FinancialsStepProps = {}) {
                         )}
 
                         <div className="pt-8 border-t-2 border-gray-100 relative">
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-3">
+                            <div className="absolute -top-3 left-1/2 -tranbrand-green-x-1/2 bg-white px-3">
                                 <div className="size-6 rounded-full bg-brand-green/10 flex items-center justify-center">
                                     <div className="size-2 rounded-full bg-brand-green"></div>
                                 </div>
