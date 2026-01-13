@@ -3,47 +3,72 @@
 import React from 'react';
 
 interface StepIndicatorProps {
-    steps: string[];
-    currentStep: number;
+  steps: string[];
+  currentStep: number;
 }
 
 export default function StepIndicator({ steps, currentStep }: StepIndicatorProps) {
-    return (
-        <div className="w-full py-6">
-            <div className="flex items-center justify-between relative">
-                <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-gray-200 -z-10"></div>
+  return (
+    <div className="w-full py-8">
+      <div className="flex items-center justify-between relative">
+        {/* Background Line */}
+        <div className="absolute left-0 top-5 transform -translate-y-1/2 w-full h-[2px] bg-gray-200 -z-10"></div>
+        
+        {/* Progress Line */}
+        <div
+          className="absolute left-0 top-5 transform -translate-y-1/2 h-[2px] bg-[#22C55E] -z-10 transition-all duration-500"
+          style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
+        ></div>
+
+        {steps.map((step, index) => {
+          const isCompleted = index < currentStep;
+          const isCurrent = index === currentStep;
+
+          return (
+            <div key={step} className="flex flex-col items-center relative min-w-[100px]">
+              {/* Step Circle */}
+              <div className="bg-white px-2">
                 <div
-                    className="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-brand-green -z-10 transition-all duration-300"
-                    style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
-                ></div>
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 border
+                    ${isCompleted 
+                      ? 'bg-[#22C55E] border-[#22C55E] text-white' 
+                      : isCurrent 
+                        ? 'bg-white border-[#22C55E] border-2 ring-4 ring-green-50 text-[#22C55E]' 
+                        : 'bg-white border-gray-200 text-gray-400'
+                    }`}
+                >
+                  {isCompleted ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    index + 1
+                  )}
+                </div>
+              </div>
 
-                {steps.map((step, index) => {
-                    const isCompleted = index < currentStep;
-                    const isCurrent = index === currentStep;
-
-                    return (
-                        <div key={step} className="flex flex-col items-center bg-white px-2">
-                            <div
-                                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors duration-300 ${isCompleted ? 'bg-brand-green border-brand-green text-white' :
-                                        isCurrent ? 'bg-white border-brand-green text-brand-green' :
-                                            'bg-white border-gray-300 text-gray-400'
-                                    }`}
-                            >
-                                {isCompleted ? (
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                    </svg>
-                                ) : (
-                                    index + 1
-                                )}
-                            </div>
-                            <span className={`text-xs mt-2   font-medium ${isCurrent ? 'text-brand-green' : 'text-gray-500'}`}>
-                                {step}
-                            </span>
-                        </div>
-                    );
-                })}
+              {/* Labels */}
+              <div className="mt-4 flex flex-col items-center">
+                <span className={`text-sm font-bold ${isCurrent ? 'text-[#22C55E]' : isCompleted ? 'text-gray-700' : 'text-gray-500'}`}>
+                  {step}
+                </span>
+                
+                {/* Status Text */}
+                {isCompleted && (
+                  <span className="text-[10px] font-black text-[#22C55E] tracking-wider uppercase">
+                    COMPLETED
+                  </span>
+                )}
+                {isCurrent && (
+                  <span className="text-[10px] font-black text-[#22C55E] tracking-wider uppercase">
+                    IN PROGRESS
+                  </span>
+                )}
+              </div>
             </div>
-        </div>
-    );
+          );
+        })}
+      </div>
+    </div>
+  );
 }

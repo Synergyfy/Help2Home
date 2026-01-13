@@ -142,11 +142,10 @@ export default function BasicInfoTab({ profile: initialProfile }: { profile: Pro
                     <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
                     <select
                         {...register('currency')}
-                        disabled={!isEditing}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-green focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500"
+                        disabled={true}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-green focus:border-transparent bg-gray-50 text-gray-500 cursor-not-allowed"
                     >
                         <option value="NGN">NGN (Nigerian Naira)</option>
-                        <option value="USD">USD (US Dollar)</option>
                     </select>
                 </div>
 

@@ -12,39 +12,54 @@ export async function createProperty(
   // Map the form data (which has nested objects) to the flat Property structure
   const mappedProperty: Partial<Property> = {
     ...newPropertyData,
+    title: newPropertyData.title || 'Untitled Property',
     price: newPropertyData.price?.amount || 0,
     currency: newPropertyData.price?.currency || 'NGN',
     address: newPropertyData.address?.street || '',
     city: newPropertyData.address?.city || '',
     state: newPropertyData.address?.state || '',
-    location: newPropertyData.address?.city || '', // Default location to city
-    propertyType: newPropertyData.listingType === 'Sale' ? 'buy' : 'rent',
+    location: newPropertyData.address?.city || '',
+
+    // Map Listing Type to Property propertyType
+    propertyType: (newPropertyData.listingType === 'Rent' ? 'rent' :
+      newPropertyData.listingType === 'Sale' ? 'buy' :
+        newPropertyData.listingType === 'Service-Apartment' ? 'service-apartment' :
+          'rent-to-own') as any,
 
     // Map Specs
-    bedrooms: newPropertyData.specs?.bedrooms || 0,
-    bathrooms: newPropertyData.specs?.bathrooms || 0,
-    floorSize: newPropertyData.specs?.area || 0,
+    bedrooms: Number(newPropertyData.specs?.bedrooms) || 0,
+    bathrooms: Number(newPropertyData.specs?.bathrooms) || 0,
+    floorSize: Number(newPropertyData.specs?.area) || 0,
 
     // Map Images (extract URLs from our new object structure)
-    // newPropertyData.images is likely PropertySchema['images'] (array of objects with url, id, etc)
     images: newPropertyData.images?.map((img: any) => img.url) || [],
 
     // Map Installments
     isInstallmentAllowed: newPropertyData.installments?.enabled || false,
+    installmentConfig: {
+      depositPercent: newPropertyData.installments?.depositPercent,
+      period: newPropertyData.price?.period,
+    },
 
-    // Ensure amenities are passed
+    serviceCharge: newPropertyData.price?.serviceCharge || 0,
+
+    // Ensure amenities are passed with their prices
     amenities: newPropertyData.amenities || [],
   };
 
   const newProperty: Property = {
     ...mappedProperty,
-    id: Math.floor(Math.random() * 10000),
+    id: Math.floor(Math.random() * 100000),
     createdBy: userId,
     dateAdded: new Date().toISOString(),
     listingAge: '24h',
     featured: false,
     verified: false,
     status: newPropertyData.status || 'available',
+    isNew: true,
+    isOffPlan: false,
+    isNewBuild: true,
+    ownership: 'freehold',
   } as Property;
 
   // Simulate sending invitation email if landlord details are provided
@@ -74,7 +89,6 @@ export async function createProperty(
 
   addPropertyToMockDb(newProperty);
   console.log('[createProperty] Added property to mock DB:', newProperty);
-  // Replaced require with direct import usage
   console.log('[createProperty] New mock DB length:', getMockProperties().length);
 
   return newProperty;

@@ -5,7 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { CiStar } from "react-icons/ci";
 import { TbNewSection } from "react-icons/tb";
+import { HiCheckCircle } from "react-icons/hi";
 import { GrStatusGood } from "react-icons/gr";
+import { formatNumber } from '@/utils/helpers';
 
 interface PropertyCardProps {
     id: number | string;
@@ -20,6 +22,10 @@ interface PropertyCardProps {
     featured?: boolean;
     verified?: boolean;
     isNew?: boolean;
+    amenities?: (string | { name: string; price: number })[];
+    serviceCharge?: number;
+    rawPrice?: number;
+    isInstallmentAllowed?: boolean;
 }
 
 export default function PropertyCard({
@@ -34,41 +40,52 @@ export default function PropertyCard({
     monthlyPrice,
     featured = false,
     verified = true,
-    isNew = false
+    isNew = false,
+    amenities = [],
+    serviceCharge = 0,
+    rawPrice = 0,
+    isInstallmentAllowed = false
 }: PropertyCardProps) {
     const [isFavorite, setIsFavorite] = useState(false);
 
+    // Calculate total upfront if rawPrice is provided
+    const amenitiesTotal = amenities.reduce((acc, curr) => {
+        if (typeof curr === 'object' && curr.price) return acc + curr.price;
+        return acc;
+    }, 0);
+
+    // Fallback to parsing price string if rawPrice isn't provided
+    const basePrice = rawPrice || parseFloat(price.replace(/[^0-9.]/g, '')) || 0;
+    const totalUpfront = basePrice + serviceCharge + amenitiesTotal;
+
     return (
-        <div className="group relative">
-            <Link href={`/marketplace/${id}`} className="block">
-                <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group-hover:-translate-y-1">
+        <div className="group relative h-full">
+            <Link href={`/marketplace/${id}`} className="block h-full">
+                <div className="bg-white rounded-4xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:-translate-y-2 flex flex-col h-full">
                     {/* Image Container */}
-                    <div className="relative h-56 sm:h-64 w-full overflow-hidden bg-gray-100">
+                    <div className="relative h-64 w-full overflow-hidden bg-gray-100 shrink-0">
                         <Image
                             src={image}
                             alt={title}
                             fill
-                            className="object-cover group-hover:scale-110 transition-transform duration-700"
+                            className="object-cover group-hover:scale-110 transition-transform duration-1000"
                         />
 
                         {/* Badges */}
-                        <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
+                        <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
                             {featured && (
-                                <span className="inline-flex gap-1 items-center bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                                    <CiStar className='w-3 h-3 text-yellow-800' /> Featured
+                                <span className="inline-flex gap-1.5 items-center bg-white/95 backdrop-blur-md text-amber-600 text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg border border-amber-100 uppercase tracking-widest">
+                                    <CiStar className='w-3.5 h-3.5' /> Featured
                                 </span>
                             )}
                             {isNew && (
-                                <span className="inline-flex gap-1 items-center bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                                    <TbNewSection className='w-3 h-3 text-blue-800' /> New
+                                <span className="inline-flex gap-1.5 items-center bg-white/95 backdrop-blur-md text-blue-600 text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg border border-blue-100 uppercase tracking-widest">
+                                    <TbNewSection className='w-3.5 h-3.5' /> New
                                 </span>
                             )}
                             {verified && (
-                                <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
-                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                    </svg>
-                                    Verified
+                                <span className="inline-flex gap-1.5 items-center bg-brand-green text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg uppercase tracking-widest">
+                                    <HiCheckCircle className="w-3.5 h-3.5" /> Verified
                                 </span>
                             )}
                         </div>
@@ -79,10 +96,10 @@ export default function PropertyCard({
                                 e.preventDefault();
                                 setIsFavorite(!isFavorite);
                             }}
-                            className="absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all duration-200 shadow-lg z-10 group/fav"
+                            className="absolute top-4 right-4 w-11 h-11 bg-white/90 backdrop-blur-md rounded-2xl flex items-center justify-center hover:bg-white transition-all duration-300 shadow-lg z-10 group/fav border border-white/20"
                         >
                             <svg
-                                className={`w-5 h-5 transition-all duration-200 ${isFavorite ? 'fill-red-500 text-red-500 scale-110' : 'fill-none text-gray-700 group-hover/fav:text-red-500'}`}
+                                className={`w-5 h-5 transition-all duration-300 ${isFavorite ? 'fill-red-500 text-red-500 scale-110' : 'fill-none text-gray-700 group-hover/fav:text-red-500'}`}
                                 stroke="currentColor"
                                 strokeWidth="2"
                                 viewBox="0 0 24 24"
@@ -90,62 +107,51 @@ export default function PropertyCard({
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                             </svg>
                         </button>
-
-                        {/* Quick View Overlay */}
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                            <span className="bg-white text-gray-900 px-6 py-3 rounded-lg font-semibold transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                View Details
-                            </span>
-                        </div>
                     </div>
 
                     {/* Content */}
-                    <div className="p-5">
-                        <h3 className="text-lg font-bold text-gray-900 mb-1 group-hover:text-[#00853E] transition-colors line-clamp-1">
-                            {title}
-                        </h3>
-                        <p className="text-gray-500 text-sm mb-4 flex items-center gap-1">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <div className="p-7 flex flex-col grow">
+                        <div className="flex justify-between items-start mb-2 gap-4">
+                            <h3 className="text-xl font-black text-gray-900 leading-tight group-hover:text-brand-green transition-colors line-clamp-1">
+                                {title}
+                            </h3>
+                            <div className="flex flex-col items-end">
+                                <div className="text-brand-green font-black text-lg whitespace-nowrap">
+                                    {price.startsWith('₦') ? `₦${formatNumber(price)}` : formatNumber(price)}
+                                </div>
+                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">
+                                    Upfront: ₦{formatNumber(totalUpfront)}
+                                </div>
+                            </div>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-6 flex items-center gap-1.5 font-bold uppercase tracking-wider">
+                            <svg className="w-4 h-4 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                             {location}
                         </p>
 
                         {/* Features */}
-                        <div className="flex items-center gap-4 mb-4 text-sm text-gray-600">
-                            <div className="flex items-center gap-1.5">
-                                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                </svg>
-                                <span className="font-medium">{bedrooms} Beds</span>
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+                                <span className="text-brand-green font-black text-xs">{bedrooms}</span>
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Beds</span>
                             </div>
-                            <div className="flex items-center gap-1.5">
-                                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-                                </svg>
-                                <span className="font-medium">{bathrooms} Baths</span>
+                            <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+                                <span className="text-brand-green font-black text-xs">{bathrooms}</span>
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Baths</span>
                             </div>
                         </div>
 
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
-                            {description}
-                        </p>
-
-                        {/* Price */}
-                        <div className="flex items-end justify-between pt-4 border-t border-gray-100">
-                            <div>
-                                <div className="text-2xl font-bold text-gray-900">
-                                    {price}
-                                </div>
-                                {monthlyPrice && (
-                                    <div className="text-sm text-gray-500 mt-0.5">
-                                        or {monthlyPrice}/month
-                                    </div>
-                                )}
+                        <div className="mt-auto pt-6 border-t border-gray-100 flex items-center justify-between">
+                            <div className="text-brand-green font-black text-xl">
+                                {price.startsWith('₦') ? `₦${formatNumber(price)}` : formatNumber(price)}
                             </div>
-                            <div className="bg-[#00853E] text-white px-4 py-2 rounded-lg text-sm font-semibold group-hover:bg-green-700 transition-colors">
-                                View →
+                            <div className="bg-brand-green text-white p-3 rounded-2xl shadow-lg shadow-brand-green/20">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
                             </div>
                         </div>
                     </div>

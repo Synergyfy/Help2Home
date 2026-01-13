@@ -22,13 +22,13 @@ export default function Header() {
 
     const handleCategoryClick = (type: 'rent' | 'buy' | 'service-apartment' | 'rent-to-own', category?: string) => {
         setIsMenuOpen(false);
-        
+
         // Build query string
         let queryString = `type=${type}`;
         if (category) {
             queryString += `&category=${category}`;
         }
-        
+
         // Navigate to marketplace with query params
         router.push(`/marketplace?${queryString}`);
     };
@@ -50,23 +50,35 @@ export default function Header() {
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-180 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
                         </button>
                         <div className="absolute top-full left-0 w-60 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
-                            <button 
+                            <button
                                 onClick={() => handleCategoryClick('rent', 'residential-properties-to-rent')}
                                 className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
                             >
                                 Residential Property to Rent
                             </button>
-                            <button 
+                            <button
                                 onClick={() => handleCategoryClick('rent', 'corporate-properties-to-rent')}
                                 className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
                             >
                                 Corporate Property
                             </button>
-                            <button 
+                            <button
                                 onClick={() => handleCategoryClick('rent', 'student-properties-to-rent')}
                                 className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
                             >
                                 Student / Corpers Property
+                            </button>
+                            <button
+                                onClick={() => handleCategoryClick('rent', 'shared-spaces-to-rent')}
+                                className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
+                            >
+                                Shared Spaces / Self-Contain
+                            </button>
+                            <button
+                                onClick={() => handleCategoryClick('rent', 'land-to-rent')}
+                                className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
+                            >
+                                Land / Plots to Rent
                             </button>
                         </div>
                     </div>
@@ -78,35 +90,41 @@ export default function Header() {
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-180 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
                         </button>
                         <div className="absolute top-full left-0 w-60 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
-                            <button 
+                            <button
                                 onClick={() => handleCategoryClick('buy', 'residential-properties-for-sale')}
                                 className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
                             >
                                 Residential Property for Sale
                             </button>
-                            <button 
+                            <button
                                 onClick={() => handleCategoryClick('buy', 'commercial-properties-for-sale')}
                                 className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
                             >
                                 Commercial Property for Sale
                             </button>
-                            <button 
+                            <button
                                 onClick={() => handleCategoryClick('buy', 'corporate-properties-for-sale')}
                                 className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
                             >
                                 Corporate Property for Sale
                             </button>
+                            <button
+                                onClick={() => handleCategoryClick('buy', 'land-for-sale')}
+                                className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
+                            >
+                                Land / Plots for Sale
+                            </button>
                         </div>
                     </div>
 
                     {/* Standalone Menu Items */}
-                    <button 
+                    <button
                         onClick={() => handleCategoryClick('service-apartment')}
                         className="hover:text-brand-green transition-colors"
                     >
                         Service Apartments
                     </button>
-                    <button 
+                    <button
                         onClick={() => handleCategoryClick('rent-to-own')}
                         className="hover:text-brand-green transition-colors"
                     >
@@ -154,19 +172,19 @@ export default function Header() {
                 <div className="lg:hidden absolute top-full left-0 w-full bg-white border-t shadow-lg p-4 flex flex-col gap-4 z-50 max-h-[80vh] overflow-y-auto">
                     <div className="border-b border-gray-100 pb-2">
                         <p className="text-xs font-bold text-gray-400 uppercase mb-2">Rent</p>
-                        <button 
+                        <button
                             onClick={() => handleCategoryClick('rent', 'residential-properties-to-rent')}
                             className="block w-full text-left text-gray-600 hover:text-brand-green py-2 pl-4"
                         >
                             Residential Property
                         </button>
-                        <button 
+                        <button
                             onClick={() => handleCategoryClick('rent', 'corporate-properties-to-rent')}
                             className="block w-full text-left text-gray-600 hover:text-brand-green py-2 pl-4"
                         >
                             Corporate Property
                         </button>
-                        <button 
+                        <button
                             onClick={() => handleCategoryClick('rent', 'student-properties-to-rent')}
                             className="block w-full text-left text-gray-600 hover:text-brand-green py-2 pl-4"
                         >
@@ -176,13 +194,13 @@ export default function Header() {
 
                     <div className="border-b border-gray-100 pb-2">
                         <p className="text-xs font-bold text-gray-400 uppercase mb-2">Buy</p>
-                        <button 
+                        <button
                             onClick={() => handleCategoryClick('buy', 'residential-properties-for-sale')}
                             className="block w-full text-left text-gray-600 hover:text-brand-green py-2 pl-4"
                         >
                             Residential Property for Sale
                         </button>
-                        <button 
+                        <button
                             onClick={() => handleCategoryClick('buy', 'commercial-properties-for-sale')}
                             className="block w-full text-left text-gray-600 hover:text-brand-green py-2 pl-4"
                         >
@@ -190,13 +208,13 @@ export default function Header() {
                         </button>
                     </div>
 
-                    <button 
+                    <button
                         onClick={() => handleCategoryClick('service-apartment')}
                         className="text-left text-gray-600 hover:text-brand-green py-2"
                     >
                         Service Apartments
                     </button>
-                    <button 
+                    <button
                         onClick={() => handleCategoryClick('rent-to-own')}
                         className="text-left text-gray-600 hover:text-brand-green py-2"
                     >

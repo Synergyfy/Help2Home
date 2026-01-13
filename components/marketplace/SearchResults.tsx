@@ -16,7 +16,8 @@ import {
     HiOutlineHeart,
     HiCheckCircle,
     HiOutlineChevronLeft,
-    HiOutlineChevronRight
+    HiOutlineChevronRight,
+    HiOutlineCreditCard
 } from 'react-icons/hi';
 import { IoBedOutline, IoWaterOutline } from 'react-icons/io5';
 
@@ -153,46 +154,63 @@ export default function MarketplacePage() {
 }
 
 function PropertyCard({ property, index }: { property: any; index: number }) {
+    // Calculate total upfront
+    const amenitiesTotal = (property.amenities || []).reduce((acc: number, curr: any) => {
+        if (typeof curr === 'object' && curr.price) return acc + curr.price;
+        return acc;
+    }, 0);
+    const totalUpfront = (property.price || 0) + (property.serviceCharge || 0) + amenitiesTotal;
+
     return (
         <FadeIn delay={index * 0.05} direction="up" className="h-full">
-            <div className="group bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-lg transition-all h-full flex flex-col">
-                <div className="relative aspect-[4/3] overflow-hidden">
+            <div className="group bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/20 transition-all h-full flex flex-col relative">
+                <div className="relative aspect-4/3 overflow-hidden">
                     <Image
                         src={property.images?.[0] || '/placeholder.jpg'}
                         alt={property.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                     {property.verified && (
                         <div className="absolute top-3 left-3">
-                            <span className="bg-brand-green/90 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm flex items-center gap-1">
-                                <HiCheckCircle size={12} /> VERIFIED
+                            <span className="bg-brand-green text-white text-[9px] font-black px-2 py-1 rounded shadow-lg flex items-center gap-1 uppercase tracking-widest backdrop-blur-sm">
+                                <HiCheckCircle size={12} /> Verified
                             </span>
                         </div>
                     )}
-                    <button className="absolute top-3 right-3 bg-white/90 hover:bg-white rounded-full p-2 text-gray-400 hover:text-red-500 transition-colors">
+                    <button className="absolute top-3 right-3 bg-white/90 backdrop-blur-md hover:bg-white rounded-full p-2 text-gray-400 hover:text-red-500 transition-all shadow-md z-10">
                         <HiOutlineHeart size={18} />
                     </button>
                 </div>
 
-                <div className="p-5 flex flex-col flex-grow">
+                <div className="p-5 flex flex-col grow">
                     <div className="flex justify-between items-start mb-2 gap-2">
-                        <h3 className="font-bold text-gray-900 truncate text-sm">{property.title}</h3>
-                        <p className="text-brand-green font-bold text-sm whitespace-nowrap">{formatCurrency(property.price)}</p>
+                        <h3 className="font-bold text-gray-900 truncate text-sm leading-tight group-hover:text-brand-green transition-colors">{property.title}</h3>
+                        <div className="flex flex-col items-end gap-0.5">
+                            <p className="text-brand-green font-black text-sm whitespace-nowrap">{formatCurrency(property.price)}</p>
+                            <p className="text-[9px] font-black text-gray-400 uppercase tracking-tighter">Upfront: ₦{totalUpfront.toLocaleString()}</p>
+                        </div>
                     </div>
-                    <p className="text-xs text-gray-500 mb-4 truncate flex items-center gap-1">
-                        <HiOutlineLocationMarker size={14} className="text-gray-400" />
+                    <p className="text-xs text-gray-400 mb-4 truncate flex items-center gap-1 font-medium">
+                        <HiOutlineLocationMarker size={14} className="text-brand-green" />
                         {property.location}
                     </p>
-                    <div className="flex flex-wrap gap-3 mb-6">
-                        <div className="flex items-center gap-1.5 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
-                            <IoBedOutline size={14} /> <span>{property.bedrooms} Beds</span>
+
+                    <div className="flex flex-wrap gap-2 mb-4">
+                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-600 bg-gray-50 px-2 py-1 rounded-lg border border-gray-100/50">
+                            <IoBedOutline size={14} className="text-brand-green" /> <span>{property.bedrooms} Beds</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
-                            <IoWaterOutline size={14} /> <span>{property.bathrooms} Baths</span>
+                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-600 bg-gray-50 px-2 py-1 rounded-lg border border-gray-100/50">
+                            <IoWaterOutline size={14} className="text-brand-green" /> <span>{property.bathrooms} Baths</span>
                         </div>
+                        {property.isInstallmentAllowed && (
+                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-brand-green bg-green-50 px-2 py-1 rounded-lg border border-green-100/50" title="Installments Available">
+                                <HiOutlineCreditCard size={14} /> <span>Installments</span>
+                            </div>
+                        )}
                     </div>
-                    <Link href={`/marketplace/${property.id}`} className="block w-full text-center border border-brand-green text-brand-green hover:bg-brand-green hover:text-white py-2.5 rounded-lg font-bold transition-all text-xs mt-auto">
+
+                    <Link href={`/marketplace/${property.id}`} className="mt-auto block w-full text-center bg-brand-green text-white hover:bg-green-600 py-3 rounded-xl font-bold transition-all text-xs uppercase tracking-widest shadow-sm shadow-brand-green/10">
                         View Listing
                     </Link>
                 </div>
@@ -204,7 +222,7 @@ function PropertyCard({ property, index }: { property: any; index: number }) {
 function SkeletonCard() {
     return (
         <div className="bg-white rounded-xl h-[380px] animate-pulse border border-gray-100 overflow-hidden">
-            <div className="aspect-[4/3] bg-gray-200" />
+            <div className="aspect-4/3 bg-gray-200" />
             <div className="p-5 space-y-4">
                 <div className="h-4 bg-gray-200 rounded w-3/4" />
                 <div className="h-3 bg-gray-100 rounded w-1/2" />

@@ -26,9 +26,9 @@ export const PROPERTY_CATEGORIES = [
 ];
 
 export const STEP_CONFIG: Record<string, string[]> = {
-  landlord: ['basics', 'location', 'details', 'financials', 'media'],
-  agent: ['basics', 'location', 'details', 'financials', 'media', 'client-info'],
-  caretaker: ['basics', 'location', 'details', 'financials', 'media'],
+  landlord: ['basics', 'location', 'details', 'financials', 'media', 'preview'],
+  agent: ['basics', 'location', 'details', 'financials', 'media', 'client-info', 'preview'],
+  caretaker: ['basics', 'location', 'details', 'financials', 'media', 'preview'],
 };
 
 export const ROLE_ACTIONS: Record<string, { submitLabel: string; successMessage: string }> = {
@@ -41,7 +41,29 @@ export const ROLE_ACTIONS: Record<string, { submitLabel: string; successMessage:
     successMessage: 'Listing published successfully!'
   },
   caretaker: {
-    submitLabel: 'List Property',
+    submitLabel: 'Submit for Verification',
     successMessage: 'Property listed successfully!'
   }
+};
+
+export const PROPERTY_TYPES_BY_LISTING: Record<string, string[]> = {
+  'Rent': [
+    'Residential Property to Rent',
+    'Corporate Property',
+    'Student / Corpers Property',
+    'Shared Spaces / Self-Contain',
+    'Land / Plots to Rent'
+  ],
+  'Sale': [
+    'Residential Property for Sale',
+    'Commercial Property for Sale',
+    'Corporate Property for Sale',
+    'Land / Plots for Sale'
+  ],
+  'Service-Apartment': [
+    'Service Apartments'
+  ],
+  'Rent-to-Own': [
+    'Rent to Own'
+  ]
 };

@@ -10,6 +10,7 @@ import BasicsStep from './BasicsStep';
 import FinancialsStep from './FinancialsStep';
 import DetailsAmenitiesStep from './DetailsAmenitiesStep';
 import MediaStep from './MediaStep';
+import LocationStep from './LocationStep';
 import TermsPreviewStep from './TermsPreviewStep';
 import { useCreateProperty } from '@/hooks/useLandlordQueries';
 import { toast } from 'react-toastify';
@@ -45,7 +46,7 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
     // We keep a mapping of all possible steps to their components/labels
     const ALL_STEPS_MAP: Record<string, { label: string; component: React.ReactNode }> = {
         'basics': { label: 'Basics', component: <BasicsStep role={roleKey} /> },
-        'location': { label: 'Location', component: <BasicsStep role={roleKey} /> },
+        'location': { label: 'Location', component: <LocationStep /> },
         'financials': { label: 'Financials', component: <FinancialsStep role={roleKey} /> },
         'details': { label: 'Details', component: <DetailsAmenitiesStep role={roleKey} /> },
         'media': { label: 'Media', component: <MediaStep role={roleKey} /> },
@@ -193,7 +194,10 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
                         <SuccessStep />
                     ) : (
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            {activeSteps[currentStep]?.component}
+                            {activeSteps[currentStep]?.key === 'preview'
+                                ? React.cloneElement(activeSteps[currentStep]?.component as React.ReactElement<any>, { onEditStep: setCurrentStep })
+                                : activeSteps[currentStep]?.component
+                            }
                         </form>
                     )}
                 </div>

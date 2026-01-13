@@ -29,6 +29,7 @@ export default function Footer() {
                             <h3 className="font-bold text-white mb-4">Company</h3>
                             <ul className="space-y-3">
                                 <li><Link href="/about" className="hover:text-brand-green transition-colors">About Us</Link></li>
+                                <li><Link href="/locations" className="hover:text-brand-green transition-colors">Popular Locations</Link></li>
                                 <li><Link href="/careers" className="hover:text-brand-green transition-colors">Careers</Link></li>
                                 <li><Link href="/blog" className="hover:text-brand-green transition-colors">Blog</Link></li>
                             </ul>
@@ -42,7 +43,7 @@ export default function Footer() {
                                 <li><Link href="/support" className="hover:text-brand-green transition-colors">Support Center</Link></li>
                             </ul>
                         </div>
-                           <div>
+                        <div>
                             <h3 className="font-bold text-white mb-4">How It Works</h3>
                             <ul className="space-y-3">
                                 <li><Link href="/how-it-works/tenants" className="hover:text-brand-green transition-colors">Tenants</Link></li>

@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { useUserStore } from '@/store/userStore';
-import { PROPERTY_CATEGORIES } from '@/config/propertyConfig';
+import { PROPERTY_CATEGORIES, PROPERTY_TYPES_BY_LISTING } from '@/config/propertyConfig';
 
 // UI Components
 import RoleSwitchModal from '@/components/lib/RoleSwitchModal';
@@ -27,10 +27,7 @@ import {
 import { PropertySchema } from '@/lib/validations/propertySchema';
 import 'leaflet/dist/leaflet.css';
 
-const PropertyMap = dynamic(() => import('./PropertyMap'), {
-    ssr: false,
-    loading: () => <div className="h-64 w-full bg-gray-100 animate-pulse rounded-xl flex items-center justify-center text-gray-400">Loading Map...</div>
-});
+const SuccessStep = dynamic(() => import('./SuccessStep'), { ssr: false });
 
 interface BasicsStepProps {
     role?: 'landlord' | 'agent' | 'caretaker';
@@ -45,11 +42,6 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
     const [pendingRole, setPendingRole] = useState<'landlord' | 'agent' | 'caretaker' | null>(null);
 
     const selectedListingType = useWatch({ control, name: 'listingType' });
-    const street = useWatch({ control, name: 'address.street' });
-    const city = useWatch({ control, name: 'address.city' });
-    const state = useWatch({ control, name: 'address.state' });
-
-    const [coords, setCoords] = useState<[number, number]>([6.5244, 3.3792]);
 
     const inputClasses = "w-full h-12 px-4 rounded-xl border border-gray-200 bg-white text-[#111811] focus:border-brand-green focus:ring-1 focus:ring-[brand-green] outline-none transition-all placeholder:text-gray-400 shadow-sm";
     const labelClasses = "block text-sm font-bold text-[#111811] mb-2";
@@ -63,24 +55,6 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
         }
     }, [activeRole, draftData, setValue]);
 
-    // 2. Logic: Geocoding
-    useEffect(() => {
-        const fullAddress = `${street || ''} ${city || ''} ${state || ''}`.trim();
-        if (fullAddress.length < 5) return;
-
-        const timer = setTimeout(async () => {
-            try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}&limit=1`);
-                const data = await res.json();
-                if (data && data[0]) {
-                    setCoords([parseFloat(data[0].lat), parseFloat(data[0].lon)]);
-                }
-            } catch (error) {
-                console.error("Geocoding failed", error);
-            }
-        }, 1200);
-        return () => clearTimeout(timer);
-    }, [street, city, state]);
 
     const isRoleOnboarded = activeRole ? roleOnboardingCompleted[activeRole] : false;
 
@@ -125,14 +99,50 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                         </div>
 
                         {activeRole === 'agent' ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-left duration-300">
-                                <div>
-                                    <label className={labelClasses}>Agency Name</label>
-                                    <input {...register('agencyName')} className={inputClasses} placeholder="e.g. Prime Realty Ltd" />
+                            <div className="space-y-6 animate-in slide-in-from-left duration-300">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className={labelClasses}>Agency Name</label>
+                                        <input {...register('agencyName')} className={inputClasses} placeholder="e.g. Prime Realty Ltd" />
+                                    </div>
+                                    <div>
+                                        <label className={labelClasses}>Agent License No.</label>
+                                        <input {...register('agentLicense')} className={inputClasses} placeholder="Optional for verification" />
+                                    </div>
                                 </div>
-                                <div>
-                                    <label className={labelClasses}>Agent License No.</label>
-                                    <input {...register('agentLicense')} className={inputClasses} placeholder="Optional for verification" />
+
+                                {/* Optional Landlord info for Agents */}
+                                <div className="p-5 bg-green-50/50 rounded-2xl border border-brand-green/10">
+                                    <div className="flex items-start gap-3 mb-4">
+                                        <div className="size-8 rounded-lg bg-brand-green/10 flex items-center justify-center text-brand-green shrink-0">
+                                            <HiOutlineShieldCheck size={20} />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-gray-900">Owner Verification (Optional)</h4>
+                                            <p className="text-xs text-gray-500">Provide the landlord's contact to automatically request verification. This increases your listing's trust score.</p>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <input {...register('landlord.fullName')} className={inputClasses} placeholder="Landlord Full Name" />
+                                        <input {...register('landlord.email')} className={inputClasses} placeholder="Landlord Email" />
+                                    </div>
+                                </div>
+
+                                {/* Caretaker Assignment for Agents */}
+                                <div className="p-5 bg-blue-50/50 rounded-2xl border border-blue-500/10">
+                                    <div className="flex items-start gap-3 mb-4">
+                                        <div className="size-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-600 shrink-0">
+                                            <MdOutlineAssignmentInd size={20} />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-gray-900">Assign Caretaker (Optional)</h4>
+                                            <p className="text-xs text-gray-500">Assign a management representative to handle this property's daily operations.</p>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <input {...register('caretaker.fullName')} className={inputClasses} placeholder="Caretaker Full Name" />
+                                        <input {...register('caretaker.email')} className={inputClasses} placeholder="Caretaker Email" />
+                                    </div>
                                 </div>
                             </div>
                         ) : activeRole === 'caretaker' ? (
@@ -162,31 +172,92 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                                 </div>
                             </div>
                         ) : (
-                            <div className="p-4 bg-gray-50 rounded-xl border border-dashed border-gray-200 animate-in slide-in-from-right duration-300">
-                                <p className="text-sm text-gray-600 flex items-center gap-2">
-                                    <HiOutlineShieldCheck className="text-brand-green" />
-                                    Listing as the primary owner. Ensure you have ownership documents ready.
-                                </p>
+                            <div className="space-y-6 animate-in slide-in-from-right duration-300">
+                                <div className="p-4 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                                    <p className="text-sm text-gray-600 flex items-center gap-2">
+                                        <HiOutlineShieldCheck className="text-brand-green" />
+                                        Listing as the primary owner. Ensure you have ownership documents ready.
+                                    </p>
+                                </div>
+
+                                {/* Caretaker Assignment for Landlords */}
+                                <div className="p-5 bg-blue-50/50 rounded-2xl border border-blue-500/10">
+                                    <div className="flex items-start gap-3 mb-4">
+                                        <div className="size-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-600 shrink-0">
+                                            <MdOutlineAssignmentInd size={20} />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-gray-900">Invite & Assign Caretaker (Optional)</h4>
+                                            <p className="text-xs text-gray-500">Need someone to manage this property? Invite a caretaker to help with listings and tenants.</p>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <input {...register('caretaker.fullName')} className={inputClasses} placeholder="Caretaker Full Name" />
+                                        <input {...register('caretaker.email')} className={inputClasses} placeholder="Caretaker Email" />
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </section>
 
-                    {/* PROPERTY TYPE */}
+                    {/* PROPERTY DETAILS */}
                     <section className={cardClasses}>
-                        <div className="mb-6">
-                            <h3 className="text-xl font-bold text-[#111811]">Listing Details</h3>
-                            <p className="text-sm text-gray-500">Categorize your property.</p>
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="size-10 rounded-xl bg-brand-green/10 flex items-center justify-center text-brand-green">
+                                <MdOutlineVilla size={24} />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-bold text-[#111811]">Listing Details</h3>
+                                <p className="text-sm text-gray-500">Categorize your property and set its basic identity.</p>
+                            </div>
                         </div>
 
-                        {/* Property Category - DYNAMIC */}
-                        <div className="mb-8">
+                        {/* Title field moved to top of listing details */}
+                        <div className="mb-10">
+                            <label className={labelClasses}>Property Title</label>
+                            <input {...register('title')} className={inputClasses} placeholder="e.g. Luxury 4 Bedroom Semi-Detached Duplex" />
+                        </div>
+
+                        {/* Listing Type First - Logic: Property Types depend on this */}
+                        <div className="mb-10">
+                            <label className={labelClasses}>Listing Type</label>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                {[
+                                    { id: 'Rent', label: 'For Rent', icon: HiOutlineHome },
+                                    { id: 'Sale', label: 'For Sale', icon: MdOutlineBusinessCenter },
+                                    { id: 'Service-Apartment', label: 'Short Let', icon: MdOutlineHotel },
+                                    { id: 'Rent-to-Own', label: 'Rent to Own', icon: MdOutlineKey },
+                                ].map((type) => (
+                                    <label key={type.id} className="relative cursor-pointer group">
+                                        <input
+                                            {...register('listingType')}
+                                            type="radio"
+                                            value={type.id}
+                                            className="peer sr-only"
+                                            onChange={(e) => {
+                                                const val = e.target.value as "Rent" | "Sale" | "Service-Apartment" | "Rent-to-Own";
+                                                setValue('listingType', val);
+                                                setValue('propertyType', ''); // Reset type when listing type changes
+                                            }}
+                                        />
+                                        <div className="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-gray-100 bg-white transition-all peer-checked:border-brand-green peer-checked:bg-green-50/50 peer-checked:scale-[1.02] hover:border-gray-300">
+                                            <type.icon className={`text-2xl mb-2 transition-colors ${selectedListingType === type.id ? 'text-brand-green' : 'text-gray-400 group-hover:text-gray-600'}`} />
+                                            <span className={`font-bold text-xs ${selectedListingType === type.id ? 'text-brand-green' : 'text-gray-500 group-hover:text-gray-700'}`}>{type.label}</span>
+                                        </div>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Property Category */}
+                        <div className="mb-10">
                             <label className={labelClasses}>Property Category</label>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 {PROPERTY_CATEGORIES.map((cat) => (
                                     <label key={cat.id} className="relative cursor-pointer group">
                                         <input {...register('propertyCategory')} type="radio" value={cat.label} className="peer sr-only" />
-                                        <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-gray-200 bg-white transition-all peer-checked:border-brand-green peer-checked:bg-green-50 text-sm font-medium text-gray-700 peer-checked:text-brand-green h-full">
-                                            <span>{cat.label}</span>
+                                        <div className="flex flex-col items-center justify-center p-4 rounded-xl border border-gray-200 bg-white transition-all peer-checked:border-brand-green peer-checked:bg-green-50 peer-checked:shadow-sm hover:border-brand-green/50 min-h-[80px]">
+                                            <span className="text-sm font-bold text-gray-700 peer-checked:text-brand-green">{cat.label}</span>
                                             <span className="text-[10px] text-gray-400 font-normal mt-1 text-center hidden sm:block">{cat.description}</span>
                                         </div>
                                     </label>
@@ -194,64 +265,23 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                             </div>
                         </div>
 
-                        {/* Property Type */}
-                        <div className="mb-8">
-                            <label className={labelClasses}>Property Type</label>
-                            <input {...register('propertyType')} className={inputClasses} placeholder="e.g. Apartment, Office Space, Detached House" />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className={labelClasses}>Listing Type</label>
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                                {[
-                                    { id: 'Rent', label: 'For Rent', icon: HiOutlineHome },
-                                    { id: 'Sale', label: 'For Sale', icon: MdOutlineBusinessCenter },
-                                    { id: 'Service-Apt', label: 'Short Let', icon: MdOutlineHotel },
-                                    { id: 'Rent-to-Own', label: 'Rent to Own', icon: MdOutlineKey },
-                                ].map((type) => (
-                                    <label key={type.id} className="relative cursor-pointer">
-                                        <input {...register('listingType')} type="radio" value={type.id} className="peer sr-only" />
-                                        <div className="flex flex-col items-center justify-center p-4 sm:p-6 rounded-2xl border-2 border-gray-50 bg-white transition-all peer-checked:border-brand-green peer-checked:bg-green-50/30 peer-checked:shadow-sm">
-                                            <type.icon className={`text-2xl sm:text-3xl mb-2 transition-colors ${selectedListingType === type.id ? 'text-brand-green' : 'text-gray-400'}`} />
-                                            <span className={`font-bold text-[10px] sm:text-sm whitespace-nowrap ${selectedListingType === type.id ? 'text-brand-green' : 'text-gray-500'}`}>{type.label}</span>
-                                        </div>
-                                    </label>
-                                ))}
+                        {/* Property Type - DYNAMIC CARDS ENABLED */}
+                        {selectedListingType && (
+                            <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                                <label className={labelClasses}>Property Type</label>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                                    {(PROPERTY_TYPES_BY_LISTING[selectedListingType] || []).map((type) => (
+                                        <label key={type} className="relative cursor-pointer group">
+                                            <input {...register('propertyType')} type="radio" value={type} className="peer sr-only" />
+                                            <div className="flex items-center gap-3 p-4 rounded-xl border border-gray-200 bg-white transition-all peer-checked:border-brand-green peer-checked:bg-green-50 peer-checked:ring-1 peer-checked:ring-brand-green hover:bg-gray-50">
+                                                <div className="size-2 rounded-full bg-gray-300 peer-checked:bg-brand-green transition-colors"></div>
+                                                <span className="text-xs font-bold text-gray-700 peer-checked:text-brand-green">{type}</span>
+                                            </div>
+                                        </label>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    </section>
-
-                    {/* LOCATION & MAP */}
-                    <section className={cardClasses}>
-                        <div className="flex items-center gap-3 mb-8">
-                            <div className="size-8 rounded-lg bg-brand-green flex items-center justify-center text-white">
-                                <HiOutlineMapPin />
-                            </div>
-                            <h3 className="text-xl font-bold text-[#111811]">Address Details</h3>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                            <div className="md:col-span-2">
-                                <label className={labelClasses}>Property Title</label>
-                                <input {...register('title')} className={inputClasses} placeholder="e.g. Luxury 4 Bedroom Semi-Detached Duplex" />
-                            </div>
-                            <div className="md:col-span-2">
-                                <label className={labelClasses}>Street Address</label>
-                                <input {...register('address.street')} className={inputClasses} placeholder="123 Real Estate Ave" />
-                            </div>
-                            <div>
-                                <label className={labelClasses}>City</label>
-                                <input {...register('address.city')} className={inputClasses} placeholder="Lekki" />
-                            </div>
-                            <div>
-                                <label className={labelClasses}>State</label>
-                                <input {...register('address.state')} className={inputClasses} placeholder="Lagos" />
-                            </div>
-                        </div>
-
-                        <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-inner h-64 sm:h-80 w-full relative z-0">
-                            <PropertyMap position={coords} />
-                        </div>
+                        )}
                     </section>
                 </div>
 
@@ -277,7 +307,7 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                         </ul>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     );
 }

@@ -18,10 +18,7 @@ export default function Home() {
     <div className="min-h-screen font-(family-name:--font-geist-sans)">
       <main>
         <HeroSearch />
-        <RoleCards />
-        <PurpleBanner />
         <FeaturedListings />
-
         {/* Tenant Calculator Section */}
         <CalculatorCTA
           variant="hero"
@@ -37,7 +34,8 @@ export default function Home() {
           badgeType="savings"
           bgColor="bg-[#F9FEFA]"
         />
-
+        <RoleCards />
+        <PurpleBanner />
         <HowItWorks />
         <LocationsGrid />
 
@@ -47,7 +45,7 @@ export default function Home() {
           title="See What You Can Earn as a"
           highlightText="Landlord"
           description="Determine your property investment potential based on your budget and target ROI."
-          placeholder="Enter Investment Budget (₦)"
+          placeholder="Enter Your property price to see returns (₦)"
           redirectPath="/landlord-earnings-calculator"
           ctaText="Calculate ROI"
           imageSrc={LandlordImg}
