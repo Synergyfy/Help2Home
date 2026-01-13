@@ -59,7 +59,7 @@ export default function SecuritySettingsPage() {
                                 id="toggle"
                                 checked={mfaEnabled}
                                 onChange={handleToggleMFA}
-                                className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out checked:translate-x-full checked:border-[#00853E]"
+                                className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out checked:tranbrand-green-x-full checked:border-[#00853E]"
                                 style={{ right: mfaEnabled ? '0' : 'auto', left: mfaEnabled ? 'auto' : '0' }}
                             />
                             <label

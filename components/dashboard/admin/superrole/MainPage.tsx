@@ -48,7 +48,7 @@ const SuperAdmin = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
+        <div className="min-h-screen bg-brand-green-50 font-sans text-brand-green-900 pb-20">
             {/* Brand Header */}
             <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-emerald-100 h-16">
                 <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
@@ -64,13 +64,13 @@ const SuperAdmin = () => {
                             <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
                             <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-tighter">Live Access Control</span>
                         </div>
-                        <button onClick={() => setIsAuthenticated(false)} className="text-sm font-medium text-slate-500 hover:text-red-500">Sign Out</button>
+                        <button onClick={() => setIsAuthenticated(false)} className="text-sm font-medium text-brand-green-500 hover:text-red-500">Sign Out</button>
                     </div>
                 </div>
             </header>
 
             {/* Navigation Tabs */}
-            <nav className="bg-white border-b border-slate-200 sticky top-16 z-30">
+            <nav className="bg-white border-b border-brand-green-200 sticky top-16 z-30">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="flex gap-8 overflow-x-auto no-scrollbar">
                         {tabs.map((tab) => (
@@ -79,7 +79,7 @@ const SuperAdmin = () => {
                                 onClick={() => setActiveTab(tab.id as any)}
                                 className={`flex items-center gap-2 py-4 border-b-2 transition-all whitespace-nowrap px-1 ${activeTab === tab.id
                                     ? 'border-emerald-500 text-emerald-600 font-bold'
-                                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                                    : 'border-transparent text-brand-green-500 hover:text-brand-green-700'
                                     }`}
                             >
                                 <tab.icon size={18} />
@@ -99,8 +99,8 @@ const SuperAdmin = () => {
                 {activeTab === 'overview' && (
                     <div className="space-y-8">
                         <div>
-                            <h1 className="text-3xl font-black text-slate-900">Platform Health</h1>
-                            <p className="text-slate-500">Real-time performance and audit aggregation.</p>
+                            <h1 className="text-3xl font-black text-brand-green-900">Platform Health</h1>
+                            <p className="text-brand-green-500">Real-time performance and audit aggregation.</p>
                         </div>
 
                         {/* Stats Grid */}
@@ -111,37 +111,37 @@ const SuperAdmin = () => {
                                 { label: 'Pending Verifications', value: platformStats.pendingVerifications, icon: FiActivity, color: 'text-amber-500', bg: 'bg-amber-50' },
                                 { label: 'Total Revenue', value: platformStats.revenueTotal, icon: FiDollarSign, color: 'text-purple-500', bg: 'bg-purple-50' },
                             ].map((stat, i) => (
-                                <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                                <div key={i} className="bg-white p-6 rounded-2xl border border-brand-green-200 shadow-sm">
                                     <div className="flex items-center justify-between mb-4">
                                         <div className={`p-2 rounded-lg ${stat.bg} ${stat.color}`}>
                                             <stat.icon size={20} />
                                         </div>
-                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Last 24h</span>
+                                        <span className="text-[10px] font-bold text-brand-green-400 uppercase tracking-wider">Last 24h</span>
                                     </div>
-                                    <div className="text-2xl font-black text-slate-900">{stat.value}</div>
-                                    <div className="text-sm text-slate-500">{stat.label}</div>
+                                    <div className="text-2xl font-black text-brand-green-900">{stat.value}</div>
+                                    <div className="text-sm text-brand-green-500">{stat.label}</div>
                                 </div>
                             ))}
                         </div>
 
                         {/* Recent Activity / Quick Actions Placeholder */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            <section className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                            <section className="bg-white rounded-2xl border border-brand-green-200 p-6 shadow-sm">
                                 <h3 className="font-bold mb-4 flex items-center gap-2 tracking-tight">
                                     <FiActivity className="text-emerald-500" /> Recent System Audit
                                 </h3>
                                 <div className="space-y-4">
                                     {[1, 2, 3].map(i => (
-                                        <div key={i} className="flex gap-4 p-3 hover:bg-slate-50 rounded-xl transition-colors border-l-2 border-emerald-500 bg-emerald-50/20">
-                                            <div className="text-xs text-slate-400 font-mono">09:4{i}</div>
+                                        <div key={i} className="flex gap-4 p-3 hover:bg-brand-green-50 rounded-xl transition-colors border-l-2 border-emerald-500 bg-emerald-50/20">
+                                            <div className="text-xs text-brand-green-400 font-mono">09:4{i}</div>
                                             <div>
                                                 <div className="text-sm font-bold">Admin Override: Property Approved</div>
-                                                <div className="text-[10px] text-slate-500 uppercase font-black">SuperAdmin • ID: #PROP_12{i}</div>
+                                                <div className="text-[10px] text-brand-green-500 uppercase font-black">SuperAdmin • ID: #PROP_12{i}</div>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
-                                <button className="w-full mt-6 py-2 text-xs font-bold text-slate-400 hover:text-emerald-600 uppercase tracking-widest transition-colors">View All Logs</button>
+                                <button className="w-full mt-6 py-2 text-xs font-bold text-brand-green-400 hover:text-emerald-600 uppercase tracking-widest transition-colors">View All Logs</button>
                             </section>
 
                             <section className="bg-emerald-900 rounded-2xl p-6 text-white shadow-xl shadow-emerald-100 flex flex-col justify-between">
@@ -160,7 +160,7 @@ const SuperAdmin = () => {
                 {activeTab === 'properties' && (
                     <div className="space-y-6">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-black text-slate-900">Content Moderation</h2>
+                            <h2 className="text-2xl font-black text-brand-green-900">Content Moderation</h2>
                             <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">
                                 {moderationQueue.length} Pending Review
                             </span>
@@ -181,7 +181,7 @@ const SuperAdmin = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div>
                             <h2 className="text-2xl font-black mb-6 font-mono text-emerald-900 tracking-tighter">System Console</h2>
-                            <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 overflow-hidden relative">
+                            <section className="bg-white rounded-2xl border border-brand-green-200 shadow-sm p-6 overflow-hidden relative">
                                 <div className="absolute top-0 right-0 p-4 opacity-5">
                                     <FiDatabase size={120} />
                                 </div>
@@ -189,38 +189,38 @@ const SuperAdmin = () => {
                                     <FiDatabase size={18} className="text-emerald-500" /> Direct SQL Query
                                 </h3>
                                 <textarea
-                                    className="w-full h-48 bg-slate-900 text-emerald-400 font-mono text-sm p-4 rounded-xl mb-4 resize-none focus:ring-1 focus:ring-emerald-500 outline-none"
+                                    className="w-full h-48 bg-brand-green-900 text-emerald-400 font-mono text-sm p-4 rounded-xl mb-4 resize-none focus:ring-1 focus:ring-emerald-500 outline-none"
                                     placeholder="SELECT * FROM transactions WHERE status = 'pending' LIMIT 10..."
                                 />
                                 <div className="flex items-center justify-between">
                                     <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-2.5 rounded-xl font-bold transition-all shadow-md">
                                         Execute Query
                                     </button>
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Read-Only Session</span>
+                                    <span className="text-[10px] font-black text-brand-green-400 uppercase tracking-widest">Read-Only Session</span>
                                 </div>
                             </section>
                         </div>
 
                         <div className="space-y-6">
-                            <h2 className="text-2xl font-black text-slate-900 mb-6 opacity-0">Maintenance</h2>
-                            <section className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                            <h2 className="text-2xl font-black text-brand-green-900 mb-6 opacity-0">Maintenance</h2>
+                            <section className="bg-white rounded-2xl border border-brand-green-200 p-6 shadow-sm">
                                 <h3 className="font-bold mb-4 flex items-center gap-2"><FiServer size={18} /> Maintenance Tools</h3>
                                 <div className="space-y-3">
-                                    <button className="w-full py-4 px-4 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/30 text-sm font-bold flex items-center justify-between group transition-all">
+                                    <button className="w-full py-4 px-4 rounded-xl border border-brand-green-200 hover:border-emerald-500 hover:bg-emerald-50/30 text-sm font-bold flex items-center justify-between group transition-all">
                                         <div className="flex items-center gap-3">
                                             <FiZap className="text-amber-500" />
                                             <span>Flush Redis Cache</span>
                                         </div>
-                                        <span className="text-[10px] bg-slate-100 px-2 py-1 rounded-md group-hover:bg-emerald-100 transition-colors uppercase font-black">Cluster-Wide</span>
+                                        <span className="text-[10px] bg-brand-green-100 px-2 py-1 rounded-md group-hover:bg-emerald-100 transition-colors uppercase font-black">Cluster-Wide</span>
                                     </button>
-                                    <button className="w-full py-4 px-4 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/30 text-sm font-bold flex items-center justify-between group transition-all">
+                                    <button className="w-full py-4 px-4 rounded-xl border border-brand-green-200 hover:border-emerald-500 hover:bg-emerald-50/30 text-sm font-bold flex items-center justify-between group transition-all">
                                         <div className="flex items-center gap-3">
                                             <FiActivity className="text-emerald-500" />
                                             <span>Rebuild Search Index</span>
                                         </div>
-                                        <span className="text-[10px] bg-slate-100 px-2 py-1 rounded-md group-hover:bg-emerald-100 transition-colors uppercase font-black">Vast Data Store</span>
+                                        <span className="text-[10px] bg-brand-green-100 px-2 py-1 rounded-md group-hover:bg-emerald-100 transition-colors uppercase font-black">Vast Data Store</span>
                                     </button>
-                                    <button className="w-full py-4 px-4 rounded-xl border border-slate-200 hover:border-red-500 hover:bg-red-50/30 text-sm font-bold flex items-center justify-between group transition-all">
+                                    <button className="w-full py-4 px-4 rounded-xl border border-brand-green-200 hover:border-red-500 hover:bg-red-50/30 text-sm font-bold flex items-center justify-between group transition-all">
                                         <div className="flex items-center gap-3">
                                             <FiSlash className="text-red-500" />
                                             <span className="text-red-600">Enter Maintenance Mode</span>

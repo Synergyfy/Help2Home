@@ -144,7 +144,7 @@ export default function MarketplacePage() {
 
             <AnimatePresence>
                 {isFetching && !isLoading && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full text-xs font-bold uppercase z-50 shadow-2xl">
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed bottom-8 left-1/2 -tranbrand-green-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full text-xs font-bold uppercase z-50 shadow-2xl">
                         Updating Results...
                     </motion.div>
                 )}

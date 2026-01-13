@@ -23,7 +23,7 @@ export default function ReminderSettings({ settings, onToggle }: ReminderSetting
                         onClick={() => onToggle('sms')}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#6D28D9] focus:ring-offset-2 ${settings.smsEnabled ? 'bg-[#6D28D9]' : 'bg-gray-200'}`}
                     >
-                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.smsEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.smsEnabled ? 'tranbrand-green-x-6' : 'tranbrand-green-x-1'}`} />
                     </button>
                 </div>
 
@@ -36,7 +36,7 @@ export default function ReminderSettings({ settings, onToggle }: ReminderSetting
                         onClick={() => onToggle('email')}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#6D28D9] focus:ring-offset-2 ${settings.emailEnabled ? 'bg-[#6D28D9]' : 'bg-gray-200'}`}
                     >
-                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.emailEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.emailEnabled ? 'tranbrand-green-x-6' : 'tranbrand-green-x-1'}`} />
                     </button>
                 </div>
             </div>

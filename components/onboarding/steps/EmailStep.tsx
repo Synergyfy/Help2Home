@@ -74,7 +74,7 @@ const EmailStep = () => {
             </label>
             <div className="relative group">
               <FiMail 
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors" 
+                className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors" 
                 size={20} 
               />
               <input

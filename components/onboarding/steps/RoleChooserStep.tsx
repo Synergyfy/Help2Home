@@ -96,7 +96,7 @@ const RoleChooserStep = () => {
                     <p className="font-bold text-gray-900">{roleNames[role]}</p>
                     <p className="text-xs text-gray-500 font-medium">Tap to finish setup</p>
                   </div>
-                  <FiArrowRight className="text-gray-300 group-hover:text-brand-green transition-transform group-hover:translate-x-1" size={20} />
+                  <FiArrowRight className="text-gray-300 group-hover:text-brand-green transition-transform group-hover:tranbrand-green-x-1" size={20} />
                 </div>
               </motion.button>
             ))}

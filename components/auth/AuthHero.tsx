@@ -31,10 +31,10 @@ export default function AuthHero() {
     const [current, setCurrent] = useState(0);
 
     return (
-        <div className="relative hidden lg:flex flex-col h-full overflow-hidden bg-slate-900">
+        <div className="relative hidden lg:flex flex-col h-full overflow-hidden bg-brand-green-900">
             <div className="absolute inset-0">
                 <Image src={HeroImg} alt="Auth Background" fill className="object-cover opacity-50" priority />
-                <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-brand-green-950 via-brand-green-950/40 to-transparent" />
             </div>
 
             <GeometricPattern />

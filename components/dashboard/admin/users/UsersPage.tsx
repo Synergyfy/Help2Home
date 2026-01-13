@@ -34,8 +34,8 @@ export default function AdminUsersPage() {
         <div className="pb-20 space-y-6">
             <div className="flex justify-between items-end">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Organization Control</h1>
-                    <p className="text-slate-500 font-medium">Coordinate the Help2Home stakeholder ecosystem.</p>
+                    <h1 className="text-3xl font-black text-brand-green-900 tracking-tight">Organization Control</h1>
+                    <p className="text-brand-green-500 font-medium">Coordinate the Help2Home stakeholder ecosystem.</p>
                 </div>
                 <button className="px-6 py-3 bg-emerald-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg active:scale-95 flex items-center gap-2">
                     <FiPlus size={18} /> Add New Member
@@ -43,15 +43,15 @@ export default function AdminUsersPage() {
             </div>
 
             {/* Hierarchy Tabs */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="flex border-b border-slate-100 bg-slate-50/50">
+            <div className="bg-white rounded-2xl border border-brand-green-200 shadow-sm overflow-hidden">
+                <div className="flex border-b border-brand-green-100 bg-brand-green-50/50">
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={`flex-1 flex items-center justify-center gap-3 py-4 text-xs font-black uppercase tracking-widest transition-all ${(activeTab === tab.id || (tab.id === 'ecosystem' && isEcosystemActive))
                                     ? 'bg-white text-emerald-600 border-b-2 border-emerald-500'
-                                    : 'text-slate-400 hover:text-slate-600'
+                                    : 'text-brand-green-400 hover:text-brand-green-600'
                                 }`}
                         >
                             <tab.icon size={16} />
@@ -62,7 +62,7 @@ export default function AdminUsersPage() {
 
                 {/* Sub-tabs for Ecosystem */}
                 {isEcosystemActive && (activeTab !== 'tenants' && activeTab !== 'investors') && (
-                    <div className="px-6 py-3 bg-white flex gap-4 border-b border-slate-100 overflow-x-auto no-scrollbar">
+                    <div className="px-6 py-3 bg-white flex gap-4 border-b border-brand-green-100 overflow-x-auto no-scrollbar">
                         {[
                             { id: 'ecosystem', label: 'Whole Network' },
                             { id: 'landlords', label: 'Landlords' },
@@ -73,8 +73,8 @@ export default function AdminUsersPage() {
                                 key={sub.id}
                                 onClick={() => setActiveTab(sub.id as any)}
                                 className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${activeTab === sub.id
-                                        ? 'bg-slate-900 text-white'
-                                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+                                        ? 'bg-brand-green-900 text-white'
+                                        : 'bg-brand-green-100 text-brand-green-400 hover:bg-brand-green-200'
                                     }`}
                             >
                                 {sub.label}

@@ -29,8 +29,8 @@ export default function AdminProfilePage() {
       case 'activity': return <ActivityLog />;
       case 'notifications':
         return (
-          <div className="bg-white rounded-2xl border border-slate-100 p-20 text-center">
-            <p className="text-slate-400 font-bold">Notification Settings coming soon...</p>
+          <div className="bg-white rounded-2xl border border-brand-green-100 p-20 text-center">
+            <p className="text-brand-green-400 font-bold">Notification Settings coming soon...</p>
           </div>
         );
       default: return <PersonalInfoForm profile={profile} />;

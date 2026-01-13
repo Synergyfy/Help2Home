@@ -116,7 +116,7 @@ export default function FindDevelopersPage() {
                                 </div>
 
                                 <button className="w-full bg-gray-900 text-white hover:bg-brand-green py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 group/btn">
-                                    View Portfolio <HiOutlineArrowRight className="group-hover/btn:translate-x-1 transition-transform" />
+                                    View Portfolio <HiOutlineArrowRight className="group-hover/btn:tranbrand-green-x-1 transition-transform" />
                                 </button>
                             </div>
                         </FadeIn>
@@ -126,7 +126,7 @@ export default function FindDevelopersPage() {
                 {/* Developer CTA */}
                 <FadeIn direction="up" delay={0.4}>
                     <div className="mt-20 bg-brand-green rounded-[3rem] p-12 text-center relative overflow-hidden shadow-2xl shadow-brand-green/20">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -tranbrand-green-y-1/2 tranbrand-green-x-1/2 blur-3xl"></div>
                         <div className="relative z-10">
                             <h2 className="text-3xl md:text-4xl font-black text-white mb-6">Are You a Developer?</h2>
                             <p className="text-green-50 max-w-xl mx-auto mb-10 text-lg opacity-90">Join Help2Home&apos;s exclusive developer network and showcase your premium projects to thousands of qualified leads.</p>
