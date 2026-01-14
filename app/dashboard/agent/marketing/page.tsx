@@ -5,16 +5,19 @@ import { MdCampaign, MdBolt, MdInsights, MdArrowUpward } from 'react-icons/md';
 export default function MarketingPage() {
     return (
         <div className="space-y-6">
+            <h3 className="text-brand-green font-semibold mb-1">Create Campaign</h3>
             <h1 className="text-2xl font-bold text-gray-900">Marketing Hub</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-[#00853E] p-6 rounded-3xl text-white">
-                    <MdBolt size={32} className="mb-4" />
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                    <div className="h-12 w-12 bg-brand-green rounded-xl flex items-center justify-center mb-4">
+                        <MdBolt size={32} className="text-white" />
+                    </div>
                     <h3 className="font-bold text-lg">Boost Listing</h3>
-                    <p className="text-white/70 text-xs mt-1">Get 5x more visibility on the marketplace.</p>
-                    <button className="mt-4 bg-white text-[#00853E] w-full py-2 rounded-xl font-bold text-xs uppercase">Activate Now</button>
+                    <p className="text-gray-500 text-xs mt-1">Get 5x more visibility on the marketplace.</p>
+                    <button className="w-full bg-brand-green text-white py-2 rounded-lg font-medium hover:bg-opacity-90 transition-colors mt-4">Activate Now</button>
                 </div>
-                
+
                 <div className="md:col-span-2 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
                     <div className="flex justify-between items-start mb-6">
                         <div>
@@ -29,7 +32,7 @@ export default function MarketingPage() {
                     <div className="h-20 flex items-end gap-2">
                         {[30, 50, 40, 80, 60, 90, 70, 100, 85].map((h, i) => (
                             <div key={i} className="flex-1 bg-gray-50 rounded-t-lg relative group">
-                                <div className="absolute bottom-0 w-full bg-[#00853E] rounded-t-lg transition-all duration-500" style={{ height: `${h}%` }} />
+                                <div className="absolute bottom-0 w-full bg-brand-green rounded-t-lg transition-all duration-500" style={{ height: `${h}%` }} />
                             </div>
                         ))}
                     </div>

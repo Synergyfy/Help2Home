@@ -213,7 +213,7 @@ export default function DashboardSidebar({ isOpen = false, onClose }: { isOpen?:
             rounded-2xl 
             transition-transform duration-300 ease-in-out
             flex flex-col shadow-2xl
-            ${isOpen ? 'tranbrand-green-x-0' : '-tranbrand-green-x-full md:tranbrand-green-x-0'}
+            ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}>
             {/* Logo */}
             <div className="p-6 flex items-center justify-between">

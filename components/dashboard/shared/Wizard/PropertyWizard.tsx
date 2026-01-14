@@ -106,7 +106,28 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
         const fieldsToValidate = validationFields[currentStepKey];
         if (fieldsToValidate && fieldsToValidate.length > 0) {
             isValid = await trigger(fieldsToValidate as any);
-            if (currentStepKey === 'media' && !isValid) toast.error("Please upload at least one image.");
+
+            if (!isValid) {
+                // Get all errors for the current fields and trigger toasts
+                const currentErrors = methods.formState.errors;
+                fieldsToValidate.forEach(field => {
+                    const error = (currentErrors as any)[field];
+                    if (error) {
+                        if (error.message) {
+                            toast.error(error.message);
+                        } else if (typeof error === 'object') {
+                            // Handle nested errors like address.street
+                            Object.values(error).forEach((nestedError: any) => {
+                                if (nestedError.message) toast.error(nestedError.message);
+                            });
+                        }
+                    }
+                });
+
+                if (currentStepKey === 'media' && !isValid) {
+                    toast.error("Please upload at least one image.");
+                }
+            }
         } else {
             isValid = true;
         }

@@ -11,7 +11,7 @@ import { HiMapPin, HiMagnifyingGlass, HiXMark, HiFire } from "react-icons/hi2";
 type PropertyType = 'rent' | 'buy';
 
 const TAB_ASSETS: Record<PropertyType, { image: string; title: string }> = {
-    
+
     rent: {
         image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop',
         title: 'cozy'
@@ -111,7 +111,7 @@ export default function MarketPlaceMain() {
                         <div className="relative z-50" ref={searchRef}>
                             <div className="flex flex-col md:flex-row items-center gap-4">
                                 <div className="relative flex-1 w-full">
-                                    <HiMapPin className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 text-brand-green w-6 h-6" />
+                                    <HiMapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-green w-6 h-6" />
                                     <input
                                         type="text"
                                         placeholder="Enter city, neighborhood, or address..."
@@ -121,7 +121,7 @@ export default function MarketPlaceMain() {
                                         className="w-full h-16 pl-12 pr-12 bg-gray-50 border-2 border-transparent focus:border-brand-green/30 focus:bg-white rounded-2xl outline-none text-base font-medium text-gray-900 shadow-inner transition-all"
                                     />
                                     {searchQuery && (
-                                        <button onClick={() => setSearchQuery('')} className="absolute right-4 top-1/2 -tranbrand-green-y-1/2 text-gray-400 hover:text-gray-600">
+                                        <button onClick={() => setSearchQuery('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                                             <HiXMark className="w-6 h-6" />
                                         </button>
                                     )}
@@ -142,7 +142,7 @@ export default function MarketPlaceMain() {
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: 10 }}
-                                        className="absolute top-[110%] left-0 right-0 bg-white border border-gray-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-[100] overflow-hidden"
+                                        className="absolute top-[110%] left-0 right-0 bg-white border border-gray-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-100 overflow-hidden"
                                     >
                                         {!searchQuery && (
                                             <div className="p-3">
@@ -169,7 +169,7 @@ export default function MarketPlaceMain() {
                                                     <div className="p-8 text-center text-sm font-medium text-gray-400 animate-pulse">
                                                         Searching locations...
                                                     </div>
-                                                ) : locations && locations.length > 0 ? ( 
+                                                ) : locations && locations.length > 0 ? (
                                                     locations.map((loc: any) => (
                                                         <button
                                                             key={loc.id}

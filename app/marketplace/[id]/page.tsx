@@ -93,8 +93,15 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
     });
 
     const amenitiesTotal = processedAmenities.reduce((acc, curr) => acc + (curr.price || 0), 0);
-
     const totalInitialOutlay = propertyPrice + serviceCharge + amenitiesTotal;
+
+    // Specific Fee Extractions
+    const legalFees = processedAmenities.find(a => a.name.toLowerCase().includes('legal'))?.price || 0;
+    const tenancyAgreement = processedAmenities.find(a => a.name.toLowerCase().includes('agreement'))?.price || 0;
+    const powerBackup = processedAmenities.find(a => a.name.toLowerCase().includes('power') || a.name.toLowerCase().includes('backup'))?.price || 0;
+    const waterSupply = processedAmenities.find(a => a.name.toLowerCase().includes('water'))?.price || 0;
+    const securityPatrol = processedAmenities.find(a => a.name.toLowerCase().includes('security'))?.price || 0;
+    const wasteDisposal = processedAmenities.find(a => a.name.toLowerCase().includes('waste'))?.price || 0;
 
 
     return (
@@ -297,13 +304,6 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                                     )}
 
                                     {(() => {
-                                        const legalFees = processedAmenities.find(a => a.name.toLowerCase().includes('legal'))?.price || 0;
-                                        const tenancyAgreement = processedAmenities.find(a => a.name.toLowerCase().includes('agreement'))?.price || 0;
-                                        const powerBackup = processedAmenities.find(a => a.name.toLowerCase().includes('power') || a.name.toLowerCase().includes('backup'))?.price || 0;
-                                        const waterSupply = processedAmenities.find(a => a.name.toLowerCase().includes('water'))?.price || 0;
-                                        const securityPatrol = processedAmenities.find(a => a.name.toLowerCase().includes('security'))?.price || 0;
-                                        const wasteDisposal = processedAmenities.find(a => a.name.toLowerCase().includes('waste'))?.price || 0;
-
                                         const calcUrl = new URLSearchParams({
                                             amount: propertyPrice.toString(),
                                             serviceCharge: serviceCharge.toString(),
@@ -315,7 +315,7 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                                             wasteDisposal: wasteDisposal.toString(),
                                             propertyId: property.id.toString(),
                                             interestRate: (property.interestRate || 0).toString(),
-                                            isInterestEnabled: (property.isInterestEnabled || false).toString()
+                                            isInstallmentEnabled: (property.installments?.enabled || false).toString()
                                         }).toString();
 
                                         return (
@@ -364,6 +364,25 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                                             <div className="flex justify-between text-sm text-gray-600">
                                                 <span>Service Charge</span>
                                                 <span className="font-bold">₦{formatNumber(serviceCharge)}</span>
+                                            </div>
+                                        )}
+                                        {/* Added missing charges display */}
+                                        {processedAmenities.filter(a => a.price > 0 && !['legal', 'agreement', 'service'].some(s => a.name.toLowerCase().includes(s))).map((amn, i) => (
+                                            <div key={i} className="flex justify-between text-sm text-gray-500 italic">
+                                                <span>+ {amn.name}</span>
+                                                <span className="font-bold">₦{formatNumber(amn.price)}</span>
+                                            </div>
+                                        ))}
+                                        {legalFees > 0 && (
+                                            <div className="flex justify-between text-sm text-gray-500 italic">
+                                                <span>+ Legal Fees</span>
+                                                <span className="font-bold">₦{formatNumber(legalFees)}</span>
+                                            </div>
+                                        )}
+                                        {tenancyAgreement > 0 && (
+                                            <div className="flex justify-between text-sm text-gray-500 italic">
+                                                <span>+ Tenancy Agreement</span>
+                                                <span className="font-bold">₦{formatNumber(tenancyAgreement)}</span>
                                             </div>
                                         )}
                                         <div className="bg-green-50/50 p-4 rounded-xl border border-brand-green/10 mt-4">

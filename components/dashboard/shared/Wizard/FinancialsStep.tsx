@@ -224,16 +224,24 @@ export default function FinancialsStep({ role }: FinancialsStepProps = {}) {
                                             {depositType === 'percentage' && <span className="text-xl font-bold text-brand-green">%</span>}
                                         </div>
 
-                                        {depositType === 'percentage' && depositValue > 0 && (
-                                            <p className="text-[10px] text-gray-400 mt-3 font-medium italic">
-                                                Equals: ₦{formatNumber(upfrontDeposit)}
-                                            </p>
-                                        )}
-                                        {depositType === 'fixed' && depositValue > 0 && propertyPrice > 0 && (
-                                            <p className="text-[10px] text-gray-400 mt-3 font-medium italic">
-                                                Equals: {((depositValue / propertyPrice) * 100).toFixed(1)}% of price
-                                            </p>
-                                        )}
+                                        {/* Real-time conversion container */}
+                                        <div className="mt-4 p-3 bg-white/50 rounded-xl border border-dashed border-brand-green/20">
+                                            <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">
+                                                <span>Conversion</span>
+                                                <HiOutlineCalculator className="text-brand-green" />
+                                            </div>
+                                            {depositType === 'percentage' ? (
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-xs text-gray-500 font-medium">Fixed Amount</span>
+                                                    <span className="text-sm font-black text-brand-green">₦{formatNumber(upfrontDeposit)}</span>
+                                                </div>
+                                            ) : (
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-xs text-gray-500 font-medium">Percentage of Rent</span>
+                                                    <span className="text-sm font-black text-brand-green">{propertyPrice > 0 ? ((depositValue / propertyPrice) * 100).toFixed(1) : 0}%</span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
 
                                     <div>
@@ -246,18 +254,47 @@ export default function FinancialsStep({ role }: FinancialsStepProps = {}) {
                                             />
                                         </div>
                                         <div className="grid grid-cols-3 gap-2">
-                                            {(listingType === 'Sale' ? [12, 24, 36, 48, 60, 120] : [3, 6, 12, 18, 24]).map(months => (
+                                            {(listingType === 'Sale' ? [3, 6, 9, 10] : [3, 6, 9, 10]).map(months => (
                                                 <button
                                                     key={months}
                                                     type="button"
                                                     onClick={() => handleTenureToggle(months)}
                                                     className={`flex flex-col items-center justify-center p-2 rounded-xl border-2 transition-all ${installments.tenures?.includes(months) ? 'border-brand-green bg-green-50 text-brand-green' : 'border-gray-100 bg-gray-50 text-gray-400 hover:border-gray-200'}`}
                                                 >
-                                                    <span className="text-xs font-black">{months >= 12 ? `${months / 12}Y` : `${months}M`}</span>
+                                                    <span className="text-xs font-black">{months}M</span>
                                                     <span className="text-[8px] uppercase font-bold tracking-tighter">{months} Mos</span>
                                                 </button>
                                             ))}
                                         </div>
+
+                                        <div className="mt-8 space-y-4 pt-8 border-t border-gray-100">
+                                            <div className="flex items-center justify-between">
+                                                <label className={labelClasses + " mb-0"}>Annual Interest Rate (%)</label>
+                                                <HiOutlineInformationCircle
+                                                    data-tooltip-id="interest-tooltip"
+                                                    data-tooltip-content="Set the interest rate for this direct installment plan. Leave at 0 for ethical financing."
+                                                    className="text-gray-400 cursor-help"
+                                                />
+                                            </div>
+                                            <div className="relative group/interest">
+                                                <input
+                                                    type="number"
+                                                    {...register('installments.interestRate')}
+                                                    className="w-full h-14 pl-12 pr-4 rounded-xl border-2 border-gray-100 bg-gray-50 text-xl font-black text-gray-900 focus:border-brand-green focus:bg-white outline-none transition-all group-hover/interest:border-brand-green/30"
+                                                    placeholder="0"
+                                                />
+                                                <HiOutlineReceiptPercent className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-green size-6" />
+                                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">%</span>
+                                            </div>
+                                        </div>
+
+                                        <p className="mt-6 text-[10px] text-orange-600 font-bold bg-orange-50 p-4 rounded-2xl border border-orange-100 leading-relaxed shadow-sm">
+                                            <span className="flex items-center gap-1.5 mb-2 text-orange-700">
+                                                <HiOutlineShieldCheck className="size-3.5" />
+                                                Lister-Handled Installments
+                                            </span>
+                                            By enabling this, you (the lister) agree to receive payments directly from the tenant over time. External financing partners will be hidden for this property. Interest set above will be added to the total repayable amount.
+                                        </p>
                                     </div>
                                 </div>
                             </div>

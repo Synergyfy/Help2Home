@@ -34,9 +34,10 @@ export default function RentCalculator() {
         wasteDisposal: Number(params.get('wasteDisposal')) || 0,
     };
 
-    const interestConfig = {
-        isInterestEnabled: params.get('isInterestEnabled') === 'true',
+    const installmentConfig = {
+        isInstallmentEnabled: params.get('isInstallmentEnabled') === 'true', // From Property Data
         interestRate: Number(params.get('interestRate')) || 0,
+        isAgencyFinancing: params.get('isInstallmentEnabled') !== 'true', // If property doesn't have it, we offer agency financing
     };
 
     const totalItemized = Object.values(itemizedUrlCharges).reduce((a, b) => a + Number(b), 0);
@@ -51,9 +52,10 @@ export default function RentCalculator() {
     const [downPaymentPercent, setDownPaymentPercent] = useState(50);
     const [months, setMonths] = useState(1);
 
-    // Optional Interest State
-    const [isInterestEnabled, setIsInterestEnabled] = useState(interestConfig.isInterestEnabled || false);
-    const [interestRate, setInterestRate] = useState(interestConfig.interestRate || 10); // 10% annual flat rate as default
+    // Optional Installment State
+    const [isInstallmentEnabled, setIsInstallmentEnabled] = useState(installmentConfig.isInstallmentEnabled || false);
+    const [isAgencyMode, setIsAgencyMode] = useState(!installmentConfig.isInstallmentEnabled);
+    const [interestRate, setInterestRate] = useState(installmentConfig.interestRate || (isAgencyMode ? 10 : 0));
 
     // Calculated values
     const [results, setResults] = useState({
@@ -76,10 +78,16 @@ export default function RentCalculator() {
     const [selectedBank, setSelectedBank] = useState(MOCK_BANKS[0]);
 
     useEffect(() => {
-        if (isInterestEnabled) {
-            setInterestRate(selectedBank.rate);
+        if (isInstallmentEnabled) {
+            if (isAgencyMode) {
+                setInterestRate(selectedBank.rate);
+            } else {
+                setInterestRate(installmentConfig.interestRate || 0);
+            }
+        } else {
+            setInterestRate(0);
         }
-    }, [selectedBank, isInterestEnabled]);
+    }, [selectedBank, isInstallmentEnabled, isAgencyMode, installmentConfig.interestRate]);
 
     useEffect(() => {
         if (rent === '' || rent === 0) {
@@ -103,7 +111,7 @@ export default function RentCalculator() {
         const balance = rentAmount - rentDownPayment;
 
         // Interest calculation (flat rate based on months)
-        const interestAmount = isInterestEnabled
+        const interestAmount = isInstallmentEnabled
             ? (balance * (interestRate / 100) * (months / 12))
             : 0;
 
@@ -124,7 +132,7 @@ export default function RentCalculator() {
             totalRepayable,
             monthlyPayment
         });
-    }, [rent, otherCharges, downPaymentPercent, months, isInterestEnabled, interestRate]);
+    }, [rent, otherCharges, downPaymentPercent, months, isInstallmentEnabled, interestRate]);
 
     const handleApply = () => {
         const query = new URLSearchParams({
@@ -132,7 +140,7 @@ export default function RentCalculator() {
             otherCharges: otherCharges.toString(),
             downPayment: results.downPaymentAmount.toString(),
             months: months.toString(),
-            interest: isInterestEnabled ? interestRate.toString() : '0'
+            installment: isInstallmentEnabled ? interestRate.toString() : '0'
         }).toString();
         router.push(`/signup?${query}`);
     };
@@ -146,7 +154,9 @@ export default function RentCalculator() {
                         <div className="text-center">
                             <h2 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Flexible Rent Calculator</h2>
                             <p className="text-gray-500 max-w-2xl mx-auto">
-                                Split your rent into manageable monthly payments. {isInterestEnabled ? 'Fast-track your move with partner financing.' : 'No interest, no hidden fees. Just transparent housing finance.'}
+                                {isInstallmentEnabled && !isAgencyMode
+                                    ? "Lister-handled plan. Pay directly to the property lister."
+                                    : "Split your rent into manageable monthly payments via our partner agencies."}
                             </p>
                         </div>
 
@@ -247,92 +257,129 @@ export default function RentCalculator() {
                                                     <div className="flex items-center gap-3">
                                                         <span className="text-2xl font-black text-brand-green">{months} {months === 1 ? 'Month' : 'Months'}</span>
 
-                                                        {/* Interest Toggle */}
-                                                        <button
-                                                            onClick={() => setIsInterestEnabled(!isInterestEnabled)}
-                                                            className={`flex items-center gap-2 px-3 py-1 rounded-full border-2 transition-all ${isInterestEnabled
-                                                                ? 'border-brand-green bg-green-50 text-brand-green shadow-sm'
-                                                                : 'border-gray-200 text-gray-400 grayscale'
-                                                                }`}
-                                                        >
-                                                            <div className={`size-2 rounded-full ${isInterestEnabled ? 'bg-brand-green animate-pulse' : 'bg-gray-300'}`}></div>
-                                                            <span className="text-[10px] font-black uppercase tracking-tight">Interest Enabled</span>
-                                                        </button>
+                                                        {/* Installment Toggle */}
+                                                        <div className="flex items-center gap-3">
+                                                            <button
+                                                                onClick={() => {
+                                                                    setIsInstallmentEnabled(!isInstallmentEnabled);
+                                                                    if (!isInstallmentEnabled) setIsAgencyMode(true);
+                                                                }}
+                                                                className={`flex items-center gap-2 px-3 py-1 rounded-full border-2 transition-all ${isInstallmentEnabled
+                                                                    ? 'border-brand-green bg-green-50 text-brand-green shadow-sm'
+                                                                    : 'border-gray-200 text-gray-400 grayscale'
+                                                                    }`}
+                                                            >
+                                                                <div className={`size-2 rounded-full ${isInstallmentEnabled ? 'bg-brand-green animate-pulse' : 'bg-gray-300'}`}></div>
+                                                                <span className="text-[10px] font-black uppercase tracking-tight">Installment Enabled</span>
+                                                            </button>
+
+                                                            {isInstallmentEnabled && (
+                                                                <div className="flex bg-gray-100 p-0.5 rounded-lg border border-gray-200">
+                                                                    <button
+                                                                        onClick={() => setIsAgencyMode(true)}
+                                                                        className={`px-2 py-1 rounded-md text-[9px] font-black uppercase transition-all ${isAgencyMode ? 'bg-white text-brand-green shadow-sm' : 'text-gray-400'}`}
+                                                                    >
+                                                                        Agency
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => setIsAgencyMode(false)}
+                                                                        className={`px-2 py-1 rounded-md text-[9px] font-black uppercase transition-all ${!isAgencyMode ? 'bg-white text-orange-600 shadow-sm' : 'text-gray-400'}`}
+                                                                    >
+                                                                        Direct
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <input
                                                 type="range"
                                                 min="1"
-                                                max="12"
+                                                max="10"
                                                 value={months}
                                                 onChange={(e) => setMonths(Number(e.target.value))}
                                                 className="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-brand-green"
                                             />
                                             <div className="flex justify-between text-[10px] font-bold text-gray-400 tracking-widest uppercase">
                                                 <span>1 Month</span>
-                                                <span>12 Months</span>
+                                                <span>10 Months</span>
                                             </div>
                                         </div>
 
-                                        {/* Optional Interest Rate Slider & Bank Selection */}
-                                        {isInterestEnabled && (
+                                        {/* Optional Installment Rate Slider & Bank Selection */}
+                                        {isInstallmentEnabled && (
                                             <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-300 p-6 bg-gray-50 rounded-2xl border border-brand-green/10">
-                                                <div className="space-y-4">
-                                                    <div className="flex items-center gap-2">
-                                                        <HiOutlineBanknotes className="text-brand-green" size={20} />
-                                                        <label className="text-sm font-bold text-gray-700">Select Financing Partner</label>
+                                                {isAgencyMode ? (
+                                                    <div className="space-y-4">
+                                                        <div className="flex items-center gap-2">
+                                                            <HiOutlineBanknotes className="text-brand-green" size={20} />
+                                                            <label className="text-sm font-bold text-gray-700">Select Financing Partner</label>
+                                                        </div>
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                            {MOCK_BANKS.map((bank) => (
+                                                                <button
+                                                                    key={bank.name}
+                                                                    onClick={() => setSelectedBank(bank)}
+                                                                    className={`p-3 rounded-xl border-2 text-left transition-all ${selectedBank.name === bank.name
+                                                                        ? 'border-brand-green bg-white shadow-md'
+                                                                        : 'border-transparent bg-white/50 hover:bg-white'}`}
+                                                                >
+                                                                    <p className="text-[10px] font-black uppercase text-gray-400 mb-1">{bank.name}</p>
+                                                                    <p className={`text-lg font-black ${bank.color}`}>{bank.rate}% APR</p>
+                                                                </button>
+                                                            ))}
+                                                        </div>
                                                     </div>
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                        {MOCK_BANKS.map((bank) => (
-                                                            <button
-                                                                key={bank.name}
-                                                                onClick={() => setSelectedBank(bank)}
-                                                                className={`p-3 rounded-xl border-2 text-left transition-all ${selectedBank.name === bank.name
-                                                                    ? 'border-brand-green bg-white shadow-md'
-                                                                    : 'border-transparent bg-white/50 hover:bg-white'}`}
-                                                            >
-                                                                <p className="text-[10px] font-black uppercase text-gray-400 mb-1">{bank.name}</p>
-                                                                <p className={`text-lg font-black ${bank.color}`}>{bank.rate}% APR</p>
-                                                            </button>
-                                                        ))}
+                                                ) : (
+                                                    <div className="p-4 bg-orange-50 rounded-xl border border-orange-100 italic text-[10px] text-orange-800">
+                                                        Direct installment rates are set by the property owner. Some owners may offer 0% interest as an exception.
                                                     </div>
-                                                </div>
+                                                )}
 
                                                 <div className="space-y-4 pt-4 border-t border-gray-200/50">
                                                     <div className="flex justify-between items-end">
                                                         <div className="flex items-center gap-2">
                                                             <HiOutlineReceiptPercent className="text-brand-green" size={20} />
-                                                            <label className="text-sm font-bold text-gray-700">Custom Interest Rate Adjustment</label>
+                                                            <label className="text-sm font-bold text-gray-700">{isAgencyMode ? 'Financing Fee APR' : 'Lister Interest Rate'}</label>
                                                         </div>
                                                         <span className="text-2xl font-black text-brand-green">{interestRate}%</span>
                                                     </div>
                                                     <input
                                                         type="range"
-                                                        min="5"
+                                                        min="0"
                                                         max="25"
                                                         step="1"
                                                         value={interestRate}
                                                         onChange={(e) => setInterestRate(Number(e.target.value))}
                                                         className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-green"
+                                                        disabled={!isAgencyMode && installmentConfig.interestRate > 0} // Lock if landlord set it
                                                     />
-                                                    <p className="text-[10px] text-gray-500 italic">Adjust based on your personalized offer from {selectedBank.name}.</p>
+                                                    <p className="text-[10px] text-gray-500 italic">
+                                                        {isAgencyMode
+                                                            ? `Service fee for credit facility provided by ${selectedBank.name}.`
+                                                            : "Total interest charged by the property owner for spreading payments."}
+                                                    </p>
                                                 </div>
                                             </div>
                                         )}
                                     </div>
 
                                     {/* Explanatory Card */}
-                                    <div className={`p-6 border rounded-2xl flex gap-4 transition-all duration-500 ${isInterestEnabled ? 'bg-orange-50/50 border-orange-100' : 'bg-brand-green/5 border-brand-green/10'}`}>
-                                        <div className={`shrink-0 size-12 rounded-xl flex items-center justify-center text-white shadow-lg ${isInterestEnabled ? 'bg-orange-500 shadow-orange-500/20' : 'bg-brand-green shadow-brand-green/20'}`}>
-                                            {isInterestEnabled ? <HiOutlineBanknotes size={28} /> : <HiOutlineShieldCheck size={28} />}
+                                    <div className={`p-6 border rounded-2xl flex gap-4 transition-all duration-500 ${isInstallmentEnabled ? 'bg-orange-50/50 border-orange-100' : 'bg-brand-green/5 border-brand-green/10'}`}>
+                                        <div className={`shrink-0 size-12 rounded-xl flex items-center justify-center text-white shadow-lg ${isInstallmentEnabled ? (isAgencyMode ? 'bg-blue-600 shadow-blue-500/20' : 'bg-orange-500 shadow-orange-500/20') : 'bg-brand-green shadow-brand-green/20'}`}>
+                                            {isInstallmentEnabled ? <HiOutlineBanknotes size={28} /> : <HiOutlineShieldCheck size={28} />}
                                         </div>
                                         <div>
-                                            <h4 className="font-bold text-gray-900 mb-1">{isInterestEnabled ? 'Partner Financing' : '0% Interest Financing'}</h4>
+                                            <h4 className="font-bold text-gray-900 mb-1">
+                                                {isInstallmentEnabled ? (isAgencyMode ? 'Platform-Agency Financing' : 'Lister-Direct Installment') : 'Upfront Full Payment'}
+                                            </h4>
                                             <p className="text-sm text-gray-500 leading-relaxed">
-                                                {isInterestEnabled
-                                                    ? 'We partner with leading banks to provide you with instant rent loans. Pay a small monthly interest to secure your dream home today.'
-                                                    : 'We believe in ethical financing. Your total repayable amount is exactly the same as the rent. Only "Other Charges" are collected upfront.'
+                                                {isInstallmentEnabled
+                                                    ? (isAgencyMode
+                                                        ? 'Get instant funding from our profit-driven financing partners. Pay small service fees for the convenience of deferred payment.'
+                                                        : 'Lister-managed plan. Owners may choose to offer 0% interest as an exception, or apply their own rates as per property policy.')
+                                                    : 'Secure this property with a 100% upfront payment. No financing fees or interest applied. All "Other Charges" are collected at closing.'
                                                 }
                                             </p>
                                         </div>
@@ -375,11 +422,11 @@ export default function RentCalculator() {
                                             <span className="font-bold">{formatCurrency(results.balanceToFinance)}</span>
                                         </div>
 
-                                        {isInterestEnabled && (
+                                        {isInstallmentEnabled && (
                                             <div className="flex justify-between items-center text-green-200">
                                                 <div className="flex items-center gap-1">
-                                                    <span className="text-sm">Financing Interest ({interestRate}%)</span>
-                                                    <InfoIcon tooltip="Total interest cost charged by the financing partner." />
+                                                    <span className="text-sm">Financing Fee ({interestRate}%)</span>
+                                                    <InfoIcon tooltip="Total installment fee charged by the financing partner." />
                                                 </div>
                                                 <span className="font-bold">+ {formatCurrency(results.interestAmount)}</span>
                                             </div>

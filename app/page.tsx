@@ -24,9 +24,9 @@ export default function Home() {
           variant="hero"
           title="Take Control of Your"
           highlightText="Rent Today"
-          description="Calculate your rent "
+          description="Calculate your tenant rent"
           placeholder="Enter Annual Rent (₦)"
-          redirectPath="/tenant-rent-calculator"
+          redirectPath="/tenant-rent-calculator" 
           ctaText="Check Rent"
           imageSrc={TenantImg.src}
           badgeValue="Save 15%"
