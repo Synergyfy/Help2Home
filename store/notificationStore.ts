@@ -22,8 +22,18 @@ interface NotificationState {
   
   // Hydration flag
   hasHydrated: boolean;
+
+  notifications: Array<{
+    id: string;
+    title: string;
+    message: string;
+    type: 'success' | 'info' | 'warning' | 'error';
+    timestamp: number;
+    read: boolean;
+  }>;
   
   // Actions
+  addNotification: (notification: { title: string; message: string; type: 'success' | 'info' | 'warning' | 'error' }) => void;
   markAsRead: (notificationId: string) => void;
   markAllAsRead: (notificationIds: string[]) => void;
   dismissNotification: (notificationId: string) => void;
@@ -47,10 +57,27 @@ export const useNotificationStore = create<NotificationState>()(
       preferences: defaultPreferences,
       lastFetchedAt: null,
       hasHydrated: false,
+      notifications: [],
+
+      addNotification: (notification) =>
+        set((state) => ({
+          notifications: [
+            {
+              id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              ...notification,
+              timestamp: Date.now(),
+              read: false,
+            },
+            ...state.notifications,
+          ].slice(0, 50), // Keep last 50 notifications
+        })),
 
       markAsRead: (notificationId: string) =>
         set((state) => ({
           readNotifications: new Set([...state.readNotifications, notificationId]),
+          notifications: state.notifications.map((n) =>
+            n.id === notificationId ? { ...n, read: true } : n
+          ),
         })),
 
       markAllAsRead: (notificationIds: string[]) =>

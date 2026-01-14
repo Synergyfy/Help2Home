@@ -4,9 +4,9 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { HiOutlineMapPin, HiOutlineArrowRight } from 'react-icons/hi2';
+import { HiOutlineArrowRight } from 'react-icons/hi2';
 import { getMockProperties } from '@/utils/properties';
-import { formatNumber } from '@/utils/helpers';
+import PropertyCard from '@/components/shared/PropertyCard';
 
 export default function FeaturedListings() {
     // Get real properties and filter for featured
@@ -40,78 +40,13 @@ export default function FeaturedListings() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-                    {featuredProperties.map((property, index) => {
-                        // Calculate total upfront
-                        const amenitiesTotal = (property.amenities || []).reduce((acc: number, curr: any) => {
-                            if (typeof curr === 'object' && curr.price) return acc + curr.price;
-                            return acc;
-                        }, 0);
-                        const totalUpfront = property.price + (property.serviceCharge || 0) + amenitiesTotal;
-
-                        return (
-                            <motion.div
-                                key={property.id}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1, duration: 0.6 }}
-                                viewport={{ once: true }}
-                                className="group bg-white rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-500"
-                            >
-                                <Link href={`/marketplace/${property.id}`} className="block relative h-72 md:h-80 overflow-hidden">
-                                    <Image
-                                        src={property.images[0] || '/assets/marketplace assets/home1.png'}
-                                        alt={property.title}
-                                        fill
-                                        className="object-cover group-hover:scale-110 transition-transform duration-700"
-                                    />
-                                    <div className="absolute inset-0 bg-linear-to-t from-gray-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-                                    <div className="absolute top-6 left-6 flex flex-wrap gap-2">
-                                        {property.verified && (
-                                            <span className="bg-white/90 backdrop-blur-md text-brand-green text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-                                                Verified
-                                            </span>
-                                        )}
-                                        <span className="bg-brand-green text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-                                            {property.propertyType.replace('-', ' ')}
-                                        </span>
-                                    </div>
-
-                                    <div className="absolute bottom-6 left-6 right-6">
-                                        <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md rounded-full px-3 py-1 text-white text-xs border border-white/20">
-                                            <HiOutlineMapPin className="text-brand-green" />
-                                            {property.location}, {property.city}
-                                        </div>
-                                    </div>
-                                </Link>
-
-                                <div className="p-8">
-                                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-brand-green transition-colors mb-4 line-clamp-1">
-                                        {property.title}
-                                    </h3>
-
-                                    <div className="flex items-center gap-4 mb-6 text-gray-400">
-                                        <div className="flex items-center gap-2 text-gray-500 font-bold text-sm bg-gray-50 px-3 py-1.5 rounded-xl">
-                                            <span className="text-brand-green">{property.bedrooms}</span> Beds
-                                        </div>
-                                        <div className="flex items-center gap-2 text-gray-500 font-bold text-sm bg-gray-50 px-3 py-1.5 rounded-xl">
-                                            <span className="text-brand-green">{property.bathrooms}</span> Baths
-                                        </div>
-                                    </div>
-
-                                    <div className="flex flex-col gap-1 pt-6 border-t border-gray-50">
-                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Total Upfront</span>
-                                        <div className="flex items-baseline gap-1">
-                                            <span className="text-2xl font-black text-brand-green">₦{formatNumber(totalUpfront)}</span>
-                                            {property.propertyType === 'rent' && (
-                                                <span className="text-xs font-bold text-gray-400">total</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        );
-                    })}
+                    {featuredProperties.map((property, index) => (
+                        <PropertyCard
+                            key={property.id}
+                            property={property}
+                            index={index}
+                        />
+                    ))}
                 </div>
             </div>
         </section>

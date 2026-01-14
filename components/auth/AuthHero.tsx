@@ -33,8 +33,8 @@ export default function AuthHero() {
     return (
         <div className="relative hidden lg:flex flex-col h-full overflow-hidden bg-brand-green-900">
             <div className="absolute inset-0">
-                <Image src={HeroImg} alt="Auth Background" fill className="object-cover opacity-50" priority />
-                <div className="absolute inset-0 bg-linear-to-t from-brand-green-950 via-brand-green-950/40 to-transparent" />
+                <Image src={HeroImg} alt="Auth Background" fill className="object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-1000" priority />
+                <div className="absolute inset-0 bg-linear-to-t from-black via-brand-green-950/60 to-brand-green-900/40" />
             </div>
 
             <GeometricPattern />
@@ -57,13 +57,13 @@ export default function AuthHero() {
                 </AnimatePresence>
 
                 <div className="flex gap-3 mt-8">
-                    <button 
+                    <button
                         onClick={() => setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
                         className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-brand-green hover:border-brand-green transition-all"
                     >
                         <FiChevronLeft size={20} />
                     </button>
-                    <button 
+                    <button
                         onClick={() => setCurrent((prev) => (prev + 1) % testimonials.length)}
                         className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-brand-green hover:border-brand-green transition-all"
                     >

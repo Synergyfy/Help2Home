@@ -11,6 +11,7 @@ import { PropertyDetails, InstallmentPlan, ApplicationData, ApplicationDocument 
 
 import { useApplications } from '@/hooks/useApplications';
 import { useUserStore } from '@/store/userStore';
+import { useNotificationStore } from '@/store/notificationStore';
 import { Application } from '@/store/applicationStore';
 import { mockProperties } from '@/utils/properties';
 
@@ -20,6 +21,7 @@ export default function Apply() {
     const propertyIdParam = searchParams.get('propertyId');
 
     const { id: userId, fullName: userName, email: userEmail, phone: userPhone } = useUserStore();
+    const { addNotification } = useNotificationStore();
     const { submitApplication, isSubmitting } = useApplications();
 
     // Find property from mock data
@@ -189,7 +191,14 @@ export default function Apply() {
             };
 
             submitApplication(newApp, {
-                onSuccess: () => setShowSuccess(true)
+                onSuccess: () => {
+                    setShowSuccess(true);
+                    addNotification({
+                        title: 'Application Submitted',
+                        message: `Your application for "${property.name}" has been sent for review.`,
+                        type: 'success'
+                    });
+                }
             });
         } else {
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -222,7 +231,14 @@ export default function Apply() {
             }
         };
         submitApplication(newApp, {
-            onSuccess: () => router.push('/dashboard/tenant/applications')
+            onSuccess: () => {
+                addNotification({
+                    title: 'Draft Saved',
+                    message: `Application for "${property.name}" has been saved to your drafts.`,
+                    type: 'info'
+                });
+                router.push('/dashboard/tenant/applications');
+            }
         });
     };
 

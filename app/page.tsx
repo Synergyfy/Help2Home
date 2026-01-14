@@ -24,7 +24,7 @@ export default function Home() {
           variant="hero"
           title="Take Control of Your"
           highlightText="Rent Today"
-          description="Estimate your monthly payments in seconds and plan your budget confidently."
+          description="Calculate your rent "
           placeholder="Enter Annual Rent (₦)"
           redirectPath="/tenant-rent-calculator"
           ctaText="Check Rent"

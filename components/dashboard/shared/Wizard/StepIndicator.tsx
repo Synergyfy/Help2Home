@@ -27,14 +27,14 @@ export default function StepIndicator({ steps, currentStep }: StepIndicatorProps
                     return (
                         <div key={step} className="flex flex-col items-center relative min-w-[100px]">
                             {/* Step Circle */}
-                            <div className="bg-white px-2">
+                            <div className="z-10">
                                 <div
                                     className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 border
                     ${isCompleted
                                             ? 'bg-brand-green border-brand-green text-white'
                                             : isCurrent
-                                                ? 'bg-white border-brand-green border-2 ring-4 ring-brand-green/10 text-brand-green'
-                                                : 'bg-white border-gray-200 text-gray-400'
+                                                ? 'bg-white border-brand-green border-2 ring-4 ring-brand-green/10 text-brand-green shadow-sm'
+                                                : 'bg-gray-50 border-gray-200 text-gray-400'
                                         }`}
                                 >
                                     {isCompleted ? (

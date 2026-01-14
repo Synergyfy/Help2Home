@@ -34,12 +34,16 @@ interface BasicsStepProps {
 }
 
 export default function BasicsStep({ role }: BasicsStepProps = {}) {
-    const { register, setValue, control } = useFormContext<PropertySchema>();
+    const { register, setValue, control, formState: { errors } } = useFormContext<PropertySchema>();
     const { activeRole, setActiveRole } = useUserStore();
     const { draftData, roleOnboardingCompleted } = useOnboardingStore();
 
     const [showModal, setShowModal] = useState(false);
     const [pendingRole, setPendingRole] = useState<'landlord' | 'agent' | 'caretaker' | null>(null);
+
+    // Toggle states for optional assignments
+    const [hasLandlord, setHasLandlord] = useState(false);
+    const [hasCaretaker, setHasCaretaker] = useState(false);
 
     const selectedListingType = useWatch({ control, name: 'listingType' });
 
@@ -113,36 +117,60 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
 
                                 {/* Optional Landlord info for Agents */}
                                 <div className="p-5 bg-green-50/50 rounded-2xl border border-brand-green/10">
-                                    <div className="flex items-start gap-3 mb-4">
-                                        <div className="size-8 rounded-lg bg-brand-green/10 flex items-center justify-center text-brand-green shrink-0">
-                                            <HiOutlineShieldCheck size={20} />
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-start gap-3">
+                                            <div className="size-8 rounded-lg bg-brand-green/10 flex items-center justify-center text-brand-green shrink-0">
+                                                <HiOutlineShieldCheck size={20} />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-bold text-gray-900">Owner Verification</h4>
+                                                <p className="text-xs text-gray-500">Provide the landlord's contact to request verification.</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 className="text-sm font-bold text-gray-900">Owner Verification (Optional)</h4>
-                                            <p className="text-xs text-gray-500">Provide the landlord's contact to automatically request verification. This increases your listing's trust score.</p>
+                                        <button
+                                            type="button"
+                                            onClick={() => setHasLandlord(!hasLandlord)}
+                                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${hasLandlord ? 'bg-brand-green' : 'bg-gray-200'}`}
+                                        >
+                                            <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${hasLandlord ? 'translate-x-5' : 'translate-x-0'}`} />
+                                        </button>
+                                    </div>
+
+                                    {hasLandlord && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                            <input {...register('landlord.fullName')} className={inputClasses} placeholder="Landlord Full Name" />
+                                            <input {...register('landlord.email')} className={inputClasses} placeholder="Landlord Email" />
                                         </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <input {...register('landlord.fullName')} className={inputClasses} placeholder="Landlord Full Name" />
-                                        <input {...register('landlord.email')} className={inputClasses} placeholder="Landlord Email" />
-                                    </div>
+                                    )}
                                 </div>
 
                                 {/* Caretaker Assignment for Agents */}
                                 <div className="p-5 bg-blue-50/50 rounded-2xl border border-blue-500/10">
-                                    <div className="flex items-start gap-3 mb-4">
-                                        <div className="size-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-600 shrink-0">
-                                            <MdOutlineAssignmentInd size={20} />
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-start gap-3">
+                                            <div className="size-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-600 shrink-0">
+                                                <MdOutlineAssignmentInd size={20} />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-bold text-gray-900">Assign Caretaker</h4>
+                                                <p className="text-xs text-gray-500">Assign a management representative for daily operations.</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 className="text-sm font-bold text-gray-900">Assign Caretaker (Optional)</h4>
-                                            <p className="text-xs text-gray-500">Assign a management representative to handle this property's daily operations.</p>
+                                        <button
+                                            type="button"
+                                            onClick={() => setHasCaretaker(!hasCaretaker)}
+                                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${hasCaretaker ? 'bg-brand-green' : 'bg-gray-200'}`}
+                                        >
+                                            <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${hasCaretaker ? 'translate-x-5' : 'translate-x-0'}`} />
+                                        </button>
+                                    </div>
+
+                                    {hasCaretaker && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                            <input {...register('caretaker.fullName')} className={inputClasses} placeholder="Caretaker Full Name" />
+                                            <input {...register('caretaker.email')} className={inputClasses} placeholder="Caretaker Email" />
                                         </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <input {...register('caretaker.fullName')} className={inputClasses} placeholder="Caretaker Full Name" />
-                                        <input {...register('caretaker.email')} className={inputClasses} placeholder="Caretaker Email" />
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         ) : activeRole === 'caretaker' ? (
@@ -152,23 +180,37 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                                     You are submitting a property update/request on behalf of the owner. This will be sent for review.
                                 </p>
 
-                                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-white rounded-xl border border-gray-100 shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
-                                    <div className="md:col-span-2">
-                                        <h4 className="text-sm font-bold text-brand-green uppercase tracking-wider mb-1">Landlord Information</h4>
-                                        <p className="text-xs text-gray-500 mb-4">Provide the owner's details to automatically invite them to the platform.</p>
+                                <div className="mt-6 p-4 bg-white rounded-xl border border-gray-100 shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div>
+                                            <h4 className="text-sm font-bold text-brand-green uppercase tracking-wider mb-1">Landlord Information</h4>
+                                            <p className="text-xs text-gray-500">Invite the owner to the platform.</p>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => setHasLandlord(!hasLandlord)}
+                                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${hasLandlord ? 'bg-brand-green' : 'bg-gray-200'}`}
+                                        >
+                                            <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${hasLandlord ? 'translate-x-5' : 'translate-x-0'}`} />
+                                        </button>
                                     </div>
-                                    <div className="md:col-span-2">
-                                        <label className={labelClasses}>Landlord Full Name</label>
-                                        <input {...register('landlord.fullName')} className={inputClasses} placeholder="e.g. John Doe" />
-                                    </div>
-                                    <div>
-                                        <label className={labelClasses}>Landlord Email</label>
-                                        <input {...register('landlord.email')} className={inputClasses} placeholder="landlord@example.com" />
-                                    </div>
-                                    <div>
-                                        <label className={labelClasses}>Landlord Phone</label>
-                                        <input {...register('landlord.phone')} className={inputClasses} placeholder="+234 ..." />
-                                    </div>
+
+                                    {hasLandlord && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                                            <div className="md:col-span-2">
+                                                <label className={labelClasses}>Landlord Full Name</label>
+                                                <input {...register('landlord.fullName')} className={inputClasses} placeholder="e.g. John Doe" />
+                                            </div>
+                                            <div>
+                                                <label className={labelClasses}>Landlord Email</label>
+                                                <input {...register('landlord.email')} className={inputClasses} placeholder="landlord@example.com" />
+                                            </div>
+                                            <div>
+                                                <label className={labelClasses}>Landlord Phone</label>
+                                                <input {...register('landlord.phone')} className={inputClasses} placeholder="+234 ..." />
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ) : (
@@ -182,19 +224,31 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
 
                                 {/* Caretaker Assignment for Landlords */}
                                 <div className="p-5 bg-blue-50/50 rounded-2xl border border-blue-500/10">
-                                    <div className="flex items-start gap-3 mb-4">
-                                        <div className="size-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-600 shrink-0">
-                                            <MdOutlineAssignmentInd size={20} />
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-start gap-3">
+                                            <div className="size-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-600 shrink-0">
+                                                <MdOutlineAssignmentInd size={20} />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-bold text-gray-900">Invite & Assign Caretaker</h4>
+                                                <p className="text-xs text-gray-500">Invite a representative to help manage this property.</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 className="text-sm font-bold text-gray-900">Invite & Assign Caretaker (Optional)</h4>
-                                            <p className="text-xs text-gray-500">Need someone to manage this property? Invite a caretaker to help with listings and tenants.</p>
+                                        <button
+                                            type="button"
+                                            onClick={() => setHasCaretaker(!hasCaretaker)}
+                                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${hasCaretaker ? 'bg-brand-green' : 'bg-gray-200'}`}
+                                        >
+                                            <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${hasCaretaker ? 'translate-x-5' : 'translate-x-0'}`} />
+                                        </button>
+                                    </div>
+
+                                    {hasCaretaker && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                            <input {...register('caretaker.fullName')} className={inputClasses} placeholder="Caretaker Full Name" />
+                                            <input {...register('caretaker.email')} className={inputClasses} placeholder="Caretaker Email" />
                                         </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <input {...register('caretaker.fullName')} className={inputClasses} placeholder="Caretaker Full Name" />
-                                        <input {...register('caretaker.email')} className={inputClasses} placeholder="Caretaker Email" />
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -212,10 +266,16 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                             </div>
                         </div>
 
-                        {/* Title field moved to top of listing details */}
-                        <div className="mb-10">
-                            <label className={labelClasses}>Property Title</label>
-                            <input {...register('title')} className={inputClasses} placeholder="e.g. Luxury 4 Bedroom Semi-Detached Duplex" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                            <div>
+                                <label className={labelClasses}>Property Title</label>
+                                <input {...register('title')} className={inputClasses} placeholder="e.g. Luxury 4 Bedroom Semi-Detached Duplex" />
+                            </div>
+                            <div>
+                                <label className={labelClasses}>Community / Contact Link</label>
+                                <input {...register('communityLink')} className={inputClasses} placeholder="e.g. WhatsApp group, personal link" />
+                                {errors.communityLink && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.communityLink.message}</p>}
+                            </div>
                         </div>
 
                         {/* Listing Type First - Logic: Property Types depend on this */}

@@ -91,6 +91,7 @@ export type Property = {
   isChainFree: boolean;
   hasReducedPrice: boolean;
   isUnderOffer: boolean;
+  communityLink?: string;
 };
 const initialProperties: Property[] = [
   {

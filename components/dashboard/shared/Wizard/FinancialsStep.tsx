@@ -8,8 +8,11 @@ import {
     HiOutlineBanknotes,
     HiOutlineCalculator,
     HiOutlineShieldCheck,
-    HiOutlineReceiptPercent
+    HiOutlineReceiptPercent,
+    HiOutlineClock,
+    HiOutlineInformationCircle
 } from 'react-icons/hi2';
+import { Tooltip } from 'react-tooltip';
 
 interface FinancialsStepProps {
     role?: 'landlord' | 'agent' | 'caretaker';
@@ -26,13 +29,20 @@ export default function FinancialsStep({ role }: FinancialsStepProps = {}) {
 
     // Calculate dynamic values for the summary
     const propertyPrice = price?.amount || 0;
+    const serviceCharge = price?.serviceCharge || 0;
     const amenitiesTotal = amenities.reduce((acc: number, curr: any) => acc + (curr.price || 0), 0);
 
-    // Deposit calculation
-    const depositPercent = installments?.depositPercent || 0;
-    const upfrontDeposit = propertyPrice * (depositPercent / 100);
+    const totalPropertyCost = propertyPrice + serviceCharge + amenitiesTotal;
 
-    const totalInitialOutlay = propertyPrice + (price?.serviceCharge || 0) + amenitiesTotal;
+    // Deposit calculation
+    const depositType = installments?.depositType || 'percentage';
+    const depositValue = installments?.depositValue || 0;
+
+    const upfrontDeposit = depositType === 'percentage'
+        ? (propertyPrice * (depositValue / 100))
+        : depositValue;
+
+    const remainingBalance = totalPropertyCost - upfrontDeposit;
 
     const handleTenureToggle = (month: number) => {
         const currentTenures = installments?.tenures || [];
@@ -40,6 +50,13 @@ export default function FinancialsStep({ role }: FinancialsStepProps = {}) {
             ? currentTenures.filter((m: number) => m !== month)
             : [...currentTenures, month];
         setValue('installments.tenures', newTenures);
+    };
+
+    const handleDepositValueChange = (val: string) => {
+        const numVal = Number(val.replace(/,/g, ''));
+        if (!isNaN(numVal)) {
+            setValue('installments.depositValue', numVal);
+        }
     };
 
     const sectionClasses = "bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8";
@@ -89,13 +106,46 @@ export default function FinancialsStep({ role }: FinancialsStepProps = {}) {
                                 {...register('price.period')}
                                 className="w-full h-16 px-6 rounded-2xl border-2 border-gray-100 bg-gray-50 text-gray-900 focus:border-brand-green focus:bg-white outline-none font-bold text-lg transition-all"
                             >
-                                <option value="month">Per Month</option>
                                 <option value="year">Per Annum</option>
+                                <option value="month">Per Month</option>
                                 {listingType === 'Service-Apartment' && <option value="day">Daily</option>}
                             </select>
                         </div>
                     </div>
                 </section>
+
+                {/* Property Availability - NEW */}
+                {listingType === 'Rent' && (
+                    <section className={sectionClasses}>
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="size-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                                <HiOutlineClock size={24} />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-gray-900">Property Availability</h3>
+                                <p className="text-sm text-gray-500">How long is this property available for?</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4">
+                            {[6, 12, 24].map((months) => (
+                                <label key={months} className="relative cursor-pointer group">
+                                    <input
+                                        type="radio"
+                                        value={months}
+                                        {...register('availabilityDuration')}
+                                        className="peer sr-only"
+                                    />
+                                    <div className="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-gray-100 bg-white transition-all peer-checked:border-brand-green peer-checked:bg-green-50/50 hover:border-gray-300">
+                                        <span className="text-lg font-black text-gray-900 peer-checked:text-brand-green">
+                                            {months === 12 ? '1 Year' : months === 24 ? '2 Years' : '6 Months'}
+                                        </span>
+                                    </div>
+                                </label>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
                 {/* Additional Information Banner */}
                 <section className={`${sectionClasses} border-l-4 border-l-brand-green`}>
@@ -139,35 +189,72 @@ export default function FinancialsStep({ role }: FinancialsStepProps = {}) {
                         {installments?.enabled && (
                             <div className="space-y-8 pt-8 border-t border-gray-100 animate-in fade-in slide-in-from-top-4 duration-500">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="p-6 rounded-2xl border-2 border-brand-green/10 bg-brand-green/5">
-                                        <label className="block text-[10px] font-black uppercase text-gray-500 mb-3 tracking-widest">
-                                            Minimum Deposit (%)
-                                        </label>
-                                        <div className="flex items-center gap-3">
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                max="100"
-                                                {...register('installments.depositPercent', { valueAsNumber: true })}
-                                                className="w-32 h-14 px-4 rounded-xl border-2 border-white bg-white text-2xl font-black text-brand-green focus:border-brand-green outline-none shadow-sm"
-                                            />
-                                            <span className="text-xl font-bold text-brand-green">%</span>
+                                    <div className="p-6 rounded-3xl border-2 border-brand-green/10 bg-brand-green/5">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest">
+                                                Downpayment / Deposit
+                                            </label>
+                                            <div className="flex bg-white rounded-lg p-1 border border-gray-100 shadow-sm">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setValue('installments.depositType', 'percentage')}
+                                                    className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${depositType === 'percentage' ? 'bg-brand-green text-white' : 'text-gray-400 hover:text-gray-600'}`}
+                                                >
+                                                    Percent
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setValue('installments.depositType', 'fixed')}
+                                                    className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${depositType === 'fixed' ? 'bg-brand-green text-white' : 'text-gray-400 hover:text-gray-600'}`}
+                                                >
+                                                    Fixed
+                                                </button>
+                                            </div>
                                         </div>
-                                        <p className="text-[10px] text-gray-400 mt-3 font-medium italic">Requirement: {upfrontDeposit ? `₦${formatNumber(upfrontDeposit)}` : '₦0.00'} min. deposit</p>
+
+                                        <div className="flex items-center gap-3">
+                                            {depositType === 'fixed' && <span className="text-xl font-bold text-brand-green">₦</span>}
+                                            <input
+                                                type="text"
+                                                value={depositValue ? formatNumber(depositValue) : ''}
+                                                onChange={(e) => handleDepositValueChange(e.target.value)}
+                                                className="w-full h-14 px-4 rounded-xl border-2 border-white bg-white text-2xl font-black text-brand-green focus:border-brand-green outline-none shadow-sm"
+                                                placeholder="0"
+                                            />
+                                            {depositType === 'percentage' && <span className="text-xl font-bold text-brand-green">%</span>}
+                                        </div>
+
+                                        {depositType === 'percentage' && depositValue > 0 && (
+                                            <p className="text-[10px] text-gray-400 mt-3 font-medium italic">
+                                                Equals: ₦{formatNumber(upfrontDeposit)}
+                                            </p>
+                                        )}
+                                        {depositType === 'fixed' && depositValue > 0 && propertyPrice > 0 && (
+                                            <p className="text-[10px] text-gray-400 mt-3 font-medium italic">
+                                                Equals: {((depositValue / propertyPrice) * 100).toFixed(1)}% of price
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div>
-                                        <label className={labelClasses}>Available Tenures</label>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            {[6, 12, 18, 24].map(months => (
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <label className={labelClasses + " mb-0"}>Repayment Strategy</label>
+                                            <HiOutlineInformationCircle
+                                                data-tooltip-id="tenure-tooltip"
+                                                data-tooltip-content="Select the available payment durations for this property."
+                                                className="text-gray-400 cursor-help"
+                                            />
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {(listingType === 'Sale' ? [12, 24, 36, 48, 60, 120] : [3, 6, 12, 18, 24]).map(months => (
                                                 <button
                                                     key={months}
                                                     type="button"
                                                     onClick={() => handleTenureToggle(months)}
-                                                    className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all ${installments.tenures?.includes(months) ? 'border-brand-green bg-green-50 text-brand-green' : 'border-gray-100 bg-gray-50 text-gray-400 hover:border-gray-200'}`}
+                                                    className={`flex flex-col items-center justify-center p-2 rounded-xl border-2 transition-all ${installments.tenures?.includes(months) ? 'border-brand-green bg-green-50 text-brand-green' : 'border-gray-100 bg-gray-50 text-gray-400 hover:border-gray-200'}`}
                                                 >
-                                                    <span className="text-sm font-black">{months}</span>
-                                                    <span className="text-[9px] uppercase font-bold tracking-tighter">Months</span>
+                                                    <span className="text-xs font-black">{months >= 12 ? `${months / 12}Y` : `${months}M`}</span>
+                                                    <span className="text-[8px] uppercase font-bold tracking-tighter">{months} Mos</span>
                                                 </button>
                                             ))}
                                         </div>
@@ -195,9 +282,15 @@ export default function FinancialsStep({ role }: FinancialsStepProps = {}) {
                             <span className="font-black text-gray-900">₦{formatNumber(propertyPrice)}</span>
                         </div>
 
-                        {amenities.length > 0 && (
+                        {(serviceCharge > 0 || amenitiesTotal > 0) && (
                             <div className="space-y-3 pt-4 border-t border-gray-100 border-dashed">
-                                <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Itemized Charges</p>
+                                <p className="text-[10px] font-black  text-gray-400 tracking-widest uppercase">Itemized Costs & Charges</p>
+                                {serviceCharge > 0 && (
+                                    <div className="flex justify-between text-xs font-bold text-gray-600">
+                                        <span>Service Charge</span>
+                                        <span>₦{formatNumber(serviceCharge)}</span>
+                                    </div>
+                                )}
                                 {amenities.map((amn: any, idx: number) => (
                                     amn.price > 0 && (
                                         <div key={idx} className="flex justify-between text-xs font-bold text-blue-600">
@@ -209,16 +302,54 @@ export default function FinancialsStep({ role }: FinancialsStepProps = {}) {
                             </div>
                         )}
 
+                        <div className="pt-4 border-t border-gray-100 border-dashed">
+                            <div className="flex justify-between items-center group mb-2">
+                                <span className="text-sm font-bold text-gray-900">Total Project Value</span>
+                                <span className="font-black text-gray-900">₦{formatNumber(totalPropertyCost)}</span>
+                            </div>
+                        </div>
+
+                        {installments?.enabled && (
+                            <div className="p-4 bg-brand-green/5 rounded-2xl border border-brand-green/10 space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[10px] font-bold text-brand-green uppercase">Initial Downpayment</span>
+                                    <span className="text-sm font-black text-brand-green">₦{formatNumber(upfrontDeposit)}</span>
+                                </div>
+
+                                {installments.tenures && installments.tenures.length > 0 && (
+                                    <div className="pt-2 border-t border-brand-green/10">
+                                        <div className="flex items-center gap-1 mb-2">
+                                            <span className="text-[10px] font-bold text-gray-400 uppercase">Sub Payments</span>
+                                            <HiOutlineInformationCircle
+                                                data-tooltip-id="sub-payment-tooltip"
+                                                data-tooltip-content="Estimated periodic payment amount based on selected repayment strategy."
+                                                className="text-gray-300 size-3 cursor-help"
+                                            />
+                                        </div>
+                                        {installments.tenures.slice(0, 3).map((months: number) => (
+                                            <div key={months} className="flex justify-between items-center mb-1">
+                                                <span className="text-[10px] font-medium text-gray-500">{months} Months plan</span>
+                                                <span className="text-[10px] font-black text-gray-900">₦{formatNumber(Math.ceil(remainingBalance / months))}/mo</span>
+                                            </div>
+                                        ))}
+                                        {installments.tenures.length > 3 && (
+                                            <p className="text-[8px] text-gray-400">+ {installments.tenures.length - 3} more strategies</p>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
                         <div className="pt-8 border-t-2 border-gray-100 relative">
-                            <div className="absolute -top-3 left-1/2 -tranbrand-green-x-1/2 bg-white px-3">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-3">
                                 <div className="size-6 rounded-full bg-brand-green/10 flex items-center justify-center">
                                     <div className="size-2 rounded-full bg-brand-green"></div>
                                 </div>
                             </div>
 
                             <div className="flex flex-col gap-1">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-green text-center">Total Upfront Payment</p>
-                                <p className="text-3xl font-black text-gray-900 text-center tracking-tight">₦{formatNumber(totalInitialOutlay)}</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-green text-center">Required Upfront Payment</p>
+                                <p className="text-3xl font-black text-gray-900 text-center tracking-tight">₦{formatNumber(installments?.enabled ? upfrontDeposit : totalPropertyCost)}</p>
                             </div>
                         </div>
                     </div>
@@ -236,6 +367,8 @@ export default function FinancialsStep({ role }: FinancialsStepProps = {}) {
                     </div>
                 </div>
             </div>
+            <Tooltip id="tenure-tooltip" />
+            <Tooltip id="sub-payment-tooltip" />
         </div>
     );
 }
