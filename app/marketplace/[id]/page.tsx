@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -30,8 +30,8 @@ import {
     MdOutlineVilla
 } from 'react-icons/md';
 
-export default function PropertyDetailsPage({ params }: { params: { id: string } }) {
-    const { id } = params;
+export default function PropertyDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
     const { activeRole, followedListers, toggleFollowLister } = useUserStore();
     const { addNotification } = useNotificationStore();
 
@@ -313,7 +313,9 @@ export default function PropertyDetailsPage({ params }: { params: { id: string }
                                             waterSupply: waterSupply.toString(),
                                             securityPatrol: securityPatrol.toString(),
                                             wasteDisposal: wasteDisposal.toString(),
-                                            propertyId: property.id.toString()
+                                            propertyId: property.id.toString(),
+                                            interestRate: (property.interestRate || 0).toString(),
+                                            isInterestEnabled: (property.isInterestEnabled || false).toString()
                                         }).toString();
 
                                         return (

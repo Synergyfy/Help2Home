@@ -125,7 +125,7 @@ function DataCard({ icon, label, value }: { icon: React.ReactNode, label: string
         <div className="p-5 bg-white rounded-2xl border border-gray-100 hover:shadow-md transition-all group">
             <div className="flex items-start gap-4">
                 <div className="size-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-green/10 group-hover:text-brand-green transition-colors shrink-0">
-                    {React.cloneElement(icon as React.ReactElement, { size: 20 })}
+                    {React.cloneElement(icon as React.ReactElement<{ size?: number }>, { size: 20 })}
                 </div>
                 <div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{label}</p>

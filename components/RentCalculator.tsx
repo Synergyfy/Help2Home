@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import FadeIn from './FadeIn';
 import { HiOutlineInformationCircle, HiOutlineShieldCheck, HiOutlineReceiptPercent, HiOutlineBanknotes } from 'react-icons/hi2';
+import InfoIcon from './lib/InfoIcon';
 
 // Helpers
 const formatNumberWithCommas = (value: number | string) => {
@@ -33,7 +34,12 @@ export default function RentCalculator() {
         wasteDisposal: Number(params.get('wasteDisposal')) || 0,
     };
 
-    const totalItemized = Object.values(itemizedUrlCharges).reduce((a, b) => a + b, 0);
+    const interestConfig = {
+        isInterestEnabled: params.get('isInterestEnabled') === 'true',
+        interestRate: Number(params.get('interestRate')) || 0,
+    };
+
+    const totalItemized = Object.values(itemizedUrlCharges).reduce((a, b) => a + Number(b), 0);
     const hasItemizedFromUrl = totalItemized > 0;
 
     // Use prefilled total other charges if itemized is not present, otherwise use totalItemized
@@ -46,8 +52,8 @@ export default function RentCalculator() {
     const [months, setMonths] = useState(1);
 
     // Optional Interest State
-    const [isInterestEnabled, setIsInterestEnabled] = useState(false);
-    const [interestRate, setInterestRate] = useState(10); // 10% annual flat rate as default
+    const [isInterestEnabled, setIsInterestEnabled] = useState(interestConfig.isInterestEnabled || false);
+    const [interestRate, setInterestRate] = useState(interestConfig.interestRate || 10); // 10% annual flat rate as default
 
     // Calculated values
     const [results, setResults] = useState({
@@ -59,6 +65,21 @@ export default function RentCalculator() {
         totalRepayable: 0,
         monthlyPayment: 0
     });
+
+    const MOCK_BANKS = [
+        { name: 'Standard Trust Bank', rate: 10, color: 'text-blue-600' },
+        { name: 'Heritage Savings', rate: 12, color: 'text-orange-600' },
+        { name: 'Greenleaf Finance', rate: 15, color: 'text-brand-green' },
+        { name: 'Premium Capital', rate: 8, color: 'text-purple-600' },
+    ];
+
+    const [selectedBank, setSelectedBank] = useState(MOCK_BANKS[0]);
+
+    useEffect(() => {
+        if (isInterestEnabled) {
+            setInterestRate(selectedBank.rate);
+        }
+    }, [selectedBank, isInterestEnabled]);
 
     useEffect(() => {
         if (rent === '' || rent === 0) {
@@ -129,21 +150,16 @@ export default function RentCalculator() {
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-10 gap-8">
                             {/* Inputs Column */}
-                            <div className="lg:col-span-2 space-y-8">
+                            <div className="lg:col-span-6 space-y-8">
                                 <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-10 space-y-8">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         {/* Annual Rent */}
                                         <div className="space-y-2">
                                             <label className="flex items-center gap-2 text-sm font-bold text-gray-700">
                                                 Annual Asset Value (₦)
-                                                <div className="group relative">
-                                                    <HiOutlineInformationCircle className="text-gray-400 cursor-help" />
-                                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-900 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                                                        The total quoted price of the property or annual rent.
-                                                    </div>
-                                                </div>
+                                                <InfoIcon tooltip="The total quoted price of the property or annual rent." />
                                             </label>
                                             <div className="relative">
                                                 <input
@@ -164,12 +180,7 @@ export default function RentCalculator() {
                                         <div className="space-y-2">
                                             <label className="flex items-center gap-2 text-sm font-bold text-gray-700">
                                                 Other Charges (₦)
-                                                <div className="group relative">
-                                                    <HiOutlineInformationCircle className="text-gray-400 cursor-help" />
-                                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-900 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                                                        Includes Legal fees, Service charges, and Agency fees. These must be paid upfront.
-                                                    </div>
-                                                </div>
+                                                <InfoIcon tooltip="Includes Legal fees, Service charges, and Agency fees. These must be paid upfront." />
                                             </label>
                                             <div className="relative">
                                                 <input
@@ -208,7 +219,10 @@ export default function RentCalculator() {
                                     <div className="space-y-10 pt-4">
                                         <div className="space-y-4">
                                             <div className="flex justify-between items-end">
-                                                <label className="text-sm font-bold text-gray-700">Down Payment Percentage</label>
+                                                <label className="flex items-center gap-1 text-sm font-bold text-gray-700">
+                                                    Down Payment
+                                                    <InfoIcon tooltip="The initial amount you pay from your own pocket." />
+                                                </label>
                                                 <span className="text-2xl font-black text-brand-green">{downPaymentPercent}%</span>
                                             </div>
                                             <input
@@ -261,26 +275,49 @@ export default function RentCalculator() {
                                             </div>
                                         </div>
 
-                                        {/* Optional Interest Rate Slider */}
+                                        {/* Optional Interest Rate Slider & Bank Selection */}
                                         {isInterestEnabled && (
-                                            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 p-6 bg-gray-50 rounded-2xl border border-brand-green/10">
-                                                <div className="flex justify-between items-end">
+                                            <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-300 p-6 bg-gray-50 rounded-2xl border border-brand-green/10">
+                                                <div className="space-y-4">
                                                     <div className="flex items-center gap-2">
-                                                        <HiOutlineReceiptPercent className="text-brand-green" size={20} />
-                                                        <label className="text-sm font-bold text-gray-700">Dynamic Interest Rate (APR)</label>
+                                                        <HiOutlineBanknotes className="text-brand-green" size={20} />
+                                                        <label className="text-sm font-bold text-gray-700">Select Financing Partner</label>
                                                     </div>
-                                                    <span className="text-2xl font-black text-brand-green">{interestRate}%</span>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                        {MOCK_BANKS.map((bank) => (
+                                                            <button
+                                                                key={bank.name}
+                                                                onClick={() => setSelectedBank(bank)}
+                                                                className={`p-3 rounded-xl border-2 text-left transition-all ${selectedBank.name === bank.name
+                                                                    ? 'border-brand-green bg-white shadow-md'
+                                                                    : 'border-transparent bg-white/50 hover:bg-white'}`}
+                                                            >
+                                                                <p className="text-[10px] font-black uppercase text-gray-400 mb-1">{bank.name}</p>
+                                                                <p className={`text-lg font-black ${bank.color}`}>{bank.rate}% APR</p>
+                                                            </button>
+                                                        ))}
+                                                    </div>
                                                 </div>
-                                                <input
-                                                    type="range"
-                                                    min="5"
-                                                    max="25"
-                                                    step="1"
-                                                    value={interestRate}
-                                                    onChange={(e) => setInterestRate(Number(e.target.value))}
-                                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-green"
-                                                />
-                                                <p className="text-[10px] text-gray-500 italic">This rate is determined by our partner banks based on your credit profile.</p>
+
+                                                <div className="space-y-4 pt-4 border-t border-gray-200/50">
+                                                    <div className="flex justify-between items-end">
+                                                        <div className="flex items-center gap-2">
+                                                            <HiOutlineReceiptPercent className="text-brand-green" size={20} />
+                                                            <label className="text-sm font-bold text-gray-700">Custom Interest Rate Adjustment</label>
+                                                        </div>
+                                                        <span className="text-2xl font-black text-brand-green">{interestRate}%</span>
+                                                    </div>
+                                                    <input
+                                                        type="range"
+                                                        min="5"
+                                                        max="25"
+                                                        step="1"
+                                                        value={interestRate}
+                                                        onChange={(e) => setInterestRate(Number(e.target.value))}
+                                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-green"
+                                                    />
+                                                    <p className="text-[10px] text-gray-500 italic">Adjust based on your personalized offer from {selectedBank.name}.</p>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -304,8 +341,8 @@ export default function RentCalculator() {
                             </div>
 
                             {/* Summary Column */}
-                            <div className="bg-brand-green rounded-3xl p-8 md:p-10 text-white shadow-2xl shadow-brand-green/30 flex flex-col">
-                                <div className="flex-1 space-y-8">
+                            <div className="lg:col-span-4 bg-brand-green rounded-3xl p-8 md:p-10 text-white shadow-2xl shadow-brand-green/30 h-fit">
+                                <div className="space-y-8">
                                     <div>
                                         <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-2">Monthly Installment</p>
                                         <div className="text-5xl font-black">
@@ -316,40 +353,75 @@ export default function RentCalculator() {
 
                                     <div className="space-y-4 pt-8 border-t border-white/10">
                                         <div className="flex justify-between items-center group">
-                                            <span className="text-sm text-white/70">Downpayment ({downPaymentPercent}%)</span>
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-sm text-white/70">Downpayment ({downPaymentPercent}%)</span>
+                                                <InfoIcon tooltip="The initial asset payment you're making upfront." />
+                                            </div>
                                             <span className="font-bold">{formatCurrency(results.downPaymentAmount)}</span>
                                         </div>
                                         <div className="flex justify-between items-center">
-                                            <span className="text-sm text-white/70">Total Other Charges</span>
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-sm text-white/70">Total Other Charges</span>
+                                                <InfoIcon tooltip="Sum of Legal Fees, Service Charges, and Agency Fees required upfront." />
+                                            </div>
                                             <span className="font-bold">{formatCurrency(results.otherChargesAmount)}</span>
                                         </div>
+
+                                        <div className="flex justify-between items-center text-green-100/80">
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-sm">Loan from Bank</span>
+                                                <InfoIcon tooltip="The remaining balance that will be financed by our partner banks." />
+                                            </div>
+                                            <span className="font-bold">{formatCurrency(results.balanceToFinance)}</span>
+                                        </div>
+
                                         {isInterestEnabled && (
                                             <div className="flex justify-between items-center text-green-200">
-                                                <span className="text-sm">Financing Interest</span>
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-sm">Financing Interest ({interestRate}%)</span>
+                                                    <InfoIcon tooltip="Total interest cost charged by the financing partner." />
+                                                </div>
                                                 <span className="font-bold">+ {formatCurrency(results.interestAmount)}</span>
                                             </div>
                                         )}
+
                                         <div className="pt-4 border-t border-white/20">
-                                            <div className="flex justify-between items-center">
+                                            <div className="flex justify-between items-center mb-1">
                                                 <div className="flex flex-col">
-                                                    <span className="text-xs font-black uppercase tracking-widest text-white/50">Required Upfront</span>
-                                                    <span className="text-lg font-black">Total Payment</span>
+                                                    <div className="flex items-center gap-1">
+                                                        <span className="text-[10px] font-black uppercase tracking-widest text-white/50">Upfront Required</span>
+                                                        <InfoIcon tooltip="Total amount payable before move-in (Downpayment + Other Charges)." />
+                                                    </div>
+                                                    <span className="text-lg font-black leading-none">Immediate Payment</span>
                                                 </div>
                                                 <span className="text-3xl font-black">{formatCurrency(results.totalUpfront)}</span>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* Action Button */}
+                                        <div className="pt-4 border-t border-white/10">
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-xs font-bold uppercase text-white/40">Total Cost of Housing</span>
+                                                    <InfoIcon tooltip="Grand total cost of the property including rent, fees, and interest over the period." />
+                                                </div>
+                                                <span className="text-xl font-black text-white/90">
+                                                    {formatCurrency(results.totalUpfront + results.totalRepayable)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-10 space-y-4">
                                     <button
                                         onClick={handleApply}
-                                        className="w-full bg-white text-brand-green py-5 rounded-2xl font-black text-lg hover:shadow-xl hover:scale-[1.02] transition-all active:scale-95 mt-4"
+                                        className="w-full bg-white text-brand-green py-5 rounded-2xl font-black text-lg hover:shadow-xl hover:scale-[1.02] transition-all active:scale-95"
                                     >
                                         Get Started Now
                                     </button>
 
                                     <p className="text-[10px] text-center text-white/40 font-bold uppercase tracking-tighter">
-                                        Terms and conditions apply. Subject to verification.
+                                        Terms and conditions apply. Subject to verification via {selectedBank.name}.
                                     </p>
                                 </div>
                             </div>
