@@ -4,6 +4,7 @@ import React, { use } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { getMockProperties } from '@/utils/properties';
+import PropertyInviteSection from '@/components/dashboard/caretaker/PropertyInviteSection';
 
 export default function PropertyDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
@@ -157,6 +158,14 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
 
                 {/* Right Column: Stats & Actions */}
                 <div className="space-y-6">
+                    {/* Caretaker Specific Actions */}
+                    {role === 'caretaker' && (
+                        <PropertyInviteSection
+                            propertyId={property.id.toString()}
+                            propertyTitle={property.title}
+                        />
+                    )}
+
                     {/* Price Card */}
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                         <div className="mb-4">

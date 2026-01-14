@@ -59,6 +59,7 @@ interface UserState {
     agent?: any;
     investor?: any;
   };
+  followedListers: string[];
   draftData: Record<string, any>;
   
   
@@ -66,6 +67,7 @@ interface UserState {
   setUser: (data: Partial<UserState>) => void;
   updateProfile: (data: Partial<CommonProfile>) => void;
   updateRoleProfileData: (role: Role, data: any) => void;
+  toggleFollowLister: (listerId: string) => void;
   setActiveRole: (role: Role) => void;
   setEmailVerified: (status: boolean) => void;
   setHasHydrated: (value: boolean) => void;
@@ -106,6 +108,7 @@ export const useUserStore = create<UserState>()(
         image: '/assets/dashboard/profile-placeholder.png',
       },
       roleData: {},
+      followedListers: [],
       draftData: {},
 
       setUser: (data) => set((state) => ({ ...state, ...data })),
@@ -117,6 +120,11 @@ export const useUserStore = create<UserState>()(
           ...state.roleData, 
           [role]: { ...state.roleData[role as keyof typeof state.roleData], ...data }
         }
+      })),
+      toggleFollowLister: (listerId) => set((state) => ({
+        followedListers: state.followedListers.includes(listerId)
+          ? state.followedListers.filter(id => id !== listerId)
+          : [...state.followedListers, listerId]
       })),
       setActiveRole: (activeRole) => set({ activeRole }),
       setEmailVerified: (verified) => set({ verified }),

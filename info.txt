@@ -1,44 +1,31 @@
- 
--- diffrent sub property types will have diffrent questions
-
---user maagement,landlord,caretaker,agent, investor,tenant seprate
-
---when adding properties add the sepcifications
-
---in add property Make sure that they can also add videos as well, and accept both Portrait and Landscape videos and pictures size in the add property
 
 
---extra charges for specifications with note are paid alongside 
+----new task
 
 
------ new tassk
 
---featured listings 
---default additional charges
----service charges, legal and charges
-tenancy agreement,
---preview of properties todo,
 
---*make some fields required
+-- change available tenure to repayment strategy
 
--- how do we certify an agent by providing the owner details and make sure that the owner is aware but make it optional.
+--add tooltip that says amount for sub payment
 
---properties should have the role that uploaded it.
 
---card to warn users that dealings outside the bussiness is not recommmended 
 
--- when a user clicks the property the user listed should be able to see the person who listed 
 
--- integrated messaging for properties should reach out
 
--- lister profile  should be verfied /not verfied
+--landlord, should be able to invite agent,caretaker, 
+--caretaker can be able to invite landlord only
+--agent can invite landlord,caretaker,agent 
 
---carousel,
+--view profile by the side in marketplace single page under the main card,
 
--- for sale property encourage to upload property plan 
+-lister can have a group or contact:once a lister uploads a property
+--update tenant rent calculator with the extra charges 
 
---google earth..
+-- add tooltips to the calculator
 
---landlord should be able to assign caretaker, agent can assign caretaker too, invite landlord and list them ,
+--remove intrest from calculator
 
---support for properties 
+--additional charges should be on the calculator as other charges  + downpayment 
+--pass other charges through url
+--add a card that explain that.

@@ -57,20 +57,20 @@ export default function SignInPage() {
                         <div className="w-12 h-12 bg-brand-green rounded-xl mb-6 flex items-center justify-center text-white font-bold shadow-lg shadow-brand-green/20">
                             H2H
                         </div>
-                        <h1 className="text-3xl font-bold text-brand-green-900 mb-2">Sign in to account</h1>
-                        <p className="text-brand-green-500">Welcome back! Please enter your details.</p>
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign in to account</h1>
+                        <p className="text-gray-500">Welcome back! Please enter your details.</p>
                     </div>
 
                     <form onSubmit={handleSubmit((data) => signIn(data.email, data.password))} className="space-y-5">
                         <div>
-                            <label className="block text-xs font-bold text-brand-green-500 uppercase mb-2 tracking-wider">
+                            <label className="block text-xs font-bold text-gray-600 uppercase mb-2 tracking-wider">
                                 Email Address
                             </label>
                             <div className="relative group">
-                                <FiMail className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400 group-focus-within:text-brand-green transition-colors" />
+                                <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors" />
                                 <input
                                     {...register('email')}
-                                    className={`w-full pl-12 pr-4 py-4 bg-brand-green-50 border-2 rounded-xl outline-none transition-all ${errors.email ? 'border-red-500' : 'border-transparent focus:bg-white focus:border-brand-green'}`}
+                                    className={`w-full pl-12 pr-4 py-4 bg-gray-50 border-2 rounded-xl outline-none transition-all ${errors.email ? 'border-red-500' : 'border-transparent focus:bg-white focus:border-brand-green'}`}
                                     placeholder="you@example.com"
                                 />
                             </div>
@@ -79,23 +79,23 @@ export default function SignInPage() {
 
                         <div>
                             <div className="flex justify-between mb-2">
-                                <label className="text-xs font-bold text-brand-green-500 uppercase tracking-wider">Password</label>
-                                <Link href="/forgot-password" className="text-xs font-bold text-brand-green hover:underline">
+                                <label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Password</label>
+                                <Link href="/forgot-password" university-green className="text-xs font-bold text-brand-green hover:underline">
                                     Forgot password?
                                 </Link>
                             </div>
                             <div className="relative group">
-                                <FiLock className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400 group-focus-within:text-brand-green transition-colors" />
+                                <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors" />
                                 <input
                                     {...register('password')}
                                     type={showPassword ? "text" : "password"}
-                                    className={`w-full pl-12 pr-12 py-4 bg-brand-green-50 border-2 rounded-xl outline-none transition-all ${errors.password ? 'border-red-500' : 'border-transparent focus:bg-white focus:border-brand-green'}`}
+                                    className={`w-full pl-12 pr-12 py-4 bg-gray-50 border-2 rounded-xl outline-none transition-all ${errors.password ? 'border-red-500' : 'border-transparent focus:bg-white focus:border-brand-green'}`}
                                     placeholder="••••••••"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400 hover:text-brand-green"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-green"
                                 >
                                     {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
                                 </button>
@@ -114,8 +114,8 @@ export default function SignInPage() {
                     </form>
 
                     {/* Quick Login Section */}
-                    <div className="mt-8 pt-8 border-t border-brand-green-100">
-                        <p className="text-[10px] font-bold text-brand-green-400 uppercase tracking-[0.2em] mb-4 text-center">
+                    <div className="mt-8 pt-8 border-t border-gray-100">
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4 text-center">
                             Quick Login (Demo)
                         </p>
                         <div className="grid grid-cols-3 gap-2">
@@ -125,10 +125,10 @@ export default function SignInPage() {
                                     type="button"
                                     disabled={isLoading}
                                     onClick={() => handleQuickLogin(account.email)}
-                                    className="flex flex-col items-center justify-center p-3 rounded-xl bg-brand-green-50 border border-brand-green-100 hover:border-brand-green hover:bg-white transition-all group disabled:opacity-50"
+                                    className="flex flex-col items-center justify-center p-3 rounded-xl bg-gray-50 border border-gray-100 hover:border-brand-green hover:bg-white transition-all group disabled:opacity-50"
                                 >
-                                    <account.icon className="text-brand-green-400 group-hover:text-brand-green mb-1" size={16} />
-                                    <span className="text-[9px] font-bold text-brand-green-600 uppercase text-center truncate w-full">
+                                    <account.icon className="text-gray-400 group-hover:text-brand-green mb-1" size={16} />
+                                    <span className="text-[9px] font-bold text-gray-600 uppercase text-center truncate w-full">
                                         {account.label}
                                     </span>
                                 </button>
@@ -137,7 +137,7 @@ export default function SignInPage() {
                     </div>
 
                     <div className="mt-10 text-center">
-                        <p className="text-sm text-brand-green-500">
+                        <p className="text-sm text-gray-500">
                             Don't have an account? <Link href={redirect ? `/signup?redirect=${encodeURIComponent(redirect)}` : "/signup"} className="text-brand-green font-bold hover:underline">Create one</Link>
                         </p>
                     </div>

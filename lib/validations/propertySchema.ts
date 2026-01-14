@@ -81,9 +81,12 @@ export const propertySchema = z.object({
 
   installments: z.object({
     enabled: z.boolean().default(false),
-    depositPercent: z.coerce.number().optional(),
-    tenures: z.array(z.coerce.number()).optional(),
+    depositType: z.enum(['fixed', 'percentage']).default('percentage'),
+    depositValue: z.coerce.number().optional(),
+    tenures: z.array(z.coerce.number()).optional(), // Repayment Strategy (months)
   }).optional(),
+
+  availabilityDuration: z.coerce.number().optional(), // 6, 12, 24 months for rent
 
   description: z.object({
     short: z.string().optional(),
@@ -109,6 +112,7 @@ export const propertySchema = z.object({
     phone: z.string().optional(),
   }).optional(),
 
+  communityLink: z.string().url('Invalid URL format').optional().or(z.literal('')),
   status: z.enum(['available', 'sold', 'let-agreed', 'draft']).default('draft'),
 }).superRefine((data, ctx) => {
   // Caretaker: Landlord details are required

@@ -3,20 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import FadeIn from './FadeIn';
-
-// Partner banks with their interest rates
-const PARTNER_BANKS = [
-    { name: 'First Bank of Nigeria', rate: 4.5 },
-    { name: 'Zenith Bank', rate: 4.8 },
-    { name: 'GTBank (Guaranty Trust Bank)', rate: 4.7 },
-    { name: 'Access Bank', rate: 5.0 },
-    { name: 'UBA (United Bank for Africa)', rate: 4.9 },
-    { name: 'Stanbic IBTC Bank', rate: 4.6 },
-    { name: 'Fidelity Bank', rate: 5.2 },
-    { name: 'Union Bank', rate: 5.1 },
-    { name: 'Wema Bank', rate: 5.3 },
-    { name: 'Sterling Bank', rate: 4.8 },
-];
+import { HiOutlineInformationCircle, HiOutlineShieldCheck, HiOutlineReceiptPercent, HiOutlineBanknotes } from 'react-icons/hi2';
+import InfoIcon from './lib/InfoIcon';
 
 // Helpers
 const formatNumberWithCommas = (value: number | string) => {
@@ -32,29 +20,74 @@ export default function RentCalculator() {
     const router = useRouter();
     const params = useSearchParams();
 
-    // Get pre-filled amount from query if exists
+    // Get pre-filled amounts from query if exists
     const prefilledAmount = params.get('amount') ? Number(params.get('amount')) : 2000000;
 
-    // Default values - updated per requirements
+    // Parse itemized charges
+    const itemizedUrlCharges = {
+        serviceCharge: Number(params.get('serviceCharge')) || 0,
+        legalFees: Number(params.get('legalFees')) || 0,
+        tenancyAgreement: Number(params.get('tenancyAgreement')) || 0,
+        powerBackup: Number(params.get('powerBackup')) || 0,
+        waterSupply: Number(params.get('waterSupply')) || 0,
+        securityPatrol: Number(params.get('securityPatrol')) || 0,
+        wasteDisposal: Number(params.get('wasteDisposal')) || 0,
+    };
+
+    const interestConfig = {
+        isInterestEnabled: params.get('isInterestEnabled') === 'true',
+        interestRate: Number(params.get('interestRate')) || 0,
+    };
+
+    const totalItemized = Object.values(itemizedUrlCharges).reduce((a, b) => a + Number(b), 0);
+    const hasItemizedFromUrl = totalItemized > 0;
+
+    // Use prefilled total other charges if itemized is not present, otherwise use totalItemized
+    const initialOtherCharges = hasItemizedFromUrl ? totalItemized : (Number(params.get('otherCharges')) || 0);
+
+    // State
     const [rent, setRent] = useState<number | ''>(prefilledAmount);
-    const [downPaymentPercent, setDownPaymentPercent] = useState(50); // Start at 50%
-    const [months, setMonths] = useState(1); // Start at 1 month
-    const [selectedBankIndex, setSelectedBankIndex] = useState(0); // Default to first bank
+    const [otherCharges, setOtherCharges] = useState<number | ''>(initialOtherCharges);
+    const [downPaymentPercent, setDownPaymentPercent] = useState(50);
+    const [months, setMonths] = useState(1);
+
+    // Optional Interest State
+    const [isInterestEnabled, setIsInterestEnabled] = useState(interestConfig.isInterestEnabled || false);
+    const [interestRate, setInterestRate] = useState(interestConfig.interestRate || 10); // 10% annual flat rate as default
 
     // Calculated values
     const [results, setResults] = useState({
-        downPayment: 0,
-        principal: 0,
+        downPaymentAmount: 0,
+        otherChargesAmount: 0,
+        totalUpfront: 0,
+        balanceToFinance: 0,
         interestAmount: 0,
         totalRepayable: 0,
         monthlyPayment: 0
     });
 
+    const MOCK_BANKS = [
+        { name: 'Standard Trust Bank', rate: 10, color: 'text-blue-600' },
+        { name: 'Heritage Savings', rate: 12, color: 'text-orange-600' },
+        { name: 'Greenleaf Finance', rate: 15, color: 'text-brand-green' },
+        { name: 'Premium Capital', rate: 8, color: 'text-purple-600' },
+    ];
+
+    const [selectedBank, setSelectedBank] = useState(MOCK_BANKS[0]);
+
+    useEffect(() => {
+        if (isInterestEnabled) {
+            setInterestRate(selectedBank.rate);
+        }
+    }, [selectedBank, isInterestEnabled]);
+
     useEffect(() => {
         if (rent === '' || rent === 0) {
             setResults({
-                downPayment: 0,
-                principal: 0,
+                downPaymentAmount: 0,
+                otherChargesAmount: 0,
+                totalUpfront: 0,
+                balanceToFinance: 0,
                 interestAmount: 0,
                 totalRepayable: 0,
                 monthlyPayment: 0
@@ -63,156 +96,333 @@ export default function RentCalculator() {
         }
 
         const rentAmount = Number(rent);
-        const downPayment = (rentAmount * downPaymentPercent) / 100;
-        const principal = rentAmount - downPayment;
+        const otherAmount = Number(otherCharges) || 0;
 
-        // Get interest rate from selected bank
-        const interestRate = PARTNER_BANKS[selectedBankIndex].rate;
+        // Calculate downpayment for the rent portion
+        const rentDownPayment = (rentAmount * downPaymentPercent) / 100;
+        const balance = rentAmount - rentDownPayment;
 
-        // Calculate monthly interest on principal
-        const interestAmount = (principal * (interestRate / 100)) * months;
+        // Interest calculation (flat rate based on months)
+        const interestAmount = isInterestEnabled
+            ? (balance * (interestRate / 100) * (months / 12))
+            : 0;
 
-        // Total repayable = principal + interest
-        const totalRepayable = principal + interestAmount;
-        const monthlyPayment = totalRepayable / months;
+        const totalRepayable = balance + interestAmount;
+
+        // Total upfront = Downpayment on rent + all other charges
+        const totalUpfront = rentDownPayment + otherAmount;
+
+        // Monthly payment
+        const monthlyPayment = months > 0 ? totalRepayable / months : 0;
 
         setResults({
-            downPayment,
-            principal,
+            downPaymentAmount: rentDownPayment,
+            otherChargesAmount: otherAmount,
+            totalUpfront,
+            balanceToFinance: balance,
             interestAmount,
             totalRepayable,
             monthlyPayment
         });
-    }, [rent, downPaymentPercent, months, selectedBankIndex]);
+    }, [rent, otherCharges, downPaymentPercent, months, isInterestEnabled, interestRate]);
 
-    const handleSubmit = () => router.push('/signup');
+    const handleApply = () => {
+        const query = new URLSearchParams({
+            amount: rent.toString(),
+            otherCharges: otherCharges.toString(),
+            downPayment: results.downPaymentAmount.toString(),
+            months: months.toString(),
+            interest: isInterestEnabled ? interestRate.toString() : '0'
+        }).toString();
+        router.push(`/signup?${query}`);
+    };
 
     return (
         <section id="calculator" className="py-20 bg-gray-50">
             <div className="container mx-auto px-6 md:px-12">
                 <FadeIn>
-                    <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-                        <div className="p-8 md:p-12">
-                            <h2 className="text-3xl font-bold text-gray-900 mb-2 text-center">Tenant Rent Calculator</h2>
-                            <p className="text-gray-600 text-center mb-10">Estimate your monthly payments. Final terms subject to approval.</p>
+                    <div className="max-w-5xl mx-auto space-y-8">
+                        {/* Header */}
+                        <div className="text-center">
+                            <h2 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Flexible Rent Calculator</h2>
+                            <p className="text-gray-500 max-w-2xl mx-auto">
+                                Split your rent into manageable monthly payments. {isInterestEnabled ? 'Fast-track your move with partner financing.' : 'No interest, no hidden fees. Just transparent housing finance.'}
+                            </p>
+                        </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                                {/* Inputs */}
-                                <div className="space-y-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Annual Rent (₦) <span className="text-red-500">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={formatNumberWithCommas(rent)}
-                                            onChange={(e) => {
-                                                const numericValue = Number(e.target.value.replace(/,/g, ''));
-                                                setRent(isNaN(numericValue) ? '' : numericValue);
-                                            }}
-                                            placeholder="e.g. 2,000,000"
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none transition-all"
-                                        />
-                                    </div>
+                        <div className="grid grid-cols-1 lg:grid-cols-10 gap-8">
+                            {/* Inputs Column */}
+                            <div className="lg:col-span-6 space-y-8">
+                                <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-10 space-y-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        {/* Annual Rent */}
+                                        <div className="space-y-2">
+                                            <label className="flex items-center gap-2 text-sm font-bold text-gray-700">
+                                                Annual Asset Value (₦)
+                                                <InfoIcon tooltip="The total quoted price of the property or annual rent." />
+                                            </label>
+                                            <div className="relative">
+                                                <input
+                                                    type="text"
+                                                    value={formatNumberWithCommas(rent)}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value.replace(/,/g, '');
+                                                        setRent(val === '' ? '' : Number(val));
+                                                    }}
+                                                    className="w-full pl-4 pr-12 py-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-brand-green focus:bg-white outline-none transition-all font-bold text-lg"
+                                                    placeholder="0.00"
+                                                />
+                                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">₦</span>
+                                            </div>
+                                        </div>
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Down Payment ({downPaymentPercent}%)</label>
-                                        <input
-                                            type="range"
-                                            min="50"
-                                            max="100"
-                                            value={downPaymentPercent}
-                                            onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
-                                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-green"
-                                        />
-                                        <div className="flex justify-between text-xs text-gray-500 mt-1">
-                                            <span>50%</span>
-                                            <span>100%</span>
+                                        {/* Other Charges */}
+                                        <div className="space-y-2">
+                                            <label className="flex items-center gap-2 text-sm font-bold text-gray-700">
+                                                Other Charges (₦)
+                                                <InfoIcon tooltip="Includes Legal fees, Service charges, and Agency fees. These must be paid upfront." />
+                                            </label>
+                                            <div className="relative">
+                                                <input
+                                                    type="text"
+                                                    value={formatNumberWithCommas(otherCharges)}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value.replace(/,/g, '');
+                                                        setOtherCharges(val === '' ? '' : Number(val));
+                                                    }}
+                                                    className="w-full pl-4 pr-12 py-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-brand-green focus:bg-white outline-none transition-all font-bold text-lg"
+                                                    placeholder="0.00"
+                                                    readOnly={hasItemizedFromUrl}
+                                                />
+                                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">₦</span>
+                                            </div>
+                                            {hasItemizedFromUrl && <p className="text-[10px] text-brand-green font-bold uppercase ml-1 tracking-tighter">Locked: Using itemized charges from property</p>}
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Repayment Period ({months} {months === 1 ? 'Month' : 'Months'})</label>
-                                        <input
-                                            type="range"
-                                            min="1"
-                                            max="10"
-                                            value={months}
-                                            onChange={(e) => setMonths(Number(e.target.value))}
-                                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-green"
-                                        />
-                                        <div className="flex justify-between text-xs text-gray-500 mt-1">
-                                            <span>1 Month</span>
-                                            <span>10 Months</span>
+                                    {/* Itemized Breakdown if available */}
+                                    {hasItemizedFromUrl && (
+                                        <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100 space-y-3">
+                                            <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Itemized Other Charges Breakdown</p>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                                                {Object.entries(itemizedUrlCharges).map(([key, val]) => val > 0 && (
+                                                    <div key={key} className="flex justify-between items-center py-1 border-b border-gray-200/50 last:border-0">
+                                                        <span className="text-xs text-gray-500 capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
+                                                        <span className="text-xs font-bold text-gray-700">₦{formatNumberWithCommas(val)}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
+                                    )}
+
+                                    {/* Sliders */}
+                                    <div className="space-y-10 pt-4">
+                                        <div className="space-y-4">
+                                            <div className="flex justify-between items-end">
+                                                <label className="flex items-center gap-1 text-sm font-bold text-gray-700">
+                                                    Down Payment
+                                                    <InfoIcon tooltip="The initial amount you pay from your own pocket." />
+                                                </label>
+                                                <span className="text-2xl font-black text-brand-green">{downPaymentPercent}%</span>
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min="30"
+                                                max="100"
+                                                step="5"
+                                                value={downPaymentPercent}
+                                                onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
+                                                className="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-brand-green"
+                                            />
+                                            <div className="flex justify-between text-[10px] font-bold text-gray-400 tracking-widest uppercase">
+                                                <span>Min 30%</span>
+                                                <span>Full Pay 100%</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-6">
+                                            <div className="flex justify-between items-end">
+                                                <div className="space-y-1">
+                                                    <label className="text-sm font-bold text-gray-700">Repayment Period</label>
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-2xl font-black text-brand-green">{months} {months === 1 ? 'Month' : 'Months'}</span>
+
+                                                        {/* Interest Toggle */}
+                                                        <button
+                                                            onClick={() => setIsInterestEnabled(!isInterestEnabled)}
+                                                            className={`flex items-center gap-2 px-3 py-1 rounded-full border-2 transition-all ${isInterestEnabled
+                                                                ? 'border-brand-green bg-green-50 text-brand-green shadow-sm'
+                                                                : 'border-gray-200 text-gray-400 grayscale'
+                                                                }`}
+                                                        >
+                                                            <div className={`size-2 rounded-full ${isInterestEnabled ? 'bg-brand-green animate-pulse' : 'bg-gray-300'}`}></div>
+                                                            <span className="text-[10px] font-black uppercase tracking-tight">Interest Enabled</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min="1"
+                                                max="12"
+                                                value={months}
+                                                onChange={(e) => setMonths(Number(e.target.value))}
+                                                className="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-brand-green"
+                                            />
+                                            <div className="flex justify-between text-[10px] font-bold text-gray-400 tracking-widest uppercase">
+                                                <span>1 Month</span>
+                                                <span>12 Months</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Optional Interest Rate Slider & Bank Selection */}
+                                        {isInterestEnabled && (
+                                            <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-300 p-6 bg-gray-50 rounded-2xl border border-brand-green/10">
+                                                <div className="space-y-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <HiOutlineBanknotes className="text-brand-green" size={20} />
+                                                        <label className="text-sm font-bold text-gray-700">Select Financing Partner</label>
+                                                    </div>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                        {MOCK_BANKS.map((bank) => (
+                                                            <button
+                                                                key={bank.name}
+                                                                onClick={() => setSelectedBank(bank)}
+                                                                className={`p-3 rounded-xl border-2 text-left transition-all ${selectedBank.name === bank.name
+                                                                    ? 'border-brand-green bg-white shadow-md'
+                                                                    : 'border-transparent bg-white/50 hover:bg-white'}`}
+                                                            >
+                                                                <p className="text-[10px] font-black uppercase text-gray-400 mb-1">{bank.name}</p>
+                                                                <p className={`text-lg font-black ${bank.color}`}>{bank.rate}% APR</p>
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-4 pt-4 border-t border-gray-200/50">
+                                                    <div className="flex justify-between items-end">
+                                                        <div className="flex items-center gap-2">
+                                                            <HiOutlineReceiptPercent className="text-brand-green" size={20} />
+                                                            <label className="text-sm font-bold text-gray-700">Custom Interest Rate Adjustment</label>
+                                                        </div>
+                                                        <span className="text-2xl font-black text-brand-green">{interestRate}%</span>
+                                                    </div>
+                                                    <input
+                                                        type="range"
+                                                        min="5"
+                                                        max="25"
+                                                        step="1"
+                                                        value={interestRate}
+                                                        onChange={(e) => setInterestRate(Number(e.target.value))}
+                                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-green"
+                                                    />
+                                                    <p className="text-[10px] text-gray-500 italic">Adjust based on your personalized offer from {selectedBank.name}.</p>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
 
+                                    {/* Explanatory Card */}
+                                    <div className={`p-6 border rounded-2xl flex gap-4 transition-all duration-500 ${isInterestEnabled ? 'bg-orange-50/50 border-orange-100' : 'bg-brand-green/5 border-brand-green/10'}`}>
+                                        <div className={`shrink-0 size-12 rounded-xl flex items-center justify-center text-white shadow-lg ${isInterestEnabled ? 'bg-orange-500 shadow-orange-500/20' : 'bg-brand-green shadow-brand-green/20'}`}>
+                                            {isInterestEnabled ? <HiOutlineBanknotes size={28} /> : <HiOutlineShieldCheck size={28} />}
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-gray-900 mb-1">{isInterestEnabled ? 'Partner Financing' : '0% Interest Financing'}</h4>
+                                            <p className="text-sm text-gray-500 leading-relaxed">
+                                                {isInterestEnabled
+                                                    ? 'We partner with leading banks to provide you with instant rent loans. Pay a small monthly interest to secure your dream home today.'
+                                                    : 'We believe in ethical financing. Your total repayable amount is exactly the same as the rent. Only "Other Charges" are collected upfront.'
+                                                }
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Summary Column */}
+                            <div className="lg:col-span-4 bg-brand-green rounded-3xl p-8 md:p-10 text-white shadow-2xl shadow-brand-green/30 h-fit">
+                                <div className="space-y-8">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Partner Bank</label>
-                                        <select
-                                            value={selectedBankIndex}
-                                            onChange={(e) => setSelectedBankIndex(Number(e.target.value))}
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-transparent outline-none transition-all"
-                                        >
-                                            {PARTNER_BANKS.map((bank, index) => (
-                                                <option key={index} value={index}>
-                                                    {bank.name} - {bank.rate}% interest
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <p className="text-xs text-gray-500 mt-1">Interest rate varies by partner bank</p>
+                                        <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-2">Monthly Installment</p>
+                                        <div className="text-5xl font-black">
+                                            {formatCurrency(results.monthlyPayment)}
+                                        </div>
+                                        <p className="text-white/60 text-xs mt-2 italic">For next {months} months</p>
+                                    </div>
+
+                                    <div className="space-y-4 pt-8 border-t border-white/10">
+                                        <div className="flex justify-between items-center group">
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-sm text-white/70">Downpayment ({downPaymentPercent}%)</span>
+                                                <InfoIcon tooltip="The initial asset payment you're making upfront." />
+                                            </div>
+                                            <span className="font-bold">{formatCurrency(results.downPaymentAmount)}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-sm text-white/70">Total Other Charges</span>
+                                                <InfoIcon tooltip="Sum of Legal Fees, Service Charges, and Agency Fees required upfront." />
+                                            </div>
+                                            <span className="font-bold">{formatCurrency(results.otherChargesAmount)}</span>
+                                        </div>
+
+                                        <div className="flex justify-between items-center text-green-100/80">
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-sm">Loan from Bank</span>
+                                                <InfoIcon tooltip="The remaining balance that will be financed by our partner banks." />
+                                            </div>
+                                            <span className="font-bold">{formatCurrency(results.balanceToFinance)}</span>
+                                        </div>
+
+                                        {isInterestEnabled && (
+                                            <div className="flex justify-between items-center text-green-200">
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-sm">Financing Interest ({interestRate}%)</span>
+                                                    <InfoIcon tooltip="Total interest cost charged by the financing partner." />
+                                                </div>
+                                                <span className="font-bold">+ {formatCurrency(results.interestAmount)}</span>
+                                            </div>
+                                        )}
+
+                                        <div className="pt-4 border-t border-white/20">
+                                            <div className="flex justify-between items-center mb-1">
+                                                <div className="flex flex-col">
+                                                    <div className="flex items-center gap-1">
+                                                        <span className="text-[10px] font-black uppercase tracking-widest text-white/50">Upfront Required</span>
+                                                        <InfoIcon tooltip="Total amount payable before move-in (Downpayment + Other Charges)." />
+                                                    </div>
+                                                    <span className="text-lg font-black leading-none">Immediate Payment</span>
+                                                </div>
+                                                <span className="text-3xl font-black">{formatCurrency(results.totalUpfront)}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-white/10">
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-xs font-bold uppercase text-white/40">Total Cost of Housing</span>
+                                                    <InfoIcon tooltip="Grand total cost of the property including rent, fees, and interest over the period." />
+                                                </div>
+                                                <span className="text-xl font-black text-white/90">
+                                                    {formatCurrency(results.totalUpfront + results.totalRepayable)}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Results */}
-                                <div className="bg-green-50 rounded-xl p-8 flex flex-col justify-center space-y-6">
-                                    {rent === '' || rent === 0 ? (
-                                        <div className="text-center opacity-60">
-                                            <div className="w-16 h-16 bg-brand-green/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-brand-green">
-                                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                                </svg>
-                                            </div>
-                                            <p className="text-gray-600">Enter your annual rent to see payment breakdown.</p>
-                                        </div>
-                                    ) : (
-                                        <>
-                                            <div>
-                                                <p className="text-sm text-gray-600 mb-1">Monthly Repayment</p>
-                                                <div className="text-4xl font-bold text-brand-green">
-                                                    {formatCurrency(results.monthlyPayment)}
-                                                </div>
-                                                <p className="text-xs text-gray-500 mt-1">For {months} {months === 1 ? 'month' : 'months'}</p>
-                                            </div>
+                                <div className="mt-10 space-y-4">
+                                    <button
+                                        onClick={handleApply}
+                                        className="w-full bg-white text-brand-green py-5 rounded-2xl font-black text-lg hover:shadow-xl hover:scale-[1.02] transition-all active:scale-95"
+                                    >
+                                        Get Started Now
+                                    </button>
 
-                                            <div className="space-y-3 pt-6 border-t border-green-100">
-                                                <div className="flex justify-between text-sm">
-                                                    <span className="text-gray-600">Down Payment ({downPaymentPercent}%)</span>
-                                                    <span className="font-medium text-gray-900">{formatCurrency(results.downPayment)}</span>
-                                                </div>
-                                                <div className="flex justify-between text-sm">
-                                                    <span className="text-gray-600">Amount Financed</span>
-                                                    <span className="font-medium text-gray-900">{formatCurrency(results.principal)}</span>
-                                                </div>
-                                                <div className="flex justify-between text-sm">
-                                                    <span className="text-gray-600">Interest ({PARTNER_BANKS[selectedBankIndex].rate}%)</span>
-                                                    <span className="font-medium text-gray-900">{formatCurrency(results.interestAmount)}</span>
-                                                </div>
-                                                <div className="flex justify-between text-sm font-bold pt-2 border-t border-green-100">
-                                                    <span className="text-gray-900">Total Repayable</span>
-                                                    <span className="text-brand-green">{formatCurrency(results.totalRepayable)}</span>
-                                                </div>
-                                            </div>
-
-                                            <button 
-                                                onClick={handleSubmit}
-                                                className="w-full bg-brand-green text-white py-4 rounded-xl font-bold hover:bg-green-600 transition-colors shadow-lg shadow-green-200 mt-4"
-                                            >
-                                                Proceed to Apply
-                                            </button>
-                                        </>
-                                    )}
+                                    <p className="text-[10px] text-center text-white/40 font-bold uppercase tracking-tighter">
+                                        Terms and conditions apply. Subject to verification via {selectedBank.name}.
+                                    </p>
                                 </div>
                             </div>
                         </div>

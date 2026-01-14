@@ -48,6 +48,8 @@ export type Property = {
     depositPercent?: number;
     period?: string;
   };
+  interestRate?: number;
+  isInterestEnabled?: boolean;
 
   serviced?: boolean;
   electricity?: boolean;
@@ -91,6 +93,7 @@ export type Property = {
   isChainFree: boolean;
   hasReducedPrice: boolean;
   isUnderOffer: boolean;
+  communityLink?: string;
 };
 const initialProperties: Property[] = [
   {
@@ -250,6 +253,8 @@ const initialProperties: Property[] = [
     ],
     serviceCharge: 0,
     isInstallmentAllowed: false,
+    interestRate: 15,
+    isInterestEnabled: true,
     posterRole: 'caretaker',
     listerName: "Sarah Adeniran",
     listerVerified: true,
@@ -350,6 +355,8 @@ const initialProperties: Property[] = [
     ],
     serviceCharge: 0,
     isInstallmentAllowed: false,
+    interestRate: 20,
+    isInterestEnabled: true,
     posterRole: 'landlord',
     listerName: "Madam Ngozi",
     listerVerified: true,

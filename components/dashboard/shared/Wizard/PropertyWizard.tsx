@@ -15,6 +15,7 @@ import TermsPreviewStep from './TermsPreviewStep';
 import { useCreateProperty } from '@/hooks/useLandlordQueries';
 import { toast } from 'react-toastify';
 import { useUserStore } from '@/store/userStore';
+import { useNotificationStore } from '@/store/notificationStore';
 import { STEP_CONFIG, ROLE_ACTIONS } from '@/config/propertyConfig';
 
 import SuccessStep from './SuccessStep';
@@ -27,6 +28,7 @@ interface PropertyWizardProps {
 export default function PropertyWizard({ initialData, isEditing = false }: PropertyWizardProps) {
     const router = useRouter();
     const { activeRole } = useUserStore();
+    const { addNotification } = useNotificationStore();
     const [currentStep, setCurrentStep] = useState(0);
 
     const pathname = usePathname();
@@ -146,6 +148,14 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
         createProperty(submissionData, {
             onSuccess: () => {
                 toast.success(isEditing ? 'Property updated!' : roleAction.successMessage);
+
+                // Simulate Priority Broadcast
+                addNotification({
+                    title: 'Priority Broadcast Successful',
+                    message: `Your "Early Bird" priority list has been notified about "${data.title}".`,
+                    type: 'success'
+                });
+
                 setCurrentStep(activeSteps.length); // Move to Success Step (index = length)
                 window.scrollTo(0, 0);
             },

@@ -70,6 +70,7 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
         { label: 'Applications', href: '/dashboard/landlord/applications', icon: MdAssignment },
         { label: 'Payments', href: '/dashboard/landlord/payments', icon: MdPayment },
         { label: 'Contracts', href: '/dashboard/landlord/contracts', icon: MdDescription },
+        { label: 'Partner Network', href: '/dashboard/landlord/team', icon: MdGroup },
         { label: 'Support', href: '/dashboard/landlord/support', icon: MdSupportAgent },
         { label: 'Settings', href: '/dashboard/landlord/settings', icon: MdSettings },
     ],
@@ -88,6 +89,7 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
         { label: 'My Profile', href: '/dashboard/caretaker/profile', icon: MdPerson },
         { label: 'Properties', href: '/dashboard/caretaker/properties', icon: MdHomeWork },
         { label: 'My Tasks', href: '/dashboard/caretaker/tasks', icon: MdAssignment },
+        { label: 'Partner Network', href: '/dashboard/caretaker/team', icon: MdGroup },
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
     ],
     agent: [
@@ -99,6 +101,7 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
         { label: 'Transactions', href: '/dashboard/agent/transactions', icon: MdPayment },
         { label: 'Marketing Tools', href: '/dashboard/agent/marketing', icon: MdTrendingUp },
         { label: 'Documents', href: '/dashboard/agent/documents', icon: MdFolder },
+        { label: 'Partner Network', href: '/dashboard/agent/team', icon: MdGroup },
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
         { label: 'Settings', href: '/dashboard/agent/settings', icon: MdSettings },
     ],
