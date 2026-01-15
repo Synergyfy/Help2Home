@@ -80,7 +80,7 @@ export default function SignInPage() {
                         <div>
                             <div className="flex justify-between mb-2">
                                 <label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Password</label>
-                                <Link href="/forgot-password" university-green className="text-xs font-bold text-brand-green hover:underline">
+                                <Link href="/forgot-password" size="sm" className="text-xs font-bold text-brand-green hover:underline">
                                     Forgot password?
                                 </Link>
                             </div>
@@ -107,7 +107,7 @@ export default function SignInPage() {
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.98 }}
                             disabled={isLoading}
-                            className="w-full py-4 bg-gray-900 hover:bg-black text-white font-bold rounded-xl shadow-lg shadow-gray-200 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                            className="w-full py-4 bg-brand-green hover:bg-green-700 text-white font-bold rounded-xl shadow-lg shadow-green-900/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                         >
                             {isLoading ? 'Signing in...' : 'Sign in'} <FiArrowRight />
                         </motion.button>
