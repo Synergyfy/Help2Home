@@ -79,10 +79,10 @@ export default function LandlordPropertiesPage() {
                             )}
                             <div className="absolute top-4 right-4">
                                 <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${property.status === 'available'
-                                        ? 'bg-green-500 text-white'
-                                        : property.status === 'let-agreed'
-                                            ? 'bg-orange-500 text-white'
-                                            : 'bg-gray-500 text-white'
+                                    ? 'bg-green-500 text-white'
+                                    : property.status === 'let-agreed'
+                                        ? 'bg-orange-500 text-white'
+                                        : 'bg-gray-500 text-white'
                                     }`}>
                                     {property.status}
                                 </span>
@@ -102,7 +102,7 @@ export default function LandlordPropertiesPage() {
                             <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                                 <div>
                                     <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Rent</p>
-                                    <p className="text-lg font-black text-gray-900 italic">₦{property.rent?.toLocaleString()}</p>
+                                    <p className="text-lg font-black text-gray-900 italic">₦{property.price?.toLocaleString()}</p>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Views</p>
