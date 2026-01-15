@@ -26,16 +26,28 @@ export default function QuickActions() {
                 </button>
 
                 <div className="grid grid-cols-2 gap-3">
-                    <button className="bg-gray-50 text-gray-700 py-3 px-2 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200">
+                    <button
+                        onClick={() => router.push(`/dashboard/${activeRole || 'landlord'}/applications`)}
+                        className="bg-gray-50 text-gray-700 py-3 px-2 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200"
+                    >
                         Review applications
                     </button>
-                    <button className="bg-gray-50 text-gray-700 py-3 px-2 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200">
+                    <button
+                        onClick={() => router.push(`/dashboard/${activeRole || 'landlord'}/contracts`)}
+                        className="bg-gray-50 text-gray-700 py-3 px-2 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200"
+                    >
                         Send contract
                     </button>
-                    <button className="bg-gray-50 text-gray-700 py-3 px-2 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200">
+                    <button
+                        onClick={() => router.push(`/dashboard/${activeRole || 'landlord'}/payments`)}
+                        className="bg-gray-50 text-gray-700 py-3 px-2 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200"
+                    >
                         Request payout
                     </button>
-                    <button className="bg-gray-50 text-gray-700 py-3 px-2 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200">
+                    <button
+                        onClick={() => router.push(`/dashboard/${activeRole || 'landlord'}/team`)}
+                        className="bg-gray-50 text-gray-700 py-3 px-2 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200"
+                    >
                         Invite caretaker
                     </button>
                 </div>

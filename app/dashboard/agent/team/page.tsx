@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import InvitePartnerModal from '@/components/shared/InvitePartnerModal';
 import {
     HiOutlineUserGroup,
     HiOutlinePlus,
@@ -58,6 +59,7 @@ const MOCK_PARTNERS: Partner[] = [
 export default function TeamPage() {
     const [partners] = useState<Partner[]>(MOCK_PARTNERS);
     const [filter, setFilter] = useState<'All' | 'Landlord' | 'Caretaker'>('All');
+    const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
     const filteredPartners = filter === 'All'
         ? partners
@@ -74,7 +76,10 @@ export default function TeamPage() {
                     <h1 className="text-3xl font-black text-gray-900 tracking-tight">Partner Network</h1>
                     <p className="text-gray-500 mt-1">Collaborate with landlords and caretakers to grow your business.</p>
                 </div>
-                <button className="flex items-center gap-2 px-6 py-3 bg-brand-green text-white rounded-2xl font-bold hover:bg-green-700 transition-all shadow-lg shadow-green-100">
+                <button
+                    onClick={() => setIsInviteModalOpen(true)}
+                    className="flex items-center gap-2 px-6 py-3 bg-brand-green text-white rounded-2xl font-bold hover:bg-green-700 transition-all shadow-lg shadow-green-100"
+                >
                     <HiOutlinePlus size={20} />
                     Invite Partner
                 </button>
@@ -112,8 +117,8 @@ export default function TeamPage() {
                         key={tab}
                         onClick={() => setFilter(tab)}
                         className={`px-6 py-3 font-bold text-sm transition-all border-b-2 ${filter === tab
-                                ? 'border-brand-green text-brand-green'
-                                : 'border-transparent text-gray-400 hover:text-gray-600'
+                            ? 'border-brand-green text-brand-green'
+                            : 'border-transparent text-gray-400 hover:text-gray-600'
                             }`}
                     >
                         {tab}
@@ -136,16 +141,16 @@ export default function TeamPage() {
                                             <h3 className="font-black text-gray-900">{partner.name}</h3>
                                             <div className="flex items-center gap-2 mt-1">
                                                 <span className={`text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-widest ${partner.role === 'Landlord'
-                                                        ? 'bg-blue-50 text-blue-600'
-                                                        : 'bg-purple-50 text-purple-600'
+                                                    ? 'bg-blue-50 text-blue-600'
+                                                    : 'bg-purple-50 text-purple-600'
                                                     }`}>
                                                     {partner.role}
                                                 </span>
                                                 <span className={`text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-widest ${partner.status === 'Active'
-                                                        ? 'bg-green-50 text-green-600'
-                                                        : partner.status === 'Pending'
-                                                            ? 'bg-orange-50 text-orange-600'
-                                                            : 'bg-gray-50 text-gray-600'
+                                                    ? 'bg-green-50 text-green-600'
+                                                    : partner.status === 'Pending'
+                                                        ? 'bg-orange-50 text-orange-600'
+                                                        : 'bg-gray-50 text-gray-600'
                                                     }`}>
                                                     {partner.status}
                                                 </span>
@@ -193,6 +198,13 @@ export default function TeamPage() {
                     )}
                 </div>
             </div>
+
+            {/* Invite Modal */}
+            <InvitePartnerModal
+                isOpen={isInviteModalOpen}
+                onClose={() => setIsInviteModalOpen(false)}
+                currentRole="agent"
+            />
         </div>
     );
 }
