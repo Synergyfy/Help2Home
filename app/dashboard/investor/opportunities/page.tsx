@@ -3,12 +3,11 @@
 import React, { useState } from 'react';
 import FadeIn from '@/components/FadeIn';
 import {
-    HiOutlineTrendingUp,
+    HiOutlineArrowTrendingUp,
     HiOutlineShieldCheck,
     HiOutlineClock,
-    HiOutlineCurrencyDollar,
-    HiOutlineFilter,
-    HiOutlineSearch
+    HiOutlineFunnel,
+    HiOutlineMagnifyingGlass
 } from 'react-icons/hi2';
 
 const OPPORTUNITIES = [
@@ -64,7 +63,7 @@ export default function OpportunitiesPage() {
                     </div>
                     <div className="flex gap-2">
                         <div className="relative">
-                            <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <HiOutlineMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                             <input
                                 type="text"
                                 placeholder="Search ventures..."
@@ -72,7 +71,7 @@ export default function OpportunitiesPage() {
                             />
                         </div>
                         <button className="p-2.5 bg-white border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors shadow-sm">
-                            <HiOutlineFilter className="text-gray-600" />
+                            <HiOutlineFunnel className="text-gray-600" />
                         </button>
                     </div>
                 </div>
@@ -80,7 +79,7 @@ export default function OpportunitiesPage() {
                 {/* Quick Stats Banner */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-brand-green p-6 rounded-3xl text-white shadow-xl shadow-brand-green/20 relative overflow-hidden group">
-                        <HiOutlineTrendingUp className="absolute right-[-10px] bottom-[-10px] size-32 text-white/10 rotate-12 group-hover:rotate-0 transition-transform duration-700" />
+                        <HiOutlineArrowTrendingUp className="absolute right-[-10px] bottom-[-10px] size-32 text-white/10 rotate-12 group-hover:rotate-0 transition-transform duration-700" />
                         <p className="text-white/60 text-[10px] font-black uppercase tracking-widest mb-1">Average Portfolio ROI</p>
                         <h3 className="text-3xl font-black italic">14.8% <span className="text-sm font-medium not-italic opacity-80">Annually</span></h3>
                     </div>
@@ -103,8 +102,8 @@ export default function OpportunitiesPage() {
                             key={cat}
                             onClick={() => setSelectedCategory(cat)}
                             className={`px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap border-2 ${selectedCategory === cat
-                                    ? 'bg-brand-green border-brand-green text-white shadow-lg shadow-brand-green/20'
-                                    : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200'
+                                ? 'bg-brand-green border-brand-green text-white shadow-lg shadow-brand-green/20'
+                                : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200'
                                 }`}
                         >
                             {cat}
@@ -167,7 +166,7 @@ export default function OpportunitiesPage() {
 
                                 <button className="w-full py-4 bg-brand-green text-white font-black rounded-2xl text-sm italic hover:bg-brand-green/90 hover:shadow-xl hover:shadow-brand-green/20 transition-all flex items-center justify-center gap-2">
                                     View Investment Details
-                                    <HiOutlineTrendingUp size={18} />
+                                    <HiOutlineArrowTrendingUp size={18} />
                                 </button>
                             </div>
                         </div>
