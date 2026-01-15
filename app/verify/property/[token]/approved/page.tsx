@@ -16,7 +16,7 @@ export default function PropertyApprovedPage() {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
             <div className="max-w-lg w-full">
                 {/* Header */}
-                <div className="bg-[#102210] rounded-t-[2rem] p-6 flex justify-between items-center border-b border-gray-800">
+                <div className="bg-[#102210] rounded-t-4xl p-6 flex justify-between items-center border-b border-gray-800">
                     <div className="flex items-center gap-2">
                         <div className="size-8 rounded-full bg-brand-green flex items-center justify-center text-[#102210]">
                             <HiOutlineHome size={20} />
@@ -28,7 +28,7 @@ export default function PropertyApprovedPage() {
                 </div>
 
                 {/* Main Content */}
-                <div className="bg-white rounded-b-[2rem] shadow-2xl overflow-hidden">
+                <div className="bg-white rounded-b-4xl shadow-2xl overflow-hidden">
                     <div className="p-12 text-center">
                         <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-green-50 mb-6 animate-in fade-in zoom-in duration-300">
                             <HiOutlineCheckCircle className="text-brand-green" size={64} />
