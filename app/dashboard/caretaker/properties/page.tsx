@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { getMockProperties } from '@/utils/properties';
 import CaretakerManagedProperties from '@/components/dashboard/caretaker/CaretakerManagedProperties';
 import Link from 'next/link';
