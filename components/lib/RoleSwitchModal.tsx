@@ -1,8 +1,10 @@
 
+import { BiShield } from "react-icons/bi";
+
 interface RoleSwitchModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: () => void;
+    onConfirm: () => void;  
     targetRole: string;
 }
 
@@ -13,7 +15,7 @@ export default function RoleSwitchModal({ isOpen, onClose, onConfirm, targetRole
         <div className="fixed inset-0 z-9999 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl animate-in fade-in zoom-in duration-200">
                 <div className="bg-brand-green/10 p-3 rounded-full mb-4 mx-auto w-fit">
-                    <Shield className="h-8 w-8 text-brand-green" />
+                    <BiShield className="h-8 w-8 text-brand-green" />
                 </div>
                 <h3 className="text-xl font-bold text-center text-[#111811] mb-2">Switch Perspective?</h3>
                 <p className="text-gray-500 text-center text-sm mb-8">

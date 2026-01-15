@@ -7,14 +7,13 @@ import {
     HiOutlineEnvelope,
     HiOutlinePhone,
     HiOutlineCheckCircle,
-    HiOutlineClock,
-    HiOutlineXCircle
+    HiOutlineClock
 } from 'react-icons/hi2';
 
 interface Partner {
     id: string;
     name: string;
-    role: 'Landlord' | 'Caretaker';
+    role: 'Landlord' | 'Agent';
     email: string;
     phone: string;
     properties: number;
@@ -25,39 +24,39 @@ interface Partner {
 const MOCK_PARTNERS: Partner[] = [
     {
         id: '1',
-        name: 'Adebayo Okonkwo',
+        name: 'Funke Adeyemi',
         role: 'Landlord',
-        email: 'adebayo@example.com',
+        email: 'funke@example.com',
         phone: '+234 801 234 5678',
-        properties: 5,
+        properties: 4,
+        status: 'Active',
+        joinedDate: '2025-10-20'
+    },
+    {
+        id: '2',
+        name: 'Tunde Bakare',
+        role: 'Agent',
+        email: 'tunde@example.com',
+        phone: '+234 802 345 6789',
+        properties: 2,
         status: 'Active',
         joinedDate: '2025-11-15'
     },
     {
-        id: '2',
-        name: 'Chioma Nwosu',
-        role: 'Caretaker',
-        email: 'chioma@example.com',
-        phone: '+234 802 345 6789',
-        properties: 3,
-        status: 'Active',
-        joinedDate: '2025-12-01'
-    },
-    {
         id: '3',
-        name: 'Ibrahim Musa',
+        name: 'Amina Hassan',
         role: 'Landlord',
-        email: 'ibrahim@example.com',
+        email: 'amina@example.com',
         phone: '+234 803 456 7890',
-        properties: 2,
+        properties: 1,
         status: 'Pending',
-        joinedDate: '2026-01-10'
+        joinedDate: '2026-01-05'
     }
 ];
 
 export default function TeamPage() {
     const [partners] = useState<Partner[]>(MOCK_PARTNERS);
-    const [filter, setFilter] = useState<'All' | 'Landlord' | 'Caretaker'>('All');
+    const [filter, setFilter] = useState<'All' | 'Landlord' | 'Agent'>('All');
 
     const filteredPartners = filter === 'All'
         ? partners
@@ -72,7 +71,7 @@ export default function TeamPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <h1 className="text-3xl font-black text-gray-900 tracking-tight">Partner Network</h1>
-                    <p className="text-gray-500 mt-1">Collaborate with landlords and caretakers to grow your business.</p>
+                    <p className="text-gray-500 mt-1">Collaborate with landlords and agents for seamless property management.</p>
                 </div>
                 <button className="flex items-center gap-2 px-6 py-3 bg-brand-green text-white rounded-2xl font-bold hover:bg-green-700 transition-all shadow-lg shadow-green-100">
                     <HiOutlinePlus size={20} />
@@ -101,13 +100,13 @@ export default function TeamPage() {
                         <HiOutlineCheckCircle size={24} />
                     </div>
                     <div className="text-2xl font-black text-gray-900">{partners.reduce((acc, p) => acc + p.properties, 0)}</div>
-                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Properties</div>
+                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Shared Properties</div>
                 </div>
             </div>
 
             {/* Filter Tabs */}
             <div className="flex gap-2 border-b border-gray-100">
-                {(['All', 'Landlord', 'Caretaker'] as const).map((tab) => (
+                {(['All', 'Landlord', 'Agent'] as const).map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setFilter(tab)}
