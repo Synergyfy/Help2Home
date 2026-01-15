@@ -11,13 +11,13 @@ export default function LeadsPage() {
     return (
         <div className="space-y-6">
             <h1 className="text-2xl font-bold text-gray-900">Leads Pipeline</h1>
-            
+
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
                 <div className="divide-y divide-gray-50">
                     {leads.map((lead, i) => (
                         <div key={i} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50/50 transition-colors">
                             <div className="flex items-center gap-4">
-                                <div className="h-12 w-12 rounded-2xl bg-[#00853E]/10 flex items-center justify-center font-bold text-[#00853E]">
+                                <div className="h-12 w-12 rounded-2xl bg-brand-green/10 flex items-center justify-center font-bold text-brand-green">
                                     {lead.name.split(' ').map(n => n[0]).join('')}
                                 </div>
                                 <div>
@@ -34,7 +34,7 @@ export default function LeadsPage() {
                                     <div className="text-sm font-bold text-gray-900">{lead.budget}</div>
                                 </div>
                                 <div className="flex gap-2">
-                                    <button className="p-2.5 bg-[#00853E] text-white rounded-xl hover:bg-green-700 transition-colors"><MdPhone /></button>
+                                    <button className="p-2.5 bg-brand-green text-white rounded-xl hover:bg-green-700 transition-colors"><MdPhone /></button>
                                     <button className="p-2.5 border border-gray-200 text-gray-400 rounded-xl hover:bg-gray-100"><MdEmail /></button>
                                 </div>
                             </div>

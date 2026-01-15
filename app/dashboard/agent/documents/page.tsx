@@ -20,7 +20,7 @@ export default function DocumentsPage() {
 
             <div className="grid grid-cols-1 gap-3">
                 {docs.map((doc, i) => (
-                    <div key={i} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-[#00853E] transition-colors">
+                    <div key={i} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-brand-green transition-colors">
                         <div className="flex items-center gap-4">
                             <div className="h-12 w-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
                                 <MdPictureAsPdf size={24} />
@@ -31,7 +31,7 @@ export default function DocumentsPage() {
                             </div>
                         </div>
                         <div className="flex items-center gap-1">
-                            <button className="p-2 text-gray-400 hover:text-[#00853E] transition-colors"><MdFileDownload size={20} /></button>
+                            <button className="p-2 text-gray-400 hover:text-brand-green transition-colors"><MdFileDownload size={20} /></button>
                             <button className="p-2 text-gray-400 hover:text-gray-900"><MdMoreVert size={20} /></button>
                         </div>
                     </div>

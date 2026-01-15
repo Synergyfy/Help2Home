@@ -57,10 +57,10 @@ export default function Header() {
                                 Residential Property to Rent
                             </button>
                             <button
-                                onClick={() => handleCategoryClick('rent', 'corporate-properties-to-rent')}
+                                onClick={() => handleCategoryClick('rent', 'commercial-properties-to-rent')}
                                 className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
                             >
-                                Corporate Property
+                                Commercial / Corporate Property
                             </button>
                             <button
                                 onClick={() => handleCategoryClick('rent', 'student-properties-to-rent')}
@@ -101,12 +101,6 @@ export default function Header() {
                                 className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
                             >
                                 Commercial Property for Sale
-                            </button>
-                            <button
-                                onClick={() => handleCategoryClick('buy', 'corporate-properties-for-sale')}
-                                className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
-                            >
-                                Corporate Property for Sale
                             </button>
                             <button
                                 onClick={() => handleCategoryClick('buy', 'land-for-sale')}
@@ -179,10 +173,10 @@ export default function Header() {
                             Residential Property
                         </button>
                         <button
-                            onClick={() => handleCategoryClick('rent', 'corporate-properties-to-rent')}
+                            onClick={() => handleCategoryClick('rent', 'commercial-properties-to-rent')}
                             className="block w-full text-left text-gray-600 hover:text-brand-green py-2 pl-4"
                         >
-                            Corporate Property
+                            Commercial / Corporate Property
                         </button>
                         <button
                             onClick={() => handleCategoryClick('rent', 'student-properties-to-rent')}

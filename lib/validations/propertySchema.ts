@@ -7,14 +7,18 @@ export const propertySchema = z.object({
   agentLicense: z.string().optional(),
   
   // Basic Info
-  title: z.string().min(5, 'Title must be at least 5 characters'),
-  propertyCategory: z.enum(['Residential', 'Commercial', 'Land', 'Industrial']),
+  title: z.string().min(5, 'Title is too short (min 5 chars)'),
+  propertyCategory: z.enum(['Residential', 'Commercial', 'Land', 'Industrial'], {
+    errorMap: () => ({ message: 'Please select a property category' })
+  }),
   propertyType: z.string().min(1, 'Property type is required'), // Apartment, House, Shop, etc.
-  listingType: z.enum(['Rent', 'Sale', 'Service-Apartment', 'Rent-to-Own']),
+  listingType: z.enum(['Rent', 'Sale', 'Service-Apartment', 'Rent-to-Own'], {
+    errorMap: () => ({ message: 'Please select a listing type' })
+  }),
   
   // Location
   address: z.object({
-    street: z.string().min(5, 'Street address is required'),
+    street: z.string().min(5, 'Street address is required (min 5 chars)'),
     city: z.string().min(2, 'City is required'),
     state: z.string().min(2, 'State is required'),
   }),
@@ -82,8 +86,9 @@ export const propertySchema = z.object({
   installments: z.object({
     enabled: z.boolean().default(false),
     depositType: z.enum(['fixed', 'percentage']).default('percentage'),
-    depositValue: z.coerce.number().optional(),
-    tenures: z.array(z.coerce.number()).optional(), // Repayment Strategy (months)
+    depositValue: z.coerce.number().min(0, 'Deposit value cannot be negative').optional(),
+    tenures: z.array(z.coerce.number()).max(10, 'Repayment plans cannot exceed 10 months').optional(), // Repayment Strategy (months)
+    interestRate: z.coerce.number().min(0, 'Interest rate cannot be negative').default(0),
   }).optional(),
 
   availabilityDuration: z.coerce.number().optional(), // 6, 12, 24 months for rent

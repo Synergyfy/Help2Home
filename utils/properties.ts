@@ -55,6 +55,10 @@ export type Property = {
   electricity?: boolean;
   waterSupply?: boolean;
   security?: boolean;
+  installments?: {
+    enabled: boolean;
+    interestRate?: number;
+  };
   
   // --- Status & Analytics ---
   featured: boolean;

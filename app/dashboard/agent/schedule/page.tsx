@@ -13,7 +13,7 @@ export default function SchedulePage() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold text-gray-900">Inspections</h1>
-                <button className="bg-[#00853E] text-white px-4 py-2 rounded-xl text-sm font-bold">Book Slot</button>
+                <button className="bg-brand-green text-white px-4 py-2 rounded-xl text-sm font-bold">Book Slot</button>
             </div>
 
             <div className="space-y-4">
@@ -27,7 +27,7 @@ export default function SchedulePage() {
                             <div>
                                 <h3 className="font-bold text-gray-900">{item.client}</h3>
                                 <p className="text-sm text-gray-500 flex items-center gap-1 mt-0.5">
-                                    <MdLocationOn className="text-[#00853E]" /> {item.property}
+                                    <MdLocationOn className="text-brand-green" /> {item.property}
                                 </p>
                                 <div className="flex gap-3 mt-2">
                                     <span className="text-[10px] font-bold bg-blue-50 text-blue-600 px-2 py-1 rounded-md flex items-center gap-1">
@@ -41,7 +41,7 @@ export default function SchedulePage() {
                         </div>
                         <div className="flex gap-2 border-t md:border-0 pt-4 md:pt-0">
                             <button className="flex-1 md:flex-none px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 transition-all">Reschedule</button>
-                            <button className="p-2.5 bg-[#00853E] text-white rounded-xl hover:bg-green-700 transition-all"><MdPhone size={18} /></button>
+                            <button className="p-2.5 bg-brand-green text-white rounded-xl hover:bg-green-700 transition-all"><MdPhone size={18} /></button>
                         </div>
                     </div>
                 ))}

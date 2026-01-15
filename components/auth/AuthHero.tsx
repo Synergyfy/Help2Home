@@ -31,10 +31,10 @@ export default function AuthHero() {
     const [current, setCurrent] = useState(0);
 
     return (
-        <div className="relative hidden lg:flex flex-col h-full overflow-hidden bg-brand-green-900">
+        <div className="relative hidden lg:flex flex-col h-full overflow-hidden bg-gray-950">
             <div className="absolute inset-0">
-                <Image src={HeroImg} alt="Auth Background" fill className="object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-1000" priority />
-                <div className="absolute inset-0 bg-linear-to-t from-black via-brand-green-950/60 to-brand-green-900/40" />
+                <Image src={HeroImg} alt="Auth Background" fill className="object-cover opacity-40 grayscale hover:grayscale-0 transition-all duration-1000" priority />
+                <div className="absolute inset-0 bg-linear-to-t from-black via-gray-900/80 to-transparent" />
             </div>
 
             <GeometricPattern />
@@ -48,11 +48,11 @@ export default function AuthHero() {
                         exit={{ opacity: 0, x: 20 }}
                         className="max-w-md"
                     >
-                        <p className="text-white text-2xl font-medium leading-relaxed mb-6 italic">
+                        <p className="text-white text-2xl font-medium leading-relaxed mb-6 italic opacity-90">
                             "{testimonials[current].quote}"
                         </p>
                         <p className="text-white font-bold text-lg">{testimonials[current].author}</p>
-                        <p className="text-brand-green font-medium">{testimonials[current].role}</p>
+                        <p className="text-gray-400 font-medium">{testimonials[current].role}</p>
                     </motion.div>
                 </AnimatePresence>
 

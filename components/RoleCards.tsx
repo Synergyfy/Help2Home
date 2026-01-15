@@ -46,12 +46,12 @@ const roles: { title: string; description: string; icon: JSX.Element; roleParam:
 
 export default function RoleCards() {
   const router = useRouter();
-  const {setUser} = useUserStore()
+  const { setUser } = useUserStore()
 
   const handleGetStarted = (roleParam: Role) => {
-    setUser({ 
-    roles: [roleParam] 
-  });
+    setUser({
+      roles: [roleParam]
+    });
     router.push('/signup/create-account');
   };
 
@@ -80,18 +80,18 @@ export default function RoleCards() {
                   {role.icon}
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-2">{role.title}</h3>
-                <p className="text-gray-600 mb-6 text-sm leading-relaxed flex-grow">
+                <p className="text-gray-600 mb-6 text-sm leading-relaxed grow">
                   {role.description}
                 </p>
                 <div className="flex gap-3 w-full mt-auto">
-                  <button 
+                  <button
                     onClick={() => handleGetStarted(role.roleParam)}
                     className="flex-1 text-center bg-brand-green text-white py-2 rounded-md text-sm font-medium hover:bg-green-600 transition-colors"
                   >
                     Get started
                   </button>
-                  <Link 
-                    href={`/roles/${role.roleParam}`} 
+                  <Link
+                    href={`/roles/${role.roleParam}`}
                     className="flex-1 text-center border border-gray-300 text-gray-700 py-2 rounded-md text-sm font-medium hover:bg-gray-50 transition-colors"
                   >
                     Learn more

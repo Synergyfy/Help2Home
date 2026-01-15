@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import FadeIn from '@/components/FadeIn';
 
 export default function InvestorDashboard() {
@@ -12,9 +13,9 @@ export default function InvestorDashboard() {
                         <h1 className="text-2xl font-bold text-gray-900">Investor Dashboard</h1>
                         <p className="text-gray-500">Welcome back, Alex</p>
                     </div>
-                    <button className="bg-brand-green text-white px-6 py-2 rounded-lg font-medium hover:bg-brand-green/90 transition-colors">
+                    <Link href="/dashboard/investor/opportunities" className="bg-brand-green text-white px-6 py-2 rounded-lg font-medium hover:bg-brand-green/90 transition-colors">
                         Browse Opportunities
-                    </button>
+                    </Link>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

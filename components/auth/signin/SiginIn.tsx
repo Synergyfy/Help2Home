@@ -54,7 +54,7 @@ export default function SignInPage() {
             <div className="flex-1 flex flex-col justify-center px-8 md:px-16 lg:px-24 py-12 bg-white">
                 <div className="max-w-md w-full mx-auto">
                     <div className="mb-10">
-                        <div className="w-12 h-12 bg-brand-green rounded-xl mb-6 flex items-center justify-center text-white font-bold shadow-lg shadow-brand-green/20">
+                        <div className="w-12 h-12 bg-gray-900 rounded-xl mb-6 flex items-center justify-center text-white font-bold shadow-lg shadow-gray-200">
                             H2H
                         </div>
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign in to account</h1>
@@ -80,7 +80,7 @@ export default function SignInPage() {
                         <div>
                             <div className="flex justify-between mb-2">
                                 <label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Password</label>
-                                <Link href="/forgot-password" university-green className="text-xs font-bold text-brand-green hover:underline">
+                                <Link href="/forgot-password" className="text-xs font-bold text-brand-green hover:underline">
                                     Forgot password?
                                 </Link>
                             </div>
@@ -107,7 +107,7 @@ export default function SignInPage() {
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.98 }}
                             disabled={isLoading}
-                            className="w-full py-4 bg-brand-green hover:bg-green-600 text-white font-bold rounded-xl shadow-lg shadow-brand-green/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                            className="w-full py-4 bg-brand-green hover:bg-green-700 text-white font-bold rounded-xl shadow-lg shadow-green-900/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                         >
                             {isLoading ? 'Signing in...' : 'Sign in'} <FiArrowRight />
                         </motion.button>

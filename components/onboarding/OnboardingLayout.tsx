@@ -74,18 +74,18 @@ const OnboardingLayout = ({ children, currentStep, totalSteps }: OnboardingLayou
               src={testimonialImage}
               alt="Professional working"
               fill
-              className="object-cover opacity-60" 
+              className="object-cover opacity-60"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
           </div>
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-black/80 to-transparent flex flex-col justify-end p-8"></div>
 
           <GeometricPattern />
 
           {/* Logo Badge */}
           <div className="relative z-10 p-8 flex justify-end">
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-4 py-2 flex items-center gap-2">
-             
+
               <span className="font-semibold text-white text-sm">Help2Home</span>
             </div>
           </div>
