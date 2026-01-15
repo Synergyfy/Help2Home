@@ -80,7 +80,7 @@ export default function SignInPage() {
                         <div>
                             <div className="flex justify-between mb-2">
                                 <label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Password</label>
-                                <Link href="/forgot-password" size="sm" className="text-xs font-bold text-brand-green hover:underline">
+                                <Link href="/forgot-password" className="text-xs font-bold text-brand-green hover:underline">
                                     Forgot password?
                                 </Link>
                             </div>
