@@ -34,7 +34,7 @@ export default function GuarantorCard({ guarantors, onAdd, onRemove }: Guarantor
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="px-4 py-2 bg-[#6D28D9] text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                    className="px-4 py-2 bg-brand-green text-white text-sm font-bold rounded-xl hover:bg-green-700 shadow-md shadow-green-100 transition-all active:scale-[0.98]"
                 >
                     Add guarantor
                 </button>
@@ -107,7 +107,7 @@ export default function GuarantorCard({ guarantors, onAdd, onRemove }: Guarantor
                             <input
                                 type="email"
                                 placeholder="Email (Optional)"
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300"
+                                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none"
                                 value={newGuarantor.email}
                                 onChange={e => setNewGuarantor({ ...newGuarantor, email: e.target.value })}
                             />
@@ -121,7 +121,7 @@ export default function GuarantorCard({ guarantors, onAdd, onRemove }: Guarantor
                             </button>
                             <button
                                 onClick={handleAdd}
-                                className="px-4 py-2 bg-[#6D28D9] text-white rounded-lg hover:bg-purple-700"
+                                className="px-6 py-2 bg-brand-green text-white font-bold rounded-xl hover:bg-green-700 shadow-lg shadow-green-100 transition-all active:scale-[0.95]"
                             >
                                 Add
                             </button>

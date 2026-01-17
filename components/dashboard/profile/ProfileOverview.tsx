@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useUser } from '@/components/providers/UserContext';
+import { useUserStore } from '@/store/userStore';
 import EditProfileModal from './EditProfileModal';
 
 interface ProfileOverviewProps {
@@ -9,22 +10,31 @@ interface ProfileOverviewProps {
 }
 
 export default function ProfileOverview({ onStartVerification }: ProfileOverviewProps) {
-    const { user, getDefaultAvatar } = useUser();
+    const { user: contextUser, getDefaultAvatar } = useUser();
+    const { profile, fullName, email: storeEmail, verified: isStoreVerified, activeRole } = useUserStore();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-    if (!user) return null;
+    // Fallback to store data if context user is null
+    const displayUser = contextUser || {
+        firstName: profile.firstName || fullName?.split(' ')[0] || 'User',
+        lastName: profile.lastName || fullName?.split(' ')[1] || '',
+        email: storeEmail || 'user@example.com',
+        gender: profile.gender?.toLowerCase() as any || 'other',
+        isVerified: isStoreVerified,
+        role: activeRole || 'tenant'
+    };
 
     return (
         <>
             <div className="max-w-5xl mx-auto">
                 {/* Profile Header Card */}
-                <div className="bg-gradient-to-r from-[#6D28D9] to-purple-600 rounded-xl shadow-lg p-8 mb-6 text-white">
+                <div className="bg-linear-to-r from-[#6D28D9] to-purple-600 rounded-xl shadow-lg p-8 mb-6 text-white">
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                         {/* Avatar */}
-                        <div className="relative flex-shrink-0">
+                        <div className="relative shrink-0">
                             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
                                 <img
-                                    src={getDefaultAvatar()}
+                                    src={profile.image || getDefaultAvatar()}
                                     alt="Profile"
                                     className="w-full h-full object-cover"
                                 />
@@ -44,10 +54,10 @@ export default function ProfileOverview({ onStartVerification }: ProfileOverview
                         <div className="flex-1 text-center md:text-left">
                             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3">
                                 <div>
-                                    <h1 className="text-3xl font-bold mb-1">{user.firstName} {user.lastName}</h1>
-                                    <p className="text-purple-100">{user.email}</p>
+                                    <h1 className="text-3xl font-bold mb-1">{displayUser.firstName} {displayUser.lastName}</h1>
+                                    <p className="text-purple-100">{displayUser.email}</p>
                                 </div>
-                                {user.isVerified ? (
+                                {displayUser.isVerified ? (
                                     <span className="mt-2 md:mt-0 inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-full shadow-md">
                                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -67,7 +77,7 @@ export default function ProfileOverview({ onStartVerification }: ProfileOverview
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
                                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                                     <p className="text-purple-200 text-xs uppercase mb-1">Role</p>
-                                    <p className="font-semibold capitalize">{user.role}</p>
+                                    <p className="font-semibold capitalize">{displayUser.role}</p>
                                 </div>
                                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                                     <p className="text-purple-200 text-xs uppercase mb-1">Member Since</p>
@@ -75,13 +85,13 @@ export default function ProfileOverview({ onStartVerification }: ProfileOverview
                                 </div>
                                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 col-span-2 md:col-span-1">
                                     <p className="text-purple-200 text-xs uppercase mb-1">Gender</p>
-                                    <p className="font-semibold capitalize">{user.gender === 'other' ? 'Not specified' : user.gender}</p>
+                                    <p className="font-semibold capitalize">{displayUser.gender === 'other' ? 'Not specified' : displayUser.gender}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {!user.isVerified && (
+                    {!displayUser.isVerified && (
                         <div className="mt-6 pt-6 border-t border-white/20">
                             <button
                                 onClick={onStartVerification}
@@ -133,11 +143,11 @@ export default function ProfileOverview({ onStartVerification }: ProfileOverview
                                 </svg>
                             </div>
                         </div>
-                        <p className="text-3xl font-bold text-gray-900">{user.isVerified ? '100' : '45'}%</p>
+                        <p className="text-3xl font-bold text-gray-900">{displayUser.isVerified ? '100' : '45'}%</p>
                         <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                             <div
                                 className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${user.isVerified ? 100 : 45}%` }}
+                                style={{ width: `${displayUser.isVerified ? 100 : 45}%` }}
                             ></div>
                         </div>
                     </div>
@@ -148,7 +158,7 @@ export default function ProfileOverview({ onStartVerification }: ProfileOverview
                     <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <button className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
-                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
                                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
@@ -160,7 +170,7 @@ export default function ProfileOverview({ onStartVerification }: ProfileOverview
                         </button>
 
                         <button className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
-                            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center shrink-0">
                                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                 </svg>
@@ -174,9 +184,9 @@ export default function ProfileOverview({ onStartVerification }: ProfileOverview
                 </div>
 
                 {/* Help Card */}
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100 p-6">
+                <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100 p-6">
                     <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
                             <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>

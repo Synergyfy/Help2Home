@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { EmploymentData } from './types';
+import { useUserStore } from '@/store/userStore';
 
 interface EmploymentInfoCardProps {
     data: EmploymentData;
@@ -45,6 +46,14 @@ export default function EmploymentInfoCard({ data, onSave }: EmploymentInfoCardP
     const handleSubmit = () => {
         if (validate()) {
             onSave(formData);
+            useUserStore.getState().updateRoleProfileData('tenant', {
+                employerName: formData.employerName,
+                jobTitle: formData.jobTitle,
+                monthlySalary: formData.salary,
+                companyName: formData.companyName,
+                organizationId: formData.organizationId,
+                employmentStatus: formData.status
+            });
             setIsEditing(false);
             setShowSuccess(true);
             setTimeout(() => setShowSuccess(false), 3000);
@@ -101,6 +110,30 @@ export default function EmploymentInfoCard({ data, onSave }: EmploymentInfoCardP
                                 className={`w-full px-4 py-3 rounded-lg border ${errors.employerName ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-[#6D28D9] focus:border-[#6D28D9]'} focus:ring-2 outline-none transition-all`}
                             />
                             {errors.employerName && <p className="mt-1 text-sm text-red-500">{errors.employerName}</p>}
+                        </div>
+
+                        {/* Company Name */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Company name</label>
+                            <input
+                                type="text"
+                                name="companyName"
+                                value={formData.companyName || ''}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#6D28D9] focus:border-[#6D28D9] outline-none transition-all"
+                            />
+                        </div>
+
+                        {/* Organization ID */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Organization ID</label>
+                            <input
+                                type="text"
+                                name="organizationId"
+                                value={formData.organizationId || ''}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#6D28D9] focus:border-[#6D28D9] outline-none transition-all"
+                            />
                         </div>
 
                         {/* Job Title */}
