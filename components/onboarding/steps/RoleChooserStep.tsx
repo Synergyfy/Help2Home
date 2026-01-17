@@ -12,6 +12,7 @@ const roleIcons: Record<UserRole, React.ReactNode> = {
   caretaker: <FiUsers size={24} />,
   agent: <FiBriefcase size={24} />,
   investor: <FiTrendingUp size={24} />,
+  developer: <FiCheck size={24} />,
   admin: <FiStar size={24} />,
   superAdmin: <FiShield size={24} />
 };
@@ -22,6 +23,7 @@ const roleNames: Record<UserRole, string> = {
   caretaker: "Caretaker",
   agent: "Real Estate Agent",
   investor: "Investor",
+  developer: "Real Estate Developer",
   admin: "Administrator",
   superAdmin: "Super Admin",
 };

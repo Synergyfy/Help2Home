@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const propertySchema = z.object({
   // Identity & Attribution
-  posterRole: z.enum(['landlord', 'agent', 'caretaker']),
+  posterRole: z.enum(['landlord', 'agent', 'caretaker', 'developer']),
   agencyName: z.string().optional(),
   agentLicense: z.string().optional(),
   
@@ -101,6 +101,28 @@ export const propertySchema = z.object({
   terms: z.object({
     availableFrom: z.string().optional(),
     minTenancy: z.string().optional(),
+  }).optional(),
+
+  // Developer Specifics
+  projectTimeline: z.object({
+    startDate: z.string().optional(),
+    completionDate: z.string().optional(),
+    status: z.enum(['planning', 'in-progress', 'completed', 'halted']).default('planning'),
+    milestones: z.array(z.object({
+       title: z.string(),
+       date: z.string(),
+       completed: z.boolean().default(false)
+    })).optional()
+  }).optional(),
+
+  investmentTerms: z.object({
+    enabled: z.boolean().default(false),
+    minInvestment: z.coerce.number().min(0).optional(),
+    maxInvestment: z.coerce.number().min(0).optional(),
+    roi: z.coerce.number().min(0).optional(), // percentage
+    roiFrequency: z.enum(['monthly', 'quarterly', 'annually', 'end-of-term']).default('annually'),
+    duration: z.coerce.number().min(0).optional(), // months
+    repaymentSchedule: z.string().optional() // Description or Enum
   }).optional(),
 
   // Landlord Details (Required for Caretakers)

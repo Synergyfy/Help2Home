@@ -24,6 +24,7 @@ const DEMO_ACCOUNTS = [
     { label: 'Caretaker', email: 'caretaker@example.com', icon: FiUser },
     { label: 'Tenant', email: 'tenant@example.com', icon: FiUser },
     { label: 'Investor', email: 'investor@example.com', icon: FiTrendingUp },
+    { label: 'Developer', email: 'developer@example.com', icon: FiUsers }, // Using FiUsers as placeholder or import MdOutlineVilla
     { label: 'Multi-Role', email: 'multi@example.com', icon: FiUsers },
     { label: 'New User', email: 'newuser@example.com', icon: FiUser },
 ];

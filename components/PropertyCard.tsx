@@ -88,6 +88,9 @@ export default function PropertyCard({
                                     <HiCheckCircle className="w-3.5 h-3.5" /> Verified
                                 </span>
                             )}
+                            <span className="inline-flex gap-1.5 items-center bg-white/95 backdrop-blur-md text-gray-900 text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg border border-gray-100 uppercase tracking-widest">
+                                <MdOutlineVilla className='w-3.5 h-3.5 text-brand-green' /> Role Card
+                            </span>
                         </div>
 
                         {/* Favorite Button */}

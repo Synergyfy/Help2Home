@@ -1,59 +1,72 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm, FormProvider, SubmitHandler, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { propertySchema, PropertySchema } from '@/lib/validations/propertySchema';
+import { toast } from 'react-toastify';
 import StepIndicator from './StepIndicator';
 import BasicsStep from './BasicsStep';
+import LocationStep from './LocationStep';
 import FinancialsStep from './FinancialsStep';
 import DetailsAmenitiesStep from './DetailsAmenitiesStep';
 import MediaStep from './MediaStep';
-import LocationStep from './LocationStep';
+import ProjectTimelineStep from './ProjectTimelineStep';
+import InvestmentTermsStep from './InvestmentTermsStep';
 import TermsPreviewStep from './TermsPreviewStep';
-import { useCreateProperty } from '@/hooks/useLandlordQueries';
-import { toast } from 'react-toastify';
-import { useUserStore } from '@/store/userStore';
-import { useNotificationStore } from '@/store/notificationStore';
-import { STEP_CONFIG, ROLE_ACTIONS } from '@/config/propertyConfig';
-
 import SuccessStep from './SuccessStep';
+import { useCreateProperty } from '@/hooks/useLandlordQueries';
+import { useNotificationStore } from '@/store/notificationStore';
+
+const ROLE_ACTIONS: Record<string, { submitLabel: string; successMessage: string }> = {
+    landlord: {
+        submitLabel: 'Publish Property',
+        successMessage: 'Property published successfully!'
+    },
+    agent: {
+        submitLabel: 'Publish Listing',
+        successMessage: 'Listing published successfully!'
+    },
+    developer: {
+        submitLabel: 'Publish Project',
+        successMessage: 'Project published successfully!'
+    },
+    caretaker: {
+        submitLabel: 'Submit for Review',
+        successMessage: 'Property submitted for review.'
+    }
+};
 
 interface PropertyWizardProps {
-    initialData?: any;
+    roleKey: string;
+    availableStepsKeys: string[];
+    initialData?: Partial<PropertySchema>;
     isEditing?: boolean;
 }
 
-export default function PropertyWizard({ initialData, isEditing = false }: PropertyWizardProps) {
+export default function PropertyWizard({
+    roleKey,
+    availableStepsKeys,
+    initialData,
+    isEditing = false
+}: PropertyWizardProps) {
     const router = useRouter();
-    const { activeRole } = useUserStore();
     const { addNotification } = useNotificationStore();
+    const { mutate: createProperty, isPending } = useCreateProperty();
     const [currentStep, setCurrentStep] = useState(0);
 
-    const pathname = usePathname();
-
-    // Derive role from URL to support deep linking and immediate context switching
-    // /dashboard/[role]/properties/add
-    const pathSegments = pathname?.split('/') || [];
-    const urlRole = pathSegments[2]; // dashboard is 1, role is 2
-
-    // Determine available steps based on role, default to landlord if undefined
-    const roleKey = (urlRole && ['landlord', 'agent', 'caretaker'].includes(urlRole)
-        ? urlRole
-        : activeRole || 'landlord') as 'landlord' | 'agent' | 'caretaker';
-    const availableStepsKeys = STEP_CONFIG[roleKey] || STEP_CONFIG['landlord'];
-
     // Map keys to readable labels and component indices
-    // We keep a mapping of all possible steps to their components/labels
     const ALL_STEPS_MAP: Record<string, { label: string; component: React.ReactNode }> = {
-        'basics': { label: 'Basics', component: <BasicsStep role={roleKey} /> },
+        'basics': { label: 'Basics', component: <BasicsStep role={roleKey as any} /> },
         'location': { label: 'Location', component: <LocationStep /> },
-        'financials': { label: 'Financials', component: <FinancialsStep role={roleKey} /> },
-        'details': { label: 'Details', component: <DetailsAmenitiesStep role={roleKey} /> },
-        'media': { label: 'Media', component: <MediaStep role={roleKey} /> },
-        'preview': { label: 'Preview', component: <TermsPreviewStep role={roleKey} /> },
-        'client-info': { label: 'Client Info', component: <BasicsStep role={roleKey} /> }, // Placeholder for Agent
+        'financials': { label: 'Financials', component: <FinancialsStep role={roleKey as any} /> },
+        'details': { label: 'Details', component: <DetailsAmenitiesStep role={roleKey as any} /> },
+        'media': { label: 'Media', component: <MediaStep role={roleKey as any} /> },
+        'project-timeline': { label: 'Timeline', component: <ProjectTimelineStep /> },
+        'investment-terms': { label: 'Investment', component: <InvestmentTermsStep /> },
+        'preview': { label: 'Preview', component: <TermsPreviewStep role={roleKey as any} /> },
+        'client-info': { label: 'Client Info', component: <BasicsStep role={roleKey as any} /> }, // Placeholder depending on requirements
     };
 
     // Filter valid steps
@@ -63,43 +76,32 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
 
     const stepsForIndicator = [...activeSteps.map(s => s.label), 'Complete'];
 
-    const { mutate: createProperty, isPending } = useCreateProperty();
-
     const methods = useForm<PropertySchema>({
         resolver: zodResolver(propertySchema) as Resolver<PropertySchema>,
-        defaultValues: initialData || {
+        defaultValues: (initialData as any) || {
             title: '',
-            posterRole: roleKey as 'landlord' | 'agent' | 'caretaker',
+            posterRole: roleKey,
             propertyCategory: 'Residential',
-            propertyType: '',
-            listingType: 'Rent',
-            address: { street: '', city: '', state: '' },
-            price: { amount: 0, currency: 'NGN', period: 'year' },
-            specs: { bedrooms: 0, bathrooms: 0, area: 0, areaUnit: 'sqm', furnishing: '' },
-            amenities: [],
-            images: [],
-            installments: { enabled: false, tenures: [] },
-            description: { short: '', long: '' },
-            terms: { availableFrom: '', minTenancy: '12' },
-            status: 'draft' as const
+            projectTimeline: { status: 'planning', milestones: [] },
+            investmentTerms: { enabled: false },
         },
         mode: 'onChange'
     });
 
-    const { trigger, handleSubmit, getValues } = methods;
+    const { trigger, handleSubmit, getValues, formState: { errors } } = methods;
 
     const handleNext = async () => {
         let isValid = false;
         const currentStepKey = activeSteps[currentStep]?.key;
 
-        // Dynamic validation based on the current step key
-        // This mapping needs to cover all keys used in ALL_STEPS_MAP
         const validationFields: Record<string, any[]> = {
-            'basics': ['title', 'listingType', 'propertyCategory', 'propertyType'], // Removed address and landlord
+            'basics': ['title', 'listingType', 'propertyCategory', 'propertyType'],
             'location': ['address'],
             'financials': ['price', 'installments'],
             'details': ['specs', 'amenities'],
             'media': ['images'],
+            'project-timeline': ['projectTimeline'],
+            'investment-terms': ['investmentTerms'],
             'preview': [],
         };
 
@@ -108,15 +110,12 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
             isValid = await trigger(fieldsToValidate as any);
 
             if (!isValid) {
-                // Get all errors for the current fields and trigger toasts
-                const currentErrors = methods.formState.errors;
                 fieldsToValidate.forEach(field => {
-                    const error = (currentErrors as any)[field];
+                    const error = (errors as any)[field];
                     if (error) {
                         if (error.message) {
                             toast.error(error.message);
                         } else if (typeof error === 'object') {
-                            // Handle nested errors like address.street
                             Object.values(error).forEach((nestedError: any) => {
                                 if (nestedError.message) toast.error(nestedError.message);
                             });
@@ -137,10 +136,6 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
                 setCurrentStep(prev => prev + 1);
                 window.scrollTo(0, 0);
             } else {
-                // Determine implicit 'submit' action
-                // If we are at the last step (Preview mostly), we submit.
-                // But wait, the button says "Publish Property" or "Send Request"
-                // So we trigger submit.
                 await handleSubmit(onSubmit)();
             }
         }
@@ -156,11 +151,6 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
     const onSubmit: SubmitHandler<PropertySchema> = (data) => {
         const roleAction = ROLE_ACTIONS[roleKey] || ROLE_ACTIONS['landlord'];
 
-        // If caretaker, maybe we flag it differently in the backend or status
-        // For now, we use the same createProperty mutation but maybe change status if needed
-        // The prompt asked for "Send Mail" simulation.
-        // We can simulate that in the onSuccess or by changing status to 'pending_review'
-
         const submissionData = { ...data };
         if (roleKey === 'caretaker') {
             submissionData.status = 'pending_review' as any;
@@ -170,14 +160,13 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
             onSuccess: () => {
                 toast.success(isEditing ? 'Property updated!' : roleAction.successMessage);
 
-                // Simulate Priority Broadcast
                 addNotification({
                     title: 'Priority Broadcast Successful',
                     message: `Your "Early Bird" priority list has been notified about "${data.title}".`,
                     type: 'success'
                 });
 
-                setCurrentStep(activeSteps.length); // Move to Success Step (index = length)
+                setCurrentStep(activeSteps.length);
                 window.scrollTo(0, 0);
             },
             onError: (error: any) => {
@@ -205,7 +194,7 @@ export default function PropertyWizard({ initialData, isEditing = false }: Prope
     };
 
     if (activeSteps.length === 0) {
-        return <div className="p-8 text-center text-red-500">Error: No configuration found for role {activeRole}</div>;
+        return <div className="p-8 text-center text-red-500">Error: No configuration found for role {roleKey}</div>;
     }
 
     const isSuccessStep = currentStep === activeSteps.length;

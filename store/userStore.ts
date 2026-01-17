@@ -2,7 +2,7 @@ import React from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type Role = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor' | 'admin' | 'superAdmin';
+export type Role = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor' | 'developer' | 'admin' | 'superAdmin';
 
 
 
@@ -63,6 +63,32 @@ export interface LandlordProfileData {
   bankAccounts?: any[];
 }
 
+export interface PortfolioItem {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  status: 'completed' | 'in-progress' | 'planned';
+}
+
+export interface InvestmentCondition {
+  minAmount: number;
+  expectedReturn: string;
+  timeline: string;
+  riskLevel: 'low' | 'medium' | 'high';
+}
+
+export interface DeveloperProfileData {
+  companyName: string;
+  registrationNumber: string;
+  yearsExperience: string;
+  completedProjects: string;
+  specialization: string[];
+  portfolio: PortfolioItem[];
+  investmentConditions: InvestmentCondition[];
+  isVetted: boolean;
+}
+
 interface UserState {
   id: string;
   email: string;
@@ -82,6 +108,7 @@ interface UserState {
     caretaker?: any;
     agent?: any;
     investor?: any;
+    developer?: DeveloperProfileData;
   };
   followedListers: string[];
   draftData: Record<string, any>;
@@ -118,6 +145,7 @@ export const useUserStore = create<UserState>()(
         caretaker: false,
         agent: false,
         investor: false,
+        developer: false,
         admin: false,
         superAdmin: false,
       },

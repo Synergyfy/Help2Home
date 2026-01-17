@@ -15,7 +15,7 @@ export type Property = {
   postcode?: string;
   images: string[];
   createdBy?: string;
-  posterRole: 'landlord' | 'agent' | 'caretaker';
+  posterRole: 'landlord' | 'agent' | 'caretaker' | 'developer';
   listerName?: string;
   listerImage?: string;
   listerVerified?: boolean;

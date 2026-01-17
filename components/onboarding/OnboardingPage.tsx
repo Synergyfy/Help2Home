@@ -13,12 +13,13 @@ import LandlordStep from "./steps/LandlordSteps";
 import CaretakerStep from "./steps/CaretakerSteps";
 import AgentStep from "./steps/AgentSteps";
 import InvestorStep from "./steps/InvestorSteps";
+import DeveloperStep from "./steps/DeveloperSteps";
 import CompletionStep from "./steps/CompletionStep";
 
 const OnboardingPage = () => {
-  const [isHydrated, setIsHydrated] = useState(false); 
+  const [isHydrated, setIsHydrated] = useState(false);
   const { getCurrentUser, getTotalSteps } = useOnboardingStore();
-  
+
   useEffect(() => {
     setIsHydrated(true);
   }, []);
@@ -48,12 +49,13 @@ const OnboardingPage = () => {
       if (!activeRole) return <RoleChooserStep />;
 
       switch (activeRole) {
-        case "tenant":    return <TenantStep stepNumber={roleSubStep} />;
-        case "landlord":  return <LandlordStep stepNumber={roleSubStep} />;
+        case "tenant": return <TenantStep stepNumber={roleSubStep} />;
+        case "landlord": return <LandlordStep stepNumber={roleSubStep} />;
         case "caretaker": return <CaretakerStep stepNumber={roleSubStep} />;
-        case "agent":     return <AgentStep stepNumber={roleSubStep} />;
-        case "investor":  return <InvestorStep stepNumber={roleSubStep} />;
-        default:          return <RoleChooserStep />;
+        case "agent": return <AgentStep stepNumber={roleSubStep} />;
+        case "investor": return <InvestorStep stepNumber={roleSubStep} />;
+        case "developer": return <DeveloperStep stepNumber={roleSubStep as 1 | 2} />;
+        default: return <RoleChooserStep />;
       }
     }
 

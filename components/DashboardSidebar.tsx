@@ -75,13 +75,11 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
         { label: 'Settings', href: '/dashboard/landlord/settings', icon: MdSettings },
     ],
     investor: [
-        { label: 'Dashboard', href: '/dashboard/investor', icon: MdDashboard },
-        { label: 'My Profile', href: '/dashboard/investor/profile', icon: MdPerson },
-        { label: 'Opportunities', href: '/dashboard/investor/opportunities', icon: MdTrendingUp },
-        { label: 'Portfolio', href: '/dashboard/investor/portfolio', icon: MdPieChart },
-        { label: 'Reports', href: '/dashboard/investor/reports', icon: MdDescription },
-        { label: 'Documents', href: '/dashboard/investor/documents', icon: MdFolder },
-        { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
+        { label: 'Overview', href: '/dashboard/investor', icon: MdDashboard },
+        { label: 'Marketplace', href: '/dashboard/investor/invest', icon: MdStorefront },
+        { label: 'My Portfolio', href: '/dashboard/investor/investments', icon: MdPieChart },
+        { label: 'Partner Applications', href: '/dashboard/investor/applications', icon: MdGroup },
+        { label: 'Financial Reports', href: '/dashboard/investor/reports', icon: MdDescription },
         { label: 'Settings', href: '/dashboard/investor/settings', icon: MdSettings },
     ],
     caretaker: [
@@ -109,6 +107,15 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
         { label: 'Admin Dashboard', href: '/dashboard/admin', icon: RxDashboard },
         { label: 'Systems Health', href: '/dashboard/admin/health', icon: MdSecurity },
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
+    ],
+    developer: [
+        { label: 'Dashboard', href: '/dashboard/developer', icon: RxDashboard },
+        { label: 'My Profile', href: '/dashboard/developer/profile', icon: MdPerson },
+        { label: 'Projects', href: '/dashboard/developer/projects', icon: MdHomeWork },
+        { label: 'Portfolio', href: '/dashboard/developer/portfolio', icon: MdPieChart },
+        { label: 'Investments', href: '/dashboard/developer/investments', icon: MdTrendingUp },
+        { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
+        { label: 'Settings', href: '/dashboard/developer/settings', icon: MdSettings },
     ]
 };
 

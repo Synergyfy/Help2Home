@@ -43,7 +43,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setAvatarFile(file);
+            // setAvatarFile(file); // Removed unused call
             const reader = new FileReader();
             reader.onloadend = () => {
                 setAvatarPreview(reader.result as string);

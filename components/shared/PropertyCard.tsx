@@ -66,6 +66,11 @@ export default function PropertyCard({ property, index, showTotalUpfront = true 
                         <span className="bg-brand-green text-white text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
                             {property.propertyType?.replace('-', ' ') || 'Property'}
                         </span>
+                        {property.investmentTerms?.enabled && (
+                            <span className="bg-brand-green/10 backdrop-blur-md text-brand-green text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1 border border-brand-green/20">
+                                ROI: {property.investmentTerms.roi}%
+                            </span>
+                        )}
                     </div>
 
                     {/* Like Button */}

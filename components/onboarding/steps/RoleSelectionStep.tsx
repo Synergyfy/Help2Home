@@ -9,6 +9,7 @@ const roles: { id: UserRole; name: string; description: string; icon: React.Reac
   { id: "landlord", name: "Landlord", description: "Own properties and want to find reliable tenants", icon: <FiKey className="w-5 h-5 sm:w-6 sm:h-6" />, multiSelect: true },
   { id: "caretaker", name: "Caretaker", description: "Manage properties on behalf of landlords", icon: <FiUsers className="w-5 h-5 sm:w-6 sm:h-6" />, multiSelect: true },
   { id: "agent", name: "Real Estate Agent", description: "Help clients buy, sell, or rent properties professionally", icon: <FiBriefcase className="w-5 h-5 sm:w-6 sm:h-6" />, multiSelect: true },
+  { id: "developer", name: "Real Estate Developer", description: "Create large scale projects, manage portfolios and set investment terms", icon: <FiCheck className="w-5 h-5 sm:w-6 sm:h-6" />, multiSelect: true },
   { id: "investor", name: "Investor", description: "Looking to invest in real estate for returns and growth", icon: <FiTrendingUp className="w-5 h-5 sm:w-6 sm:h-6" /> },
 ];
 

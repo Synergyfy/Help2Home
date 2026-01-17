@@ -95,7 +95,9 @@ export default function MarketplacePage() {
                 <FadeIn direction="up">
                     <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900 mb-2">Property Listings</h1>
+                            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                                {filters.propertyType === 'invest' ? 'Investment Opportunities' : 'Property Listings'}
+                            </h1>
                             <p className="text-gray-600">
                                 {isLoading
                                     ? 'Loading properties...'

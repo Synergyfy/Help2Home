@@ -1,28 +1,47 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
 import ProfileOverview from '@/components/dashboard/profile/ProfileOverview';
-import VerificationStatusBar from '@/components/dashboard/profile/VerificationStatusBar';
 import PersonalDetailsCard from '@/components/dashboard/profile/PersonalDetailsCard';
 import EmploymentInfoCard from '@/components/dashboard/profile/EmploymentInfoCard';
+import NextOfKinCard from '@/components/dashboard/profile/NextOfKinCard';
 import GuarantorCard from '@/components/dashboard/profile/GuarantorCard';
 import DocumentsUploadArea from '@/components/dashboard/profile/DocumentsUploadArea';
 import HelpTipsCard from '@/components/dashboard/profile/HelpTipsCard';
 import TenantPreferencesTab from './TenantPreferencesTab';
 import { ProfileData, EmploymentData, DocumentItem } from '@/components/dashboard/profile/types';
 import { useUserStore } from '@/store/userStore';
+import {
+    IoPersonOutline,
+    IoBriefcaseOutline,
+    IoPeopleOutline,
+    IoShieldCheckmarkOutline,
+    IoDocumentTextOutline,
+    IoCheckmarkCircle,
+    IoInformationCircleOutline
+} from 'react-icons/io5';
+
+type TabType = 'overview' | 'basic' | 'work' | 'nok' | 'guarantor' | 'documents' | 'preferences';
 
 export default function TenantProfile() {
-    const [showVerification, setShowVerification] = useState(false);
+    const [activeTab, setActiveTab] = useState<TabType>('overview');
     const { data: profileQuery, isLoading } = useProfile('tenant');
     const { mutate: updateProfileApi } = useUpdateProfile('tenant');
-    const { profile: storeProfile, updateRoleProfileData, fullName, email: storeEmail, phone: storePhone } = useUserStore();
+    const { profile: storeProfile, roleData, updateRoleProfileData } = useUserStore();
 
     const apiProfile = profileQuery?.data || {};
-
-    // Combine API data and Store data (Store data takes precedence for local session)
     const profile = { ...apiProfile, ...storeProfile };
+    const tenantProfile = roleData.tenant;
+
+    // Monitoring Verification Status
+    const verificationStatus = {
+        basic: !!(profile.firstName && profile.lastName && profile.dob),
+        work: !!(tenantProfile?.employmentStatus && (tenantProfile.employmentStatus !== 'Unemployed' ? tenantProfile.employerName : true)),
+        nok: !!(tenantProfile?.nextOfKin?.name),
+        guarantor: !!(tenantProfile?.guarantor?.name),
+        documents: false // Placeholder for doc check
+    };
 
     // Mock documents state
     const [documents] = useState<DocumentItem[]>([
@@ -33,13 +52,6 @@ export default function TenantProfile() {
         { id: '5', type: 'Proof of Address', name: 'Proof of Address', status: 'Pending' }
     ]);
 
-    const verificationSteps = [
-        { id: 1, title: 'Personal Details', status: 'Verified' as const },
-        { id: 2, title: 'Employment Info', status: 'In Review' as const },
-        { id: 3, title: 'Guarantor', status: 'Pending' as const },
-        { id: 4, title: 'Documents', status: 'Pending' as const }
-    ];
-
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -48,7 +60,6 @@ export default function TenantProfile() {
         );
     }
 
-    // Map API data to Card props
     const personalData: ProfileData = {
         firstName: profile.firstName || '',
         lastName: profile.lastName || '',
@@ -63,95 +74,147 @@ export default function TenantProfile() {
     };
 
     const employmentData: EmploymentData = {
-        status: profile.employmentStatus || '',
-        employerName: profile.employerName || '',
-        jobTitle: profile.jobTitle || '',
-        salary: profile.monthlySalary || '',
-        type: profile.employmentType || '',
-        startDate: profile.startDate || '',
-        contact: profile.employerContact || ''
+        status: tenantProfile?.employmentStatus || '',
+        employerName: tenantProfile?.employerName || '',
+        companyName: tenantProfile?.companyName || '',
+        organizationId: tenantProfile?.organizationId || '',
+        jobTitle: tenantProfile?.jobTitle || '',
+        salary: tenantProfile?.monthlySalary || '',
+        type: tenantProfile?.employmentType || '',
+        startDate: tenantProfile?.startDate || '',
+        contact: tenantProfile?.employerContact || ''
     };
 
     const handleProfileSave = (data: ProfileData) => {
         updateProfileApi(data);
-        // Also update local store
         useUserStore.getState().updateProfile(data);
     };
 
     const handleEmploymentSave = (data: EmploymentData) => {
-        const updates = {
-            employmentStatus: data.status,
-            employerName: data.employerName,
-            jobTitle: data.jobTitle,
-            monthlySalary: data.salary,
-            employmentType: data.type,
-            startDate: data.startDate,
-            employerContact: data.contact
-        };
-        updateProfileApi(updates);
-        // Also update local store
-        updateRoleProfileData('tenant', {
-            employmentStatus: data.status,
-            employerName: data.employerName,
-            jobTitle: data.jobTitle,
-            monthlySalary: data.salary,
-            // Assuming other fields map to store as well if needed
-        });
+        // Handled within component or here
     };
 
-    if (!showVerification) {
-        return <ProfileOverview onStartVerification={() => setShowVerification(true)} />;
-    }
+    const tabs: { id: TabType; label: string; icon: any; verified: boolean }[] = [
+        { id: 'overview', label: 'Overview', icon: IoInformationCircleOutline, verified: true },
+        { id: 'basic', label: 'Basic Info', icon: IoPersonOutline, verified: verificationStatus.basic },
+        { id: 'work', label: 'Work Info', icon: IoBriefcaseOutline, verified: verificationStatus.work },
+        { id: 'nok', label: 'Next of Kin', icon: IoPeopleOutline, verified: verificationStatus.nok },
+        { id: 'guarantor', label: 'Guarantor', icon: IoShieldCheckmarkOutline, verified: verificationStatus.guarantor },
+        { id: 'documents', label: 'Documents', icon: IoDocumentTextOutline, verified: verificationStatus.documents },
+    ];
 
     return (
-        <div className="max-w-7xl mx-auto pb-12">
-            <button
-                onClick={() => setShowVerification(false)}
-                className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900"
-            >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                </svg>
-                Back to Profile
-            </button>
-
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900">Identity Verification & Preferences</h1>
-                <p className="text-gray-600 mt-2">Complete your profile to unlock all features and start applying for properties.</p>
+        <div className="max-w-7xl mx-auto pb-20 px-4 md:px-0">
+            {/* Header */}
+            <div className="mb-10 text-center md:text-left">
+                <h1 className="text-4xl font-black text-gray-900 tracking-tight">Profile & Verification</h1>
+                <p className="text-gray-500 mt-2 font-medium text-lg italic">Complete each section to maintain a 100% verification score.</p>
             </div>
 
-            <VerificationStatusBar currentStep={1} steps={verificationSteps} />
+            {/* Tab Navigation */}
+            <div className="flex border-b border-gray-100 mb-10 overflow-x-auto no-scrollbar pb-1">
+                {tabs.map((tab) => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`flex items-center gap-3 px-8 py-5 text-sm font-black border-b-4 transition-all whitespace-nowrap group ${activeTab === tab.id
+                                ? 'border-brand-green text-brand-green bg-green-50/30'
+                                : 'border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50/50'
+                            }`}
+                    >
+                        <tab.icon size={20} className={activeTab === tab.id ? 'text-brand-green' : 'text-gray-300 group-hover:text-gray-400'} />
+                        {tab.label}
+                        {tab.verified && tab.id !== 'overview' && (
+                            <IoCheckmarkCircle className="text-green-500 ml-1" />
+                        )}
+                    </button>
+                ))}
+            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-                <div className="lg:col-span-2 space-y-6">
-                    {/* New Preferences Section */}
-                    <TenantPreferencesTab profile={profile} />
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
+                {/* Main Content Area */}
+                <div className="lg:col-span-3">
+                    <div className="transition-all duration-300 ease-in-out">
+                        {activeTab === 'overview' && (
+                            <ProfileOverview onStartVerification={() => setActiveTab('basic')} />
+                        )}
 
-                    <PersonalDetailsCard
-                        data={personalData}
-                        onSave={handleProfileSave}
-                    />
+                        {activeTab === 'basic' && (
+                            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <PersonalDetailsCard
+                                    data={personalData}
+                                    onSave={handleProfileSave}
+                                />
+                                <TenantPreferencesTab profile={profile} />
+                            </div>
+                        )}
 
-                    <EmploymentInfoCard
-                        data={employmentData}
-                        onSave={handleEmploymentSave}
-                    />
+                        {activeTab === 'work' && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <EmploymentInfoCard
+                                    data={employmentData}
+                                    onSave={handleEmploymentSave}
+                                />
+                            </div>
+                        )}
 
-                    <GuarantorCard
-                        guarantors={[]}
-                        onAdd={() => { }}
-                        onRemove={() => { }}
-                    />
+                        {activeTab === 'nok' && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <NextOfKinCard />
+                            </div>
+                        )}
 
-                    <DocumentsUploadArea
-                        documents={documents}
-                        onUpload={() => { }}
-                        onRemove={() => { }}
-                    />
+                        {activeTab === 'guarantor' && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <GuarantorCard
+                                    guarantors={[]}
+                                    onAdd={() => { }}
+                                    onRemove={() => { }}
+                                />
+                            </div>
+                        )}
+
+                        {activeTab === 'documents' && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <DocumentsUploadArea
+                                    documents={documents}
+                                    onUpload={() => { }}
+                                    onRemove={() => { }}
+                                />
+                            </div>
+                        )}
+                    </div>
                 </div>
 
-                <div className="lg:col-span-1">
-                    <div className="sticky top-8">
+                {/* Sidebar Tips */}
+                <div className="hidden lg:block lg:col-span-1">
+                    <div className="sticky top-28 space-y-6">
+                        <div className="bg-brand-green text-white p-8 rounded-3xl shadow-2xl shadow-green-100">
+                            <h3 className="text-xl font-black mb-3">Verification Score</h3>
+                            <div className="relative pt-1">
+                                <div className="flex mb-2 items-center justify-between">
+                                    <div>
+                                        <span className="text-xs font-black inline-block py-1 px-2 uppercase rounded-full bg-white/20">
+                                            High Approval Chance
+                                        </span>
+                                    </div>
+                                    <div className="text-right">
+                                        <span className="text-2xl font-black">
+                                            {Object.values(verificationStatus).filter(Boolean).length * 20}%
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="overflow-hidden h-3 mb-4 text-xs flex rounded-full bg-white/20">
+                                    <div
+                                        style={{ width: `${Object.values(verificationStatus).filter(Boolean).length * 20}%` }}
+                                        className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-white rounded-full transition-all duration-1000"
+                                    ></div>
+                                </div>
+                            </div>
+                            <p className="text-sm font-medium opacity-90 leading-relaxed">
+                                Users with 100% verification score get approved for rent financing 5x faster.
+                            </p>
+                        </div>
                         <HelpTipsCard />
                     </div>
                 </div>

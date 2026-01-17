@@ -8,7 +8,7 @@ import { useMarketplaceStore } from '@/store/marketplaceStore';
 import { useDebounce } from '@/hooks/useDebounce';
 import { HiMapPin, HiMagnifyingGlass, HiXMark, HiFire } from "react-icons/hi2";
 
-type PropertyType = 'rent' | 'buy';
+type PropertyType = 'rent' | 'buy' | 'invest';
 
 const TAB_ASSETS: Record<PropertyType, { image: string; title: string }> = {
 
@@ -19,6 +19,10 @@ const TAB_ASSETS: Record<PropertyType, { image: string; title: string }> = {
     buy: {
         image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop',
         title: 'perfect'
+    },
+    invest: {
+        image: 'https://images.unsplash.com/photo-1460472178825-e5240623afd5?q=80&w=2069&auto=format&fit=crop',
+        title: 'profitable'
     }
 };
 
