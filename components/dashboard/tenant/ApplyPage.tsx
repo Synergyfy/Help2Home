@@ -7,6 +7,7 @@ import InstallmentPlanCard from '@/components/dashboard/apply/InstallmentPlanCar
 import FinancingInputs from '@/components/dashboard/apply/FinancingInputs';
 import ApplicationTenantInfo from '@/components/dashboard/apply/ApplicationTenantInfo';
 import ApplicationDocuments from '@/components/dashboard/apply/ApplicationDocuments';
+import VerificationModal from '@/components/dashboard/apply/VerificationModal';
 import { PropertyDetails, InstallmentPlan, ApplicationData, ApplicationDocument } from '@/components/dashboard/apply/types';
 
 import { useApplications } from '@/hooks/useApplications';
@@ -20,7 +21,9 @@ export default function Apply() {
     const searchParams = useSearchParams();
     const propertyIdParam = searchParams.get('propertyId');
 
-    const { id: userId, fullName: userName, email: userEmail, phone: userPhone } = useUserStore();
+    const { id: userId, fullName: userName, email: userEmail, phone: userPhone, profile, roleData, verified: isVerified } = useUserStore();
+    const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(!isVerified);
+    const tenantProfile = roleData.tenant;
     const { addNotification } = useNotificationStore();
     const { submitApplication, isSubmitting } = useApplications();
 
@@ -54,19 +57,19 @@ export default function Apply() {
             acceptedTerms: false
         },
         tenantInfo: {
-            firstName: userName?.split(' ')[0] || '',
-            lastName: userName?.split(' ')[1] || '',
+            firstName: profile.firstName || userName?.split(' ')[0] || '',
+            lastName: profile.lastName || userName?.split(' ')[1] || '',
             email: userEmail || '',
             phone: userPhone || '',
-            employmentStatus: 'Employed',
-            employerName: '',
-            monthlySalary: ''
+            employmentStatus: tenantProfile?.employmentStatus || 'Employed',
+            employerName: tenantProfile?.employerName || '',
+            monthlySalary: tenantProfile?.monthlySalary || ''
         },
         guarantor: {
-            name: '',
-            phone: '',
-            relationship: '',
-            email: ''
+            name: tenantProfile?.guarantor?.name || '',
+            phone: tenantProfile?.guarantor?.phone || '',
+            relationship: tenantProfile?.guarantor?.relationship || '',
+            email: tenantProfile?.guarantor?.email || ''
         },
         notes: '',
         documents: [
@@ -153,8 +156,30 @@ export default function Apply() {
     const validate = () => {
         const newErrors: string[] = [];
         if (!applicationData.financing.acceptedTerms) newErrors.push("You must accept the terms and conditions.");
-        if (!applicationData.guarantor.name) newErrors.push("Guarantor name is required.");
-        if (!applicationData.guarantor.phone) newErrors.push("Guarantor phone is required.");
+
+        // Basic Info Validation
+        if (!applicationData.tenantInfo.firstName || !applicationData.tenantInfo.lastName) newErrors.push("Basic personal details are missing from your profile.");
+
+        // Work Info Validation
+        if (applicationData.tenantInfo.employmentStatus !== 'Unemployed' && !applicationData.tenantInfo.employerName) {
+            newErrors.push("Work information is incomplete. Please update your profile.");
+        }
+
+        // Next of Kin Validation (from store)
+        if (!tenantProfile?.nextOfKin?.name) {
+            newErrors.push("Next of Kin details are required. Please update your profile.");
+        }
+
+        // Guarantor Validation
+        if (!applicationData.guarantor.name || !applicationData.guarantor.phone) {
+            newErrors.push("Guarantor details are incomplete.");
+        }
+
+        // Credit Score / Eligibility Check
+        const isEligible = (profile.firstName && profile.lastName && userPhone && tenantProfile?.isBvnVerified);
+        if (!isEligible) {
+            newErrors.push("Your profile must be fully verified (including BVN) to apply for financing.");
+        }
 
         const pendingDocs = applicationData.documents.filter(d => d.status !== 'Uploaded');
         if (pendingDocs.length > 0) newErrors.push(`Please upload all required documents: ${pendingDocs.map(d => d.name).join(', ')}`);
@@ -273,7 +298,17 @@ export default function Apply() {
                     <nav className="text-sm text-gray-500 mb-2">
                         Home / <span className="text-gray-900 font-medium">Apply for Rent</span>
                     </nav>
-                    <h1 className="text-3xl font-bold text-gray-900">Rent Financing Application</h1>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <h1 className="text-3xl font-bold text-gray-900">Rent Financing Application</h1>
+                        {!isVerified && (
+                            <button
+                                onClick={() => setIsVerificationModalOpen(true)}
+                                className="px-4 py-2 bg-amber-50 text-amber-700 text-sm font-bold rounded-lg border border-amber-200 hover:bg-amber-100 transition-colors"
+                            >
+                                Complete Verification
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 {errors.length > 0 && (
@@ -282,6 +317,28 @@ export default function Apply() {
                         <ul className="list-disc list-inside text-red-700 text-sm">
                             {errors.map((err, idx) => <li key={idx}>{err}</li>)}
                         </ul>
+                    </div>
+                )}
+
+                {(!tenantProfile?.isBvnVerified) && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-8 flex items-start gap-4">
+                        <div className="shrink-0 w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center text-amber-600">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div className="flex-1">
+                            <h3 className="text-amber-900 font-bold text-lg mb-1">Increase your eligibility</h3>
+                            <p className="text-amber-800 text-sm mb-4">
+                                Your BVN is not yet verified. Verifying your BVN and completing your profile increases your credit score and application approval rate.
+                            </p>
+                            <button
+                                onClick={() => router.push('/dashboard/tenant/profile')}
+                                className="px-4 py-2 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors"
+                            >
+                                Complete Profile
+                            </button>
+                        </div>
                     </div>
                 )}
 
@@ -344,10 +401,31 @@ export default function Apply() {
                                     Contact Support →
                                 </button>
                             </div>
+
+                            <div className="mt-4 bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                                <h4 className="font-bold text-gray-900 mb-3 text-lg">Financing Eligibility</h4>
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="text-gray-500 font-medium">Profile Score</span>
+                                        <span className="text-brand-green font-bold">Good</span>
+                                    </div>
+                                    <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                                        <div className="bg-brand-green h-full w-[70%]" />
+                                    </div>
+                                    <p className="text-[11px] text-gray-500 font-medium leading-relaxed">
+                                        You are eligible for <span className="text-brand-green font-bold">up to ₦10M</span> in rent financing based on your current profile data.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <VerificationModal
+                isOpen={isVerificationModalOpen}
+                onClose={() => setIsVerificationModalOpen(false)}
+            />
         </div>
     );
 }

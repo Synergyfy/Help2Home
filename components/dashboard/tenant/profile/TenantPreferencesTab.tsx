@@ -75,9 +75,9 @@ export default function TenantPreferencesTab({ profile }: { profile: any }) {
                     >
                         <option value="">Select Range</option>
                         <option value="500k-1m">₦500k - ₦1m</option>
-                        <option value="1m-2m">₦1m - ₦2m</option>
-                        <option value="2m-5m">₦2m - ₦5m</option>
-                        <option value="5m+">₦5m+</option>
+                        <option value="1m-5m">₦1m - ₦5m</option>
+                        <option value="5m-10m">₦5m - ₦10m</option>
+                        <option value="10m+">₦10m+</option>
                     </select>
                 </div>
 

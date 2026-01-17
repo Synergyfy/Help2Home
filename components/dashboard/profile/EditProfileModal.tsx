@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser } from '@/components/providers/UserContext';
+import { useUserStore } from '@/store/userStore';
 
 interface EditProfileModalProps {
     isOpen: boolean;
@@ -9,17 +10,31 @@ interface EditProfileModalProps {
 }
 
 export default function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
-    const { user, updateUser, getDefaultAvatar } = useUser();
-    const [formData, setFormData] = useState({
-        firstName: user?.firstName || '',
-        lastName: user?.lastName || '',
-        email: user?.email || '',
-        gender: user?.gender || 'other' as 'male' | 'female' | 'other'
-    });
-    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-    const [avatarFile, setAvatarFile] = useState<File | null>(null);
+    const { user: contextUser, updateUser, getDefaultAvatar } = useUser();
+    const { profile, fullName, email: storeEmail, updateProfile, setUser } = useUserStore();
 
-    if (!isOpen || !user) return null;
+    const [formData, setFormData] = useState({
+        firstName: contextUser?.firstName || profile.firstName || fullName?.split(' ')[0] || '',
+        lastName: contextUser?.lastName || profile.lastName || fullName?.split(' ')[1] || '',
+        email: contextUser?.email || storeEmail || '',
+        gender: (contextUser?.gender || profile.gender?.toLowerCase() || 'other') as 'male' | 'female' | 'other'
+    });
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(profile.image || null);
+
+    // Sync if profile changes in store
+    useEffect(() => {
+        if (isOpen) {
+            setFormData({
+                firstName: contextUser?.firstName || profile.firstName || fullName?.split(' ')[0] || '',
+                lastName: contextUser?.lastName || profile.lastName || fullName?.split(' ')[1] || '',
+                email: contextUser?.email || storeEmail || '',
+                gender: (contextUser?.gender || profile.gender?.toLowerCase() || 'other') as 'male' | 'female' | 'other'
+            });
+            setAvatarPreview(profile.image || null);
+        }
+    }, [isOpen, profile, contextUser]);
+
+    if (!isOpen) return null;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -40,10 +55,22 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Update user data
+        // Update context
         updateUser({
             ...formData,
-            avatarUrl: avatarPreview || user.avatarUrl
+            avatarUrl: avatarPreview || contextUser?.avatarUrl
+        });
+
+        // Update store
+        updateProfile({
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            gender: formData.gender.charAt(0).toUpperCase() + formData.gender.slice(1),
+            image: avatarPreview || profile.image
+        });
+
+        setUser({
+            fullName: `${formData.firstName} ${formData.lastName}`
         });
 
         onClose();

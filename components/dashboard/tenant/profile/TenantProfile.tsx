@@ -11,13 +11,18 @@ import DocumentsUploadArea from '@/components/dashboard/profile/DocumentsUploadA
 import HelpTipsCard from '@/components/dashboard/profile/HelpTipsCard';
 import TenantPreferencesTab from './TenantPreferencesTab';
 import { ProfileData, EmploymentData, DocumentItem } from '@/components/dashboard/profile/types';
+import { useUserStore } from '@/store/userStore';
 
 export default function TenantProfile() {
     const [showVerification, setShowVerification] = useState(false);
     const { data: profileQuery, isLoading } = useProfile('tenant');
-    const { mutate: updateProfile } = useUpdateProfile('tenant');
+    const { mutate: updateProfileApi } = useUpdateProfile('tenant');
+    const { profile: storeProfile, updateRoleProfileData, fullName, email: storeEmail, phone: storePhone } = useUserStore();
 
-    const profile = profileQuery?.data || {};
+    const apiProfile = profileQuery?.data || {};
+
+    // Combine API data and Store data (Store data takes precedence for local session)
+    const profile = { ...apiProfile, ...storeProfile };
 
     // Mock documents state
     const [documents] = useState<DocumentItem[]>([
@@ -68,11 +73,13 @@ export default function TenantProfile() {
     };
 
     const handleProfileSave = (data: ProfileData) => {
-        updateProfile(data);
+        updateProfileApi(data);
+        // Also update local store
+        useUserStore.getState().updateProfile(data);
     };
 
     const handleEmploymentSave = (data: EmploymentData) => {
-        updateProfile({
+        const updates = {
             employmentStatus: data.status,
             employerName: data.employerName,
             jobTitle: data.jobTitle,
@@ -80,6 +87,15 @@ export default function TenantProfile() {
             employmentType: data.type,
             startDate: data.startDate,
             employerContact: data.contact
+        };
+        updateProfileApi(updates);
+        // Also update local store
+        updateRoleProfileData('tenant', {
+            employmentStatus: data.status,
+            employerName: data.employerName,
+            jobTitle: data.jobTitle,
+            monthlySalary: data.salary,
+            // Assuming other fields map to store as well if needed
         });
     };
 
