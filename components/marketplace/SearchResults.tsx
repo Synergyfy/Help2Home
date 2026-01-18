@@ -36,7 +36,6 @@ export default function MarketplacePage() {
         setCurrentPage,
     } = useMarketplaceStore();
 
-    // Preserved exactly as requested
     const {
         data: searchResults,
         isLoading,
