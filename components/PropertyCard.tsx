@@ -7,6 +7,7 @@ import { CiStar } from "react-icons/ci";
 import { TbNewSection } from "react-icons/tb";
 import { HiCheckCircle } from "react-icons/hi";
 import { GrStatusGood } from "react-icons/gr";
+import { MdOutlineVilla } from "react-icons/md";
 import { formatNumber } from '@/utils/helpers';
 
 interface PropertyCardProps {

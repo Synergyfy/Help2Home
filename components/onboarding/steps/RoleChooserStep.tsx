@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from "framer-motion";
-import { FiKey, FiBriefcase, FiArrowRight, FiArrowLeft, FiCheck, FiUsers, FiHome, FiTrendingUp, FiStar, FiShield } from "react-icons/fi";
+import { FiKey, FiBriefcase, FiArrowRight, FiArrowLeft, FiCheck, FiUsers, FiHome, FiTrendingUp, FiStar, FiShield, FiCode } from "react-icons/fi";
 import { useOnboardingStore, UserRole } from "@/store/onboardingStore";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
@@ -12,7 +12,7 @@ const roleIcons: Record<UserRole, React.ReactNode> = {
   caretaker: <FiUsers size={24} />,
   agent: <FiBriefcase size={24} />,
   investor: <FiTrendingUp size={24} />,
-  developer: <FiCheck size={24} />,
+  developer: <FiCode size={24} />,
   admin: <FiStar size={24} />,
   superAdmin: <FiShield size={24} />
 };
