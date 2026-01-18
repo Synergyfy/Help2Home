@@ -5,6 +5,7 @@ import DashboardSidebar from '@/components/DashboardSidebar';
 import DashboardHeader from '@/components/DashboardHeader';
 import ContextBar from '@/components/dashboard/landlord/lib/ContextBar';
 import { useRoleSync } from '@/hooks/useRoleSync';
+import ProfileCompletionModal from '@/components/dashboard/profile/ProfileCompletionModal';
 
 export default function DashboardLayout({
     children,
@@ -12,7 +13,7 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-    
+
     // Initialized role-sync engine to keep store and URL in sync
     useRoleSync();
 
@@ -48,6 +49,7 @@ export default function DashboardLayout({
                     {children}
                 </main>
             </div>
+            <ProfileCompletionModal />
         </div>
     );
 }

@@ -24,11 +24,11 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       email: 'admin@example.com',
       fullName: 'System Administrator',
       phone: '+1 800 123 4567',
-      roles: ['admin'], // Ensure 'admin' is added to your Role type in userStore
+      roles: ['admin'], 
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: true, landlord: true, caretaker: true, agent: true, investor: true, admin: true, superAdmin: true },
+      roleOnboardingCompleted: { tenant: true, landlord: true, caretaker: true, agent: true, investor: true, admin: true, superAdmin: true,developer:false  },
       draftData: {},
       onboardingCompleted: true,
     }
@@ -43,7 +43,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: true, investor: false, admin: false, superAdmin: false },
+      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: true, investor: false, admin: false, superAdmin: false,developer:false  },
       draftData: { 
         agent: { licenseNumber: 'AG-9920', specialization: ['Residential'], yearsExperience: '5+' } 
       },
@@ -61,7 +61,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: true, caretaker: false, agent: false, investor: false, admin: false, superAdmin: false },
+      roleOnboardingCompleted: { tenant: false, landlord: true, caretaker: false, agent: false, investor: false, admin: false, superAdmin: false,developer:false  },
       draftData: { 
         landlord: { propertyCount: '2-5 properties', propertyTypes: ['Apartments'], managementStyle: 'Self-managed' } 
       },
@@ -79,7 +79,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: false, investor: true, admin: false, superAdmin: false },
+      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: false, investor: true, admin: false, superAdmin: false,developer:false  },
       draftData: { 
         investor: { investmentBudget: '$100k - $500k', investmentType: ['Buy-to-let'], riskTolerance: 'Moderate' } 
       },
@@ -97,7 +97,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: true, agent: false, investor: false, admin: false, superAdmin: false },
+      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: true, agent: false, investor: false, admin: false, superAdmin: false,developer:false  },
       draftData: { 
         caretaker: { propertiesManaged: '10+', managementExperience: '8 years', availableHours: 'Full-time' } 
       },
@@ -115,7 +115,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: true, landlord: false, caretaker: false, agent: false, investor: false, admin: false, superAdmin: false },
+      roleOnboardingCompleted: { tenant: true, landlord: false, caretaker: false, agent: false, investor: false, admin: false, superAdmin: false,developer:false  },
       draftData: { 
         tenant: { preferredLocation: 'Downtown', budgetRange: '$1500 - $2500', moveInDate: '2026-02-01' } 
       },
@@ -133,10 +133,40 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: true, caretaker: false, agent: false, investor: true, admin: false, superAdmin: false },
+      roleOnboardingCompleted: { tenant: false, landlord: true, caretaker: false, agent: false, investor: true, admin: false, superAdmin: false,developer:false  },
       draftData: { 
         landlord: { propertyCount: '6-10 properties' },
         investor: { investmentBudget: '$1M+' }
+      },
+      onboardingCompleted: true,
+    }
+  },
+
+  'developer@example.com': {
+    user: {
+      id: 'user_clt08developer008',
+      email: 'developer@example.com',
+      fullName: 'David Developer',
+      phone: '+1 890 123 4567',
+      roles: ['developer'],
+      verified: true,
+    },
+    onboarding: {
+      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: false, investor: false, admin: false, superAdmin: false, developer: true },
+      draftData: { 
+        developer: { 
+            companyName: 'Zenith Developments', 
+            registrationNumber: 'RC-123456', 
+            yearsExperience: '10+',
+            specialization: ['Residential', 'Commercial'],
+            portfolio: [
+                { id: 'p1', title: 'Lekki Gardens V', description: 'Luxury apartments in Lekki.', image: '/assets/portfolio/1.jpg', status: 'completed' },
+                { id: 'p2', title: 'Banana Island Heights', description: 'Premium high-rise living.', image: '/assets/portfolio/2.jpg', status: 'in-progress' }
+            ],
+            investmentConditions: [
+                { minAmount: 1000000, expectedReturn: '20-25%', timeline: '18 Months', riskLevel: 'medium' }
+            ]
+        } 
       },
       onboardingCompleted: true,
     }
@@ -152,7 +182,7 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
       verified: true,
     },
     onboarding: {
-      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: false, investor: false, admin: false, superAdmin: false },
+      roleOnboardingCompleted: { tenant: false, landlord: false, caretaker: false, agent: false, investor: false, admin: false, superAdmin: false,developer:false },
       draftData: {},
       onboardingCompleted: false,
     }

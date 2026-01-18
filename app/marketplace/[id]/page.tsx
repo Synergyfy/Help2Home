@@ -10,6 +10,7 @@ import BookingModal from '@/components/BookingModal';
 import ConfirmationModal from '@/components/ConfirmationModal';
 import ChatDrawer from '@/components/marketplace/ChatDrawer';
 import ListerProfileModal from '@/components/marketplace/ListerProfileModal';
+import InvestmentDetailsModal from '@/components/dashboard/investor/InvestmentDetailsModal';
 import { mockProperties } from '@/utils/properties';
 import { FaShower, FaHome } from "react-icons/fa";
 import { formatNumber } from '@/utils/helpers';
@@ -45,6 +46,7 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
     const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(0);
 
     if (!property) {
@@ -303,6 +305,16 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                                         </Link>
                                     )}
 
+                                    {(property as any).investmentTerms?.enabled && (
+                                        <button
+                                            onClick={() => setIsInvestmentModalOpen(true)}
+                                            className="w-full bg-[#111811] text-white font-bold py-4 rounded-xl hover:bg-black transition-colors shadow-lg flex items-center justify-center gap-2"
+                                        >
+                                            <span className="text-brand-green"><MdOutlineVilla /></span>
+                                            Invest Now
+                                        </button>
+                                    )}
+
                                     {(() => {
                                         const calcUrl = new URLSearchParams({
                                             amount: propertyPrice.toString(),
@@ -526,6 +538,11 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                 listerRole={property.posterRole}
                 listerVerified={property.listerVerified}
             />
-        </div>
+            <InvestmentDetailsModal
+                isOpen={isInvestmentModalOpen}
+                onClose={() => setIsInvestmentModalOpen(false)}
+                property={property}
+            />
+        </div >
     );
 }

@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const propertySchema = z.object({
   // Identity & Attribution
-  posterRole: z.enum(['landlord', 'agent', 'caretaker']),
+  posterRole: z.enum(['landlord', 'agent', 'caretaker', 'developer']),
   agencyName: z.string().optional(),
   agentLicense: z.string().optional(),
   
@@ -26,7 +26,7 @@ export const propertySchema = z.object({
   // Pricing Dynamics (Conditional based on listingType)
   price: z.object({
     amount: z.coerce.number().min(1, 'Price is required'),
-    currency: z.enum(['NGN', 'USD']).default('NGN'),
+    currency: z.enum(['NGN', 'USD']),
     period: z.enum(['year', 'month', 'day', 'week']).optional(), // Added for Rent/Short-Let
     serviceCharge: z.coerce.number().optional(),
   }),
@@ -44,14 +44,14 @@ export const propertySchema = z.object({
   purchasePrice: z.coerce.number().optional(),
   optionFee: z.coerce.number().optional(),
   downPayment: z.coerce.number().optional(),
-  isMortgageAvailable: z.boolean().default(false),
+  isMortgageAvailable: z.boolean(),
 
   // Specifications
   specs: z.object({
     bedrooms: z.coerce.number().min(0).optional(),
     bathrooms: z.coerce.number().min(0).optional(),
     area: z.coerce.number().optional(),
-    areaUnit: z.enum(['sqm', 'sqft']).default('sqm'),
+    areaUnit: z.enum(['sqm', 'sqft']),
     furnishing: z.string().optional(),
     floorNumber: z.coerce.number().optional(), // For Apartments/Commercial
     zoning: z.string().optional(), // For Land
@@ -61,8 +61,8 @@ export const propertySchema = z.object({
   // Media & Extras
   amenities: z.array(z.object({
     name: z.string(),
-    price: z.coerce.number().optional().default(0),
-  })).default([]),
+    price: z.coerce.number(),
+  })),
   images: z.array(z.object({
     id: z.string(),
     url: z.string(),
@@ -84,11 +84,11 @@ export const propertySchema = z.object({
   }).optional(),
 
   installments: z.object({
-    enabled: z.boolean().default(false),
-    depositType: z.enum(['fixed', 'percentage']).default('percentage'),
+    enabled: z.boolean(),
+    depositType: z.enum(['fixed', 'percentage']),
     depositValue: z.coerce.number().min(0, 'Deposit value cannot be negative').optional(),
     tenures: z.array(z.coerce.number()).max(10, 'Repayment plans cannot exceed 10 months').optional(), // Repayment Strategy (months)
-    interestRate: z.coerce.number().min(0, 'Interest rate cannot be negative').default(0),
+    interestRate: z.coerce.number().min(0, 'Interest rate cannot be negative'),
   }).optional(),
 
   availabilityDuration: z.coerce.number().optional(), // 6, 12, 24 months for rent
@@ -101,6 +101,28 @@ export const propertySchema = z.object({
   terms: z.object({
     availableFrom: z.string().optional(),
     minTenancy: z.string().optional(),
+  }).optional(),
+
+  // Developer Specifics
+  projectTimeline: z.object({
+    startDate: z.string().optional(),
+    completionDate: z.string().optional(),
+    status: z.enum(['planning', 'in-progress', 'completed', 'halted']),
+    milestones: z.array(z.object({
+       title: z.string(),
+       date: z.string(),
+       completed: z.boolean()
+    })).optional()
+  }).optional(),
+
+  investmentTerms: z.object({
+    enabled: z.boolean(),
+    minInvestment: z.coerce.number().min(0).optional(),
+    maxInvestment: z.coerce.number().min(0).optional(),
+    roi: z.coerce.number().min(0).optional(), // percentage
+    roiFrequency: z.enum(['monthly', 'quarterly', 'annually', 'end-of-term']),
+    duration: z.coerce.number().min(0).optional(), // months
+    repaymentSchedule: z.string().optional() // Description or Enum
   }).optional(),
 
   // Landlord Details (Required for Caretakers)
@@ -118,7 +140,7 @@ export const propertySchema = z.object({
   }).optional(),
 
   communityLink: z.string().url('Invalid URL format').optional().or(z.literal('')),
-  status: z.enum(['available', 'sold', 'let-agreed', 'draft']).default('draft'),
+  status: z.enum(['available', 'sold', 'let-agreed', 'draft']),
 }).superRefine((data, ctx) => {
   // Caretaker: Landlord details are required
   if (data.posterRole === 'caretaker') {

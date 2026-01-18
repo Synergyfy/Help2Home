@@ -2,6 +2,7 @@
 
 import React from 'react';
 import PropertyWizard from '@/components/dashboard/shared/Wizard/PropertyWizard';
+import { STEP_CONFIG } from '@/config/propertyConfig';
 import { FiArrowLeft } from 'react-icons/fi';
 import Link from 'next/link';
 
@@ -27,7 +28,10 @@ export default function AdminListingPage() {
                 </div>
 
                 <div className="bg-white rounded-3xl border border-brand-green-200 shadow-xl shadow-brand-green-200/50 overflow-hidden">
-                    <PropertyWizard />
+                    <PropertyWizard
+                        roleKey="landlord"
+                        availableStepsKeys={STEP_CONFIG.landlord}
+                    />
                 </div>
             </div>
         </div>

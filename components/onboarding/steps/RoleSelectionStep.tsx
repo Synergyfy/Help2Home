@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from "framer-motion";
-import { FiHome, FiKey, FiBriefcase, FiTrendingUp, FiArrowRight, FiArrowLeft, FiCheck, FiUsers } from "react-icons/fi";
+import { FiHome, FiKey, FiBriefcase, FiTrendingUp, FiArrowRight, FiArrowLeft, FiCheck, FiUsers, FiCode } from "react-icons/fi";
 import { useOnboardingStore, UserRole, MULTI_SELECT_ROLES } from "@/store/onboardingStore";
 
 const roles: { id: UserRole; name: string; description: string; icon: React.ReactNode; multiSelect?: boolean }[] = [
@@ -9,6 +9,7 @@ const roles: { id: UserRole; name: string; description: string; icon: React.Reac
   { id: "landlord", name: "Landlord", description: "Own properties and want to find reliable tenants", icon: <FiKey className="w-5 h-5 sm:w-6 sm:h-6" />, multiSelect: true },
   { id: "caretaker", name: "Caretaker", description: "Manage properties on behalf of landlords", icon: <FiUsers className="w-5 h-5 sm:w-6 sm:h-6" />, multiSelect: true },
   { id: "agent", name: "Real Estate Agent", description: "Help clients buy, sell, or rent properties professionally", icon: <FiBriefcase className="w-5 h-5 sm:w-6 sm:h-6" />, multiSelect: true },
+  { id: "developer", name: "Real Estate Developer", description: "Create large scale projects, manage portfolios and set investment terms", icon: <FiCode className="w-5 h-5 sm:w-6 sm:h-6" />, multiSelect: true },
   { id: "investor", name: "Investor", description: "Looking to invest in real estate for returns and growth", icon: <FiTrendingUp className="w-5 h-5 sm:w-6 sm:h-6" /> },
 ];
 
@@ -57,18 +58,26 @@ const RoleSelectionStep = () => {
         {roles.map((role, index) => {
           const isSelected = selectedRoles.includes(role.id);
           const isDisabled = isRoleDisabled(role.id);
-          
+
           return (
             <motion.button
               key={role.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.03 }}
-              onClick={() => !isDisabled && toggleRole(role.id)}
+              onClick={() => {
+                if (!isDisabled) {
+                  toggleRole(role.id);
+                  // If it's a single-select role (not multiSelect), auto-proceed
+                  if (!role.multiSelect) {
+                    setActiveRole(role.id);
+                    goToStep(5);
+                  }
+                }
+              }}
               disabled={isDisabled}
-              className={`w-full relative p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 text-left transition-all duration-200 flex items-center gap-3 sm:gap-4 ${
-                isSelected ? "border-brand-green bg-brand-green/5 shadow-sm" : isDisabled ? "border-gray-50 bg-gray-50/50 opacity-40 cursor-not-allowed" : "border-gray-100 hover:border-brand-green/30 bg-white"
-              }`}
+              className={`w-full relative p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 text-left transition-all duration-200 flex items-center gap-3 sm:gap-4 ${isSelected ? "border-brand-green bg-brand-green/5 shadow-sm" : isDisabled ? "border-gray-50 bg-gray-50/50 opacity-40 cursor-not-allowed" : "border-gray-100 hover:border-brand-green/30 bg-white"
+                }`}
             >
               <div className={`shrink-0 w-10 h-10 sm:w-14 sm:h-14 rounded-lg sm:rounded-2xl flex items-center justify-center transition-all ${isSelected ? "bg-brand-green text-white" : "bg-gray-100 text-gray-500"}`}>
                 {role.icon}

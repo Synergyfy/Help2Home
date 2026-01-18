@@ -19,6 +19,8 @@ export interface EmploymentData {
     type: string;
     startDate: string;
     contact: string;
+    organizationId?: string;
+    companyName?: string;
 }
 
 export interface Guarantor {

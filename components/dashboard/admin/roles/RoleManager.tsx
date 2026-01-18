@@ -59,7 +59,7 @@ export default function RoleManager() {
       <div className="xl:col-span-2 space-y-6">
         <div className="bg-white p-4 rounded-xl border border-brand-green-100 shadow-sm flex flex-col sm:flex-row gap-4 justify-between items-center">
           <div className="relative w-full sm:w-72">
-            <HiOutlineSearch className="absolute left-3 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400" size={18} />
+            <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-green-400" size={18} />
             <input
               className="w-full pl-10 pr-4 py-2 rounded-lg border border-brand-green-200 bg-brand-green-50 text-sm focus:ring-2 focus:ring-brand-green/20 outline-none"
               placeholder="Search by name or email..."
@@ -151,7 +151,7 @@ export default function RoleManager() {
               <div>
                 <label className="block text-[10px] font-black text-brand-green-500 uppercase tracking-widest mb-1.5">Full Name</label>
                 <div className="relative">
-                  <HiOutlineBadgeCheck className="absolute left-3 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400" size={18} />
+                  <HiOutlineBadgeCheck className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-green-400" size={18} />
                   <input
                     value={newUser.name}
                     onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
@@ -163,7 +163,7 @@ export default function RoleManager() {
               <div>
                 <label className="block text-[10px] font-black text-brand-green-500 uppercase tracking-widest mb-1.5">Email Address</label>
                 <div className="relative">
-                  <HiOutlineMail className="absolute left-3 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400" size={18} />
+                  <HiOutlineMail className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-green-400" size={18} />
                   <input
                     value={newUser.email}
                     onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}

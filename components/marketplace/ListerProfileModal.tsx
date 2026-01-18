@@ -3,7 +3,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiOutlineXMark, HiOutlineShieldCheck, HiOutlineEnvelope, HiOutlinePhone } from 'react-icons/hi2';
-import { MdOutlineVilla, MdStar } from 'react-icons/md';
+import { MdOutlineVilla, MdStar, MdHandshake } from 'react-icons/md';
+import PartnerApplicationModal from '@/components/dashboard/investor/PartnerApplicationModal';
 
 interface ListerProfileModalProps {
     isOpen: boolean;
@@ -22,6 +23,8 @@ export default function ListerProfileModal({
     listerRole,
     listerVerified
 }: ListerProfileModalProps) {
+    const [isPartnerModalOpen, setIsPartnerModalOpen] = React.useState(false);
+
     if (!isOpen) return null;
 
     return (
@@ -156,15 +159,33 @@ export default function ListerProfileModal({
                             </div>
                         </div>
 
-                        <button
-                            onClick={onClose}
-                            className="w-full mt-8 py-4 bg-brand-green text-white font-bold rounded-2xl shadow-lg shadow-brand-green/20 hover:bg-green-700 transition-all active:scale-[0.98]"
-                        >
-                            Connect with Lister
-                        </button>
+                        <div className="flex flex-col gap-3 mt-8">
+                            <button
+                                onClick={onClose}
+                                className="w-full py-4 bg-brand-green text-white font-bold rounded-2xl shadow-lg shadow-brand-green/20 hover:bg-green-700 transition-all active:scale-[0.98]"
+                            >
+                                Connect with Lister
+                            </button>
+
+                            {listerRole?.toLowerCase() === 'developer' && (
+                                <button
+                                    onClick={() => setIsPartnerModalOpen(true)}
+                                    className="w-full py-4 bg-[#111811] text-white font-bold rounded-2xl shadow-lg hover:bg-black transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                                >
+                                    <MdHandshake size={20} />
+                                    Become a Partner
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </motion.div>
             </div>
+
+            <PartnerApplicationModal
+                isOpen={isPartnerModalOpen}
+                onClose={() => setIsPartnerModalOpen(false)}
+                developerName={listerName}
+            />
         </AnimatePresence>
     );
 }

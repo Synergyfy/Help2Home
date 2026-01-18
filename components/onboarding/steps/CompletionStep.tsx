@@ -2,8 +2,7 @@
 
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { FiCheck, FiHome, FiKey, FiBriefcase, FiTrendingUp, FiUsers, FiLogIn } from "react-icons/fi";
-import { FiShield } from 'react-icons/fi';
+import { FiCheck, FiHome, FiKey, FiBriefcase, FiTrendingUp, FiUsers, FiLogIn, FiShield, FiCode } from "react-icons/fi";
 import { useOnboardingStore, UserRole } from "@/store/onboardingStore";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -13,6 +12,7 @@ const roleIcons: Record<UserRole, React.ReactNode> = {
   caretaker: <FiUsers size={32} />,
   agent: <FiBriefcase size={32} />,
   investor: <FiTrendingUp size={32} />,
+  developer: <FiCode size={32} />,
   admin: <FiShield size={32} />,
   superAdmin: <FiShield size={32} />,
 };
@@ -23,6 +23,7 @@ const roleNames: Record<UserRole, string> = {
   caretaker: "Caretaker",
   agent: "Real Estate Agent",
   investor: "Investor",
+  developer: "Property Developer",
   admin: "Administrator",
   superAdmin: "Super Administrator",
 };
@@ -57,6 +58,7 @@ const CompletionStep = () => {
       case "caretaker": return "Property management tools are ready. Sign in to connect with landlords.";
       case "agent": return "Your agent profile is active. Sign in to start managing your listings.";
       case "investor": return "Investment filters are applied. Sign in to view curated opportunities.";
+      case "developer": return "Your developer profile is set up. Sign in to list your projects and investment opportunities.";
       default: return "Your account setup is complete. Please sign in to continue.";
     }
   };

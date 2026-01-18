@@ -6,7 +6,7 @@ export type Property = {
   id: number;
   title: string;
   description: string;
-  propertyType: 'rent' | 'buy' | 'service-apartment' | 'rent-to-own';
+  propertyType: 'rent' | 'buy' | 'service-apartment' | 'rent-to-own' | 'invest';
   category: PropertyCategory; 
   address: string;
   location: string;
@@ -15,7 +15,7 @@ export type Property = {
   postcode?: string;
   images: string[];
   createdBy?: string;
-  posterRole: 'landlord' | 'agent' | 'caretaker';
+  posterRole: 'landlord' | 'agent' | 'caretaker' | 'developer';
   listerName?: string;
   listerImage?: string;
   listerVerified?: boolean;
@@ -98,6 +98,17 @@ export type Property = {
   hasReducedPrice: boolean;
   isUnderOffer: boolean;
   communityLink?: string;
+  investmentTerms?: {
+    enabled: boolean;
+    roi: number;
+    duration: number; // in months
+    minInvestment: number;
+    maxInvestment?: number;
+    roiFrequency: 'monthly' | 'quarterly' | 'annually';
+    riskLevel: 'Low' | 'Medium' | 'High';
+    timeline?: string;
+    expectedReturn?: string;
+  };
 };
 const initialProperties: Property[] = [
   {
@@ -689,6 +700,90 @@ const initialProperties: Property[] = [
     listerVerified: true,
     listerImage: "https://i.pravatar.cc/150?u=lawrence"
   },
+  {
+    id: 13,
+    title: "Zenith Heights - Investment",
+    description: "High-yield residential development plot in the heart of Lekki. Perfect for passive investors.",
+    propertyType: 'invest',
+    category: 'residential-properties-for-sale',
+    address: "Lekki Phase 1",
+    location: "Lekki",
+    city: "Lagos",
+    state: "Lagos",
+    images: [Img1.src, Img2.src],
+    bedrooms: 0,
+    bathrooms: 0,
+    price: 50000000,
+    featured: true,
+    verified: true,
+    isNew: true,
+    isOffPlan: true,
+    isNewBuild: true,
+    status: 'available',
+    ownership: 'freehold',
+    dateAdded: new Date().toISOString(),
+    listingAge: '24h',
+    isRetirementHome: false,
+    isSharedOwnership: false,
+    isAuction: false,
+    isChainFree: true,
+    hasReducedPrice: false,
+    isUnderOffer: false,
+    posterRole: 'developer',
+    listerName: "Zenith Developments",
+    investmentTerms: {
+        enabled: true,
+        roi: 25,
+        duration: 18,
+        minInvestment: 5000000,
+        roiFrequency: 'annually',
+        riskLevel: 'Low',
+        timeline: '18 Months',
+        expectedReturn: '25% APY'
+    }
+  },
+  {
+    id: 14,
+    title: "Eco-Tech Park Abuja",
+    description: "Participate in the development of Abuja's first sustainable tech hub. Guaranteed buy-back after 2 years.",
+    propertyType: 'invest',
+    category: 'commercial-properties-for-sale',
+    address: "Central Business District",
+    location: "CBD",
+    city: "Abuja",
+    state: "FCT",
+    images: [Img2.src],
+    bedrooms: 0,
+    bathrooms: 0,
+    price: 150000000,
+    featured: true,
+    verified: true,
+    isNew: true,
+    isOffPlan: true,
+    isNewBuild: true,
+    status: 'available',
+    ownership: 'leasehold',
+    dateAdded: new Date().toISOString(),
+    listingAge: '24h',
+    isRetirementHome: false,
+    isSharedOwnership: false,
+    isAuction: false,
+    isChainFree: true,
+    hasReducedPrice: false,
+    isUnderOffer: false,
+    posterRole: 'developer',
+    listerName: "GreenTech Infra",
+    investmentTerms: {
+        enabled: true,
+        roi: 30,
+        duration: 24,
+        minInvestment: 10000000,
+        roiFrequency: 'annually',
+        riskLevel: 'Medium',
+        timeline: '24 Months',
+        expectedReturn: '30% Fixed'
+    }
+  }
 ];
 
 const STORAGE_KEY = 'help2home_properties_db_v1';

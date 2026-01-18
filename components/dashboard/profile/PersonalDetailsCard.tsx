@@ -8,7 +8,7 @@ interface PersonalDetailsCardProps {
 }
 
 export default function PersonalDetailsCard({ data, onSave }: PersonalDetailsCardProps) {
-    const { profile, updateProfile, email, phone: storePhone } = useUserStore();
+    const { profile, updateProfile, setUser, email, phone: storePhone } = useUserStore();
 
     const [formData, setFormData] = useState<ProfileData>({
         ...data,
@@ -84,6 +84,7 @@ export default function PersonalDetailsCard({ data, onSave }: PersonalDetailsCar
                 state: formData.state,
                 image: formData.image
             });
+            setUser({ phone: formData.phone });
             setIsEditing(false);
             setShowSuccess(true);
             setTimeout(() => setShowSuccess(false), 3000);

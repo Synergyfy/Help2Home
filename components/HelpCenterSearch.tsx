@@ -23,7 +23,7 @@ export default function HelpCenterSearch() {
                 />
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="absolute left-5 top-1/2 transform -tranbrand-green-y-1/2 text-gray-400 w-6 h-6"
+                    className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

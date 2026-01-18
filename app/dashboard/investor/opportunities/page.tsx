@@ -46,6 +46,20 @@ const OPPORTUNITIES = [
         raisedAmount: 45000000,
         type: "Income",
         image: "https://images.unsplash.com/photo-1555636222-3109ce4a7d2b?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+        id: 4,
+        title: "Centenary City Commercial Hub",
+        category: "Real Estate Equity",
+        roi: "22.0%",
+        tenure: "48 Months",
+        minInvestment: 5000000,
+        targetAmount: 2500000000,
+        raisedAmount: 1200000000,
+        type: "Growth",
+        image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800",
+        developer: "Zenith Developments",
+        isDeveloperListed: true
     }
 ];
 

@@ -25,7 +25,7 @@ export default function NotificationToast({ notification, onClose }: Notificatio
     if (!notification) return null;
 
     return (
-        <div className={`fixed top-4 right-4 z-[100] transition-all duration-300 transform ${isVisible ? 'tranbrand-green-y-0 opacity-100' : '-tranbrand-green-y-4 opacity-0'
+        <div className={`fixed top-4 right-4 z-[100] transition-all duration-300 transform ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
             }`}>
             <div className="bg-white rounded-lg shadow-xl border-l-4 border-[#00853E] p-4 max-w-sm flex items-start gap-3">
                 <div className="flex-shrink-0 text-[#00853E]">

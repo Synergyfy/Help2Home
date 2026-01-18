@@ -33,7 +33,7 @@ export default function TenantTimeline() {
                             <FadeIn key={index} delay={index * 0.1}>
                                 <div className="relative flex md:flex-col items-center md:text-center pl-16 md:pl-0">
                                     {/* Dot */}
-                                    <div className="absolute left-4 md:left-1/2 md:-tranbrand-green-x-1/2 top-0 md:top-4 w-5 h-5 rounded-full bg-brand-green border-4 border-white shadow-sm z-10"></div>
+                                    <div className="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-0 md:top-4 w-5 h-5 rounded-full bg-brand-green border-4 border-white shadow-sm z-10"></div>
 
                                     {/* Content */}
                                     <div className="md:pt-12">

@@ -28,7 +28,7 @@ export const LoginModal = ({ onLogin }: LoginModalProps) => {
           <div className="space-y-1">
             <label className="text-xs font-bold text-brand-green-500 uppercase tracking-wider">Admin Email</label>
             <div className="relative">
-              <FiUser className="absolute left-3 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400" size={18} />
+              <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-green-400" size={18} />
               <input
                 type="email" required
                 className="w-full pl-10 pr-4 py-3 bg-brand-green-50 border border-brand-green-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
@@ -40,7 +40,7 @@ export const LoginModal = ({ onLogin }: LoginModalProps) => {
           <div className="space-y-1">
             <label className="text-xs font-bold text-brand-green-500 uppercase tracking-wider">Secure Password</label>
             <div className="relative">
-              <FiLock className="absolute left-3 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400" size={18} />
+              <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-green-400" size={18} />
               <input
                 type="password" required
                 className="w-full pl-10 pr-4 py-3 bg-brand-green-50 border border-brand-green-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"

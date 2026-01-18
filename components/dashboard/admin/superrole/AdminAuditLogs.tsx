@@ -12,7 +12,7 @@ export default function AdminAuditLogs() {
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-black text-brand-green-900">System Audit Logs</h2>
                 <div className="relative">
-                    <FiSearch className="absolute left-3 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400" />
+                    <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-green-400" />
                     <input
                         type="text"
                         placeholder="Filter by admin or action..."

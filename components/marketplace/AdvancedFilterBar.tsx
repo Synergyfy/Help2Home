@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMarketplaceStore } from '@/store/marketplaceStore';
 import { useLocations } from '@/hooks/useMarketplaceQueries';
@@ -18,10 +18,8 @@ import { MdOutlineAttachMoney, MdOutlineGridView } from "react-icons/md";
 import FilterModal from './FilterModal';
 
 export default function AdvancedFilterBar() {
-  const pathname = usePathname();
-  const isRent = pathname?.includes('/rent');
-
-  const { filters, setLocation, setFilters, resetAdvancedFilters,toggleCategory } = useMarketplaceStore();
+  const { filters, setLocation, setFilters, resetAdvancedFilters, toggleCategory } = useMarketplaceStore();
+  const isRent = filters.propertyType === 'rent';
 
   const [locationInput, setLocationInput] = useState(filters.location || '');
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -104,7 +102,7 @@ export default function AdvancedFilterBar() {
   const CustomDropdown = ({ label, displayValue, icon: Icon, children, width = "w-[240px]" }: any) => {
     const isOpen = openDropdown === label;
     return (
-      <div className="relative dropdown-container flex-shrink-0">
+      <div className="relative dropdown-container shrink-0">
         <button
           type="button"
           onClick={() => setOpenDropdown(isOpen ? null : label)}
@@ -114,13 +112,13 @@ export default function AdvancedFilterBar() {
             {Icon && <Icon className="w-4 h-4 text-gray-400" />}
             {displayValue}
           </span>
-          <HiChevronDown className={`w-4 h-4 transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
+          <HiChevronDown className={`w-4 h-4 transition-transform shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
         </button>
         <AnimatePresence>
           {isOpen && (
             <motion.div
               initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}
-              className={`absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-[70] p-4 ${width}`}
+              className={`absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-70 p-4 ${width}`}
             >
               {children}
             </motion.div>
@@ -138,7 +136,7 @@ export default function AdvancedFilterBar() {
 
             {/* 1. Location Input */}
             <div className="relative flex-1 min-w-0 lg:min-w-[280px]" ref={locationRef}>
-              <div className="absolute left-3 top-1/2 -tranbrand-green-y-1/2 pointer-events-none">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
                 <HiOutlineMapPin className="w-5 h-5 text-gray-400" />
               </div>
               <input
@@ -150,14 +148,14 @@ export default function AdvancedFilterBar() {
                 className="w-full h-11 pl-10 pr-10 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green outline-none text-sm transition-all"
               />
               {locationInput && (
-                <button onClick={clearLocation} className="absolute right-3 top-1/2 -tranbrand-green-y-1/2 p-1 text-gray-400 hover:text-gray-600">
+                <button onClick={clearLocation} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600">
                   <HiXMark className="w-4 h-4" />
                 </button>
               )}
 
               <AnimatePresence>
                 {showLocationSuggestions && locationInput.length > 0 && (
-                  <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-[80] overflow-hidden max-h-64 overflow-y-auto">
+                  <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-80 overflow-hidden max-h-64 overflow-y-auto">
                     {isLoading ? <div className="p-4 text-center text-sm text-gray-500">Searching...</div> :
                       locations?.map((loc: any) => (
                         <button key={loc.id} onClick={() => handleLocationSelect(loc.name)} className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 flex items-center gap-3 border-b border-gray-50 last:border-none">

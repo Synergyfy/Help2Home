@@ -30,7 +30,7 @@ import 'leaflet/dist/leaflet.css';
 const SuccessStep = dynamic(() => import('./SuccessStep'), { ssr: false });
 
 interface BasicsStepProps {
-    role?: 'landlord' | 'agent' | 'caretaker';
+    role?: 'landlord' | 'agent' | 'caretaker' | 'developer';
 }
 
 export default function BasicsStep({ role }: BasicsStepProps = {}) {
@@ -102,47 +102,50 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                             <p className="text-sm text-gray-500">Details required for <span className="text-brand-green font-medium">{activeRole}</span> listings</p>
                         </div>
 
-                        {activeRole === 'agent' ? (
+                        {activeRole === 'agent' || activeRole === 'developer' ? (
                             <div className="space-y-6 animate-in slide-in-from-left duration-300">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label className={labelClasses}>Agency Name</label>
-                                        <input {...register('agencyName')} className={inputClasses} placeholder="e.g. Prime Realty Ltd" />
+                                        <label className={labelClasses}>{activeRole === 'developer' ? 'Company Name' : 'Agency Name'}</label>
+                                        <input {...register('agencyName')} className={inputClasses} placeholder={activeRole === 'developer' ? "e.g. Zenith Developments" : "e.g. Prime Realty Ltd"} />
                                     </div>
                                     <div>
-                                        <label className={labelClasses}>Agent License No.</label>
+                                        <label className={labelClasses}>{activeRole === 'developer' ? 'Registration Number' : 'Agent License No.'}</label>
                                         <input {...register('agentLicense')} className={inputClasses} placeholder="Optional for verification" />
                                     </div>
                                 </div>
 
-                                {/* Optional Landlord info for Agents */}
-                                <div className="p-5 bg-green-50/50 rounded-2xl border border-brand-green/10">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className="flex items-start gap-3">
-                                            <div className="size-8 rounded-lg bg-brand-green/10 flex items-center justify-center text-brand-green shrink-0">
-                                                <HiOutlineShieldCheck size={20} />
+                                {/* Optional Landlord info for Agents/Developers - Maybe less relevant for developers as they own it, but keeping structure for now */}
+                                {activeRole === 'agent' && (
+                                    <div className="p-5 bg-green-50/50 rounded-2xl border border-brand-green/10">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-start gap-3">
+                                                <div className="size-8 rounded-lg bg-brand-green/10 flex items-center justify-center text-brand-green shrink-0">
+                                                    <HiOutlineShieldCheck size={20} />
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-sm font-bold text-gray-900">Owner Verification</h4>
+                                                    <p className="text-xs text-gray-500">Provide the landlord's contact to request verification.</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h4 className="text-sm font-bold text-gray-900">Owner Verification</h4>
-                                                <p className="text-xs text-gray-500">Provide the landlord's contact to request verification.</p>
-                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => setHasLandlord(!hasLandlord)}
+                                                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${hasLandlord ? 'bg-brand-green' : 'bg-gray-200'}`}
+                                            >
+                                                <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${hasLandlord ? 'translate-x-5' : 'translate-x-0'}`} />
+                                            </button>
                                         </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => setHasLandlord(!hasLandlord)}
-                                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${hasLandlord ? 'bg-brand-green' : 'bg-gray-200'}`}
-                                        >
-                                            <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${hasLandlord ? 'translate-x-5' : 'translate-x-0'}`} />
-                                        </button>
-                                    </div>
 
-                                    {hasLandlord && (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                                            <input {...register('landlord.fullName')} className={inputClasses} placeholder="Landlord Full Name" />
-                                            <input {...register('landlord.email')} className={inputClasses} placeholder="Landlord Email" />
-                                        </div>
-                                    )}
-                                </div>
+                                        {hasLandlord && (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                                <input {...register('landlord.fullName')} className={inputClasses} placeholder="Landlord Full Name" />
+                                                <input {...register('landlord.email')} className={inputClasses} placeholder="Landlord Email" />
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
 
                                 {/* Caretaker Assignment for Agents */}
                                 <div className="p-5 bg-blue-50/50 rounded-2xl border border-blue-500/10">
@@ -173,6 +176,7 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                                     )}
                                 </div>
                             </div>
+
                         ) : activeRole === 'caretaker' ? (
                             <div className="p-4 bg-gray-50 rounded-xl border border-dashed border-gray-200 animate-in slide-in-from-right duration-300">
                                 <p className="text-sm text-gray-600 flex items-center gap-2">
@@ -184,33 +188,30 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                                     <div className="flex items-center justify-between mb-4">
                                         <div>
                                             <h4 className="text-sm font-bold text-brand-green uppercase tracking-wider mb-1">Landlord Information</h4>
-                                            <p className="text-xs text-gray-500">Invite the owner to the platform.</p>
+                                            <p className="text-xs text-gray-500">Owner details are required for caretaker listings.</p>
                                         </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => setHasLandlord(!hasLandlord)}
-                                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${hasLandlord ? 'bg-brand-green' : 'bg-gray-200'}`}
-                                        >
-                                            <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${hasLandlord ? 'translate-x-5' : 'translate-x-0'}`} />
-                                        </button>
+                                        {/* For caretakers, this is mandatory, so we don't show a toggle to disable it */}
+                                        <div className="size-6 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green">
+                                            <HiOutlineShieldCheck size={16} />
+                                        </div>
                                     </div>
 
-                                    {hasLandlord && (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
-                                            <div className="md:col-span-2">
-                                                <label className={labelClasses}>Landlord Full Name</label>
-                                                <input {...register('landlord.fullName')} className={inputClasses} placeholder="e.g. John Doe" />
-                                            </div>
-                                            <div>
-                                                <label className={labelClasses}>Landlord Email</label>
-                                                <input {...register('landlord.email')} className={inputClasses} placeholder="landlord@example.com" />
-                                            </div>
-                                            <div>
-                                                <label className={labelClasses}>Landlord Phone</label>
-                                                <input {...register('landlord.phone')} className={inputClasses} placeholder="+234 ..." />
-                                            </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                                        <div className="md:col-span-2">
+                                            <label className={labelClasses}>Landlord Full Name</label>
+                                            <input {...register('landlord.fullName')} className={inputClasses} placeholder="e.g. John Doe" />
+                                            {errors.landlord?.fullName && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.fullName.message}</p>}
                                         </div>
-                                    )}
+                                        <div>
+                                            <label className={labelClasses}>Landlord Email</label>
+                                            <input {...register('landlord.email')} className={inputClasses} placeholder="landlord@example.com" />
+                                            {errors.landlord?.email && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.email.message}</p>}
+                                        </div>
+                                        <div>
+                                            <label className={labelClasses}>Landlord Phone</label>
+                                            <input {...register('landlord.phone')} className={inputClasses} placeholder="+234 ..." />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ) : (
@@ -275,6 +276,28 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                                 <label className={labelClasses}>Community / Contact Link</label>
                                 <input {...register('communityLink')} className={inputClasses} placeholder="e.g. WhatsApp group, personal link" />
                                 {errors.communityLink && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.communityLink.message}</p>}
+                            </div>
+                        </div>
+
+                        {/* Description Section - Especially for Developers */}
+                        <div className="mb-10 animate-in fade-in slide-in-from-top-2 duration-500">
+                            <div className="grid grid-cols-1 gap-6">
+                                <div>
+                                    <label className={labelClasses}>{activeRole === 'developer' ? 'Project Tagline (Short)' : 'Short Description (Catchy headline)'}</label>
+                                    <input
+                                        {...register('description.short')}
+                                        className={inputClasses}
+                                        placeholder={activeRole === 'developer' ? "e.g. Modern Living Reimagined in Lekki" : "e.g. Cozy 2-bed apartment in city center"}
+                                    />
+                                </div>
+                                <div>
+                                    <label className={labelClasses}>{activeRole === 'developer' ? 'Project Full Explanation' : 'Full Property Description'}</label>
+                                    <textarea
+                                        {...register('description.long')}
+                                        className="w-full p-4 rounded-xl border border-gray-200 bg-white text-[#111811] focus:border-brand-green focus:ring-1 focus:ring-[brand-green] outline-none transition-all placeholder:text-gray-400 shadow-sm min-h-[120px]"
+                                        placeholder={activeRole === 'developer' ? "Describe the vision, amenities, and lifestyle..." : "Describe the key features, neighborhood, etc..."}
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -367,7 +390,7 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                         </ul>
                     </div>
                 </div>
-            </div >
+            </div>
         </>
     );
 }

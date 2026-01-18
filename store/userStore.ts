@@ -2,7 +2,7 @@ import React from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type Role = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor' | 'admin' | 'superAdmin';
+export type Role = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor' | 'developer' | 'admin' | 'superAdmin';
 
 
 
@@ -26,8 +26,32 @@ export interface TenantProfileData {
   amenities: string[];
   employmentStatus?: string;
   employerName?: string;
+  companyName?: string;
+  organizationId?: string;
   jobTitle?: string;
   monthlySalary?: string;
+  employmentType?: string;
+  startDate?: string;
+  employerContact?: string;
+  nextOfKin?: {
+    name: string;
+    relationship: string;
+    phone: string;
+    email?: string;
+  };
+  guarantor?: {
+    name: string;
+    relationship: string;
+    phone: string;
+    email?: string;
+  };
+  bvn?: string;
+  isBvnVerified?: boolean;
+  // Section Verifications
+  isBasicVerified?: boolean;
+  isWorkVerified?: boolean;
+  isNokVerified?: boolean;
+  isGuarantorVerified?: boolean;
 }
 
 export interface LandlordProfileData {
@@ -37,6 +61,32 @@ export interface LandlordProfileData {
   services: string[];
   experience: string;
   bankAccounts?: any[];
+}
+
+export interface PortfolioItem {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  status: 'completed' | 'in-progress' | 'planned';
+}
+
+export interface InvestmentCondition {
+  minAmount: number;
+  expectedReturn: string;
+  timeline: string;
+  riskLevel: 'low' | 'medium' | 'high';
+}
+
+export interface DeveloperProfileData {
+  companyName: string;
+  registrationNumber: string;
+  yearsExperience: string;
+  completedProjects: string;
+  specialization: string[];
+  portfolio: PortfolioItem[];
+  investmentConditions: InvestmentCondition[];
+  isVetted: boolean;
 }
 
 interface UserState {
@@ -58,6 +108,7 @@ interface UserState {
     caretaker?: any;
     agent?: any;
     investor?: any;
+    developer?: DeveloperProfileData;
   };
   followedListers: string[];
   draftData: Record<string, any>;
@@ -94,6 +145,7 @@ export const useUserStore = create<UserState>()(
         caretaker: false,
         agent: false,
         investor: false,
+        developer: false,
         admin: false,
         superAdmin: false,
       },
@@ -131,8 +183,8 @@ export const useUserStore = create<UserState>()(
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
       resetUser: () => set({ 
        id: '', email: '', roles: [], activeRole: null, verified: false, fullName: '', phone: '',token: null,
-       profile: { firstName: '', lastName: '', dob: '', gender: '', maritalStatus: '', address: '', state: '', image: '/assets/dashboard/profile-placeholder.png' },
-       roleData: {}
+        profile: { firstName: '', lastName: '', dob: '', gender: '', maritalStatus: '', address: '', state: '', image: '/assets/dashboard/profile-placeholder.png' },
+        roleData: {}
       }),
     }),
     {

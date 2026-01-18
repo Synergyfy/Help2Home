@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from "framer-motion";
-import { FiKey, FiBriefcase, FiArrowRight, FiArrowLeft, FiCheck, FiUsers, FiHome, FiTrendingUp, FiStar, FiShield } from "react-icons/fi";
+import { FiKey, FiBriefcase, FiArrowRight, FiArrowLeft, FiCheck, FiUsers, FiHome, FiTrendingUp, FiStar, FiShield, FiCode } from "react-icons/fi";
 import { useOnboardingStore, UserRole } from "@/store/onboardingStore";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
@@ -12,6 +12,7 @@ const roleIcons: Record<UserRole, React.ReactNode> = {
   caretaker: <FiUsers size={24} />,
   agent: <FiBriefcase size={24} />,
   investor: <FiTrendingUp size={24} />,
+  developer: <FiCode size={24} />,
   admin: <FiStar size={24} />,
   superAdmin: <FiShield size={24} />
 };
@@ -22,6 +23,7 @@ const roleNames: Record<UserRole, string> = {
   caretaker: "Caretaker",
   agent: "Real Estate Agent",
   investor: "Investor",
+  developer: "Real Estate Developer",
   admin: "Administrator",
   superAdmin: "Super Admin",
 };
@@ -96,7 +98,7 @@ const RoleChooserStep = () => {
                     <p className="font-bold text-gray-900">{roleNames[role]}</p>
                     <p className="text-xs text-gray-500 font-medium">Tap to finish setup</p>
                   </div>
-                  <FiArrowRight className="text-gray-300 group-hover:text-brand-green transition-transform group-hover:tranbrand-green-x-1" size={20} />
+                  <FiArrowRight className="text-gray-300 group-hover:text-brand-green transition-transform group-hover:translate-x-1" size={20} />
                 </div>
               </motion.button>
             ))}

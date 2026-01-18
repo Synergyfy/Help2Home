@@ -29,3 +29,58 @@
 --additional charges should be on the calculator as other charges  + downpayment 
 --pass other charges through url
 --add a card that explain that.
+
+
+=========================================================
+
+---developers dashboard,property listing,
+
+--create portfolio
+
+--buy,sell,investors
+
+--explaining projects to users
+
+--investors can be able to developers but they can be able to be vetted first.
+
+--invest securley confidently on the go
+
+-- partner 
+
+*todo --read on how piggy vest 
+
+--view investment repayment plan 
+
+
+-- the developers will set the conditions  and then automatically calculate 
+
+--changes the background for  url entered 
+
+-- the form should be aligned 
+
+on the property on the total upfront -- total amount,
+-- on the single property card show listed role,agent,landlord make it like a card,
+
+--artisans on the platform:order and then call on the nearest artisans, standalone platform, but connected to our main website 
+
+--artisans can put thier services and then quickly order
+
+--onboarding role
+-- it should auto set you role for you when you click your card,
+-- country when others are click a dropdown
+--for price choose 1m-5m 5m-10m
+
+--profile should be an auto modal to complete  by force 
+
+--everything in the application will be provided in the profile
+--bvn to qualify in the role -- what are the requirements to run a credit score -- show ther eligilibility 
+
+-- when you apply for rent and you dont have it 
+
+basic,work,next of kin,guarantor
+
+work- name of organization,id,name of company 
+
+task: read from the loan app
+
+--at each stages put for info pulled from your profile

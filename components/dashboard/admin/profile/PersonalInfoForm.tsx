@@ -74,7 +74,7 @@ export function PersonalInfoForm({ profile }: { profile: any }) {
         <div className="md:col-span-2 space-y-2">
           <label className="text-[10px] font-black text-brand-green-500 uppercase tracking-widest px-1">Email Address</label>
           <div className="relative">
-            <HiOutlineMail className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400" size={18} />
+            <HiOutlineMail className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-green-400" size={18} />
             <input
               {...register('email')}
               disabled={!isEditing}
@@ -86,7 +86,7 @@ export function PersonalInfoForm({ profile }: { profile: any }) {
         <div className="space-y-2">
           <label className="text-[10px] font-black text-brand-green-500 uppercase tracking-widest px-1">Phone Number</label>
           <div className="relative">
-            <HiOutlinePhone className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400" size={18} />
+            <HiOutlinePhone className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-green-400" size={18} />
             <input
               {...register('phone')}
               disabled={!isEditing}
@@ -98,7 +98,7 @@ export function PersonalInfoForm({ profile }: { profile: any }) {
         <div className="space-y-2">
           <label className="text-[10px] font-black text-brand-green-500 uppercase tracking-widest px-1">Admin Role</label>
           <div className="relative">
-            <HiOutlineBadgeCheck className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 text-emerald-500" size={18} />
+            <HiOutlineBadgeCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500" size={18} />
             <input
               disabled
               className="w-full bg-brand-green-100 border-none rounded-xl pl-12 pr-4 py-3 text-sm font-bold text-brand-green-500 cursor-not-allowed"

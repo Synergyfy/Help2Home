@@ -26,9 +26,10 @@ export const PROPERTY_CATEGORIES = [
 ];
 
 export const STEP_CONFIG: Record<string, string[]> = {
-  landlord: ['basics', 'location', 'details', 'financials', 'media', 'preview'],
-  agent: ['basics', 'location', 'details', 'financials', 'media', 'client-info', 'preview'],
-  caretaker: ['basics', 'location', 'details', 'financials', 'media', 'preview'],
+  landlord: ['basics', 'location', 'financials', 'details', 'media', 'preview'],
+  agent: ['basics', 'location', 'financials', 'details', 'media', 'preview'],
+  caretaker: ['basics', 'location', 'financials', 'details', 'media', 'preview'],
+  developer: ['basics', 'location', 'project-timeline', 'investment-terms', 'media', 'preview']
 };
 
 export const ROLE_ACTIONS: Record<string, { submitLabel: string; successMessage: string }> = {
@@ -43,6 +44,10 @@ export const ROLE_ACTIONS: Record<string, { submitLabel: string; successMessage:
   caretaker: {
     submitLabel: 'Submit for Verification',
     successMessage: 'Property listed successfully!'
+  },
+  developer: {
+      submitLabel: 'Publish Project',
+      successMessage: 'Project published successfully!',
   }
 };
 

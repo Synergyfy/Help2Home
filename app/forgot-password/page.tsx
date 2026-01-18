@@ -24,7 +24,7 @@ export default function ForgotPassword() {
                         href="/signin" 
                         className="inline-flex items-center gap-2 text-brand-green-500 hover:text-brand-green font-semibold text-sm mb-8 transition-colors group"
                     >
-                        <FiArrowLeft className="transition-transform group-hover:-tranbrand-green-x-1" /> 
+                        <FiArrowLeft className="transition-transform group-hover:-translate-x-1" /> 
                         Back to sign in
                     </Link>
 
@@ -44,7 +44,7 @@ export default function ForgotPassword() {
                                         Email Address
                                     </label>
                                     <div className="relative group">
-                                        <FiMail className="absolute left-4 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400 group-focus-within:text-brand-green transition-colors" />
+                                        <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-green-400 group-focus-within:text-brand-green transition-colors" />
                                         <input 
                                             required 
                                             type="email" 

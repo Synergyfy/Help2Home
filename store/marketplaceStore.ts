@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type PropertyType = 'rent' | 'buy' | 'service-apartment' | 'rent-to-own';
+export type PropertyType = 'rent' | 'buy' | 'service-apartment' | 'rent-to-own' | 'invest';
 
 export type PropertyCategory = 
   | 'residential-properties-to-rent'

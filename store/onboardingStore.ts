@@ -43,8 +43,16 @@ export interface InvestorData {
   investmentTimeline: string;
 }
 
-export const MULTI_SELECT_ROLES: Role[] = ['landlord', 'caretaker', 'agent'];
-export type UserRole = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor' | 'admin' | 'superAdmin';
+export interface DeveloperData {
+  companyName: string;
+  registrationNumber: string;
+  yearsExperience: string;
+  specialization: string[];
+  portfolioHighlights: string;
+}
+
+export const MULTI_SELECT_ROLES: Role[] = ['landlord', 'caretaker', 'agent', 'developer'];
+export type UserRole = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor' | 'developer' | 'admin' | 'superAdmin';
 
 interface OnboardingStore {
   currentStep: number;
@@ -91,6 +99,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
       roleOnboardingCompleted: {
         tenant: false, landlord: false, caretaker: false, agent: false,
         investor: false,
+        developer: false,
         admin: false,
         superAdmin: false,
       },
@@ -148,7 +157,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
         draftData: {},
         onboardingCompleted: false,
         roleOnboardingCompleted: {
-          tenant: false, landlord: false, caretaker: false, agent: false, investor: false, admin: false, superAdmin: false
+          tenant: false, landlord: false, caretaker: false, agent: false, investor: false, developer: false, admin: false, superAdmin: false
         }
       }),
     }),

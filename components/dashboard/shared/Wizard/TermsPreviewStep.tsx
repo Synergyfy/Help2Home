@@ -14,7 +14,7 @@ import {
 } from 'react-icons/hi2';
 
 interface TermsPreviewStepProps {
-    role?: 'landlord' | 'agent' | 'caretaker';
+    role?: 'landlord' | 'agent' | 'caretaker' | 'developer';
     onEditStep?: (step: number) => void;
 }
 
