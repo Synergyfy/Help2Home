@@ -30,7 +30,7 @@ import 'leaflet/dist/leaflet.css';
 const SuccessStep = dynamic(() => import('./SuccessStep'), { ssr: false });
 
 interface BasicsStepProps {
-    role?: 'landlord' | 'agent' | 'caretaker';
+    role?: 'landlord' | 'agent' | 'caretaker' | 'developer';
 }
 
 export default function BasicsStep({ role }: BasicsStepProps = {}) {

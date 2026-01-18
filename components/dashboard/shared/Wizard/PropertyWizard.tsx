@@ -39,7 +39,7 @@ const ROLE_ACTIONS: Record<string, { submitLabel: string; successMessage: string
 };
 
 interface PropertyWizardProps {
-    roleKey: string;
+    roleKey: 'landlord' | 'agent' | 'caretaker' | 'developer';
     availableStepsKeys: string[];
     initialData?: Partial<PropertySchema>;
     isEditing?: boolean;
@@ -58,16 +58,17 @@ export default function PropertyWizard({
 
     // Map keys to readable labels and component indices
     const ALL_STEPS_MAP: Record<string, { label: string; component: React.ReactNode }> = {
-        'basics': { label: 'Basics', component: <BasicsStep role={roleKey as any} /> },
+        'basics': { label: 'Basics', component: <BasicsStep role={roleKey} /> },
         'location': { label: 'Location', component: <LocationStep /> },
-        'financials': { label: 'Financials', component: <FinancialsStep role={roleKey as any} /> },
-        'details': { label: 'Details', component: <DetailsAmenitiesStep role={roleKey as any} /> },
-        'media': { label: 'Media', component: <MediaStep role={roleKey as any} /> },
+        'financials': { label: 'Financials', component: <FinancialsStep role={roleKey} /> },
+        'details': { label: 'Details', component: <DetailsAmenitiesStep role={roleKey} /> },
+        'media': { label: 'Media', component: <MediaStep role={roleKey} /> },
         'project-timeline': { label: 'Timeline', component: <ProjectTimelineStep /> },
         'investment-terms': { label: 'Investment', component: <InvestmentTermsStep /> },
-        'preview': { label: 'Preview', component: <TermsPreviewStep role={roleKey as any} /> },
-        'client-info': { label: 'Client Info', component: <BasicsStep role={roleKey as any} /> }, // Placeholder depending on requirements
+        'preview': { label: 'Preview', component: <TermsPreviewStep role={roleKey} /> },
+        'client-info': { label: 'Client Info', component: <BasicsStep role={roleKey} /> }, // Placeholder depending on requirements
     };
+
 
     // Filter valid steps
     const activeSteps = availableStepsKeys
@@ -78,7 +79,7 @@ export default function PropertyWizard({
 
     const methods = useForm<PropertySchema>({
         resolver: zodResolver(propertySchema) as Resolver<PropertySchema>,
-        defaultValues: (initialData as any) || {
+        defaultValues: initialData || {
             title: '',
             posterRole: roleKey,
             propertyCategory: 'Residential',

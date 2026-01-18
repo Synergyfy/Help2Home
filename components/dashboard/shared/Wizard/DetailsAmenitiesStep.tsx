@@ -30,7 +30,7 @@ const AMENITIES_LIST = [
 ];
 
 interface DetailsAmenitiesStepProps {
-    role?: 'landlord' | 'agent' | 'caretaker';
+    role?: 'landlord' | 'agent' | 'caretaker' | 'developer';
 }
 
 export default function DetailsAmenitiesStep({ role }: DetailsAmenitiesStepProps = {}) {

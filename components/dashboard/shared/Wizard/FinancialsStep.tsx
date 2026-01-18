@@ -15,7 +15,7 @@ import {
 import { Tooltip } from 'react-tooltip';
 
 interface FinancialsStepProps {
-    role?: 'landlord' | 'agent' | 'caretaker';
+    role?: 'landlord' | 'agent' | 'caretaker' | 'developer';
 }
 
 export default function FinancialsStep({ role }: FinancialsStepProps = {}) {

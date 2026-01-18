@@ -30,7 +30,7 @@ interface VideoItem {
 }
 
 interface MediaStepProps {
-    role?: 'landlord' | 'agent' | 'caretaker';
+    role?: 'landlord' | 'agent' | 'caretaker' | 'developer';
 }
 
 export default function MediaStep({ role }: MediaStepProps = {}) {
