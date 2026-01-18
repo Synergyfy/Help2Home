@@ -138,7 +138,7 @@ export default function AdvancedFilterBar() {
 
             {/* 1. Location Input */}
             <div className="relative flex-1 min-w-0 lg:min-w-[280px]" ref={locationRef}>
-              <div className="absolute left-3 top-1/2 -tranbrand-green-y-1/2 pointer-events-none">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
                 <HiOutlineMapPin className="w-5 h-5 text-gray-400" />
               </div>
               <input
@@ -150,7 +150,7 @@ export default function AdvancedFilterBar() {
                 className="w-full h-11 pl-10 pr-10 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-green outline-none text-sm transition-all"
               />
               {locationInput && (
-                <button onClick={clearLocation} className="absolute right-3 top-1/2 -tranbrand-green-y-1/2 p-1 text-gray-400 hover:text-gray-600">
+                <button onClick={clearLocation} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600">
                   <HiXMark className="w-4 h-4" />
                 </button>
               )}

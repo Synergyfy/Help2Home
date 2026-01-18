@@ -1,49 +1,17 @@
-import PropertyWizard from '@/components/dashboard/shared/wizard/PropertyWizard';
+import PropertyWizard from '@/components/dashboard/shared/Wizard/PropertyWizard';
+import { STEP_CONFIG } from '@/config/propertyConfig';
+
+type Role = 'landlord' | 'agent' | 'caretaker' | 'developer';
 
 interface PageProps {
-    params: {
-        role: 'landlord' | 'agent' | 'caretaker' | 'developer';
-    };
+    params: Promise<{
+        role: Role;
+    }>;
 }
-
-const ROLE_STEPS_MAP: Record<PageProps['params']['role'], string[]> = {
-    landlord: [
-        'basics',
-        'location',
-        'financials',
-        'details',
-        'media',
-        'preview'
-    ],
-    agent: [
-        'basics',
-        'location',
-        'financials',
-        'details',
-        'media',
-        'preview'
-    ],
-    developer: [
-        'basics',
-        'location',
-        'project-timeline',
-        'investment-terms',
-        'media',
-        'preview'
-    ],
-    caretaker: [
-        'basics',
-        'location',
-        'financials',
-        'details',
-        'media',
-        'preview'
-    ]
-};
 
 export default async function AddPropertyPage({ params }: PageProps) {
     const { role: roleKey } = await params;
-    const availableStepsKeys = ROLE_STEPS_MAP[roleKey];
+    const availableStepsKeys = STEP_CONFIG[roleKey] || STEP_CONFIG.landlord;
 
     return (
         <PropertyWizard

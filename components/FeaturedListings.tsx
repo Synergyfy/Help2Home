@@ -16,8 +16,8 @@ export default function FeaturedListings() {
     return (
         <section className="py-24 bg-white relative overflow-hidden">
             {/* Background elements */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-brand-green/5 rounded-full blur-3xl -tranbrand-green-y-1/2 tranbrand-green-x-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-green/5 rounded-full blur-3xl tranbrand-green-y-1/2 -tranbrand-green-x-1/2"></div>
+            <div className="absolute top-0 right-0 w-96 h-96 bg-brand-green/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-green/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
             <div className="max-w-7xl mx-auto px-4 md:px-8">
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
@@ -35,7 +35,7 @@ export default function FeaturedListings() {
                         className="group flex items-center gap-3 px-8 py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-brand-green transition-all duration-300 shadow-xl shadow-gray-200 hover:shadow-brand-green/20"
                     >
                         Explore Marketplace
-                        <HiOutlineArrowRight className="group-hover:tranbrand-green-x-1 transition-transform" />
+                        <HiOutlineArrowRight className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>
 

@@ -94,7 +94,7 @@ export default function SupportRequestsPage() {
         {/* Table Toolbar */}
         <div className="p-6 border-b border-brand-green-50 flex flex-col md:flex-row gap-4 justify-between items-center">
           <div className="relative w-full md:w-96">
-            <HiOutlineSearch className="absolute left-3 top-1/2 -tranbrand-green-y-1/2 text-brand-green-400" size={20} />
+            <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-green-400" size={20} />
             <input 
               type="text" 
               placeholder="Search by ticket ID..." 

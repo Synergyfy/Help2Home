@@ -16,7 +16,7 @@ export default function ContactPage() {
             <div className="lg:w-1/2 bg-[#005C29] relative flex items-center justify-center p-12 min-h-[400px] lg:min-h-screen">
                 <div className="relative z-10 w-full max-w-lg">
                     <FadeIn>
-                        <div className="relative aspect-[3/4] w-full transform scale-110 lg:tranbrand-green-x-12">
+                        <div className="relative aspect-[3/4] w-full transform scale-110 lg:translate-x-12">
                             <Image
                                 src="/assets/contact/phone-illustration.png"
                                 alt="Contact Help2Home"

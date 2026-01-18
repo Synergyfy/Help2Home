@@ -33,7 +33,7 @@ export default function PaymentTimeline({
 
             <div className="relative mb-12 overflow-x-auto pb-4">
                 {/* Progress Line */}
-                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -tranbrand-green-y-1/2 z-0"></div>
+                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -translate-y-1/2 z-0"></div>
 
                 <div className="relative z-10 flex justify-between items-center min-w-[600px] md:min-w-0">
                     {items.map((item) => (

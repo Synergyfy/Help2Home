@@ -106,7 +106,7 @@ export default function NotificationItem({
 
             {/* Unread indicator dot */}
             {!notification.isRead && (
-                <div className="absolute left-1 top-1/2 -tranbrand-green-y-1/2 w-2 h-2 bg-brand-green rounded-full" />
+                <div className="absolute left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-brand-green rounded-full" />
             )}
         </motion.div>
     );

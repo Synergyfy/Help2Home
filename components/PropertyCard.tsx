@@ -61,7 +61,7 @@ export default function PropertyCard({
     return (
         <div className="group relative h-full">
             <Link href={`/marketplace/${id}`} className="block h-full">
-                <div className="bg-white rounded-4xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:-tranbrand-green-y-2 flex flex-col h-full">
+                <div className="bg-white rounded-4xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:-translate-y-2 flex flex-col h-full">
                     {/* Image Container */}
                     <div className="relative h-64 w-full overflow-hidden bg-gray-100 shrink-0">
                         <Image

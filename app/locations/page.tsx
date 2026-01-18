@@ -48,8 +48,8 @@ export default function LocationsPage() {
                                 placeholder="Search by area, street, or landmark..."
                                 className="w-full h-18 pl-14 pr-32 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder:text-white/40 focus:bg-white/20 focus:outline-none focus:ring-4 focus:ring-brand-green/30 transition-all font-bold"
                             />
-                            <HiOutlineMagnifyingGlass className="absolute left-6 top-1/2 -tranbrand-green-y-1/2 text-white/50 w-6 h-6" />
-                            <Link href="/marketplace" className="absolute right-3 top-1/2 -tranbrand-green-y-1/2 bg-brand-green text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white hover:text-brand-green transition-all shadow-xl shadow-brand-green/20">
+                            <HiOutlineMagnifyingGlass className="absolute left-6 top-1/2 -translate-y-1/2 text-white/50 w-6 h-6" />
+                            <Link href="/marketplace" className="absolute right-3 top-1/2 -translate-y-1/2 bg-brand-green text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white hover:text-brand-green transition-all shadow-xl shadow-brand-green/20">
                                 Explore
                             </Link>
                         </div>

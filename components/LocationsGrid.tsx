@@ -82,7 +82,7 @@ export default function LocationsGrid() {
                         className="group flex items-center gap-3 px-8 py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-brand-green transition-all duration-300 shadow-xl shadow-gray-200 hover:shadow-brand-green/20"
                     >
                         View All Neighborhoods
-                        <HiOutlineArrowRight className="group-hover:tranbrand-green-x-1 transition-transform" />
+                        <HiOutlineArrowRight className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>
 
@@ -120,7 +120,7 @@ export default function LocationsGrid() {
                                 {/* Content */}
                                 <div className="absolute inset-x-0 bottom-0 p-10 z-20">
                                     <p className="text-brand-green font-black text-xs uppercase tracking-[0.3em] mb-3">{location.region}</p>
-                                    <h3 className="text-3xl font-black text-white mb-6 group-hover:tranbrand-green-x-2 transition-transform duration-500 flex items-center gap-3">
+                                    <h3 className="text-3xl font-black text-white mb-6 group-hover:translate-x-2 transition-transform duration-500 flex items-center gap-3">
                                         {location.city}
                                         <HiOutlineArrowRight className="opacity-0 group-hover:opacity-100 transition-opacity w-6 h-6" />
                                     </h3>

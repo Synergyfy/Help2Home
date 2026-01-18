@@ -12,11 +12,11 @@ export default function StepIndicator({ steps, currentStep }: StepIndicatorProps
         <div className="w-full py-8">
             <div className="flex items-center justify-between relative">
                 {/* Background Line */}
-                <div className="absolute left-0 top-5 transform -tranbrand-green-y-1/2 w-full h-[2px] bg-gray-200 -z-10"></div>
+                <div className="absolute left-0 top-5 transform -translate-y-1/2 w-full h-[2px] bg-gray-200 -z-10"></div>
 
                 {/* Progress Line */}
                 <div
-                    className="absolute left-0 top-5 transform -tranbrand-green-y-1/2 h-[2px] bg-brand-green -z-10 transition-all duration-500"
+                    className="absolute left-0 top-5 transform -translate-y-1/2 h-[2px] bg-brand-green -z-10 transition-all duration-500"
                     style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
                 ></div>
 

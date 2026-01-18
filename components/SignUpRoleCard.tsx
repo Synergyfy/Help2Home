@@ -31,7 +31,7 @@ export default function SignUpRoleCard({ title, description, icon, href, colorCl
 
             <span className={`mt-auto font-semibold text-sm ${colorClass.replace('bg-', 'text-')} flex items-center gap-2`}>
                 Get Started
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 group-hover:tranbrand-green-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
             </span>
