@@ -26,7 +26,7 @@ export interface TenantProfileData {
   amenities: string[];
   employmentStatus?: string;
   employerName?: string;
-  organizationName?: string;
+  companyName?: string;
   organizationId?: string;
   jobTitle?: string;
   monthlySalary?: string;

@@ -16,6 +16,8 @@ import {
     HiOutlineChevronLeft,
     HiOutlineChevronRight,
 } from 'react-icons/hi';
+import { useState } from 'react';
+import InvestmentDetailsModal from '@/components/dashboard/investor/InvestmentDetailsModal';
 
 const formatCurrency = (amount: number) => {
     if (amount >= 1000000) return `₦${(amount / 1000000).toFixed(1)}M`;
@@ -87,6 +89,14 @@ export default function MarketplacePage() {
     const total = searchResults?.total || 0;
     const totalPages = Math.ceil(total / 12);
 
+    const [selectedInvestment, setSelectedInvestment] = useState<any>(null);
+    const [isInvestModalOpen, setIsInvestModalOpen] = useState(false);
+
+    const handleInvest = (property: any) => {
+        setSelectedInvestment(property);
+        setIsInvestModalOpen(true);
+    };
+
     return (
         <div className="min-h-screen bg-white pb-20">
             <AdvancedFilterBar />
@@ -127,7 +137,12 @@ export default function MarketplacePage() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
                         {properties.map((property, index) => (
-                            <PropertyCard key={property.id} property={property} index={index} />
+                            <PropertyCard
+                                key={property.id}
+                                property={property}
+                                index={index}
+                                onInvest={handleInvest}
+                            />
                         ))}
                     </div>
                 )}
@@ -186,6 +201,12 @@ export default function MarketplacePage() {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            <InvestmentDetailsModal
+                isOpen={isInvestModalOpen}
+                onClose={() => setIsInvestModalOpen(false)}
+                property={selectedInvestment}
+            />
         </div>
     );
 }

@@ -20,6 +20,7 @@ interface PropertyCardProps {
     property: any;
     index: number;
     showTotalUpfront?: boolean;
+    onInvest?: (property: any) => void;
 }
 
 const formatCurrency = (amount: number) => {
@@ -27,7 +28,7 @@ const formatCurrency = (amount: number) => {
     return `₦${amount.toLocaleString()}`;
 };
 
-export default function PropertyCard({ property, index, showTotalUpfront = true }: PropertyCardProps) {
+export default function PropertyCard({ property, index, showTotalUpfront = true, onInvest }: PropertyCardProps) {
     // Normalize images
     const rawImages = property.images && property.images.length > 0 ? property.images : ['/assets/marketplace assets/home1.png'];
     const image = typeof rawImages[0] === 'string' ? rawImages[0] : rawImages[0].url;
@@ -118,7 +119,9 @@ export default function PropertyCard({ property, index, showTotalUpfront = true 
                         <div className="flex flex-col gap-1 pt-4 border-t border-gray-50">
                             <div className="flex justify-between items-baseline">
                                 <div className="flex flex-col">
-                                    <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Annual Rent</span>
+                                    <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">
+                                        {property.propertyType === 'invest' ? 'Property Value' : 'Annual Rent'}
+                                    </span>
                                     <span className="text-xl font-black text-brand-green">
                                         {formatCurrency(property.price)}
                                         {property.propertyType === 'rent' && <span className="text-[10px] font-bold text-gray-400 ml-1">/yr</span>}
@@ -133,12 +136,21 @@ export default function PropertyCard({ property, index, showTotalUpfront = true 
                             </div>
                         </div>
 
-                        <Link
-                            href={`/marketplace/${property.id}`}
-                            className="block w-full text-center bg-brand-green text-white hover:bg-green-700 py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 shadow-lg shadow-green-100 hover:shadow-brand-green/30"
-                        >
-                            View Details
-                        </Link>
+                        {property.propertyType === 'invest' ? (
+                            <button
+                                onClick={() => onInvest?.(property)}
+                                className="block w-full text-center bg-gray-900 text-white hover:bg-black py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 shadow-lg shadow-gray-200 hover:shadow-gray-400/30"
+                            >
+                                Invest Now
+                            </button>
+                        ) : (
+                            <Link
+                                href={`/marketplace/${property.id}`}
+                                className="block w-full text-center bg-brand-green text-white hover:bg-green-700 py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 shadow-lg shadow-green-100 hover:shadow-brand-green/30"
+                            >
+                                View Details
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>

@@ -10,7 +10,7 @@ export interface Location {
 }
 
 export interface SearchFilters {
-  propertyType?: 'rent' | 'buy' | 'service-apartment' | 'rent-to-own';
+  propertyType?: 'rent' | 'buy' | 'service-apartment' | 'rent-to-own' | 'invest';
   location?: string;
   category?: string;
   bedrooms?: number | null;
