@@ -188,33 +188,30 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                                     <div className="flex items-center justify-between mb-4">
                                         <div>
                                             <h4 className="text-sm font-bold text-brand-green uppercase tracking-wider mb-1">Landlord Information</h4>
-                                            <p className="text-xs text-gray-500">Invite the owner to the platform.</p>
+                                            <p className="text-xs text-gray-500">Owner details are required for caretaker listings.</p>
                                         </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => setHasLandlord(!hasLandlord)}
-                                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${hasLandlord ? 'bg-brand-green' : 'bg-gray-200'}`}
-                                        >
-                                            <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${hasLandlord ? 'translate-x-5' : 'translate-x-0'}`} />
-                                        </button>
+                                        {/* For caretakers, this is mandatory, so we don't show a toggle to disable it */}
+                                        <div className="size-6 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green">
+                                            <HiOutlineShieldCheck size={16} />
+                                        </div>
                                     </div>
 
-                                    {hasLandlord && (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
-                                            <div className="md:col-span-2">
-                                                <label className={labelClasses}>Landlord Full Name</label>
-                                                <input {...register('landlord.fullName')} className={inputClasses} placeholder="e.g. John Doe" />
-                                            </div>
-                                            <div>
-                                                <label className={labelClasses}>Landlord Email</label>
-                                                <input {...register('landlord.email')} className={inputClasses} placeholder="landlord@example.com" />
-                                            </div>
-                                            <div>
-                                                <label className={labelClasses}>Landlord Phone</label>
-                                                <input {...register('landlord.phone')} className={inputClasses} placeholder="+234 ..." />
-                                            </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                                        <div className="md:col-span-2">
+                                            <label className={labelClasses}>Landlord Full Name</label>
+                                            <input {...register('landlord.fullName')} className={inputClasses} placeholder="e.g. John Doe" />
+                                            {errors.landlord?.fullName && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.fullName.message}</p>}
                                         </div>
-                                    )}
+                                        <div>
+                                            <label className={labelClasses}>Landlord Email</label>
+                                            <input {...register('landlord.email')} className={inputClasses} placeholder="landlord@example.com" />
+                                            {errors.landlord?.email && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.email.message}</p>}
+                                        </div>
+                                        <div>
+                                            <label className={labelClasses}>Landlord Phone</label>
+                                            <input {...register('landlord.phone')} className={inputClasses} placeholder="+234 ..." />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ) : (

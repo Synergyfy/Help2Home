@@ -51,8 +51,9 @@ export default function MediaStep({ role }: MediaStepProps = {}) {
     };
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            const files = Array.from(e.target.files);
+        const filesList = e.target.files;
+        if (filesList && filesList.length > 0) {
+            const files = Array.from(filesList);
 
             const newImagePromises = files.map(async (file, index) => {
                 const base64 = await convertToBase64(file);
@@ -70,8 +71,9 @@ export default function MediaStep({ role }: MediaStepProps = {}) {
     };
 
     const handleVideoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
+        const filesList = e.target.files;
+        if (filesList && filesList[0]) {
+            const file = filesList[0];
 
             // Validate file size (max 100MB)
             const maxSize = 100 * 1024 * 1024;
@@ -99,8 +101,9 @@ export default function MediaStep({ role }: MediaStepProps = {}) {
     };
 
     const handleFloorPlanChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
+        const filesList = e.target.files;
+        if (filesList && filesList[0]) {
+            const file = filesList[0];
             const base64 = await convertToBase64(file);
             setValue('floorPlan', {
                 id: `plan-${Date.now()}`,
