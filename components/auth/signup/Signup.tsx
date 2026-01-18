@@ -28,6 +28,7 @@ export default function SignUp() {
       investor: "Preparing your investment dashboard...",
       landlord: "Setting up your property management suite...",
       agent: "Configuring your agency tools...",
+      developer: "Scaning for investements",
       caretaker: "Initializing maintenance management..."
     };
 
@@ -124,6 +125,22 @@ export default function SignUp() {
               <h3 className="text-xl font-bold text-gray-900 mb-3">Investor</h3>
               <p className="text-gray-500 text-sm leading-relaxed">
                 Fund rental deals and earn attractive returns on your real estate investment.
+              </p>
+            </button>
+          </FadeIn>
+
+          {/* Developer Card */}
+          <FadeIn direction="up">
+            <button
+              onClick={() => triggerCreativeRedirect(['developer'])}
+              className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
+            >
+              <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
+                <MdAttachMoney size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Developer</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">
+               Find reliable investors for your properties 
               </p>
             </button>
           </FadeIn>

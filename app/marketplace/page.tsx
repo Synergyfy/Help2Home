@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocations } from '@/hooks/useMarketplaceQueries';
 import { useMarketplaceStore } from '@/store/marketplaceStore';
@@ -10,8 +10,20 @@ import { HiMapPin, HiMagnifyingGlass, HiXMark, HiFire } from "react-icons/hi2";
 
 type PropertyType = 'rent' | 'buy' | 'invest';
 
-const TAB_ASSETS: Record<PropertyType, { image: string; title: string }> = {
+/* ---------------------------------------------
+   URL → TAB MAPPING
+--------------------------------------------- */
+const URL_TYPE_TO_TAB: Record<string, PropertyType> = {
+    rent: 'rent',
+    buy: 'buy',
+    'service-apartment': 'rent',
+    'rent-to-own': 'buy'
+};
 
+/* ---------------------------------------------
+   HERO ASSETS (TAB DEFAULTS)
+--------------------------------------------- */
+const TAB_ASSETS: Record<PropertyType, { image: string; title: string }> = {
     rent: {
         image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop',
         title: 'cozy'
@@ -26,6 +38,36 @@ const TAB_ASSETS: Record<PropertyType, { image: string; title: string }> = {
     }
 };
 
+/* ---------------------------------------------
+   CATEGORY HERO OVERRIDES
+--------------------------------------------- */
+const CATEGORY_ASSETS: Record<string, { image: string; title: string }> = {
+    'residential-properties-to-rent': {
+        image: 'https://images.unsplash.com/photo-1523217582562-09d0def993a6',
+        title: 'comfortable'
+    },
+    'commercial-properties-to-rent': {
+        image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab',
+        title: 'strategic'
+    },
+    'student-properties-to-rent': {
+        image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b',
+        title: 'affordable'
+    },
+    'shared-spaces-to-rent': {
+        image: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb',
+        title: 'flexible'
+    },
+    'service-apartment': {
+        image: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511',
+        title: 'luxury'
+    },
+    'rent-to-own': {
+        image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be',
+        title: 'future'
+    }
+};
+
 const POPULAR_LOCATIONS = [
     { name: 'Victoria Island, Lagos', count: '1,240' },
     { name: 'Lekki Phase 1, Lagos', count: '850' },
@@ -35,15 +77,34 @@ const POPULAR_LOCATIONS = [
 
 export default function MarketPlaceMain() {
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState<PropertyType>('rent');
+    const searchParams = useSearchParams();
+
+    const urlType = searchParams.get('type') || 'rent';
+    const rawCategory = searchParams.get('category');
+    const category: string | undefined = rawCategory ?? undefined;
+
+    const resolvedTab = URL_TYPE_TO_TAB[urlType] ?? 'rent';
+
+    const [activeTab, setActiveTab] = useState<PropertyType>(resolvedTab);
     const [searchQuery, setSearchQuery] = useState('');
     const [showSuggestions, setShowSuggestions] = useState(false);
+
     const searchRef = useRef<HTMLDivElement>(null);
 
     const { setFilters } = useMarketplaceStore();
     const debouncedQuery = useDebounce(searchQuery, 300);
     const { data: locations, isLoading: locationsLoading } = useLocations(debouncedQuery);
 
+    /* ---------------------------------------------
+       URL → STATE SYNC
+    --------------------------------------------- */
+    useEffect(() => {
+        setActiveTab(resolvedTab);
+    }, [resolvedTab]);
+
+    /* ---------------------------------------------
+       CLICK OUTSIDE HANDLER
+    --------------------------------------------- */
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -54,24 +115,42 @@ export default function MarketPlaceMain() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    /* ---------------------------------------------
+       HERO RESOLUTION
+    --------------------------------------------- */
+    const heroAsset =
+        (category && CATEGORY_ASSETS[category]) ||
+        TAB_ASSETS[activeTab];
+
+    /* ---------------------------------------------
+       SEARCH HANDLER
+    --------------------------------------------- */
     const handleSearch = (selectedLocation?: string) => {
         const locationToSearch = selectedLocation || searchQuery;
         if (!locationToSearch.trim()) return;
 
-        setFilters({ propertyType: activeTab, location: locationToSearch });
-        router.push(`/marketplace/search?type=${activeTab}&location=${encodeURIComponent(locationToSearch)}`);
+        setFilters({
+            propertyType: activeTab,
+            location: locationToSearch,
+            category
+        });
+
+        router.push(
+            `/marketplace/search?type=${activeTab}&location=${encodeURIComponent(locationToSearch)}`
+        );
+
         setShowSuggestions(false);
     };
 
     return (
-        <section className="relative min-h-[75vh] flex items-center justify-center py-16 px-4 z-10 overflow-hidden">
-            {/* Dynamic Background Wrapper */}
+        <section className="relative min-h-[75vh] flex items-center justify-center py-16 px-4 overflow-hidden">
+            {/* Background */}
             <div className="absolute inset-0 z-0">
                 <AnimatePresence mode="wait">
                     <motion.img
-                        key={activeTab}
-                        src={TAB_ASSETS[activeTab].image}
-                        initial={{ opacity: 0, scale: 1.1 }}
+                        key={heroAsset.image}
+                        src={heroAsset.image}
+                        initial={{ opacity: 0, scale: 1.08 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.8 }}
@@ -81,117 +160,135 @@ export default function MarketPlaceMain() {
                 <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
             </div>
 
+            {/* Content */}
             <div className="relative z-30 w-full max-w-4xl">
                 <div className="text-center mb-10">
                     <motion.h1
-                        key={activeTab}
+                        key={heroAsset.title}
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-4 drop-shadow-lg"
+                        className="text-4xl md:text-6xl font-bold text-white mb-4"
                     >
-                        Find your <span className="text-brand-green">{TAB_ASSETS[activeTab].title}</span> home
+                        Discover a <span className="text-brand-green">{heroAsset.title}</span> place to call home
                     </motion.h1>
-                    <p className="text-gray-200 text-lg font-medium">Search across thousands of verified listings</p>
+                    <p className="text-gray-200 text-lg font-medium">
+                        Handpicked listings, real neighborhoods, zero guesswork
+                    </p>
                 </div>
 
-                <div className="relative z-40 bg-white shadow-2xl rounded-3xl border border-white/10">
-                    <div className="flex border-b border-gray-100 bg-gray-50/80 rounded-t-3xl overflow-hidden">
-                        {(Object.keys(TAB_ASSETS) as PropertyType[]).map((tab) => (
+                {/* Tabs */}
+                <div className="bg-white shadow-2xl rounded-3xl ">
+                    <div className="flex border-b border-gray-400 bg-gray-50 rounded-t-3xl overflow-hidden">
+                        {(Object.keys(TAB_ASSETS) as PropertyType[]).map(tab => (
                             <button
                                 key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`flex-1 py-5 text-xs md:text-sm font-bold uppercase tracking-wider transition-all relative ${activeTab === tab ? 'text-brand-green bg-white' : 'text-gray-500 hover:text-gray-700'
-                                    }`}
+                                onClick={() => {
+                                    setActiveTab(tab);
+                                    router.push(
+                                        `/marketplace?type=${tab}${category ? `&category=${category}` : ''}`,
+                                        { scroll: false }
+                                    );
+                                }}
+                                className={`flex-1 py-5 text-sm font-bold uppercase ${
+                                    activeTab === tab
+                                        ? 'text-brand-green bg-white'
+                                        : 'text-gray-500 hover:text-gray-700'
+                                }`}
                             >
-                                {tab.replace(/-/g, ' ')}
+                                {tab}
                                 {activeTab === tab && (
-                                    <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-1 bg-brand-green" />
+                                    <motion.div className="h-1 bg-brand-green mt-2" />
                                 )}
                             </button>
                         ))}
                     </div>
 
-                    <div className="p-6 md:p-10">
-                        <div className="relative z-50" ref={searchRef}>
-                            <div className="flex flex-col md:flex-row items-center gap-4">
-                                <div className="relative flex-1 w-full">
+                    {/* Search + Dropdown */}
+                    <div className="p-6 md:p-10" ref={searchRef}>
+                        <div className="relative">
+                            <div className="flex gap-4">
+                                <div className="relative flex-1">
                                     <HiMapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-green w-6 h-6" />
                                     <input
-                                        type="text"
-                                        placeholder="Enter city, neighborhood, or address..."
                                         value={searchQuery}
-                                        onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
+                                        onChange={e => {
+                                            setSearchQuery(e.target.value);
+                                            setShowSuggestions(true);
+                                        }}
                                         onFocus={() => setShowSuggestions(true)}
-                                        className="w-full h-16 pl-12 pr-12 bg-gray-50 border-2 border-transparent focus:border-brand-green/30 focus:bg-white rounded-2xl outline-none text-base font-medium text-gray-900 shadow-inner transition-all"
+                                        placeholder="Enter city, neighborhood, or address..."
+                                        className="w-full h-16 pl-12 pr-12 rounded-2xl bg-gray-50"
                                     />
                                     {searchQuery && (
-                                        <button onClick={() => setSearchQuery('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                                            <HiXMark className="w-6 h-6" />
+                                        <button
+                                            onClick={() => setSearchQuery('')}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2"
+                                        >
+                                            <HiXMark className="w-6 h-6 text-gray-400" />
                                         </button>
                                     )}
                                 </div>
-
                                 <button
                                     onClick={() => handleSearch()}
-                                    className="w-full md:w-auto h-16 px-10 bg-brand-green hover:bg-green-700 text-white font-bold rounded-2xl transition-all flex items-center justify-center gap-3 uppercase text-sm tracking-widest shadow-lg active:scale-95"
+                                    className="h-16 px-10 bg-brand-green text-white rounded-2xl font-bold"
                                 >
-                                    <HiMagnifyingGlass className="w-5 h-5 stroke-2" />
-                                    Search
+                                    <HiMagnifyingGlass />
                                 </button>
                             </div>
 
+                            {/* Suggestions */}
                             <AnimatePresence>
                                 {showSuggestions && (
                                     <motion.div
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: 10 }}
-                                        className="absolute top-[110%] left-0 right-0 bg-white border border-gray-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-100 overflow-hidden"
+                                        className="absolute top-full mt-3 left-0 right-0 bg-white rounded-2xl shadow-2xl z-50 overflow-hidden"
                                     >
                                         {!searchQuery && (
                                             <div className="p-3">
-                                                <div className="px-4 py-3 flex items-center gap-2 text-gray-400 border-b border-gray-50 mb-1">
-                                                    <HiFire className="w-4 h-4 text-orange-500" />
-                                                    <span className="text-[11px] font-bold uppercase tracking-widest">Popular Near You</span>
+                                                <div className="px-4 py-3 flex items-center gap-2 text-gray-400 border-b border-gray-100">
+                                                    <HiFire className="text-orange-500" />
+                                                    <span className="text-xs font-bold uppercase">Popular Near You</span>
                                                 </div>
-                                                {POPULAR_LOCATIONS.map((loc, idx) => (
+                                                {POPULAR_LOCATIONS.map((loc, i) => (
                                                     <button
-                                                        key={idx}
-                                                        onMouseDown={() => { setSearchQuery(loc.name); handleSearch(loc.name); }}
-                                                        className="w-full px-4 py-4 text-left hover:bg-gray-50 rounded-xl flex items-center justify-between group transition-colors"
+                                                        key={i}
+                                                        onMouseDown={() => handleSearch(loc.name)}
+                                                        className="w-full px-4 py-4 flex justify-between hover:bg-gray-50"
                                                     >
-                                                        <span className="text-sm font-semibold text-gray-700 group-hover:text-brand-green">{loc.name}</span>
-                                                        <span className="text-xs font-medium text-gray-400">{loc.count} listings</span>
+                                                        <span className="font-semibold">{loc.name}</span>
+                                                        <span className="text-xs text-gray-400">{loc.count} listings</span>
                                                     </button>
                                                 ))}
                                             </div>
                                         )}
 
                                         {searchQuery && (
-                                            <div className="p-3 max-h-96 overflow-y-auto">
+                                            <div className="max-h-80 overflow-y-auto">
                                                 {locationsLoading ? (
-                                                    <div className="p-8 text-center text-sm font-medium text-gray-400 animate-pulse">
-                                                        Searching locations...
+                                                    <div className="p-6 text-center text-gray-400">
+                                                        Searching locations…
                                                     </div>
-                                                ) : locations && locations.length > 0 ? (
+                                                ) : locations?.length ? (
                                                     locations.map((loc: any) => (
                                                         <button
                                                             key={loc.id}
-                                                            onMouseDown={() => { setSearchQuery(loc.name); handleSearch(loc.name); }}
-                                                            className="w-full px-4 py-4 text-left hover:bg-green-50 rounded-xl flex items-center gap-4 transition-colors group"
+                                                            onMouseDown={() => handleSearch(loc.name)}
+                                                            className="w-full px-4 py-4 flex items-center gap-4 hover:bg-gray-50"
                                                         >
-                                                            <div className="p-2.5 bg-gray-100 group-hover:bg-brand-green/20 rounded-xl">
-                                                                <HiMapPin className="w-5 h-5 text-brand-green" />
-                                                            </div>
+                                                            <HiMapPin className="text-brand-green" />
                                                             <div>
-                                                                <div className="text-sm font-bold text-gray-900">{loc.name}</div>
-                                                                <div className="text-xs text-gray-500 font-medium">{loc.propertyCount} listings</div>
+                                                                <div className="font-semibold">{loc.name}</div>
+                                                                <div className="text-xs text-gray-400">
+                                                                    {loc.propertyCount} listings
+                                                                </div>
                                                             </div>
                                                         </button>
                                                     ))
                                                 ) : (
-                                                    <div className="p-8 text-center text-sm text-gray-500 font-medium">
-                                                        No locations found.
+                                                    <div className="p-6 text-center text-gray-400">
+                                                        No locations found
                                                     </div>
                                                 )}
                                             </div>

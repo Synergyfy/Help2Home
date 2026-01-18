@@ -8,8 +8,6 @@ import {
     HiOutlineMapPin,
     HiOutlineHeart,
     HiCheckCircle,
-    HiOutlineChevronLeft,
-    HiOutlineChevronRight,
     HiOutlineCreditCard
 } from 'react-icons/hi2';
 import { IoBedOutline, IoWaterOutline } from 'react-icons/io5';
@@ -42,9 +40,7 @@ export default function PropertyCard({ property, index, showTotalUpfront = true,
 
     return (
         <FadeIn delay={index * 0.05} direction="up" className="h-full">
-            <div
-                className="group bg-white rounded-4xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-gray-200/40 transition-all duration-500 h-full flex flex-col relative"
-            >
+            <div className="group bg-white rounded-4xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-gray-200/40 transition-all duration-500 h-full flex flex-col relative">
                 {/* Image Section */}
                 <div className="relative h-64 md:h-72 overflow-hidden">
                     <Image
@@ -90,10 +86,19 @@ export default function PropertyCard({ property, index, showTotalUpfront = true,
 
                 {/* Content Section */}
                 <div className="p-6 flex flex-col grow">
+                    {/* Title */}
                     <Link href={`/marketplace/${property.id}`} className="block">
-                        <h3 className="text-lg font-bold text-gray-900 group-hover:text-brand-green transition-colors mb-3 line-clamp-1 leading-tight">
+                        <h3 className="text-lg font-bold text-gray-900 group-hover:text-brand-green transition-colors mb-1 line-clamp-1 leading-tight">
                             {property.title}
                         </h3>
+                    </Link>
+
+                    {/* Lister Name */}
+                    <Link
+                        href={`/marketplace/listers/${property.listerId || property.listerName}`}
+                        className="text-sm text-brand-green font-medium hover:underline mb-3 block line-clamp-1"
+                    >
+                        {property.listerName || 'Verified User'}
                     </Link>
 
                     {/* Specs */}
