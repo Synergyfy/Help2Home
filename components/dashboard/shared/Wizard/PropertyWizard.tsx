@@ -94,8 +94,40 @@ export default function PropertyWizard({
       title: '',
       posterRole: roleKey,
       propertyCategory: 'Residential',
-      projectTimeline: { status: 'planning', milestones: [] },
-      investmentTerms: { enabled: false }
+      listingType: 'Rent',
+      propertyType: '',
+      status: 'draft',
+      address: {
+        street: '',
+        city: '',
+        state: '',
+      },
+      price: {
+        amount: 0,
+        currency: 'NGN',
+      },
+      isMortgageAvailable: false,
+      specs: {
+        bedrooms: 0,
+        bathrooms: 0,
+        area: 0,
+        areaUnit: 'sqm',
+      },
+      amenities: [],
+      images: [],
+      installments: {
+        enabled: false,
+        depositType: 'percentage',
+        interestRate: 0,
+      },
+      projectTimeline: {
+        status: 'planning',
+        milestones: []
+      },
+      investmentTerms: {
+        enabled: false,
+        roiFrequency: 'annually',
+      }
     },
     mode: 'onChange'
   });
@@ -130,7 +162,7 @@ export default function PropertyWizard({
       setCurrentStep(s => s + 1);
       window.scrollTo(0, 0);
     } else {
-      await handleSubmit(onSubmit)();
+      await handleSubmit(onSubmit as any)();
     }
   };
 
@@ -184,7 +216,7 @@ export default function PropertyWizard({
           <form>
             {activeSteps[currentStep]?.key === 'preview'
               ? React.cloneElement(
-                activeSteps[currentStep].component,
+                activeSteps[currentStep].component as React.ReactElement<any>,
                 { onEditStep: setCurrentStep }
               )
               : activeSteps[currentStep]?.component}
