@@ -7,7 +7,7 @@ import PersonalDetailsCard from '@/components/dashboard/profile/PersonalDetailsC
 import EmploymentInfoCard from '@/components/dashboard/profile/EmploymentInfoCard';
 import NextOfKinCard from '@/components/dashboard/profile/NextOfKinCard';
 import GuarantorCard from '@/components/dashboard/profile/GuarantorCard';
-import DocumentsUploadArea from '@/components/dashboard/profile/DocumentsUploadArea';
+import VerificationTab from '@/components/dashboard/landlord/profile/VerificationTab';
 import HelpTipsCard from '@/components/dashboard/profile/HelpTipsCard';
 import TenantPreferencesTab from './TenantPreferencesTab';
 import { ProfileData, EmploymentData, DocumentItem } from '@/components/dashboard/profile/types';
@@ -118,8 +118,8 @@ export default function TenantProfile() {
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         className={`flex items-center gap-3 px-8 py-5 text-sm font-black border-b-4 transition-all whitespace-nowrap group ${activeTab === tab.id
-                                ? 'border-brand-green text-brand-green bg-green-50/30'
-                                : 'border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50/50'
+                            ? 'border-brand-green text-brand-green bg-green-50/30'
+                            : 'border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50/50'
                             }`}
                     >
                         <tab.icon size={20} className={activeTab === tab.id ? 'text-brand-green' : 'text-gray-300 group-hover:text-gray-400'} />
@@ -176,11 +176,7 @@ export default function TenantProfile() {
 
                         {activeTab === 'documents' && (
                             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                <DocumentsUploadArea
-                                    documents={documents}
-                                    onUpload={() => { }}
-                                    onRemove={() => { }}
-                                />
+                                <VerificationTab role="tenant" />
                             </div>
                         )}
                     </div>

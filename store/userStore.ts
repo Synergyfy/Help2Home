@@ -61,7 +61,12 @@ export interface LandlordProfileData {
   services: string[];
   experience: string;
   bankAccounts?: any[];
+  // Section Verifications
+  isBasicVerified?: boolean;
+  isBankVerified?: boolean;
+  isIdentityVerified?: boolean;
 }
+
 
 export interface PortfolioItem {
   id: string;
@@ -87,7 +92,46 @@ export interface DeveloperProfileData {
   portfolio: PortfolioItem[];
   investmentConditions: InvestmentCondition[];
   isVetted: boolean;
+  // Section Verifications
+  isBasicVerified?: boolean;
+  isBusinessVerified?: boolean; // CAC/Reg
+  isIdentityVerified?: boolean; // BVN/Director
 }
+
+export interface InvestorProfileData {
+  investorType: 'individual' | 'corporate';
+  preferredCategories: string[];
+  investmentBudget: string;
+  riskTolerance: 'low' | 'medium' | 'high';
+  bankAccounts?: any[];
+  // Section Verifications
+  isBasicVerified?: boolean;
+  isBankVerified?: boolean;
+  isIdentityVerified?: boolean;
+  isAccreditationVerified?: boolean;
+}
+
+export interface AgentProfileData {
+  agencyName?: string;
+  licenseNumber?: string;
+  yearsExperience: string;
+  specialization: string[];
+  areasServed: string[];
+  // Section Verifications
+  isBasicVerified?: boolean;
+  isLicenseVerified?: boolean;
+  isIdentityVerified?: boolean;
+}
+
+export interface CaretakerProfileData {
+  specialization: string[];
+  yearsExperience: string;
+  managedPropertiesCount: number;
+  // Section Verifications
+  isBasicVerified?: boolean;
+  isIdentityVerified?: boolean;
+}
+
 
 interface UserState {
   id: string;
@@ -105,9 +149,9 @@ interface UserState {
   roleData: {
     tenant?: TenantProfileData;
     landlord?: LandlordProfileData;
-    caretaker?: any;
-    agent?: any;
-    investor?: any;
+    caretaker?: CaretakerProfileData;
+    agent?: AgentProfileData;
+    investor?: InvestorProfileData;
     developer?: DeveloperProfileData;
   };
   followedListers: string[];

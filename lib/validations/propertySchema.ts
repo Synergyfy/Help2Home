@@ -40,11 +40,17 @@ export const propertySchema = z.object({
     checkOutTime: z.string().optional(),
   }).optional(),
 
-  // Sale Specifics
+  // Sale/Market Specifics
   purchasePrice: z.coerce.number().optional(),
   optionFee: z.coerce.number().optional(),
   downPayment: z.coerce.number().optional(),
   isMortgageAvailable: z.boolean(),
+  isNewBuild: z.boolean().default(false),
+  isSharedOwnership: z.boolean().default(false),
+  isRetirementHome: z.boolean().default(false),
+  isAuction: z.boolean().default(false),
+  isOffPlan: z.boolean().default(false),
+  isVerified: z.boolean().default(false),
 
   // Specifications
   specs: z.object({

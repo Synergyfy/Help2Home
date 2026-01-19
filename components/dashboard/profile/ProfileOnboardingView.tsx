@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useUserStore, Role } from '@/store/userStore';
+import { useUserStore, Role, DeveloperProfileData, InvestorProfileData } from '@/store/userStore';
 import {
     HiOutlineHome,
     HiOutlineMapPin,
@@ -76,18 +76,41 @@ export default function ProfileOnboardingView() {
         );
     };
 
-    const renderAgentData = () => {
-        const agent = data as any;
+    const renderDeveloperData = () => {
+        const developer = data as DeveloperProfileData;
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <DataCard icon={<HiOutlineCreditCard />} label="License Number" value={agent.licenseNumber || 'Unlicensed'} />
-                <DataCard icon={<HiOutlineBriefcase />} label="Specialization" value={agent.specialization?.join(', ') || 'General'} />
-                <div className="md:col-span-2 p-6 bg-blue-50 rounded-2xl border border-blue-100">
-                    <h4 className="text-[10px] font-black uppercase text-blue-600 mb-3 tracking-widest">Areas Served</h4>
+                <DataCard icon={<HiOutlineSparkles />} label="Company Name" value={developer.companyName || 'Not specified'} />
+                <DataCard icon={<HiOutlineBriefcase />} label="Registration No" value={developer.registrationNumber || 'Not specified'} />
+                <DataCard icon={<HiOutlineCalendarDays />} label="Experience" value={`${developer.yearsExperience || 0} years`} />
+                <DataCard icon={<HiOutlineHome />} label="Completed Projects" value={developer.completedProjects || '0'} />
+                <div className="md:col-span-2 p-6 bg-brand-green/5 rounded-2xl border border-brand-green/10">
+                    <h4 className="text-[10px] font-black uppercase text-brand-green mb-3 tracking-widest">Specialization</h4>
                     <div className="flex flex-wrap gap-2">
-                        {agent.areasServed?.map((area: string) => (
-                            <span key={area} className="px-3 py-1.5 bg-white rounded-xl text-xs font-bold text-gray-700 border border-blue-200">
-                                {area}
+                        {developer.specialization?.map((spec: string) => (
+                            <span key={spec} className="px-3 py-1.5 bg-white rounded-xl text-xs font-bold text-gray-700 border border-brand-green/20">
+                                {spec}
+                            </span>
+                        )) || 'None listed'}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const renderInvestorData = () => {
+        const investor = data as InvestorProfileData;
+        return (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <DataCard icon={<HiOutlineBriefcase />} label="Investor Type" value={investor.investorType || 'Individual'} />
+                <DataCard icon={<HiOutlineBanknotes />} label="Investment Budget" value={investor.investmentBudget || 'Not specified'} />
+                <DataCard icon={<HiOutlineCalendarDays />} label="Risk Tolerance" value={investor.riskTolerance || 'Medium'} />
+                <div className="md:col-span-2 p-6 bg-purple-50 rounded-2xl border border-purple-100">
+                    <h4 className="text-[10px] font-black uppercase text-purple-600 mb-3 tracking-widest">Preferred Categories</h4>
+                    <div className="flex flex-wrap gap-2">
+                        {investor.preferredCategories?.map((cat: string) => (
+                            <span key={cat} className="px-3 py-1.5 bg-white rounded-xl text-xs font-bold text-gray-700 border border-purple-200">
+                                {cat}
                             </span>
                         )) || 'Not specified'}
                     </div>
@@ -95,6 +118,7 @@ export default function ProfileOnboardingView() {
             </div>
         );
     };
+
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -111,7 +135,9 @@ export default function ProfileOnboardingView() {
             {activeRole === 'tenant' && renderTenantData()}
             {activeRole === 'landlord' && renderLandlordData()}
             {activeRole === 'agent' && renderAgentData()}
-            {(activeRole === 'caretaker' || activeRole === 'investor') && (
+            {activeRole === 'developer' && renderDeveloperData()}
+            {activeRole === 'investor' && renderInvestorData()}
+            {activeRole === 'caretaker' && (
                 <div className="p-12 text-center bg-gray-50 rounded-3xl border border-dashed border-gray-200">
                     <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Data processing for this role is coming soon.</p>
                 </div>

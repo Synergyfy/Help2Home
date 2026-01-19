@@ -1,53 +1,28 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { HiCheckCircle, HiOutlineMail, HiOutlinePhone, HiOutlineGlobeAlt, HiOutlineArrowRight } from 'react-icons/hi';
+import { HiSearch, HiChevronDown, HiStar, HiLocationMarker, HiArrowRight, HiChevronLeft, HiChevronRight } from 'react-icons/hi';
+import { MdVerified } from 'react-icons/md';
 import FadeIn from '@/components/FadeIn';
-
-const developers = [
-    {
-        id: 1,
-        name: "Lagos Luxury Developments",
-        logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?q=80&w=200&h=200&auto=format&fit=crop",
-        description: "Specializing in high-end residential towers in Ikoyi and Victoria Island. Known for the 'Glass House' series.",
-        projects: 12,
-        verified: true,
-        email: "info@lagosluxury.com",
-        phone: "+234 800 LUXURY",
-        website: "www.lagosluxury.com",
-        rating: 4.9
-    },
-    {
-        id: 2,
-        name: "Abuja Urban Planners",
-        logo: "https://images.unsplash.com/photo-1554469384-e58fac16e23a?q=80&w=200&h=200&auto=format&fit=crop",
-        description: "Innovative commercial space developers focusing on Maitama and Central Business District developments.",
-        projects: 8,
-        verified: true,
-        email: "contact@abujaurban.com",
-        phone: "+234 811 ABUJA",
-        website: "www.abujaurban.com",
-        rating: 4.7
-    },
-    {
-        id: 3,
-        name: "Eko Atlantic Creators",
-        logo: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=200&h=200&auto=format&fit=crop",
-        description: "The primary developers for the waterfront districts of Eko Atlantic City. Smart city pioneers.",
-        projects: 24,
-        verified: true,
-        email: "hello@ekoatlantic.com",
-        phone: "+234 900 EKO",
-        website: "www.ekoatlantic.com",
-        rating: 4.8
-    }
-];
+import { getAllDevelopers, searchDevelopers, filterDevelopersByLocation, filterDevelopersByRating } from '@/utils/properties';
+import { HiOutlineLocationMarker, HiOutlineSearch, HiOutlineAdjustments, HiOutlineScale, HiOutlineStar } from 'react-icons/hi';
 
 export default function FindDevelopersPage() {
+    const developers = getAllDevelopers();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
+
+    // Calculate pagination
+    const totalPages = Math.ceil(developers.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentDevelopers = developers.slice(startIndex, endIndex);
+
     return (
-        <div className="min-h-screen bg-gray-50 pb-20">
+        <div className="min-h-screen bg-background-light pb-20">
             {/* Hero Section */}
             <section className="relative h-[400px] flex items-center justify-center overflow-hidden">
                 <Image
@@ -59,68 +34,146 @@ export default function FindDevelopersPage() {
                 <div className="container mx-auto px-6 relative z-10 text-center">
                     <FadeIn direction="up">
                         <span className="text-brand-green font-bold tracking-[0.3em] uppercase text-sm mb-4 block">Help2Home Partnership</span>
-                        <h1 className="text-4xl md:text-6xl font-black text-white mb-6">Partner With Top Developers</h1>
-                        <p className="text-gray-300 max-w-2xl mx-auto text-lg">Connect with West Africa&apos;s most trusted real estate developers for your next investment or dream home.</p>
+                        <h1 className="text-4xl md:text-6xl font-black text-white mb-6">Property Developer Catalog</h1>
+                        <p className="text-gray-300 max-w-2xl mx-auto text-lg">Discover and connect with top-rated developers across the country. Filter by expertise and reputation.</p>
                     </FadeIn>
                 </div>
             </section>
 
-            <div className="container mx-auto px-6 md:px-12 -mt-16 relative z-20">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {developers.map((dev, index) => (
-                        <FadeIn key={dev.id} delay={index * 0.1} direction="up">
-                            <div className="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-50 hover:border-brand-green/30 transition-all group h-full flex flex-col">
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-                                        <Image
-                                            src={dev.logo}
-                                            alt={dev.name}
-                                            fill
-                                            className="object-cover"
-                                        />
+            <main className="max-w-[1280px] mx-auto px-4 md:px-10 py-10">
+                {/* Page Heading */}
+                <div className="mb-8">
+                    <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-3">Developer Directory</h2>
+                    <p className="text-gray-600 text-lg max-w-2xl">Browse verified developers and explore their investment opportunities</p>
+                </div>
+
+                {/* Search and Filter Ribbon */}
+                <div className="bg-white p-2 rounded-xl border border-gray-200 shadow-sm mb-8 flex flex-col lg:flex-row gap-2">
+                    <div className="flex-1 relative">
+                        <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                        <input
+                            className="w-full pl-12 pr-4 h-12 bg-transparent border-none focus:ring-0 text-base placeholder:text-gray-400"
+                            placeholder="Search for developer or company name..."
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                    <div className="h-auto lg:h-8 w-px bg-gray-200 hidden lg:block self-center"></div>
+                    <div className="flex flex-wrap gap-2 p-1">
+                        <button className="flex h-10 items-center gap-2 rounded-lg bg-gray-100 px-4 text-sm font-medium hover:bg-gray-200 transition-colors">
+                            <span>Region</span>
+                            <HiChevronDown className="text-sm" />
+                        </button>
+                        <button className="flex h-10 items-center gap-2 rounded-lg bg-gray-100 px-4 text-sm font-medium hover:bg-gray-200 transition-colors">
+                            <span>Project Type</span>
+                            <HiChevronDown className="text-sm" />
+                        </button>
+                        <button className="flex h-10 items-center gap-2 rounded-lg bg-gray-100 px-4 text-sm font-medium hover:bg-gray-200 transition-colors">
+                            <span>Rating</span>
+                            <HiChevronDown className="text-sm" />
+                        </button>
+                        <button className="flex h-10 items-center gap-2 rounded-lg bg-brand-green/10 text-brand-green px-4 text-sm font-bold hover:bg-brand-green/20 transition-colors ml-auto lg:ml-2">
+                            <span>Reset</span>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Developer Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {currentDevelopers.map((dev, index) => (
+                        <FadeIn key={dev.id} delay={index * 0.05} direction="up">
+                            <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                <div className="p-4 flex flex-col h-full">
+                                    <div className="w-full aspect-square bg-gray-100 rounded-lg mb-4 overflow-hidden relative">
+                                        <div className="absolute inset-0 bg-center bg-cover" style={{ backgroundImage: `url(${dev.logo || 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?q=80&w=200&h=200&auto=format&fit=crop'})` }}></div>
+                                        {dev.verified && (
+                                            <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-sm flex items-center gap-1">
+                                                <MdVerified className="text-brand-green" size={12} />
+                                                Verified
+                                            </div>
+                                        )}
                                     </div>
-                                    {dev.verified && (
-                                        <span className="bg-brand-green/10 text-brand-green text-[10px] font-black px-3 py-1.5 rounded-full flex items-center gap-1.5 uppercase tracking-widest">
-                                            <HiCheckCircle size={14} /> Verified
-                                        </span>
-                                    )}
+                                    <div className="grow">
+                                        <div className="flex justify-between items-start mb-1">
+                                            <h3 className="text-lg font-bold group-hover:text-brand-green transition-colors line-clamp-2">{dev.name}</h3>
+                                        </div>
+                                        <div className="flex items-center gap-1 text-gray-500 text-sm mb-3">
+                                            <HiLocationMarker className="text-sm text-brand-green" />
+                                            <span>{dev.location}</span>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2 mb-4">
+                                            <span className="bg-gray-100 text-[11px] font-semibold px-2 py-1 rounded">{dev.activeProjects} Active Projects</span>
+                                            <span className="bg-gray-100 text-[11px] font-semibold px-2 py-1 rounded flex items-center gap-1">
+                                                <HiStar className="text-[12px] text-yellow-500" />
+                                                {dev.rating} Rating
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <Link href={`/find-developers/${dev.id}`}>
+                                        <button className="w-full bg-brand-green text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-green-600 transition-all">
+                                            View Portfolio
+                                            <HiArrowRight className="text-sm" />
+                                        </button>
+                                    </Link>
                                 </div>
-
-                                <h3 className="text-xl font-black text-gray-900 mb-3 group-hover:text-brand-green transition-colors">{dev.name}</h3>
-                                <p className="text-gray-500 text-sm leading-relaxed mb-6 grow">{dev.description}</p>
-
-                                <div className="grid grid-cols-2 gap-4 mb-8">
-                                    <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Projects</p>
-                                        <p className="text-lg font-black text-gray-900">{dev.projects}+</p>
-                                    </div>
-                                    <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Rating</p>
-                                        <p className="text-lg font-black text-brand-green">{dev.rating}</p>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-3 mb-8">
-                                    <div className="flex items-center gap-3 text-sm text-gray-600">
-                                        <HiOutlineMail className="text-brand-green" />
-                                        <span>{dev.email}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-sm text-gray-600">
-                                        <HiOutlinePhone className="text-brand-green" />
-                                        <span>{dev.phone}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-sm text-gray-600">
-                                        <HiOutlineGlobeAlt className="text-brand-green" />
-                                        <span>{dev.website}</span>
-                                    </div>
-                                </div>
-
-                                <button className="w-full bg-gray-900 text-white hover:bg-brand-green py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 group/btn">
-                                    View Portfolio <HiOutlineArrowRight className="group-hover/btn:translate-x-1 transition-transform" />
-                                </button>
                             </div>
                         </FadeIn>
                     ))}
+                </div>
+
+                {/* Pagination */}
+                <div className="mt-12 flex items-center justify-center gap-2">
+                    <button
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        className="size-10 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                        <HiChevronLeft />
+                    </button>
+                    {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                        let pageNum;
+                        if (totalPages <= 5) {
+                            pageNum = i + 1;
+                        } else if (currentPage <= 3) {
+                            pageNum = i + 1;
+                        } else if (currentPage >= totalPages - 2) {
+                            pageNum = totalPages - 4 + i;
+                        } else {
+                            pageNum = currentPage - 2 + i;
+                        }
+
+                        return (
+                            <button
+                                key={pageNum}
+                                onClick={() => setCurrentPage(pageNum)}
+                                className={`size-10 flex items-center justify-center rounded-lg font-bold ${currentPage === pageNum
+                                    ? 'bg-brand-green text-white'
+                                    : 'border border-gray-200 hover:bg-gray-100 transition-colors'
+                                    }`}
+                            >
+                                {pageNum}
+                            </button>
+                        );
+                    })}
+                    {totalPages > 5 && currentPage < totalPages - 2 && (
+                        <>
+                            <span className="mx-1 text-gray-400">...</span>
+                            <button
+                                onClick={() => setCurrentPage(totalPages)}
+                                className="size-10 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+                            >
+                                {totalPages}
+                            </button>
+                        </>
+                    )}
+                    <button
+                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                        disabled={currentPage === totalPages}
+                        className="size-10 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                        <HiChevronRight />
+                    </button>
                 </div>
 
                 {/* Developer CTA */}
@@ -136,7 +189,7 @@ export default function FindDevelopersPage() {
                         </div>
                     </div>
                 </FadeIn>
-            </div>
+            </main>
         </div>
     );
 }

@@ -53,22 +53,39 @@ export const ROLE_ACTIONS: Record<string, { submitLabel: string; successMessage:
 
 export const PROPERTY_TYPES_BY_LISTING: Record<string, string[]> = {
   'Rent': [
-    'Residential Property to Rent',
-    'Corporate Property',
-    'Student / Corpers Property',
-    'Shared Spaces / Self-Contain',
-    'Land / Plots to Rent'
+    'Apartment',
+    'House',
+    'Duplex',
+    'Bungalow',
+    'Detached',
+    'Semi-detached',
+    'Terraced',
+    'Flats',
+    'Studio / Self-Contain',
+    'Commercial Space',
+    'Industrial / Warehouse',
+    'Farms / Land'
   ],
   'Sale': [
-    'Residential Property for Sale',
-    'Commercial Property for Sale',
-    'Corporate Property for Sale',
-    'Land / Plots for Sale'
+    'House for Sale',
+    'Detached House',
+    'Semi-detached House',
+    'Terrace House',
+    'Apartment / Flat',
+    'Bungalow',
+    'Duplex',
+    'Commercial Property',
+    'Industrial Complex',
+    'Land / Plots'
   ],
   'Service-Apartment': [
-    'Service Apartments'
+    'Studio Apartment',
+    'Luxury Suite',
+    'Family Service Apartment',
+    'Corporate Executive Suite'
   ],
   'Rent-to-Own': [
-    'Rent to Own'
+    'Residential Rent-to-Own',
+    'Commercial Rent-to-Own'
   ]
 };

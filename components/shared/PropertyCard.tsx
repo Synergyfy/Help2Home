@@ -95,7 +95,7 @@ export default function PropertyCard({ property, index, showTotalUpfront = true,
 
                     {/* Lister Name */}
                     <Link
-                        href={`/marketplace/listers/${property.listerId || property.listerName}`}
+                        href={`/marketplace/listers/${encodeURIComponent(property.listerName || 'Verified User')}`}
                         className="text-sm text-brand-green font-medium hover:underline mb-3 block line-clamp-1"
                     >
                         {property.listerName || 'Verified User'}

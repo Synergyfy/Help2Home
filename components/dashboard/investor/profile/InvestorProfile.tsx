@@ -62,7 +62,7 @@ export default function InvestorProfile() {
                     {/* Tab Content */}
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                         {activeTab === 'strategy' && <InvestorStrategyTab profile={profileData} />}
-                        {activeTab === 'verification' && <VerificationTab documents={MOCK_DOCUMENTS} />}
+                        {activeTab === 'verification' && <VerificationTab role="investor" />}
                         {activeTab === 'security' && <PrivacySecurityTab />}
                     </div>
                 </div>

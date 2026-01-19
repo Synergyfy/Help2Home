@@ -31,7 +31,7 @@ export default function BookingModal({ isOpen, onClose, onSubmit }: BookingModal
                         <input
                             type="text"
                             placeholder="Clark Kent"
-                            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00853E] focus:ring-2 focus:ring-green-100 outline-none transition-all"
+                            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-2 focus:ring-green-100 outline-none transition-all"
                             required
                         />
                     </div>
@@ -41,7 +41,7 @@ export default function BookingModal({ isOpen, onClose, onSubmit }: BookingModal
                         <input
                             type="tel"
                             placeholder="08012345678"
-                            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00853E] focus:ring-2 focus:ring-green-100 outline-none transition-all"
+                            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-2 focus:ring-green-100 outline-none transition-all"
                             required
                         />
                     </div>
@@ -51,7 +51,7 @@ export default function BookingModal({ isOpen, onClose, onSubmit }: BookingModal
                         <input
                             type="email"
                             placeholder="clark@dailyplanet.com"
-                            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00853E] focus:ring-2 focus:ring-green-100 outline-none transition-all"
+                            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-2 focus:ring-green-100 outline-none transition-all"
                             required
                         />
                     </div>
@@ -61,14 +61,14 @@ export default function BookingModal({ isOpen, onClose, onSubmit }: BookingModal
                         <input
                             type="text"
                             placeholder="Metropolis"
-                            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00853E] focus:ring-2 focus:ring-green-100 outline-none transition-all"
+                            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-2 focus:ring-green-100 outline-none transition-all"
                             required
                         />
                     </div>
 
                     <button
                         type="submit"
-                        className="w-full bg-[#00853E] text-white font-bold py-3 rounded-lg hover:bg-[#006c32] transition-colors mt-6"
+                        className="w-full bg-brand-green text-white font-bold py-3 rounded-lg hover:bg-[#006c32] transition-colors mt-6"
                     >
                         Submit
                     </button>

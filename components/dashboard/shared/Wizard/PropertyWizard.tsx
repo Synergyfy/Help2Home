@@ -107,6 +107,12 @@ export default function PropertyWizard({
         currency: 'NGN',
       },
       isMortgageAvailable: false,
+      isNewBuild: false,
+      isSharedOwnership: false,
+      isRetirementHome: false,
+      isAuction: false,
+      isOffPlan: false,
+      isVerified: false,
       specs: {
         bedrooms: 0,
         bathrooms: 0,

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import FadeIn from '@/components/FadeIn';
+import { useUserStore } from '@/store/userStore';
 import { useApplications } from '@/hooks/useApplications';
 import {
     SummaryCard,
@@ -89,7 +90,9 @@ export default function TenantDashboard() {
                 {/* Page Title & Breadcrumb */}
                 <div className="mb-8">
                     <nav className="text-sm text-gray-500 mb-1">Home / Dashboard</nav>
-                    <h1 className="text-2xl font-bold text-gray-900">Dashboard — Home</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">
+                        Welcome back, {useUserStore.getState().profile.firstName || 'User'} — Dashboard
+                    </h1>
                 </div>
 
                 {/* Hero Summary Cards */}
@@ -208,7 +211,7 @@ export default function TenantDashboard() {
                         </div>
                         <span className="text-sm font-medium">Messages</span>
                     </Link>
-                    <Link href="/marketplace" className="bg-[#00853E] text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#006c32] transition-colors">
+                    <Link href="/marketplace" className="bg-brand-green text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#006c32] transition-colors">
                         Browse Properties
                     </Link>
                 </div>

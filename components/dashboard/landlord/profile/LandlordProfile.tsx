@@ -64,7 +64,7 @@ export default function LandlordProfile() {
                     {/* Tab Content */}
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                         {activeTab === 'info' && <BasicInfoTab profile={profileData} />}
-                        {activeTab === 'verification' && <VerificationTab documents={MOCK_DOCUMENTS} />}
+                        {activeTab === 'verification' && <VerificationTab role="landlord" />}
                         {activeTab === 'bank' && <BankPayoutsTab accounts={MOCK_BANK_ACCOUNTS} />}
                         {activeTab === 'security' && <PrivacySecurityTab />}
                     </div>

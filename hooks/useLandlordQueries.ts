@@ -7,11 +7,11 @@ import type { Property } from "@/utils/properties";
 
 export function useCreateProperty() {
   const queryClient = useQueryClient();
-  const userId = useUserStore((state) => state.id); 
+  const { id: userId, fullName, profile } = useUserStore(); 
 
   return useMutation({
     // Changed to 'any' to accept PropertySchema from the wizard
-    mutationFn: (data: any) => createProperty(data, userId),
+    mutationFn: (data: any) => createProperty(data, userId, fullName, profile.image),
     onSuccess: () => {
       // Invalidate everything to be safe during debugging
       queryClient.invalidateQueries({ queryKey: marketplaceKeys.all });
