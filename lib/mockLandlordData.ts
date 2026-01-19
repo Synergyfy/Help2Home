@@ -101,11 +101,38 @@ export const MOCK_PROFILE: ProfileData = {
     verificationDate: 'Oct 15, 2023'
 };
 
-export const MOCK_DOCUMENTS: VerificationDocument[] = [
-    { id: 'd1', type: 'ID', label: 'Upload ID', filename: 'passport_scan.jpg', status: 'approved', uploadedAt: 'Oct 10, 2023' },
-    { id: 'd2', type: 'Ownership', label: 'Proof of ownership', filename: 'title_deed_15b.pdf', status: 'approved', uploadedAt: 'Oct 12, 2023' },
-    { id: 'd3', type: 'License', label: 'Upload agency license', status: 'missing' },
+export const MOCK_DOCUMENTS_LANDLORD: VerificationDocument[] = [
+    { id: 'd1', type: 'ID', label: 'Government Issued ID', filename: 'passport_scan.jpg', status: 'approved', uploadedAt: 'Oct 10, 2023' },
+    { id: 'd2', type: 'Ownership', label: 'Proof of Property Ownership', filename: 'title_deed_15b.pdf', status: 'approved', uploadedAt: 'Oct 12, 2023' },
+    { id: 'd4', type: 'Other', label: 'Utility Bill / Proof of Address', status: 'missing' },
 ];
+
+export const MOCK_DOCUMENTS_DEVELOPER: VerificationDocument[] = [
+    { id: 'dev1', type: 'License', label: 'CAC Registration Certificate', status: 'pending', uploadedAt: 'Jan 15, 2024' },
+    { id: 'dev2', type: 'Other', label: 'Company Profile & Track Record', status: 'approved', uploadedAt: 'Jan 10, 2024' },
+    { id: 'dev3', type: 'ID', label: 'Director Government ID', status: 'approved', uploadedAt: 'Jan 12, 2024' },
+];
+
+export const MOCK_DOCUMENTS_INVESTOR: VerificationDocument[] = [
+    { id: 'inv1', type: 'ID', label: 'KYC Verification (ID)', status: 'approved', uploadedAt: 'Dec 05, 2023' },
+    { id: 'inv2', type: 'Other', label: 'Proof of Funds / Bank Statement', status: 'pending', uploadedAt: 'Jan 18, 2024' },
+    { id: 'inv3', type: 'Other', label: 'Accreditation Status (Optional)', status: 'missing' },
+];
+
+export const MOCK_DOCUMENTS_AGENT: VerificationDocument[] = [
+    { id: 'ag1', type: 'ID', label: 'Government Issued ID', status: 'approved', uploadedAt: 'Nov 20, 2023' },
+    { id: 'ag2', type: 'License', label: 'Agency License / Certification', status: 'missing' },
+    { id: 'ag3', type: 'Other', label: 'Company Authorization Letter', status: 'approved', uploadedAt: 'Nov 22, 2023' },
+];
+
+export const MOCK_DOCUMENTS_TENANT: VerificationDocument[] = [
+    { id: 'ten1', type: 'ID', label: 'Identification Document', status: 'approved', uploadedAt: 'Dec 10, 2023' },
+    { id: 'ten2', type: 'Other', label: 'Letter of Employment', status: 'approved', uploadedAt: 'Dec 12, 2023' },
+    { id: 'ten3', type: 'Other', label: 'Last 3 Months Pay Slips', status: 'pending', uploadedAt: 'Jan 19, 2024' },
+];
+
+export const MOCK_DOCUMENTS = MOCK_DOCUMENTS_LANDLORD;
+
 
 export const MOCK_BANK_ACCOUNTS: BankAccount[] = [
     { id: 'b1', bankName: 'GTBank', accountNumber: '****1234', accountHolder: 'Lagos Properties Ltd', type: 'Current', country: 'Nigeria', isPrimary: true, status: 'verified' },

@@ -5,7 +5,9 @@ import { addPropertyToMockDb, getMockProperties } from "@/utils/properties";
 
 export async function createProperty(
   newPropertyData: any,
-  userId: string
+  userId: string,
+  listerName?: string,
+  listerImage?: string
 ): Promise<Property> {
   await delay(1000);
 
@@ -51,6 +53,9 @@ export async function createProperty(
     ...mappedProperty,
     id: Math.floor(Math.random() * 100000),
     createdBy: userId,
+    listerName: listerName || 'Verified User',
+    listerImage: listerImage,
+    listerVerified: true,
     dateAdded: new Date().toISOString(),
     listingAge: '24h',
     featured: false,

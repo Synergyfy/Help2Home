@@ -44,7 +44,7 @@ export default function ApplicationsListPage() {
                             className="block bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow"
                         >
                             <div className="flex flex-col sm:flex-row gap-4">
-                                <div className="w-full sm:w-32 h-32 relative rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
+                                <div className="w-full sm:w-32 h-32 relative rounded-lg overflow-hidden bg-gray-200 shrink-0">
                                     <Image
                                         src={app.propertyImage}
                                         alt={app.propertyTitle}

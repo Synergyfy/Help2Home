@@ -1,20 +1,20 @@
 'use client';
 
 import { useState } from 'react';
+import ProfileSummaryCard from '../../landlord/profile/ProfileSummaryCard';
+import BusinessInfoTab from './BusinessInfoTab';
+import VerificationTab from '../../landlord/profile/VerificationTab';
+import PrivacySecurityTab from '../../landlord/profile/PrivacySecurityTab';
+import { MOCK_PROFILE, MOCK_DOCUMENTS } from '@/lib/mockLandlordData';
 import { useProfile } from '@/hooks/useProfile';
-import CaretakerInfoTab from './CaretakerInfoTab';
-import VerificationTab from '@/components/dashboard/landlord/profile/VerificationTab';
-import PrivacySecurityTab from '@/components/dashboard/landlord/profile/PrivacySecurityTab';
-import { MOCK_DOCUMENTS } from '@/lib/mockLandlordData'; // Reusing for now
-import ProfileSummaryCard from '@/components/dashboard/landlord/profile/ProfileSummaryCard';
 
-export default function CaretakerProfile() {
+export default function DeveloperProfile() {
     const [activeTab, setActiveTab] = useState<'info' | 'verification' | 'security'>('info');
-    const { data, isLoading } = useProfile('caretaker');
+    const { data, isLoading } = useProfile('developer');
 
     const tabs = [
-        { id: 'info', label: 'Caretaker Details' },
-        { id: 'verification', label: 'ID & Verification' },
+        { id: 'info', label: 'Business Info' },
+        { id: 'verification', label: 'Company Verification' },
         { id: 'security', label: 'Privacy & Security' },
     ];
 
@@ -26,13 +26,13 @@ export default function CaretakerProfile() {
         );
     }
 
-    const profileData = data?.data || {};
+    const profileData = data?.data || MOCK_PROFILE;
 
     return (
         <div className="min-h-screen bg-gray-50/50 pb-12">
             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-900">Caretaker Profile</h1>
-                <p className="text-gray-500 text-sm">Manage your skills, services, and profile visibility.</p>
+                <h1 className="text-2xl font-bold text-gray-900">Developer Profile</h1>
+                <p className="text-gray-500 text-sm">Manage your company details and verification status.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -61,8 +61,8 @@ export default function CaretakerProfile() {
 
                     {/* Tab Content */}
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                        {activeTab === 'info' && <CaretakerInfoTab profile={profileData} />}
-                        {activeTab === 'verification' && <VerificationTab role="caretaker" />}
+                        {activeTab === 'info' && <BusinessInfoTab profile={profileData} />}
+                        {activeTab === 'verification' && <VerificationTab role="developer" />}
                         {activeTab === 'security' && <PrivacySecurityTab />}
                     </div>
                 </div>

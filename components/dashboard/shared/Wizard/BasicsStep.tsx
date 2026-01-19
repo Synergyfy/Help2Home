@@ -301,6 +301,35 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                             </div>
                         </div>
 
+                        {/* MARKETPLACE FEATURES / BUYING SCHEMES */}
+                        <div className="mb-10 p-5 bg-gray-50 rounded-2xl border border-gray-100">
+                            <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Property Features & Schemes</h4>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                {[
+                                    { id: 'isNewBuild', label: 'New Build' },
+                                    { id: 'isSharedOwnership', label: 'Shared Ownership' },
+                                    { id: 'isRetirementHome', label: 'Retirement Home' },
+                                    { id: 'isAuction', label: 'Auction Property' },
+                                    { id: 'isOffPlan', label: 'Off-plan / Pre-construction' },
+                                    { id: 'isVerified', label: 'Request Physical Verification' },
+                                ].map((item) => (
+                                    <label key={item.id} className="flex items-center gap-3 cursor-pointer group">
+                                        <div className="relative flex items-center">
+                                            <input
+                                                {...register(item.id as any)}
+                                                type="checkbox"
+                                                className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-gray-300 bg-white transition-all checked:bg-brand-green checked:border-brand-green focus:outline-none"
+                                            />
+                                            <svg className="absolute w-3.5 h-3.5 mt-0.5 ml-0.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                                                <polyline points="20 6 9 17 4 12"></polyline>
+                                            </svg>
+                                        </div>
+                                        <span className="text-sm text-gray-700 group-hover:text-brand-green transition-colors">{item.label}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
                         {/* Listing Type First - Logic: Property Types depend on this */}
                         <div className="mb-10">
                             <label className={labelClasses}>Listing Type</label>

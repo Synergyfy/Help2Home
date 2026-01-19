@@ -1,41 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-import { VerificationDocument, MOCK_DOCUMENTS_LANDLORD, MOCK_DOCUMENTS_DEVELOPER, MOCK_DOCUMENTS_INVESTOR, MOCK_DOCUMENTS_AGENT, MOCK_DOCUMENTS_TENANT } from '@/lib/mockLandlordData';
-import { useUserStore, Role } from '@/store/userStore';
-import { useUpdateProfile } from '@/hooks/useProfile';
+import { VerificationDocument } from '@/lib/mockLandlordData';
 
-export default function VerificationTab({ role: activeRole }: { role?: Role }) {
-    const { roleData } = useUserStore();
-    const { mutate: updateProfile } = useUpdateProfile(activeRole || 'tenant');
-
-    const getDocsByRole = () => {
-        switch (activeRole) {
-            case 'landlord': return MOCK_DOCUMENTS_LANDLORD;
-            case 'developer': return MOCK_DOCUMENTS_DEVELOPER;
-            case 'investor': return MOCK_DOCUMENTS_INVESTOR;
-            case 'agent': return MOCK_DOCUMENTS_AGENT;
-            case 'tenant': return MOCK_DOCUMENTS_TENANT;
-            default: return MOCK_DOCUMENTS_LANDLORD;
-        }
-    };
-
-    const documents = getDocsByRole();
+export default function VerificationTab({ documents }: { documents: VerificationDocument[] }) {
     const completedCount = documents.filter(d => d.status === 'approved').length;
     const totalCount = documents.length;
     const progress = (completedCount / totalCount) * 100;
-
-    const handleMockVerify = (docId: string) => {
-        // Just a mock interaction to show we can update the store
-        // In a real app, this would be an upload + backend verification
-        if (activeRole === 'landlord') {
-            updateProfile({ isIdentityVerified: true });
-        } else if (activeRole === 'developer') {
-            updateProfile({ isBusinessVerified: true });
-        } else if (activeRole === 'investor') {
-            updateProfile({ isIdentityVerified: true });
-        }
-    };
 
     return (
         <div className="space-y-6">
@@ -46,10 +16,10 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
                         <h3 className="text-lg font-bold text-gray-900">Verification Progress</h3>
                         <p className="text-sm text-gray-500">Complete all steps to verify your account.</p>
                     </div>
-                    <span className="text-sm font-bold text-brand-green">{completedCount} of {totalCount} complete</span>
+                    <span className="text-sm font-bold text-[#00853E]">{completedCount} of {totalCount} complete</span>
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-2">
-                    <div className="bg-brand-green h-2 rounded-full transition-all duration-500" style={{ width: `${progress}%` }}></div>
+                    <div className="bg-[#00853E] h-2 rounded-full transition-all duration-500" style={{ width: `${progress}%` }}></div>
                 </div>
             </div>
 
@@ -63,16 +33,16 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
                     {documents.map((doc) => (
                         <div key={doc.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div className="flex items-start gap-4">
-                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${doc.status === 'approved' ? 'bg-green-100 text-green-600' :
-                                    doc.status === 'rejected' ? 'bg-red-100 text-red-600' :
-                                        doc.status === 'pending' ? 'bg-amber-100 text-amber-600' :
-                                            'bg-gray-100 text-gray-400'
+                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${doc.status === 'approved' ? 'bg-green-100 text-green-600' :
+                                        doc.status === 'rejected' ? 'bg-red-100 text-red-600' :
+                                            doc.status === 'pending' ? 'bg-amber-100 text-amber-600' :
+                                                'bg-gray-100 text-gray-400'
                                     }`}>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
                                 </div>
-                                <div className="flex-1">
+                                <div>
                                     <h4 className="font-medium text-gray-900">{doc.label}</h4>
                                     {doc.filename ? (
                                         <p className="text-sm text-gray-500 flex items-center gap-2">
@@ -105,18 +75,20 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
                                         Under Review
                                     </span>
                                 ) : doc.status === 'rejected' ? (
-                                    <button
-                                        onClick={() => handleMockVerify(doc.id)}
-                                        className="px-4 py-2 bg-white border border-red-200 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors"
-                                    >
+                                    <button className="px-4 py-2 bg-white border border-red-200 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors">
                                         Re-upload
                                     </button>
                                 ) : (
-                                    <button
-                                        onClick={() => handleMockVerify(doc.id)}
-                                        className="px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-                                    >
+                                    <button className="px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
                                         Upload
+                                    </button>
+                                )}
+
+                                {doc.filename && (
+                                    <button className="text-gray-400 hover:text-gray-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                        </svg>
                                     </button>
                                 )}
                             </div>
@@ -127,4 +99,3 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
         </div>
     );
 }
-

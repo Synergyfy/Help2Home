@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { mockProperties } from '@/utils/properties';
 
-// 1. Define the interface to fix the TS(2322) error
 interface NearbyPropertiesProps {
     currentPropertyId?: number;
     location?: string;
@@ -13,8 +12,6 @@ interface NearbyPropertiesProps {
 
 export default function NearbyProperties({ currentPropertyId, location }: NearbyPropertiesProps) {
 
-    // 2. The "Calculation": Filter properties in the same location
-    // We exclude the current property itself so it doesn't recommend what you're already looking at.
     const nearby = mockProperties
         .filter(p =>
             p.location === location && // Match location
@@ -29,7 +26,7 @@ export default function NearbyProperties({ currentPropertyId, location }: Nearby
         : mockProperties.filter(p => p.id !== currentPropertyId).slice(0, 5);
 
     return (
-        <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
             <h3 className="font-black text-gray-900 mb-6 flex items-center gap-2">
                 <span className="w-2 h-2 bg-brand-green rounded-full"></span>
                 Nearby Properties
@@ -38,7 +35,7 @@ export default function NearbyProperties({ currentPropertyId, location }: Nearby
             <div className="space-y-6">
                 {displayProperties.map((property) => (
                     <div key={property.id} className="flex gap-4 items-center group">
-                        <div className="relative w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-50">
+                        <div className="relative w-20 h-20 rounded-2xl overflow-hidden shrink-0 border border-gray-50">
                             <Image
                                 src={property.images?.[0] || '/placeholder.jpg'}
                                 alt={property.title}

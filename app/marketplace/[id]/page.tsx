@@ -426,9 +426,11 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                                             )}
                                         </div>
                                         <div>
-                                            <h4 className="font-bold text-sm text-gray-900 leading-tight">
-                                                {property.listerName || (property.posterRole === 'agent' ? property.agency : 'Verified User')}
-                                            </h4>
+                                            <Link href={`/marketplace/listers/${encodeURIComponent(property.listerName || 'Verified User')}`}>
+                                                <h4 className="font-bold text-sm text-gray-900 leading-tight hover:text-brand-green transition-colors">
+                                                    {property.listerName || (property.posterRole === 'agent' ? property.agency : 'Verified User')}
+                                                </h4>
+                                            </Link>
                                             <p className="text-[10px] font-medium text-brand-green bg-brand-green/5 px-2 py-0.5 rounded-full inline-block capitalize mt-0.5">
                                                 {property.posterRole}
                                             </p>

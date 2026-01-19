@@ -38,7 +38,7 @@ export default function PropertiesTable({ properties, onDelete }: PropertiesTabl
                         <tr key={property.id} className="hover:bg-gray-50 transition-colors">
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="flex items-center">
-                                    <div className="h-12 w-16 flex-shrink-0 relative rounded-lg overflow-hidden bg-gray-100">
+                                    <div className="h-12 w-16 shrink-0 relative rounded-lg overflow-hidden bg-gray-100">
                                         {/* property.images is an array of strings */}
                                         {property.images?.[0] && (
                                             <img className="h-full w-full object-cover" src={property.images[0]} alt="" />

@@ -10,22 +10,60 @@ export default function ProfileCompletionModal() {
     const { profile, roleData, verified, activeRole, hasHydrated } = useUserStore();
     const [isOpen, setIsOpen] = useState(false);
 
-    const tenantProfile = roleData.tenant;
+    const getChecks = () => {
+        const baseChecks = [
+            { label: 'Basic Information', done: !!(profile.firstName && profile.lastName && profile.dob && profile.gender) },
+        ];
 
-    const checks = [
-        { label: 'Basic Information', done: !!(profile.firstName && profile.lastName && profile.dob && profile.gender) },
-        { label: 'Employment Details', done: !!(tenantProfile?.employmentStatus && tenantProfile?.employmentStatus !== 'Unemployed' ? tenantProfile?.employerName : true) },
-        { label: 'Next of Kin', done: !!(tenantProfile?.nextOfKin?.name && tenantProfile?.nextOfKin?.phone) },
-        { label: 'Guarantor Details', done: !!(tenantProfile?.guarantor?.name && tenantProfile?.guarantor?.phone) },
-        { label: 'BVN Verification', done: !!tenantProfile?.isBvnVerified }
-    ];
+        switch (activeRole) {
+            case 'tenant':
+                return [
+                    ...baseChecks,
+                    { label: 'Employment Details', done: !!(roleData.tenant?.employmentStatus && roleData.tenant?.employmentStatus !== 'Unemployed' ? roleData.tenant?.employerName : true) },
+                    { label: 'Next of Kin', done: !!(roleData.tenant?.nextOfKin?.name && roleData.tenant?.nextOfKin?.phone) },
+                    { label: 'Guarantor Details', done: !!(roleData.tenant?.guarantor?.name && roleData.tenant?.guarantor?.phone) },
+                    { label: 'BVN Verification', done: !!roleData.tenant?.isBvnVerified }
+                ];
+            case 'landlord':
+                return [
+                    ...baseChecks,
+                    { label: 'Bank Details', done: !!roleData.landlord?.isBankVerified },
+                    { label: 'Identity Verification', done: !!roleData.landlord?.isIdentityVerified },
+                    { label: 'Profile Completion', done: !!roleData.landlord?.isBasicVerified }
+                ];
+            case 'developer':
+                return [
+                    ...baseChecks,
+                    { label: 'Business Registration', done: !!roleData.developer?.isBusinessVerified },
+                    { label: 'Portfolio Details', done: !!(roleData.developer?.portfolio && roleData.developer.portfolio.length > 0) },
+                    { label: 'Identity Verification', done: !!roleData.developer?.isIdentityVerified }
+                ];
+            case 'investor':
+                return [
+                    ...baseChecks,
+                    { label: 'Investment Profile', done: !!roleData.investor?.isBasicVerified },
+                    { label: 'Bank Details', done: !!roleData.investor?.isBankVerified },
+                    { label: 'Identity Verification', done: !!roleData.investor?.isIdentityVerified }
+                ];
+            case 'agent':
+            case 'caretaker':
+                return [
+                    ...baseChecks,
+                    { label: 'Professional Profile', done: !!(roleData as any)[activeRole as string]?.isBasicVerified },
+                    { label: 'Identity Verification', done: !!(roleData as any)[activeRole as string]?.isIdentityVerified }
+                ];
+            default:
+                return baseChecks;
+        }
+    };
 
+    const checks = getChecks();
     const isComplete = checks.every(c => c.done);
 
     useEffect(() => {
-        if (hasHydrated && activeRole === 'tenant' && !isComplete) {
+        if (hasHydrated && activeRole && !isComplete) {
             // Check if we are already on the profile page
-            if (window.location.pathname !== '/dashboard/tenant/profile') {
+            if (window.location.pathname !== `/dashboard/${activeRole}/profile`) {
                 setIsOpen(true);
             }
         } else {
@@ -36,7 +74,7 @@ export default function ProfileCompletionModal() {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/60 z-[999] flex items-center justify-center p-4 backdrop-blur-md">
+        <div className="fixed inset-0 bg-black/60 z-999 flex items-center justify-center p-4 backdrop-blur-md">
             <div className="bg-white rounded-[2.5rem] shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in duration-300">
                 <div className="p-10">
                     <div className="w-20 h-20 bg-amber-50 rounded-3xl flex items-center justify-center mb-8 text-amber-500 mx-auto">
@@ -62,7 +100,7 @@ export default function ProfileCompletionModal() {
                     <button
                         onClick={() => {
                             setIsOpen(false);
-                            router.push('/dashboard/tenant/profile');
+                            router.push(`/dashboard/${activeRole}/profile`);
                         }}
                         className="w-full py-5 bg-brand-green text-white font-black rounded-2xl shadow-xl shadow-green-100 hover:bg-green-700 transition-all hover:scale-[1.02] active:scale-[0.98] text-lg"
                     >
