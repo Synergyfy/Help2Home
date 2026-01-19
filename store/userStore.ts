@@ -144,7 +144,7 @@ interface UserState {
   verified: boolean;
   hasHydrated: boolean;
   onboardingCompleted: boolean;
-  roleOnboardingCompleted: Record<Role, boolean>;
+  roleOnboardingCompleted: Partial<Record<Role, boolean>>;
   profile: CommonProfile;
   roleData: {
     tenant?: TenantProfileData;
@@ -183,16 +183,7 @@ export const useUserStore = create<UserState>()(
       verified: false,
       hasHydrated: false,
       onboardingCompleted: false,
-      roleOnboardingCompleted: {
-        tenant: false,
-        landlord: false,
-        caretaker: false,
-        agent: false,
-        investor: false,
-        developer: false,
-        admin: false,
-        superAdmin: false,
-      },
+      roleOnboardingCompleted: {},
       profile: {
         firstName: '',
         lastName: '',

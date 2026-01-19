@@ -90,7 +90,7 @@ export default function PropertyWizard({
 
   const methods = useForm<PropertySchema>({
     resolver: zodResolver(propertySchema),
-    defaultValues: initialData || {
+    defaultValues: {
       title: '',
       posterRole: roleKey,
       propertyCategory: 'Residential',
@@ -133,7 +133,8 @@ export default function PropertyWizard({
       investmentTerms: {
         enabled: false,
         roiFrequency: 'annually',
-      }
+      },
+      ...initialData
     },
     mode: 'onChange'
   });

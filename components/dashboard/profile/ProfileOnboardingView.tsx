@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useUserStore, Role, DeveloperProfileData, InvestorProfileData } from '@/store/userStore';
+import { useUserStore, Role, DeveloperProfileData, InvestorProfileData, AgentProfileData } from '@/store/userStore';
 import {
     HiOutlineHome,
     HiOutlineMapPin,
@@ -113,6 +113,32 @@ export default function ProfileOnboardingView() {
                                 {cat}
                             </span>
                         )) || 'Not specified'}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const renderAgentData = () => {
+        const agent = data as AgentProfileData;
+        return (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <DataCard icon={<HiOutlineSparkles />} label="Agency Name" value={agent.agencyName || 'Independent'} />
+                <DataCard icon={<HiOutlineBriefcase />} label="Experience" value={`${agent.yearsExperience || 0} years`} />
+                <DataCard icon={<HiOutlineCreditCard />} label="License Number" value={agent.licenseNumber || 'Not provided'} />
+                <div className="md:col-span-2 p-6 bg-blue-50 rounded-2xl border border-blue-100">
+                    <h4 className="text-[10px] font-black uppercase text-blue-600 mb-3 tracking-widest">Specialization & Areas</h4>
+                    <div className="flex flex-wrap gap-2">
+                        {agent.specialization?.map((spec: string) => (
+                            <span key={spec} className="px-3 py-1.5 bg-white rounded-xl text-xs font-bold text-gray-700 border border-blue-200">
+                                {spec}
+                            </span>
+                        )) || 'No specialization listed'}
+                        {agent.areasServed?.map((area: string) => (
+                            <span key={area} className="px-3 py-1.5 bg-blue-100/50 rounded-xl text-xs font-bold text-blue-700 border border-blue-200">
+                                {area}
+                            </span>
+                        ))}
                     </div>
                 </div>
             </div>

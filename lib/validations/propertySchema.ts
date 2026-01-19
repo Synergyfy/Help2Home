@@ -44,7 +44,7 @@ export const propertySchema = z.object({
   purchasePrice: z.coerce.number().optional(),
   optionFee: z.coerce.number().optional(),
   downPayment: z.coerce.number().optional(),
-  isMortgageAvailable: z.boolean(),
+  isMortgageAvailable: z.boolean().default(false),
   isNewBuild: z.boolean().default(false),
   isSharedOwnership: z.boolean().default(false),
   isRetirementHome: z.boolean().default(false),
@@ -90,7 +90,7 @@ export const propertySchema = z.object({
   }).optional(),
 
   installments: z.object({
-    enabled: z.boolean(),
+    enabled: z.boolean().default(false),
     depositType: z.enum(['fixed', 'percentage']),
     depositValue: z.coerce.number().min(0, 'Deposit value cannot be negative').optional(),
     tenures: z.array(z.coerce.number()).max(10, 'Repayment plans cannot exceed 10 months').optional(), // Repayment Strategy (months)
@@ -122,7 +122,7 @@ export const propertySchema = z.object({
   }).optional(),
 
   investmentTerms: z.object({
-    enabled: z.boolean(),
+    enabled: z.boolean().default(false),
     minInvestment: z.coerce.number().min(0).optional(),
     maxInvestment: z.coerce.number().min(0).optional(),
     roi: z.coerce.number().min(0).optional(), // percentage
