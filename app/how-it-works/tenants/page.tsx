@@ -46,7 +46,7 @@ export default function TenantHowItWorksPage() {
                   </Link>
                 </div>
               </div>
-              <div className="relative aspect-square md:aspect-[4/3] bg-gray-100 rounded-2xl flex items-center justify-center">
+              <div className="relative aspect-square md:aspect-4/3 bg-gray-100 rounded-2xl flex items-center justify-center">
                 <span className="text-gray-400 font-medium">
                   Tenant Journey Illustration
                 </span>

@@ -18,7 +18,7 @@ const roles: { title: string; description: string; icon: JSX.Element; roleParam:
         <polyline points="9 22 9 12 15 12 15 22" />
       </svg>
     ),
-    roleParam: 'landlord'
+    roleParam: 'landlords'
   },
   {
     title: 'Tenant',
@@ -29,7 +29,7 @@ const roles: { title: string; description: string; icon: JSX.Element; roleParam:
         <circle cx="12" cy="7" r="4" />
       </svg>
     ),
-    roleParam: 'tenant'
+    roleParam: 'tenants'
   },
   {
     title: 'Investor',
@@ -40,7 +40,7 @@ const roles: { title: string; description: string; icon: JSX.Element; roleParam:
         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
       </svg>
     ),
-    roleParam: 'investor'
+    roleParam: 'investors'
   }
 ];
 
@@ -52,7 +52,7 @@ export default function RoleCards() {
     setUser({
       roles: [roleParam]
     });
-    router.push('/signup/create-account');
+    router.push('/signup');
   };
 
   return (
@@ -91,7 +91,7 @@ export default function RoleCards() {
                     Get started
                   </button>
                   <Link
-                    href={`/roles/${role.roleParam}`}
+                    href={`/how-it-works/${role.roleParam}`}
                     className="flex-1 text-center border border-gray-300 text-gray-700 py-2 rounded-md text-sm font-medium hover:bg-gray-50 transition-colors"
                   >
                     Learn more

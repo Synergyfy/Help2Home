@@ -11,7 +11,7 @@ import {
     HiOutlineCreditCard
 } from 'react-icons/hi2';
 import { IoBedOutline, IoWaterOutline } from 'react-icons/io5';
-import { formatNumber } from '@/utils/helpers';
+import { formatNumber, formatCurrency } from '@/utils/helpers';
 import FadeIn from '@/components/FadeIn';
 
 interface PropertyCardProps {
@@ -21,10 +21,7 @@ interface PropertyCardProps {
     onInvest?: (property: any) => void;
 }
 
-const formatCurrency = (amount: number) => {
-    if (amount >= 1000000) return `₦${(amount / 1000000).toFixed(1)}M`;
-    return `₦${amount.toLocaleString()}`;
-};
+
 
 export default function PropertyCard({ property, index, showTotalUpfront = true, onInvest }: PropertyCardProps) {
     // Normalize images
