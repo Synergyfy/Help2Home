@@ -11,8 +11,8 @@ interface PropertyCardProps {
 
 export default function PropertyCard({ property }: PropertyCardProps) {
     return (
-        <div className="group cursor-pointer bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-100">
-            <div className="relative w-full aspect-[4/3] overflow-hidden">
+        <Link href={`/marketplace/${property.id}`} className="block group cursor-pointer bg-white rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-100">
+            <div className="relative w-full aspect-4/3 overflow-hidden">
                 <Image
                     src={property.images[0]}
                     alt={property.title}
@@ -72,6 +72,6 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                     )}
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }

@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import PropertyCard from '@/components/Map/PropertyCard';
+import LocationBanner from '@/components/Map/LocationBanner';
 import { initialProperties } from '@/utils/properties';
 import { HiOutlineAdjustments, HiOutlineSearch } from 'react-icons/hi';
 
@@ -18,6 +19,39 @@ const LocationMap = dynamic(() => import('@/components/Map/LocationMap'), {
 
 export default function LocationsPage() {
     const [searchQuery, setSearchQuery] = useState('');
+    const [locationStatus, setLocationStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'denied'>('idle');
+    const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+    const [locationError, setLocationError] = useState<string>('');
+
+    const handleEnableLocation = () => {
+        if (!navigator.geolocation) {
+            setLocationStatus('error');
+            setLocationError("Geolocation is not supported by your browser");
+            return;
+        }
+
+        setLocationStatus('loading');
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                setUserLocation({
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                });
+                setLocationStatus('success');
+            },
+            (error) => {
+                let msg = "Unable to retrieve your location";
+                if (error.code === error.PERMISSION_DENIED) {
+                    setLocationStatus('denied');
+                    msg = "Location permission denied";
+                } else {
+                    setLocationStatus('error');
+                }
+                setLocationError(msg);
+            }
+        );
+    };
 
     // Transform initialProperties to match the map component's expected type if needed, 
     // but our PropertyCard component is loose with types, so straightforward passing should work.
@@ -32,16 +66,29 @@ export default function LocationsPage() {
         );
     }, [searchQuery]);
 
-    // Calculate center for map based on first result or default to Lagos
+    // Calculate center for map based on user location OR first result OR default to Lagos
     const mapCenter: [number, number] = useMemo(() => {
+        if (userLocation) {
+            return [userLocation.lat, userLocation.lng];
+        }
         if (filteredProperties.length > 0 && filteredProperties[0].latitude && filteredProperties[0].longitude) {
             return [filteredProperties[0].latitude, filteredProperties[0].longitude];
         }
         return [6.4549, 3.4246]; // Default Ikoyi/Lagos
-    }, [filteredProperties]);
+    }, [filteredProperties, userLocation]);
 
     return (
         <div className="h-screen flex flex-col bg-white overflow-hidden">
+
+            {/* Live Location Banner */}
+            <div className="sticky top-0 z-50">
+                <LocationBanner
+                    status={locationStatus}
+                    coords={userLocation}
+                    errorMsg={locationError}
+                    onEnableLocation={handleEnableLocation}
+                />
+            </div>
 
             <main className="flex-1 flex overflow-hidden relative">
                 {/* Left Side: Property List */}
@@ -88,7 +135,7 @@ export default function LocationsPage() {
                     <LocationMap
                         properties={filteredProperties}
                         center={mapCenter}
-                        zoom={13}
+                        zoom={userLocation ? 14 : 13}
                     />
                 </div>
             </main>
