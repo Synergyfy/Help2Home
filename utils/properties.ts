@@ -130,7 +130,7 @@ export interface Developer {
   projects: DeveloperProject[];
 }
 
-const initialProperties: Property[] = [
+export const initialProperties: Property[] = [
   {
     id: 1,
     title: "The Glass House - 5 Bed Detached",
@@ -139,6 +139,8 @@ const initialProperties: Property[] = [
     category: 'residential-properties-for-sale',
     address: "Banana Island",
     location: "Ikoyi",
+    latitude: 6.4549,
+    longitude: 3.4246,
     city: "Lagos",
     state: "Lagos",
     images: [Img1.src, Img2.src],
@@ -199,6 +201,8 @@ const initialProperties: Property[] = [
     category: 'commercial-properties-for-sale',
     address: "Adetokunbo Ademola",
     location: "Wuse 2",
+    latitude: 9.0765,
+    longitude: 7.4726,
     city: "Abuja",
     state: "FCT",
     images: [Img2.src, Img1.src],
@@ -249,6 +253,8 @@ const initialProperties: Property[] = [
     category: 'residential-properties-to-rent',
     address: "Orchid Road",
     location: "Lekki",
+    latitude: 6.4500,
+    longitude: 3.4600,
     city: "Lagos",
     state: "Lagos",
     images: [Img2.src,Img1.src],
@@ -303,6 +309,8 @@ const initialProperties: Property[] = [
     category: 'student-properties-to-rent',
     address: "Akoka Road",
     location: "Yaba",
+    latitude: 6.5173,
+    longitude: 3.3903,
     city: "Lagos",
     state: "Lagos",
     images: [Img1.src,Img2.src],
@@ -352,6 +360,8 @@ const initialProperties: Property[] = [
     category: 'corporate-properties-to-rent',
     address: "Adeola Odeku",
     location: "VI",
+    latitude: 6.4281,
+    longitude: 3.4219,
     city: "Lagos",
     state: "Lagos",
     images: [Img1.src,Img2.src],
@@ -405,6 +415,8 @@ const initialProperties: Property[] = [
     category: 'apartment',
     address: "Maitama Hills",
     location: "Maitama",
+    latitude: 9.0882,
+    longitude: 7.4934,
     city: "Abuja",
     state: "FCT",
     images: [Img1.src, Img2.src],
@@ -539,6 +551,8 @@ const initialProperties: Property[] = [
     category: 'short-term',
     address: "Eko Atlantic City",
     location: "VI",
+    latitude: 6.4167,
+    longitude: 3.4000,
     city: "Lagos",
     state: "Lagos",
     images: [Img1.src,Img2.src],

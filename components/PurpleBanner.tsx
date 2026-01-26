@@ -11,7 +11,7 @@ export default function PurpleBanner() {
         title="Find Your Perfect Home Without"
         highlightText="Breaking the Bank"
         description="Discover apartments that fit your budget. Pay monthly, live comfortably, and make your dream home a reality."
-        placeholder="Enter Monthly Rent (₦)"
+        placeholder="Enter Monthly Income"
         redirectPath="/check-rent-affordability"
         ctaText="Check Affordability"
         
