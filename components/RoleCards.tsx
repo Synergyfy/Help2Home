@@ -52,7 +52,7 @@ export default function RoleCards() {
     setUser({
       roles: [roleParam]
     });
-    router.push('/signup/create-account');
+    router.push('/signup');
   };
 
   return (
@@ -91,7 +91,7 @@ export default function RoleCards() {
                     Get started
                   </button>
                   <Link
-                    href={`/roles/${role.roleParam}`}
+                    href={`/how-it-works/${role.roleParam}s`}
                     className="flex-1 text-center border border-gray-300 text-gray-700 py-2 rounded-md text-sm font-medium hover:bg-gray-50 transition-colors"
                   >
                     Learn more

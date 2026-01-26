@@ -8,7 +8,6 @@ import LocationsGrid from "@/components/LocationsGrid";
 import Testimonials from "@/components/Testimonials";
 import FAQ from "@/components/FAQ";
 import CalculatorCTA from '@/components/lib/CalculatorCTA';
-
 import TenantImg from '@/assets/undraw_house_searching.svg';
 import LandlordImg from '@/assets/undraw_for-sale_7qjb.svg';
 import InvestorImg from '@/assets/undraw_invest_t695.svg';
@@ -19,14 +18,16 @@ export default function Home() {
       <main>
         <HeroSearch />
         <FeaturedListings />
-        {/* Tenant Calculator Section */}
+        <PurpleBanner />
+        <RoleCards />
+         {/* Tenant Calculator Section */}
         <CalculatorCTA
           variant="hero"
           title="Take Control of Your"
           highlightText="Rent Today"
           description="Calculate your tenant rent"
           placeholder="Enter Annual Rent (₦)"
-          redirectPath="/tenant-rent-calculator" 
+          redirectPath="/tenant-rent-calculator"
           ctaText="Check Rent"
           imageSrc={TenantImg.src}
           badgeValue="Save 15%"
@@ -34,8 +35,6 @@ export default function Home() {
           badgeType="savings"
           bgColor="bg-[#F9FEFA]"
         />
-        <RoleCards />
-        <PurpleBanner />
         <HowItWorks />
         <LocationsGrid />
 

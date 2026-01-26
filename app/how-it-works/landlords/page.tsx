@@ -41,9 +41,9 @@ export default function LandlordHowItWorksPage() {
                                     </Link>
                                 </div>
                             </div>
-                            <div className="relative aspect-square md:aspect-[4/3] bg-gray-100 rounded-2xl flex items-center justify-center overflow-hidden">
+                            <div className="relative aspect-square md:aspect-4/3 bg-gray-100 rounded-2xl flex items-center justify-center overflow-hidden">
                                 {/* Placeholder for Hero Illustration - In a real app, this would be an image */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-brand-green/5 to-brand-purple/5 flex items-center justify-center">
+                                <div className="absolute inset-0 bg-linear-to-br from-brand-green/5 to-brand-purple/5 flex items-center justify-center">
                                     <span className="text-gray-400 font-medium">Landlord Journey Illustration</span>
                                 </div>
                             </div>
@@ -62,7 +62,7 @@ export default function LandlordHowItWorksPage() {
 
 
             {/* CTA Section */}
-            <section className="py-20 bg-gradient-to-br from-brand-green/5 to-brand-purple/5">
+            <section className="py-20 bg-linear-to-br from-brand-green/5 to-brand-purple/5">
                 <div className="container mx-auto px-6 md:px-12 text-center">
                     <FadeIn>
                         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Ready to Maximize Your Rental Income?</h2>
