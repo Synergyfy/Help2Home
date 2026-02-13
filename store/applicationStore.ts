@@ -55,7 +55,7 @@ export const useApplicationStore = create<ApplicationState>()(
           status: 'Under Review',
           submittedAt: '2026-03-01T10:00:00Z',
           progress: 35,
-          financing: { downPaymentPercent: 25, repaymentDuration: 12 },
+          financing: { downPaymentPercent: 25, repaymentDuration: 10 },
           details: { employmentStatus: 'Employed', employerName: 'Tech Solutions Ltd', monthlySalary: '350,000' }
         },
         {

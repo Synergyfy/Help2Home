@@ -19,6 +19,58 @@ import {
 import { useState } from 'react';
 import InvestmentDetailsModal from '@/components/dashboard/investor/InvestmentDetailsModal';
 
+/* ---------------------------------------------
+   HERO ASSETS (TAB DEFAULTS)
+--------------------------------------------- */
+const TAB_ASSETS: Record<string, { image: string; title: string; subtitle: string }> = {
+    rent: {
+        image: 'https://images.unsplash.com/photo-1560448204-61dc36dc98c8?q=80&w=2070&auto=format&fit=crop',
+        title: 'Rental Properties',
+        subtitle: 'Find the perfect rental that fits your lifestyle.'
+    },
+    buy: {
+        image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=2070&auto=format&fit=crop',
+        title: 'Properties for Sale',
+        subtitle: 'Invest in your future with a home of your own.'
+    },
+    invest: {
+        image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop',
+        title: 'Investment Opportunities',
+        subtitle: 'Maximize your returns with strategic property investments.'
+    },
+    'service-apartment': {
+        image: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=2070&auto=format&fit=crop',
+        title: 'Service Apartments',
+        subtitle: 'Luxury and comfort with full amenities.'
+    },
+    'rent-to-own': {
+        image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?q=80&w=2070&auto=format&fit=crop',
+        title: 'Rent To Own',
+        subtitle: 'A flexible path to homeownership.'
+    }
+};
+
+/* ---------------------------------------------
+   CATEGORY HERO OVERRIDES
+--------------------------------------------- */
+const CATEGORY_ASSETS: Record<string, { image: string; title: string; subtitle: string }> = {
+    'residential-properties-to-rent': {
+        image: 'https://images.unsplash.com/photo-1523217582562-09d0def993a6?q=80&w=2070&auto=format&fit=crop',
+        title: 'Residential Rentals',
+        subtitle: 'Modern living spaces for you and your family.'
+    },
+    'commercial-properties-to-rent': {
+        image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2070&auto=format&fit=crop',
+        title: 'Commercial Rentals',
+        subtitle: 'Strategic locations for your business growth.'
+    },
+    'student-properties-to-rent': {
+        image: 'https://images.unsplash.com/photo-1555854817-5b2260d80637?q=80&w=2070&auto=format&fit=crop',
+        title: 'Student Housing',
+        subtitle: 'Affordable and convenient housing for students.'
+    }
+};
+
 const formatCurrency = (amount: number) => {
     if (amount >= 1000000) return `₦${(amount / 1000000).toFixed(1)}M`;
     return `₦${amount.toLocaleString()}`;
@@ -96,17 +148,72 @@ export default function MarketplacePage() {
         setIsInvestModalOpen(true);
     };
 
+    const heroAsset =
+        (filters.category && CATEGORY_ASSETS[filters.category]) ||
+        TAB_ASSETS[filters.propertyType] ||
+        TAB_ASSETS.rent;
+
+    const modeColors: Record<string, string> = {
+        rent: 'bg-brand-green',
+        buy: 'bg-blue-600',
+        'service-apartment': 'bg-indigo-600',
+        'rent-to-own': 'bg-orange-500',
+        invest: 'bg-slate-800'
+    };
+
     return (
         <div className="min-h-screen bg-white pb-20">
+            {/* Dynamic Hero Section */}
+            <section className="relative h-[40vh] min-h-[300px] flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <AnimatePresence mode="wait">
+                        <motion.img
+                            key={heroAsset.image}
+                            src={heroAsset.image}
+                            initial={{ opacity: 0, scale: 1.05 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.6 }}
+                            className="w-full h-full object-cover"
+                        />
+                    </AnimatePresence>
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+                </div>
+                <div className="relative z-10 text-center px-4">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className={`inline-block px-4 py-1.5 ${modeColors[filters.propertyType] || 'bg-brand-green'} text-white text-xs font-bold uppercase tracking-wider rounded-full mb-6 shadow-lg`}
+                    >
+                        {filters.propertyType.replace('-', ' ')} {filters.category && filters.category !== 'all' ? `• ${filters.category.split('-').join(' ')}` : ''}
+                    </motion.div>
+                    <motion.h1
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="text-4xl md:text-5xl font-bold text-white mb-4"
+                    >
+                        {heroAsset.title}
+                    </motion.h1>
+                    <motion.p
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.1 }}
+                        className="text-gray-100 text-lg md:text-xl max-w-2xl mx-auto"
+                    >
+                        {heroAsset.subtitle}
+                    </motion.p>
+                </div>
+            </section>
+
             <AdvancedFilterBar />
 
             <div className="container mx-auto px-6 md:px-12 py-10">
                 <FadeIn direction="up">
                     <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                                {filters.propertyType === 'invest' ? 'Investment Opportunities' : 'Property Listings'}
-                            </h1>
+                            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                                {filters.location ? `Properties in ${filters.location}` : 'Available Properties'}
+                            </h2>
                             <p className="text-gray-600">
                                 {isLoading
                                     ? 'Loading properties...'

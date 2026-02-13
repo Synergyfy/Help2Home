@@ -193,7 +193,31 @@ const MOCK_USERS: Record<string, MockUserResponse> = {
 export const loginUser = async (email: string, password?: string): Promise<MockUserResponse> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  const userData = MOCK_USERS[email] || MOCK_USERS['newuser@example.com'];
+  const userData = { ...(MOCK_USERS[email] || MOCK_USERS['newuser@example.com']) };
+
+  // Check if we have local onboarding data for this session
+  if (typeof window !== 'undefined') {
+    try {
+      const onboardingData = localStorage.getItem('help2home-onboarding-wizard');
+      if (onboardingData) {
+        const parsed = JSON.parse(onboardingData);
+        // If the email matches or it's a new user flow
+        if (parsed.state.onboardingCompleted) {
+           userData.onboarding = {
+             ...userData.onboarding,
+             onboardingCompleted: true,
+             // Mark roles as completed if they were in the wizard
+             roleOnboardingCompleted: {
+               ...userData.onboarding.roleOnboardingCompleted,
+               ...parsed.state.roleOnboardingCompleted
+             }
+           };
+        }
+      }
+    } catch (e) {
+      console.error("Failed to sync mock login with local onboarding", e);
+    }
+  }
 
   return { 
     ...userData, 

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { FiCheck, FiHome, FiKey, FiBriefcase, FiTrendingUp, FiUsers, FiLogIn, FiShield, FiCode } from "react-icons/fi";
 import { useOnboardingStore, UserRole } from "@/store/onboardingStore";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useUserStore } from "@/store/userStore";
 
 const roleIcons: Record<UserRole, React.ReactNode> = {
   tenant: <FiHome size={32} />,
@@ -33,13 +34,28 @@ const CompletionStep = () => {
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect');
   const { getCurrentUser, resetOnboarding, setOnboardingCompleted } = useOnboardingStore();
-  const user = getCurrentUser();
+  const { setUser } = useUserStore();
 
   useEffect(() => {
-    // Mark the account as finished so they don't see onboarding again
+    // 1. Mark onboarding as done in its own store
     setOnboardingCompleted(true);
-  }, [setOnboardingCompleted]);
+    
+    // 2. Sync critical data to user store for the session
+    const userData = getCurrentUser();
+    if (userData) {
+      setUser({
+        email: userData.currentEmail,
+        phone: userData.currentPhone,
+        fullName: userData.fullName,
+        roles: userData.roles,
+        onboardingCompleted: true,
+        roleOnboardingCompleted: userData.roleOnboardingCompleted
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  const user = getCurrentUser();
   const primaryRole = user?.roles?.[0];
   const completedRoles = user?.roles?.filter(role => user.roleOnboardingCompleted?.[role]) || [];
 

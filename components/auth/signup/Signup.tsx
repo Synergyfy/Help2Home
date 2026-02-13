@@ -100,7 +100,7 @@ export default function SignUp() {
           {/* Landlord/Management Card */}
           <FadeIn direction="up">
             <button
-              onClick={() => triggerCreativeRedirect(['landlord'])} // Triggers immediately now
+              onClick={() => triggerCreativeRedirect(['landlord', 'agent', 'caretaker'])} // Now selects all management roles
               className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
             >
               <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">

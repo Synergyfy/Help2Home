@@ -2,29 +2,48 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FiUser, FiPhone, FiArrowRight, FiArrowLeft } from "react-icons/fi";
+import { FiUser, FiPhone, FiArrowRight, FiArrowLeft, FiMail } from "react-icons/fi";
 import { useOnboardingStore } from "@/store/onboardingStore";
 import { useUserStore } from "@/store/userStore";
+import { useEffect } from "react";
 
 const ProfileStep = () => {
   const { getCurrentUser, nextStep, prevStep } = useOnboardingStore();
   const { setUser } = useUserStore()
   const user = getCurrentUser();
 
+  const isEmailSignup = !!user?.currentEmail;
+  const isPhoneSignup = !!user?.currentPhone;
+
   const [fullName, setFullName] = useState(user?.fullName || "");
   const [phone, setPhone] = useState(user?.phone || "");
-  const [errors, setErrors] = useState<{ fullName?: string; phone?: string }>({});
+  const [email, setEmail] = useState(user?.email || "");
+  const [errors, setErrors] = useState<{ fullName?: string; phone?: string; email?: string }>({});
+
+  // Auto-detect name from email if email signup
+  useEffect(() => {
+    if (isEmailSignup && user?.currentEmail && !fullName) {
+      const nameFromEmail = user.currentEmail.split('@')[0].split(/[._-]/).map((part: string) => 
+        part.charAt(0).toUpperCase() + part.slice(1)
+      ).join(' ');
+      if (nameFromEmail) setFullName(nameFromEmail);
+    }
+  }, [isEmailSignup, user?.currentEmail, fullName]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors: { fullName?: string; phone?: string } = {};
+    const newErrors: { fullName?: string; phone?: string; email?: string } = {};
 
     if (!fullName.trim()) {
       newErrors.fullName = "Please enter your full name";
     }
 
-    if (!phone.trim()) {
+    if (isEmailSignup && !phone.trim()) {
       newErrors.phone = "Please enter your phone number";
+    }
+
+    if (isPhoneSignup && !email.trim()) {
+      newErrors.email = "Please enter your email address";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -36,10 +55,21 @@ const ProfileStep = () => {
     const firstName = nameParts[0] || "";
     const lastName = nameParts.slice(1).join(" ") || "";
 
-    setUser({ fullName: fullName.trim(), phone: phone.trim() });
     useUserStore.getState().updateProfile({ firstName, lastName });
 
-    nextStep();
+    // Handle skip logic directly here to avoid multiple intermediate transitions
+    const roles = user?.roles || [];
+    if (roles.length === 1) {
+      // Single role (Tenant, Investor, etc.) -> Jump to Role Onboarding (Step 5+)
+      useOnboardingStore.getState().setActiveRole(roles[0]);
+      useOnboardingStore.getState().goToStep(5);
+    } else if (roles.length > 1) {
+      // Multiple roles (Property Management) -> Jump to Role Chooser (Step 4)
+      useOnboardingStore.getState().goToStep(4);
+    } else {
+      // No roles pre-selected -> Go to Role Selection (Step 3)
+      nextStep();
+    }
   };
 
   return (
@@ -57,7 +87,7 @@ const ProfileStep = () => {
           Tell us about yourself
         </h1>
         <p className="text-gray-600 font-medium">
-          We need a few details to personalize your real estate experience.
+          We found some details for you. Please complete the rest.
         </p>
       </div>
 
@@ -88,30 +118,57 @@ const ProfileStep = () => {
             )}
           </div>
 
-          <div>
-            <label htmlFor="phone" className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
-              Phone Number
-            </label>
-            <div className="relative group">
-              <FiPhone
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors"
-                size={20}
-              />
-              <input
-                type="tel"
-                id="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+234 800 000 0000"
-                className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-100 bg-white text-gray-900 font-medium placeholder:text-gray-400 focus:outline-none focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 transition-all"
-              />
+          {isEmailSignup ? (
+            <div>
+              <label htmlFor="phone" className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
+                Phone Number
+              </label>
+              <div className="relative group">
+                <FiPhone
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors"
+                  size={20}
+                />
+                <input
+                  type="tel"
+                  id="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+234 800 000 0000"
+                  className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-100 bg-white text-gray-900 font-medium placeholder:text-gray-400 focus:outline-none focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 transition-all"
+                />
+              </div>
+              {errors.phone && (
+                <p className="mt-2 text-sm text-red-500 font-bold flex items-center gap-1">
+                  <span>•</span> {errors.phone}
+                </p>
+              )}
             </div>
-            {errors.phone && (
-              <p className="mt-2 text-sm text-red-500 font-bold flex items-center gap-1">
-                <span>•</span> {errors.phone}
-              </p>
-            )}
-          </div>
+          ) : (
+            <div>
+              <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
+                Email Address
+              </label>
+              <div className="relative group">
+                <FiMail
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors"
+                  size={20}
+                />
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-100 bg-white text-gray-900 font-medium placeholder:text-gray-400 focus:outline-none focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 transition-all"
+                />
+              </div>
+              {errors.email && (
+                <p className="mt-2 text-sm text-red-500 font-bold flex items-center gap-1">
+                  <span>•</span> {errors.email}
+                </p>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="mt-8 flex gap-3">

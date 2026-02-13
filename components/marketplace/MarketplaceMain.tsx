@@ -8,7 +8,7 @@ import { useMarketplaceStore } from '@/store/marketplaceStore';
 import { useDebounce } from '@/hooks/useDebounce';
 import { HiMapPin, HiMagnifyingGlass, HiXMark, HiFire } from "react-icons/hi2";
 
-type PropertyType = 'rent' | 'buy' | 'invest';
+type PropertyType = 'rent' | 'buy' | 'service-apartment' | 'rent-to-own' | 'invest';
 
 /* ---------------------------------------------
    URL → TAB MAPPING
@@ -16,55 +16,75 @@ type PropertyType = 'rent' | 'buy' | 'invest';
 const URL_TYPE_TO_TAB: Record<string, PropertyType> = {
     rent: 'rent',
     buy: 'buy',
-    'service-apartment': 'rent',
-    'rent-to-own': 'buy'
+    'service-apartment': 'service-apartment',
+    'rent-to-own': 'rent-to-own',
+    invest: 'invest'
 };
 
 /* ---------------------------------------------
    HERO ASSETS (TAB DEFAULTS)
 --------------------------------------------- */
-const TAB_ASSETS: Record<PropertyType, { image: string; title: string }> = {
+const TAB_ASSETS: Record<PropertyType, { image: string; title: string; subtitle: string }> = {
     rent: {
-        image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop',
-        title: 'cozy'
+        image: 'https://images.unsplash.com/photo-1560448204-61dc36dc98c8?q=80&w=2070&auto=format&fit=crop',
+        title: 'comfortable',
+        subtitle: 'Find the perfect rental that fits your lifestyle.'
     },
     buy: {
-        image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop',
-        title: 'perfect'
+        image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=2070&auto=format&fit=crop',
+        title: 'dream',
+        subtitle: 'Invest in your future with a home of your own.'
     },
     invest: {
-        image: 'https://images.unsplash.com/photo-1460472178825-e5240623afd5?q=80&w=2069&auto=format&fit=crop',
-        title: 'profitable'
+        image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop',
+        title: 'profitable',
+        subtitle: 'Maximize your returns with strategic property investments.'
+    },
+    'service-apartment': {
+        image: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=2070&auto=format&fit=crop',
+        title: 'luxurious',
+        subtitle: 'Experience comfort and convenience in our serviced apartments.'
+    },
+    'rent-to-own': {
+        image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?q=80&w=2070&auto=format&fit=crop',
+        title: 'future',
+        subtitle: 'A flexible path to owning your dream home.'
     }
 };
 
 /* ---------------------------------------------
    CATEGORY HERO OVERRIDES
 --------------------------------------------- */
-const CATEGORY_ASSETS: Record<string, { image: string; title: string }> = {
+const CATEGORY_ASSETS: Record<string, { image: string; title: string; subtitle: string }> = {
     'residential-properties-to-rent': {
-        image: 'https://images.unsplash.com/photo-1523217582562-09d0def993a6',
-        title: 'comfortable'
+        image: 'https://images.unsplash.com/photo-1523217582562-09d0def993a6?q=80&w=2070&auto=format&fit=crop',
+        title: 'residential',
+        subtitle: 'Modern living spaces for you and your family.'
     },
     'commercial-properties-to-rent': {
-        image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab',
-        title: 'strategic'
+        image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2070&auto=format&fit=crop',
+        title: 'commercial',
+        subtitle: 'Strategic locations for your business growth.'
     },
     'student-properties-to-rent': {
-        image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b',
-        title: 'affordable'
+        image: 'https://images.unsplash.com/photo-1555854817-5b2260d80637?q=80&w=2070&auto=format&fit=crop',
+        title: 'student',
+        subtitle: 'Affordable and convenient housing for students.'
     },
     'shared-spaces-to-rent': {
-        image: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb',
-        title: 'flexible'
+        image: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=2070&auto=format&fit=crop',
+        title: 'shared',
+        subtitle: 'Collaborative and flexible living arrangements.'
     },
     'service-apartment': {
-        image: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511',
-        title: 'luxury'
+        image: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=2070&auto=format&fit=crop',
+        title: 'serviced',
+        subtitle: 'Luxury and comfort with full amenities.'
     },
     'rent-to-own': {
-        image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be',
-        title: 'future'
+        image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?q=80&w=2070&auto=format&fit=crop',
+        title: 'rent-to-own',
+        subtitle: 'A flexible path to homeownership.'
     }
 };
 
@@ -172,35 +192,49 @@ export default function MarketPlaceMain() {
                         Discover a <span className="text-brand-green">{heroAsset.title}</span> place to call home
                     </motion.h1>
                     <p className="text-gray-200 text-lg font-medium">
-                        Handpicked listings, real neighborhoods, zero guesswork
+                        {heroAsset.subtitle}
                     </p>
                 </div>
 
                 {/* Tabs */}
-                <div className="bg-white shadow-2xl rounded-3xl ">
-                    <div className="flex border-b border-gray-400 bg-gray-50 rounded-t-3xl overflow-hidden">
-                        {(Object.keys(TAB_ASSETS) as PropertyType[]).map(tab => (
-                            <button
-                                key={tab}
-                                onClick={() => {
-                                    setActiveTab(tab);
-                                    router.push(
-                                        `/marketplace?type=${tab}${category ? `&category=${category}` : ''}`,
-                                        { scroll: false }
-                                    );
-                                }}
-                                className={`flex-1 py-5 text-sm font-bold uppercase ${
-                                    activeTab === tab
-                                        ? 'text-brand-green bg-white'
-                                        : 'text-gray-500 hover:text-gray-700'
-                                }`}
-                            >
-                                {tab}
-                                {activeTab === tab && (
-                                    <motion.div className="h-1 bg-brand-green mt-2" />
-                                )}
-                            </button>
-                        ))}
+                <div className="bg-white shadow-2xl rounded-3xl overflow-hidden">
+                    <div className="flex border-b border-gray-400 bg-gray-50 overflow-x-auto no-scrollbar">
+                        {(['rent', 'buy', 'invest'] as PropertyType[]).map(tab => {
+                            const isActive = activeTab === tab;
+                            const colors: Record<PropertyType, string> = {
+                                rent: 'text-brand-green border-brand-green',
+                                buy: 'text-blue-600 border-blue-600',
+                                'service-apartment': 'text-indigo-600 border-indigo-600',
+                                'rent-to-own': 'text-orange-500 border-orange-500',
+                                invest: 'text-slate-800 border-slate-800'
+                            };
+
+                            return (
+                                <button
+                                    key={tab}
+                                    onClick={() => {
+                                        setActiveTab(tab);
+                                        router.push(
+                                            `/marketplace?type=${tab}${category ? `&category=${category}` : ''}`,
+                                            { scroll: false }
+                                        );
+                                    }}
+                                    className={`flex-1 min-w-[120px] py-5 text-[10px] md:text-xs font-bold uppercase transition-all whitespace-nowrap ${
+                                        isActive
+                                            ? `${colors[tab].split(' ')[0]} bg-white`
+                                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                                    }`}
+                                >
+                                    {tab.split('-').join(' ')}
+                                    {isActive && (
+                                        <motion.div 
+                                            layoutId="activeTab" 
+                                            className={`h-1 ${colors[tab].split(' ')[1].replace('text-', 'bg-')} mt-2 mx-4`} 
+                                        />
+                                    )}
+                                </button>
+                            );
+                        })}
                     </div>
 
                     {/* Search + Dropdown */}

@@ -4,8 +4,9 @@ import { Role } from './userStore';
 
 export interface TenantData {
   preferredLocation: string;
+  customLocation?: string;
   budgetRange: string;
-  moveInDate: string;
+  moveInDate?: string;
   propertyType: string;
   bedrooms: string;
   amenities: string[];
@@ -62,6 +63,7 @@ interface OnboardingStore {
   onboardingCompleted: boolean;
   activeRole: Role | null;
   currentEmail: string;
+  currentPhone: string;
 
   
   setStep: (step: number) => void;
@@ -73,6 +75,7 @@ interface OnboardingStore {
   setActiveRole: (role: Role | null) => void;
   setOnboardingCompleted: (status: boolean) => void;
   setCurrentEmail: (email: string) => void;
+  setCurrentPhone: (phone: string) => void;
   updateRoleData: (role: Role, data: any) => void;
   completeRoleOnboarding: (role: Role) => void;
   resetOnboarding: () => void;
@@ -94,6 +97,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
       selectedRoles: [],
       activeRole: null,
       currentEmail: '',
+      currentPhone: '',
       onboardingCompleted: false,
       draftData: {},
       roleOnboardingCompleted: {
@@ -113,11 +117,13 @@ export const useOnboardingStore = create<OnboardingStore>()(
           activeRole: state.activeRole, 
           roleOnboardingCompleted: state.roleOnboardingCompleted,
           currentEmail: state.currentEmail,
+          currentPhone: state.currentPhone,
           ...state.draftData 
         };
       },
 
       setCurrentEmail: (currentEmail) => set({ currentEmail }),
+      setCurrentPhone: (currentPhone) => set({ currentPhone }),
 
       setStep: (currentStep) => set({ currentStep }),
       goToStep: (step) => set({ currentStep: step }),

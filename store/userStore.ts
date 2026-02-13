@@ -47,6 +47,8 @@ export interface TenantProfileData {
   };
   bvn?: string;
   isBvnVerified?: boolean;
+  nin?: string;
+  isNinVerified?: boolean;
   // Section Verifications
   isBasicVerified?: boolean;
   isWorkVerified?: boolean;
@@ -165,6 +167,7 @@ interface UserState {
   toggleFollowLister: (listerId: string) => void;
   setActiveRole: (role: Role) => void;
   setEmailVerified: (status: boolean) => void;
+  setPhoneVerified: (status: boolean) => void;
   setHasHydrated: (value: boolean) => void;
   resetUser: () => void;
 }
@@ -215,6 +218,7 @@ export const useUserStore = create<UserState>()(
       })),
       setActiveRole: (activeRole) => set({ activeRole }),
       setEmailVerified: (verified) => set({ verified }),
+      setPhoneVerified: (verified) => set({ verified }),
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
       resetUser: () => set({ 
        id: '', email: '', roles: [], activeRole: null, verified: false, fullName: '', phone: '',token: null,

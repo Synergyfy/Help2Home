@@ -4,10 +4,23 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FiDollarSign, FiTrendingUp, FiClock, FiArrowRight, FiArrowLeft, FiCheck } from "react-icons/fi";
 import { useOnboardingStore, InvestorData } from "@/store/onboardingStore";
+import { useUserStore } from "@/store/userStore";
 
-const budgetRanges = ["₦10M - ₦50M", "₦50M - ₦100M", "₦100M - ₦500M", "₦500M - ₦1B", "₦1B+"];
-const investmentTypes = ["Rental Properties", "Fix & Flip", "Development", "REITs", "Land Banking", "Short-term Rentals"];
-const riskLevels = ["Conservative", "Moderate", "Aggressive", "Very Aggressive"];
+const budgetRanges = ["₦100k - ₦500k", "₦500k - ₦1M", "₦1M - ₦5M", "₦5M - ₦10M", "₦10M+"];
+const investmentTypes = [
+  { label: "Rental Properties", tooltip: "Direct ownership of properties to earn regular rental income." },
+  { label: "Fix & Flip", tooltip: "Buying distressed properties, renovating them, and selling for profit." },
+  { label: "Development", tooltip: "Investing in the construction of new buildings or major infrastructure." },
+  { label: "REITs", tooltip: "Investing in companies that own or finance income-producing real estate." },
+  { label: "Land Banking", tooltip: "Buying undeveloped land to hold for future development or resale." },
+  { label: "Short-term Rentals", tooltip: "Managing properties for short stays through platforms like Airbnb." }
+];
+const riskLevels = [
+  { label: "Conservative", tooltip: "Focuses on capital preservation and steady, low-risk returns." },
+  { label: "Moderate", tooltip: "A balanced approach seeking a mix of safety and growth." },
+  { label: "Aggressive", tooltip: "Higher risk tolerance for potentially significant capital appreciation." },
+  { label: "Very Aggressive", tooltip: "Maximum risk for maximum potential returns and rapid growth." }
+];
 const returnExpectations = ["8-12% annually", "12-18% annually", "18-25% annually", "25%+ annually"];
 const timelines = ["Short-term (1-2 years)", "Medium-term (3-5 years)", "Long-term (5-10 years)", "Very long-term (10+ years)"];
 
@@ -35,6 +48,7 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
 
   const handleComplete = () => {
     updateRoleData("investor", formData);
+    useUserStore.getState().updateRoleProfileData("investor", formData);
     completeRoleOnboarding("investor");
 
     // Check if other selected roles need onboarding
@@ -135,17 +149,24 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
             </label>
             <div className="grid grid-cols-2 gap-3">
               {investmentTypes.map((type) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => toggleInvestmentType(type)}
-                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${formData.investmentType.includes(type)
-                    ? "border-brand-green bg-brand-green/5 text-brand-green"
-                    : "border-gray-100 hover:border-gray-300 text-gray-500"
-                    }`}
-                >
-                  {type} {formData.investmentType.includes(type) && <FiCheck size={16} />}
-                </button>
+                <div key={type.label} className="relative group">
+                  <button
+                    key={type.label}
+                    type="button"
+                    onClick={() => toggleInvestmentType(type.label)}
+                    className={`w-full p-4 rounded-xl border-2 text-sm font-bold transition-all flex items-center justify-between ${formData.investmentType.includes(type.label)
+                      ? "border-brand-green bg-brand-green/5 text-brand-green"
+                      : "border-gray-100 hover:border-gray-300 text-gray-500"
+                      }`}
+                  >
+                    {type.label} {formData.investmentType.includes(type.label) && <FiCheck size={16} />}
+                  </button>
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-gray-900 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 text-center shadow-xl">
+                    {type.tooltip}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-gray-900" />
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -154,17 +175,23 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
             <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Risk tolerance</label>
             <div className="grid grid-cols-2 gap-3">
               {riskLevels.map((level) => (
-                <button
-                  key={level}
-                  type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, riskTolerance: level }))}
-                  className={`p-4 rounded-xl border-2 text-sm font-bold transition-all ${formData.riskTolerance === level
-                    ? "border-brand-green bg-brand-green/5 text-brand-green"
-                    : "border-gray-100 hover:border-gray-300 text-gray-500"
-                    }`}
-                >
-                  {level}
-                </button>
+                <div key={level.label} className="relative group">
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, riskTolerance: level.label }))}
+                    className={`w-full p-4 rounded-xl border-2 text-sm font-bold transition-all ${formData.riskTolerance === level.label
+                      ? "border-brand-green bg-brand-green/5 text-brand-green"
+                      : "border-gray-100 hover:border-gray-300 text-gray-500"
+                      }`}
+                  >
+                    {level.label}
+                  </button>
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-gray-900 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 text-center shadow-xl">
+                    {level.tooltip}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-gray-900" />
+                  </div>
+                </div>
               ))}
             </div>
           </div>

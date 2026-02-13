@@ -22,7 +22,7 @@ export default function HelpTipsCard() {
                 </li>
                 <li className="flex gap-2 text-sm text-gray-700">
                     <span className="text-[#6D28D9]">•</span>
-                    <span>For self-employed, upload 6 months of bank statements instead of payslips.</span>
+                    <span>For self-employed, upload 6 months of bank statements to verify income.</span>
                 </li>
                 <li className="flex gap-2 text-sm text-gray-700">
                     <span className="text-[#6D28D9]">•</span>

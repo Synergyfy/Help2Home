@@ -97,15 +97,23 @@ export default function ProfileCompletionModal() {
                         ))}
                     </div>
 
-                    <button
-                        onClick={() => {
-                            setIsOpen(false);
-                            router.push(`/dashboard/${activeRole}/profile`);
-                        }}
-                        className="w-full py-5 bg-brand-green text-white font-black rounded-2xl shadow-xl shadow-green-100 hover:bg-green-700 transition-all hover:scale-[1.02] active:scale-[0.98] text-lg"
-                    >
-                        Go to Profile Settings
-                    </button>
+                    <div className="flex flex-col gap-3">
+                        <button
+                            onClick={() => {
+                                setIsOpen(false);
+                                router.push(`/dashboard/${activeRole}/profile`);
+                            }}
+                            className="w-full py-5 bg-brand-green text-white font-black rounded-2xl shadow-xl shadow-green-100 hover:bg-green-700 transition-all hover:scale-[1.02] active:scale-[0.98] text-lg"
+                        >
+                            Go to Profile Settings
+                        </button>
+                        <button
+                            onClick={() => setIsOpen(false)}
+                            className="w-full py-4 text-gray-500 font-bold hover:text-gray-800 transition-colors text-base"
+                        >
+                            Skip for now
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

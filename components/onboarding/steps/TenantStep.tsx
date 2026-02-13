@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FiMapPin, FiDollarSign, FiCalendar, FiHome, FiArrowRight, FiArrowLeft, FiCheck } from "react-icons/fi";
+import { FiMapPin, FiDollarSign, FiHome, FiArrowRight, FiArrowLeft, FiCheck } from "react-icons/fi";
 import { useOnboardingStore, TenantData } from "@/store/onboardingStore";
 import { useUserStore } from "@/store/userStore";
 
 const locations = ["Lagos", "Abuja", "Port Harcourt", "Ibadan", "Kano", "Other"];
-const budgetRanges = ["₦500k - ₦1M", "₦1M - ₦5M", "₦5M - ₦10M", "₦10M+"];
-const propertyTypes = ["Apartment", "House", "Duplex", "Self-Contain", "Studio", "Bungalow"];
+const budgetRanges = ["Below ₦50k", "₦50k - ₦100k", "₦100k - ₦500k", "₦500k - ₦1M", "Above ₦1M"];
+const propertyTypes = ["House", "Duplex", "Self-Contain", "Studio"];
 const bedroomOptions = ["Studio", "1 Bedroom", "2 Bedrooms", "3 Bedrooms", "4+ Bedrooms"];
-const amenitiesList = ["Parking", "Security", "Water Supply", "Electricity", "Internet", "Gym", "Pool", "Garden"];
+const amenitiesList = ["Security", "Water Supply", "Electricity", "Internet", "Gym", "Pool", "Garden"];
 
 interface TenantStepProps {
   stepNumber: 1 | 2 | 3;
@@ -23,21 +23,29 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
 
   const [formData, setFormData] = useState<TenantData>({
     preferredLocation: tenantData.preferredLocation || "",
+    customLocation: tenantData.customLocation || "",
     budgetRange: tenantData.budgetRange || "",
-    moveInDate: tenantData.moveInDate || "",
     propertyType: tenantData.propertyType || "",
     bedrooms: tenantData.bedrooms || "",
     amenities: tenantData.amenities || [],
   });
 
   const handleContinue = () => {
-    updateRoleData("tenant", formData);
+    const finalData = {
+      ...formData,
+      preferredLocation: formData.preferredLocation === "Other" ? formData.customLocation || "Other" : formData.preferredLocation
+    };
+    updateRoleData("tenant", finalData);
     nextStep();
   };
 
   const handleComplete = () => {
-    updateRoleData("tenant", formData);
-    useUserStore.getState().updateRoleProfileData("tenant", formData);
+    const finalData = {
+      ...formData,
+      preferredLocation: formData.preferredLocation === "Other" ? formData.customLocation || "Other" : formData.preferredLocation
+    };
+    updateRoleData("tenant", finalData);
+    useUserStore.getState().updateRoleProfileData("tenant", finalData);
     completeRoleOnboarding("tenant");
 
     // Check if there are other roles selected that haven't been completed yet
@@ -114,6 +122,22 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
                 />
               ))}
             </div>
+
+            {formData.preferredLocation === "Other" && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4"
+              >
+                <input
+                  type="text"
+                  placeholder="Enter your city/location"
+                  value={formData.customLocation}
+                  onChange={(e) => setFormData(p => ({ ...p, customLocation: e.target.value }))}
+                  className="w-full px-5 py-4 rounded-xl border-2 border-brand-green bg-white text-gray-900 font-bold focus:outline-none transition-all"
+                />
+              </motion.div>
+            )}
           </div>
 
           <div>
@@ -143,7 +167,7 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
           </button>
           <button
             onClick={handleContinue}
-            disabled={!formData.preferredLocation || !formData.budgetRange}
+            disabled={!formData.preferredLocation || (formData.preferredLocation === "Other" && !formData.customLocation) || !formData.budgetRange}
             className="flex-1 py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-30 active:scale-[0.98]"
           >
             Continue <FiArrowRight size={20} />
@@ -226,23 +250,10 @@ const TenantStep = ({ stepNumber }: TenantStepProps) => {
       <Header
         step={3}
         title="Final Details"
-        description="Select must-have amenities and your move-in timeline."
+        description="Select your must-have amenities to help us find the perfect match."
       />
 
       <div className="space-y-8 flex-1">
-        <div>
-          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4">
-            <FiCalendar className="inline mr-2 text-brand-green" />
-            Expected Move-in Date
-          </label>
-          <input
-            type="date"
-            value={formData.moveInDate}
-            onChange={(e) => setFormData(prev => ({ ...prev, moveInDate: e.target.value }))}
-            className="w-full px-5 py-4 rounded-xl border-2 border-gray-100 bg-white text-gray-900 font-bold focus:outline-none focus:border-brand-green transition-all"
-          />
-        </div>
-
         <div>
           <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4">
             Must-have Amenities

@@ -1,51 +1,60 @@
 'use client';
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { FiMail, FiArrowRight } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiMail, FiArrowRight, FiPhone } from "react-icons/fi";
 import { useOnboardingStore } from "@/store/onboardingStore";
 import { Role } from "@/store/userStore";
 
 const EmailStep = () => {
-  // users does not exist, but currentEmail and currentStep do.
-  const { setCurrentEmail, nextStep, currentEmail: storedEmail, currentStep, selectedRoles } = useOnboardingStore();
-  const [email, setEmail] = useState("");
+  const { 
+    setCurrentEmail, 
+    setCurrentPhone,
+    nextStep, 
+    currentEmail: storedEmail, 
+    currentPhone: storedPhone,
+    currentStep, 
+    selectedRoles 
+  } = useOnboardingStore();
+  
+  const [inputType, setInputType] = useState<'email' | 'phone'>('email');
+  const [value, setValue] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (!email.trim()) {
-      setError("Please enter your email address");
+    if (!value.trim()) {
+      setError(`Please enter your ${inputType === 'email' ? 'email address' : 'phone number'}`);
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError("Please enter a valid email address");
-      return;
-    }
-
-    const normalizedEmail = email.toLowerCase().trim();
-    setCurrentEmail(normalizedEmail);
-    
-    // If they are resuming the same email that has progress stored locally
-    if (normalizedEmail === storedEmail?.toLowerCase() && currentStep > 0) {
-      // Logic for jumping to the specific step is usually handled in the parent 
-      // by reading 'currentStep' from the store.
-      nextStep(); 
-      return;
+    if (inputType === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        setError("Please enter a valid email address");
+        return;
+      }
+      setCurrentEmail(value.toLowerCase().trim());
+      setCurrentPhone(""); // Clear phone if email is used
+    } else {
+      // Basic phone validation
+      const phoneRegex = /^\+?[\d\s-]{10,}$/;
+      if (!phoneRegex.test(value)) {
+        setError("Please enter a valid phone number");
+        return;
+      }
+      setCurrentPhone(value.trim());
+      setCurrentEmail(""); // Clear email if phone is used
     }
     
     nextStep();
   };
 
-  // Logic: "Progress" exists if the typed email matches the persisted email in the wizard
   const hasProgress = 
-    email.toLowerCase().trim() === storedEmail?.toLowerCase() && 
-    currentStep > 0 && 
-    selectedRoles.length > 0;
+    (inputType === 'email' && value.toLowerCase().trim() === storedEmail?.toLowerCase() && storedEmail) ||
+    (inputType === 'phone' && value.trim() === storedPhone && storedPhone);
 
   return (
     <motion.div
@@ -62,38 +71,68 @@ const EmailStep = () => {
           Let&apos;s get you started
         </h1>
         <p className="text-gray-600 font-medium">
-          Enter your email to create an account or resume your setup.
+          Choose your preferred way to create an account.
         </p>
+      </div>
+
+      <div className="flex bg-gray-100 p-1 rounded-xl mb-8">
+        <button
+          onClick={() => { setInputType('email'); setValue(""); setError(""); }}
+          className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all ${inputType === 'email' ? 'bg-white text-brand-green shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          Email Address
+        </button>
+        <button
+          onClick={() => { setInputType('phone'); setValue(""); setError(""); }}
+          className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all ${inputType === 'phone' ? 'bg-white text-brand-green shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          Phone Number
+        </button>
       </div>
 
       <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
         <div className="space-y-4 flex-1">
-          <div>
-            <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
-              Email Address
-            </label>
-            <div className="relative group">
-              <FiMail 
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors" 
-                size={20} 
-              />
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-100 bg-white text-gray-900 font-medium focus:outline-none focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 transition-all"
-              />
-            </div>
-            {error && (
-              <p className="mt-2 text-sm text-red-500 font-bold flex items-center gap-1">
-                <span>•</span> {error}
-              </p>
-            )}
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={inputType}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <label htmlFor="input" className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
+                {inputType === 'email' ? 'Email Address' : 'Phone Number'}
+              </label>
+              <div className="relative group">
+                {inputType === 'email' ? (
+                  <FiMail 
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors" 
+                    size={20} 
+                  />
+                ) : (
+                  <FiPhone
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors"
+                    size={20}
+                  />
+                )}
+                <input
+                  type={inputType === 'email' ? 'email' : 'tel'}
+                  id="input"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  placeholder={inputType === 'email' ? 'you@example.com' : '+234 800 000 0000'}
+                  className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-100 bg-white text-gray-900 font-medium focus:outline-none focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 transition-all"
+                />
+              </div>
+              {error && (
+                <p className="mt-2 text-sm text-red-500 font-bold flex items-center gap-1">
+                  <span>•</span> {error}
+                </p>
+              )}
+            </motion.div>
+          </AnimatePresence>
 
-          {hasProgress && (
+          {hasProgress && currentStep > 0 && (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}

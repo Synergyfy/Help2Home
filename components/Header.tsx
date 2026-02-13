@@ -20,7 +20,7 @@ export default function Header() {
         return () => window.removeEventListener('auth-change', checkAuth);
     }, []);
 
-    const handleCategoryClick = (type: 'rent' | 'buy' | 'service-apartment' | 'rent-to-own', category?: string) => {
+    const handleCategoryClick = (type: 'rent' | 'buy' | 'service-apartment' | 'rent-to-own' | 'invest', category?: string) => {
         setIsMenuOpen(false);
 
         // Build query string
@@ -29,8 +29,13 @@ export default function Header() {
             queryString += `&category=${category}`;
         }
 
-        // Navigate to marketplace with query params
-        router.push(`/marketplace?${queryString}`);
+        // Service Apartment and Rent to Own go straight to search
+        if (type === 'service-apartment' || type === 'rent-to-own') {
+            router.push(`/marketplace/search?${queryString}`);
+        } else {
+            // Navigate to marketplace landing with query params
+            router.push(`/marketplace?${queryString}`);
+        }
     };
 
     return (

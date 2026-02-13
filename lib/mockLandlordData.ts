@@ -126,9 +126,7 @@ export const MOCK_DOCUMENTS_AGENT: VerificationDocument[] = [
 ];
 
 export const MOCK_DOCUMENTS_TENANT: VerificationDocument[] = [
-    { id: 'ten1', type: 'ID', label: 'Identification Document', status: 'approved', uploadedAt: 'Dec 10, 2023' },
-    { id: 'ten2', type: 'Other', label: 'Letter of Employment', status: 'approved', uploadedAt: 'Dec 12, 2023' },
-    { id: 'ten3', type: 'Other', label: 'Last 3 Months Pay Slips', status: 'pending', uploadedAt: 'Jan 19, 2024' },
+    { id: 'ten3', type: 'Other', label: 'Proof of Address', status: 'missing' },
 ];
 
 export const MOCK_DOCUMENTS = MOCK_DOCUMENTS_LANDLORD;

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FiMail, FiArrowRight, FiRefreshCw } from "react-icons/fi";
+import { FiMail, FiArrowRight, FiRefreshCw, FiPhone } from "react-icons/fi";
 import { useOnboardingStore } from "@/store/onboardingStore";
 import { useUserStore } from "@/store/userStore";
 
@@ -10,8 +10,11 @@ const DEMO_OTP = "123456";
 
 const VerifyEmailStep = () => {
   const { getCurrentUser, nextStep } = useOnboardingStore();
-  const { setEmailVerified, email } = useUserStore();
+  const { setEmailVerified, setPhoneVerified } = useUserStore();
   const user = getCurrentUser();
+  const isEmail = !!user?.currentEmail;
+  const contactInfo = isEmail ? user?.currentEmail : user?.currentPhone;
+
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
@@ -51,7 +54,11 @@ const VerifyEmailStep = () => {
     setIsVerifying(true);
     setTimeout(() => {
       if (otpString === DEMO_OTP) {
-        setEmailVerified(true);
+        if (isEmail) {
+          setEmailVerified(true);
+        } else {
+          setPhoneVerified?.(true);
+        }
         nextStep();
       } else {
         setError("Invalid verification code. Use 123456 for demo.");
@@ -70,14 +77,14 @@ const VerifyEmailStep = () => {
     >
       <div className="mb-8">
         <div className="w-16 h-16 rounded-2xl bg-brand-green/10 flex items-center justify-center mb-6">
-          <FiMail className="text-brand-green" size={28} />
+          {isEmail ? <FiMail className="text-brand-green" size={28} /> : <FiPhone className="text-brand-green" size={28} />}
         </div>
         <h1 className="text-3xl font-bold text-gray-900 leading-tight mb-3">
-          Verify your email
+          {isEmail ? "Verify your email" : "Verify your phone"}
         </h1>
         <p className="text-gray-600 text-lg">
           We've sent a 6-digit code to{" "}
-          <span className="font-semibold text-brand-green">{user?.email || 'your email'}</span>
+          <span className="font-semibold text-brand-green">{contactInfo || 'your contact'}</span>
         </p>
       </div>
 

@@ -101,42 +101,34 @@ export async function searchProperties(
 ): Promise<PropertySearchResult> {
   await delay(400);
 
-  const allProperties = getMockProperties();
-  let filtered = [...allProperties];
-  console.log('[searchProperties] Total properties in mock DB:', allProperties.length);
-  console.log('[searchProperties] Filters:', filters);
-
-  // 0. Owner Filter (Critical for Landlord Dashboard)
-  if (filters.ownerId) {
-    console.log(`[searchProperties] Filtering by ownerId: '${filters.ownerId}'`);
-    filtered = filtered.filter(p => {
-        const match = p.createdBy === filters.ownerId;
-        console.log(`[searchProperties] Checking p.id=${p.id} createdBy='${p.createdBy}' vs filter='${filters.ownerId}' -> match=${match}`);
-        return match;
-    });
-    console.log(`[searchProperties] Post-owner-filter count: ${filtered.length}`);
-  }
-
-  // Modify Section 1: Basic Filters
-  if (filters.propertyType && filters.propertyType !== 'all' as any) {
-    filtered = filtered.filter(p => p.propertyType === filters.propertyType);
-  }
+    const allProperties = getMockProperties();
+    let filtered = [...allProperties];
+    console.log(`[searchProperties] Total properties in mock DB: ${allProperties.length}`);
+    console.log(`[searchProperties] Initial Filters:`, JSON.stringify(filters, null, 2));
   
-  if (filters.category && filters.category !== 'all') {
-    filtered = filtered.filter(p => p.category === filters.category);
-  }
+    // Modify Section 1: Basic Filters
+    if (filters.propertyType && filters.propertyType !== 'all' as any) {
+      filtered = filtered.filter(p => p.propertyType === filters.propertyType);
+      console.log(`[searchProperties] After propertyType(${filters.propertyType}): ${filtered.length}`);
+    }
+    
+    if (filters.category && filters.category !== 'all' && filters.category !== 'undefined') {
+      const categoryFilter = filters.category;
+      filtered = filtered.filter(p => p.category === categoryFilter || categoryFilter.includes(p.category));
+      console.log(`[searchProperties] After category(${filters.category}): ${filtered.length}`);
+    }
   
-  // 2. Location Search
-  if (filters.location?.trim()) {
-    const q = filters.location.toLowerCase().trim();
-    filtered = filtered.filter(p => 
-      p.location.toLowerCase().includes(q) || 
-      p.city.toLowerCase().includes(q) || 
-      p.address.toLowerCase().includes(q)
-    );
-  }
-
-  // 3. Keywords
+    // 2. Location Search
+    if (filters.location?.trim()) {
+      const q = filters.location.toLowerCase().trim();
+      filtered = filtered.filter(p => 
+        p.location.toLowerCase().includes(q) || 
+        p.city.toLowerCase().includes(q) || 
+        p.address.toLowerCase().includes(q)
+      );
+      console.log(`[searchProperties] After location(${filters.location}): ${filtered.length}`);
+    }
+    // 3. Keywords
   if (filters.keywords?.trim()) {
     const k = filters.keywords.toLowerCase().trim();
     filtered = filtered.filter(p => 
