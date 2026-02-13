@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMarketplaceStore } from '@/store/marketplaceStore';
+import { useMarketplaceStore, PropertyType } from '@/store/marketplaceStore';
 import { useLocations } from '@/hooks/useMarketplaceQueries';
 import { useDebounce } from '@/hooks/useDebounce';
 
@@ -133,6 +133,37 @@ export default function AdvancedFilterBar() {
       <div className="bg-white border-b border-gray-200 sticky top-0 z-40 w-full">
         <div className="w-full px-4 py-4">
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
+            
+            {/* 0. Property Type Toggle */}
+            <div className="flex flex-col gap-1 shrink-0">
+              <span className="text-[10px] font-bold text-gray-400 uppercase px-1">Search Mode</span>
+              <div className="flex bg-gray-100 p-1 rounded-xl">
+                {(['rent', 'buy', 'service-apartment', 'rent-to-own', 'invest'] as PropertyType[]).map((type) => {
+                  const isActive = filters.propertyType === type;
+                  const colors: Record<PropertyType, string> = {
+                    rent: 'bg-brand-green text-white shadow-brand-green/20',
+                    buy: 'bg-blue-600 text-white shadow-blue-600/20',
+                    'service-apartment': 'bg-indigo-600 text-white shadow-indigo-600/20',
+                    'rent-to-own': 'bg-orange-500 text-white shadow-orange-500/20',
+                    invest: 'bg-slate-800 text-white shadow-slate-800/20'
+                  };
+
+                  return (
+                    <button
+                      key={type}
+                      onClick={() => handleBasicChange({ propertyType: type })}
+                      className={`px-4 py-2 rounded-lg text-[10px] font-bold uppercase transition-all whitespace-nowrap shadow-sm ${
+                        isActive
+                          ? `${colors[type]} scale-105`
+                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200 shadow-none'
+                      }`}
+                    >
+                      {type.split('-').join(' ')}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
             {/* 1. Location Input */}
             <div className="relative flex-1 min-w-0 lg:min-w-[280px]" ref={locationRef}>

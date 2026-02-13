@@ -61,9 +61,12 @@ export const useAuth = () => {
         return;
       }
 
+      const isGloballyDone = data.onboarding.onboardingCompleted;
       const isPrimaryDone = data.onboarding.roleOnboardingCompleted[primaryRole];
 
-      if (!isPrimaryDone) {
+      if (isGloballyDone) {
+        router.push(`/dashboard/${primaryRole}`);
+      } else if (!isPrimaryDone) {
         goToStep(4); 
         router.push('/onboarding');
       } else {

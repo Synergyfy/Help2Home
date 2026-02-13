@@ -10,7 +10,7 @@ import GuarantorCard from '@/components/dashboard/profile/GuarantorCard';
 import VerificationTab from '@/components/dashboard/landlord/profile/VerificationTab';
 import HelpTipsCard from '@/components/dashboard/profile/HelpTipsCard';
 import TenantPreferencesTab from './TenantPreferencesTab';
-import { ProfileData, EmploymentData, DocumentItem } from '@/components/dashboard/profile/types';
+import { ProfileData, EmploymentData } from '@/components/dashboard/profile/types';
 import { useUserStore } from '@/store/userStore';
 import {
     IoPersonOutline,
@@ -42,15 +42,6 @@ export default function TenantProfile() {
         guarantor: !!(tenantProfile?.guarantor?.name),
         documents: false // Placeholder for doc check
     };
-
-    // Mock documents state
-    const [documents] = useState<DocumentItem[]>([
-        { id: '1', type: 'NIN', name: 'National Identity Number (NIN)', status: 'Pending' },
-        { id: '2', type: 'BVN', name: 'Bank Verification Number (BVN)', status: 'Pending' },
-        { id: '3', type: 'Government ID', name: 'Government ID', status: 'Pending' },
-        { id: '4', type: 'Payslip', name: 'Payslips (3 months)', status: 'Pending' },
-        { id: '5', type: 'Proof of Address', name: 'Proof of Address', status: 'Pending' }
-    ]);
 
     if (isLoading) {
         return (
@@ -97,10 +88,10 @@ export default function TenantProfile() {
     const tabs: { id: TabType; label: string; icon: any; verified: boolean }[] = [
         { id: 'overview', label: 'Overview', icon: IoInformationCircleOutline, verified: true },
         { id: 'basic', label: 'Basic Info', icon: IoPersonOutline, verified: verificationStatus.basic },
+        { id: 'documents', label: 'Documents', icon: IoDocumentTextOutline, verified: verificationStatus.documents },
         { id: 'work', label: 'Work Info', icon: IoBriefcaseOutline, verified: verificationStatus.work },
         { id: 'nok', label: 'Next of Kin', icon: IoPeopleOutline, verified: verificationStatus.nok },
         { id: 'guarantor', label: 'Guarantor', icon: IoShieldCheckmarkOutline, verified: verificationStatus.guarantor },
-        { id: 'documents', label: 'Documents', icon: IoDocumentTextOutline, verified: verificationStatus.documents },
     ];
 
     return (

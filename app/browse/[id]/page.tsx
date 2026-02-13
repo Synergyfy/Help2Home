@@ -6,14 +6,17 @@ import Link from 'next/link';
 import NearbyProperties from '@/components/NearbyProperties';
 import BookingModal from '@/components/BookingModal';
 import ConfirmationModal from '@/components/ConfirmationModal';
+import { useUserStore } from '@/store/userStore';
 
 export default function PropertyDetailsPage({ params }: { params: { id: string } }) {
+    const { id: userId, activeRole } = useUserStore();
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(0);
 
     // Mock data
     const property = {
+        id: params.id,
         title: '3 Bedroom Flat, Lokogoma, Abuja',
         price: '₦2,300,000',
         monthlyPrice: '₦250,000',
@@ -198,10 +201,10 @@ The Lekki Conservation Centre, Movie Cinemas, a Gym, and a host of other neighbo
                                         Book a Viewing
                                     </button>
                                     <Link
-                                        href="/signin"
+                                        href={userId ? `/dashboard/tenant/apply?propertyId=${params.id}` : `/signin?redirect=/browse/${params.id}`}
                                         className="block w-full text-center border-2 border-brand-green text-brand-green font-bold py-4 rounded-xl hover:bg-green-50 transition-colors"
                                     >
-                                        Rent Now
+                                        Apply for Rent
                                     </Link>
                                 </div>
 

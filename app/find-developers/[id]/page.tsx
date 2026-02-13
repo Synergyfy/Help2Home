@@ -9,6 +9,7 @@ import { MdVerified, MdApartment, MdHistoryEdu, MdStar, MdCall, MdMail, MdMap, M
 import FadeIn from '@/components/FadeIn';
 import { useUserStore } from '@/store/userStore';
 import InvestmentDetailsModal from '@/components/dashboard/investor/InvestmentDetailsModal';
+import ContactDeveloperModal from '@/components/ContactDeveloperModal';
 import { getDeveloperById } from '@/utils/properties';
 
 
@@ -21,6 +22,7 @@ export default function DeveloperPortfolioPage() {
   const { token, activeRole } = useUserStore();
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const [showInvestModal, setShowInvestModal] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
 
   if (!developer) {
     return (
@@ -106,7 +108,10 @@ export default function DeveloperPortfolioPage() {
               </div>
 
               <div className="flex gap-4 pt-2">
-                <button className="bg-brand-green text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg hover:bg-green-600 transition-all">
+                <button
+                  onClick={() => setShowContactModal(true)}
+                  className="bg-brand-green text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg hover:bg-green-600 transition-all"
+                >
                   Inquire Now
                 </button>
                 <button className="bg-white border border-gray-200 px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors">
@@ -288,6 +293,14 @@ export default function DeveloperPortfolioPage() {
           property={selectedProject}
         />
       )}
+
+      {/* Contact Developer Modal */}
+      <ContactDeveloperModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        developerName={developer.name}
+        developerEmail={developer.email}
+      />
     </div>
   );
 }

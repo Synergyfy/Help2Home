@@ -34,19 +34,25 @@ export default function FinancingInputs({ downPaymentPercent, repaymentDuration,
                     </div>
                 </div>
 
-                {/* Repayment Duration */}
+                {/* Repayment Duration Slider */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Repayment Duration</label>
-                    <select
+                    <div className="flex justify-between items-center mb-2">
+                        <label className="text-sm font-medium text-gray-700">Repayment Duration</label>
+                        <span className="text-brand-green font-bold">{repaymentDuration} Months</span>
+                    </div>
+                    <input
+                        type="range"
+                        min="1"
+                        max="10"
+                        step="1"
                         value={repaymentDuration}
                         onChange={(e) => onChange('repaymentDuration', parseInt(e.target.value))}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-green focus:border-brand-green outline-none transition-all bg-white"
-                    >
-                        <option value="3">3 Months</option>
-                        <option value="6">6 Months</option>
-                        <option value="9">9 Months</option>
-                        <option value="12">12 Months</option>
-                    </select>
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-green"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>1 Month</span>
+                        <span>10 Months</span>
+                    </div>
                 </div>
 
                 {/* Terms Checkbox */}

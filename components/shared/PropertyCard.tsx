@@ -122,16 +122,29 @@ export default function PropertyCard({ property, index, showTotalUpfront = true,
                             <div className="flex justify-between items-baseline">
                                 <div className="flex flex-col">
                                     <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">
-                                        {property.propertyType === 'invest' ? 'Property Value' : 'Annual Rent'}
+                                        {property.propertyType === 'invest' 
+                                            ? 'Property Value' 
+                                            : property.propertyType === 'service-apartment' 
+                                                ? `Price per ${property.billingCycle || 'day'}`
+                                                : property.propertyType === 'buy' || property.propertyType === 'rent-to-own'
+                                                    ? 'Property Price'
+                                                    : 'Annual Rent'}
                                     </span>
                                     <span className="text-xl font-black text-brand-green">
                                         {formatCurrency(property.price)}
                                         {property.propertyType === 'rent' && <span className="text-[10px] font-bold text-gray-400 ml-1">/yr</span>}
+                                        {property.propertyType === 'service-apartment' && (
+                                            <span className="text-[10px] font-bold text-gray-400 ml-1">
+                                                /{property.billingCycle === 'day' ? 'day' : property.billingCycle === 'week' ? 'wk' : property.billingCycle === 'month' ? 'mo' : 'day'}
+                                            </span>
+                                        )}
                                     </span>
                                 </div>
                                 {showTotalUpfront && (
                                     <div className="flex flex-col items-end">
-                                        <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Total Upfront</span>
+                                        <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">
+                                            Total Amount
+                                        </span>
                                         <span className="text-sm font-black text-gray-900">₦{formatNumber(totalUpfront)}</span>
                                     </div>
                                 )}
