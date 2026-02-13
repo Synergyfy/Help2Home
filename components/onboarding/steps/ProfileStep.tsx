@@ -23,7 +23,7 @@ const ProfileStep = () => {
   // Auto-detect name from email if email signup
   useEffect(() => {
     if (isEmailSignup && user?.currentEmail && !fullName) {
-      const nameFromEmail = user.currentEmail.split('@')[0].split(/[._-]/).map(part => 
+      const nameFromEmail = user.currentEmail.split('@')[0].split(/[._-]/).map((part: string) => 
         part.charAt(0).toUpperCase() + part.slice(1)
       ).join(' ');
       if (nameFromEmail) setFullName(nameFromEmail);

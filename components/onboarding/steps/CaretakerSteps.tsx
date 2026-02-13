@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FiArrowRight, FiArrowLeft, FiCheck } from "react-icons/fi";
 import { useOnboardingStore } from "@/store/onboardingStore";
+import { useUserStore } from "@/store/userStore";
 
 interface CaretakerStepProps {
   stepNumber: 1 | 2 | 3;
@@ -179,6 +180,8 @@ const CaretakerStep3 = () => {
 
   const handleComplete = () => {
     updateRoleData("caretaker", { services });
+    const fullData = useOnboardingStore.getState().getCurrentUser()?.caretaker;
+    useUserStore.getState().updateRoleProfileData("caretaker", fullData);
     completeRoleOnboarding("caretaker");
 
     // Check if other selected roles need onboarding

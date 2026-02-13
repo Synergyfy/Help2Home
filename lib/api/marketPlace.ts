@@ -113,7 +113,8 @@ export async function searchProperties(
     }
     
     if (filters.category && filters.category !== 'all' && filters.category !== 'undefined') {
-      filtered = filtered.filter(p => p.category === filters.category || filters.category.includes(p.category));
+      const categoryFilter = filters.category;
+      filtered = filtered.filter(p => p.category === categoryFilter || categoryFilter.includes(p.category));
       console.log(`[searchProperties] After category(${filters.category}): ${filtered.length}`);
     }
   
