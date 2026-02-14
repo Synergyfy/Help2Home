@@ -7,7 +7,7 @@ import { useOnboardingStore, TenantData } from "@/store/onboardingStore";
 import { useUserStore } from "@/store/userStore";
 
 const locations = ["Lagos", "Abuja", "Port Harcourt", "Ibadan", "Kano", "Other"];
-const budgetRanges = ["Below ₦50k", "₦50k - ₦100k", "₦100k - ₦500k", "₦500k - ₦1M", "Above ₦1M"];
+const budgetRanges = ["Below ₦50k", "₦50k - ₦100k", "₦100k - ₦500k", "₦500k - ₦1M", "₦1M - ₦5M", "₦5M - ₦10M", "Above ₦10M"];
 const propertyTypes = ["House", "Duplex", "Self-Contain", "Studio"];
 const bedroomOptions = ["Studio", "1 Bedroom", "2 Bedrooms", "3 Bedrooms", "4+ Bedrooms"];
 const amenitiesList = ["Security", "Water Supply", "Electricity", "Internet", "Gym", "Pool", "Garden"];

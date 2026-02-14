@@ -9,6 +9,7 @@ import { HiCheckCircle } from "react-icons/hi";
 import { GrStatusGood } from "react-icons/gr";
 import { MdOutlineVilla } from "react-icons/md";
 import { formatNumber } from '@/utils/helpers';
+import { useUserStore } from '@/store/userStore';
 
 interface PropertyCardProps {
     id: number | string;
@@ -47,7 +48,8 @@ export default function PropertyCard({
     rawPrice = 0,
     isInstallmentAllowed = false
 }: PropertyCardProps) {
-    const [isFavorite, setIsFavorite] = useState(false);
+    const { wishlist, toggleWishlist } = useUserStore();
+    const isFavorite = wishlist.includes(id.toString());
 
     // Calculate total upfront if rawPrice is provided
     const amenitiesTotal = amenities.reduce((acc, curr) => {
@@ -98,7 +100,7 @@ export default function PropertyCard({
                         <button
                             onClick={(e) => {
                                 e.preventDefault();
-                                setIsFavorite(!isFavorite);
+                                toggleWishlist(id.toString());
                             }}
                             className="absolute top-4 right-4 w-11 h-11 bg-white/90 backdrop-blur-md rounded-2xl flex items-center justify-center hover:bg-white transition-all duration-300 shadow-lg z-10 group/fav border border-white/20"
                         >

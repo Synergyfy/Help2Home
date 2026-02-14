@@ -21,16 +21,16 @@ export default function FinancingInputs({ downPaymentPercent, repaymentDuration,
                     </div>
                     <input
                         type="range"
-                        min="25"
-                        max="50"
+                        min="30"
+                        max="100"
                         step="5"
                         value={downPaymentPercent}
                         onChange={(e) => onChange('downPaymentPercent', parseInt(e.target.value))}
                         className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-green"
                     />
                     <div className="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>25%</span>
-                        <span>50%</span>
+                        <span>30%</span>
+                        <span>100%</span>
                     </div>
                 </div>
 

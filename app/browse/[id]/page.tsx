@@ -9,7 +9,8 @@ import ConfirmationModal from '@/components/ConfirmationModal';
 import { useUserStore } from '@/store/userStore';
 
 export default function PropertyDetailsPage({ params }: { params: { id: string } }) {
-    const { id: userId, activeRole } = useUserStore();
+    const { id: userId, activeRole, wishlist, toggleWishlist } = useUserStore();
+    const isFavorite = wishlist.includes(params.id);
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(0);
@@ -100,6 +101,21 @@ The Lekki Conservation Centre, Movie Cinemas, a Gym, and a host of other neighbo
                                     fill
                                     className="object-cover"
                                 />
+                                {/* Favorite Button */}
+                                <button
+                                    onClick={() => toggleWishlist(params.id)}
+                                    className={`absolute top-6 right-6 w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-xl z-10 border ${isFavorite ? 'bg-red-500 border-red-500 text-white' : 'bg-white/90 backdrop-blur-md border-white/20 text-gray-700 hover:text-red-500'
+                                        }`}
+                                >
+                                    <svg
+                                        className={`w-6 h-6 transition-all ${isFavorite ? 'fill-current' : 'fill-none'}`}
+                                        stroke="currentColor"
+                                        strokeWidth="2.5"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                    </svg>
+                                </button>
                             </div>
 
                             {/* Thumbnails */}
