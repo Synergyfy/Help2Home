@@ -11,17 +11,19 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
     const { mutate: updateProfile } = useUpdateProfile(activeRole || 'tenant');
     const tenantData = roleData.tenant;
 
-    const [bvn, setBvn] = useState(tenantData?.bvn || '');
-    const [nin, setNin] = useState(tenantData?.nin || '');
     const [idType, setIdType] = useState('National ID');
     const [idNumber, setIdNumber] = useState('');
     const [uploadedFile, setUploadedFile] = useState<File | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
 
+    // Dedicated BVN state
+    const [bvn, setBvn] = useState(tenantData?.bvn || '');
+    const [isSavingBvn, setIsSavingBvn] = useState(false);
+    const [bvnSaveSuccess, setBvnSaveSuccess] = useState(false);
+
     const idTypes = [
         'National ID',
-        'BVN',
         'Driver\'s License',
         'International Passport',
         'Voter\'s Card'
@@ -30,7 +32,6 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
     useEffect(() => {
         if (tenantData) {
             setBvn(tenantData.bvn || '');
-            setNin(tenantData.nin || '');
         }
     }, [tenantData]);
 
@@ -41,13 +42,22 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
         }
     };
 
+    const handleSaveBvn = () => {
+        setIsSavingBvn(true);
+        setTimeout(() => {
+            updateRoleProfileData('tenant', { bvn });
+            setIsSavingBvn(false);
+            setBvnSaveSuccess(true);
+            setTimeout(() => setBvnSaveSuccess(false), 3000);
+        }, 1000);
+    };
+
     const handleSaveIdentification = () => {
         setIsSaving(true);
         // Simulate API call
         setTimeout(() => {
             // Update store with new data
             const updateObj: any = {};
-            if (idType === 'BVN') updateObj.bvn = idNumber;
             if (idType === 'National ID') updateObj.nin = idNumber;
             
             updateRoleProfileData('tenant', updateObj);
@@ -122,100 +132,144 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
 
             {/* Identity Verification (Tenant Only) */}
             {activeRole === 'tenant' && (
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                    <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-                        <div>
-                            <h3 className="text-lg font-bold text-gray-900">Means of Identity</h3>
-                            <p className="text-sm text-gray-500">Select and upload a valid means of identification.</p>
+                <div className="space-y-6">
+                    {/* BVN Section */}
+                    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-bold text-gray-900">Bank Verification Number (BVN)</h3>
+                                <p className="text-sm text-gray-500">Provide your 11-digit BVN for instant identity validation.</p>
+                            </div>
+                            <div className="text-brand-green bg-green-50 p-2 rounded-full">
+                                <IoInformationCircleOutline size={24} />
+                            </div>
                         </div>
-                        <div className="text-brand-green bg-green-50 p-2 rounded-full">
-                            <IoInformationCircleOutline size={24} />
+                        <div className="p-6">
+                            <div className="flex flex-col md:flex-row items-end gap-4">
+                                <div className="flex-1 w-full">
+                                    <label className="block text-sm font-black text-gray-700 mb-2 uppercase tracking-wider">BVN Number</label>
+                                    <input
+                                        type="text"
+                                        value={bvn}
+                                        onChange={(e) => setBvn(e.target.value)}
+                                        placeholder="Enter 11-digit BVN"
+                                        className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:ring-4 focus:ring-green-50 focus:border-brand-green outline-none transition-all font-bold text-gray-900"
+                                        maxLength={11}
+                                    />
+                                </div>
+                                <button
+                                    onClick={handleSaveBvn}
+                                    disabled={isSavingBvn || bvn.length < 11}
+                                    className={`px-10 py-4 rounded-xl font-black transition-all whitespace-nowrap ${isSavingBvn || bvn.length < 11
+                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                        : 'bg-brand-green text-white hover:bg-green-700 shadow-xl shadow-green-100'
+                                        }`}
+                                >
+                                    {isSavingBvn ? 'Validating...' : 'Verify BVN'}
+                                </button>
+                            </div>
+                            {bvnSaveSuccess && (
+                                <div className="mt-4 flex items-center gap-2 text-green-600 font-black animate-in fade-in slide-in-from-top-2">
+                                    <IoCheckmarkCircle size={20} />
+                                    <span>BVN Linked Successfully</span>
+                                </div>
+                            )}
                         </div>
                     </div>
-                    <div className="p-6 space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    {/* Other IDs Section */}
+                    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
                             <div>
-                                <label className="block text-sm font-black text-gray-700 mb-2 uppercase tracking-wider">Identity Type</label>
-                                <select
-                                    value={idType}
-                                    onChange={(e) => setIdType(e.target.value)}
-                                    className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:ring-4 focus:ring-green-50 focus:border-brand-green outline-none transition-all bg-white font-bold text-gray-900"
-                                >
-                                    {idTypes.map(type => (
-                                        <option key={type} value={type}>{type}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-black text-gray-700 mb-2 uppercase tracking-wider">{idType} Number</label>
-                                <input
-                                    type="text"
-                                    value={idNumber}
-                                    onChange={(e) => setIdNumber(e.target.value)}
-                                    placeholder={`Enter your ${idType} number`}
-                                    className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:ring-4 focus:ring-green-50 focus:border-brand-green outline-none transition-all font-bold text-gray-900"
-                                />
+                                <h3 className="text-lg font-bold text-gray-900">Means of Identity</h3>
+                                <p className="text-sm text-gray-500">Select and upload a valid government-issued ID.</p>
                             </div>
                         </div>
-
-                        {/* File Upload Area */}
-                        <div>
-                            <label className="block text-sm font-black text-gray-700 mb-2 uppercase tracking-wider">Upload {idType} Image</label>
-                            {!uploadedFile ? (
-                                <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-2xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all group">
-                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                        <svg className="w-10 h-10 mb-3 text-gray-400 group-hover:text-brand-green transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                        </svg>
-                                        <p className="mb-2 text-sm text-gray-500 font-bold">
-                                            <span className="text-brand-green">Click to upload</span> or drag and drop
-                                        </p>
-                                        <p className="text-xs text-gray-400">PNG, JPG or PDF (MAX. 10MB)</p>
-                                    </div>
-                                    <input type="file" className="hidden" accept="image/*,.pdf" onChange={handleFileChange} />
-                                </label>
-                            ) : (
-                                <div className="flex items-center justify-between bg-green-50 p-5 rounded-2xl border border-green-100 animate-in fade-in zoom-in duration-300">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-brand-green shadow-sm">
-                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-black text-gray-900 truncate max-w-[200px]">{uploadedFile.name}</p>
-                                            <p className="text-xs text-gray-500 font-bold">{(uploadedFile.size / 1024 / 1024).toFixed(2)} MB</p>
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={() => setUploadedFile(null)}
-                                        className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                        <div className="p-6 space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-black text-gray-700 mb-2 uppercase tracking-wider">Identity Type</label>
+                                    <select
+                                        value={idType}
+                                        onChange={(e) => setIdType(e.target.value)}
+                                        className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:ring-4 focus:ring-green-50 focus:border-brand-green outline-none transition-all bg-white font-bold text-gray-900"
                                     >
-                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
+                                        {idTypes.map(type => (
+                                            <option key={type} value={type}>{type}</option>
+                                        ))}
+                                    </select>
                                 </div>
-                            )}
-                        </div>
+                                <div>
+                                    <label className="block text-sm font-black text-gray-700 mb-2 uppercase tracking-wider">{idType} Number</label>
+                                    <input
+                                        type="text"
+                                        value={idNumber}
+                                        onChange={(e) => setIdNumber(e.target.value)}
+                                        placeholder={`Enter your ${idType} number`}
+                                        className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:ring-4 focus:ring-green-50 focus:border-brand-green outline-none transition-all font-bold text-gray-900"
+                                    />
+                                </div>
+                            </div>
 
-                        <div className="flex items-center gap-4">
-                            <button
-                                onClick={handleSaveIdentification}
-                                disabled={isSaving || !idNumber || !uploadedFile}
-                                className={`px-10 py-4 rounded-xl font-black transition-all ${isSaving || !idNumber || !uploadedFile
-                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                    : 'bg-brand-green text-white hover:bg-green-700 shadow-xl shadow-green-100 scale-[1.02] active:scale-[0.98]'
-                                    }`}
-                            >
-                                {isSaving ? 'Verifying...' : 'Submit for Verification'}
-                            </button>
-                            {saveSuccess && (
-                                <div className="flex items-center gap-2 text-green-600 font-black animate-in fade-in slide-in-from-left-4">
-                                    <IoCheckmarkCircle size={24} />
-                                    <span>Identity Submitted!</span>
-                                </div>
-                            )}
+                            {/* File Upload Area */}
+                            <div>
+                                <label className="block text-sm font-black text-gray-700 mb-2 uppercase tracking-wider">Upload {idType} Image</label>
+                                {!uploadedFile ? (
+                                    <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-2xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all group">
+                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <svg className="w-10 h-10 mb-3 text-gray-400 group-hover:text-brand-green transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                            </svg>
+                                            <p className="mb-2 text-sm text-gray-500 font-bold">
+                                                <span className="text-brand-green">Click to upload</span> or drag and drop
+                                            </p>
+                                            <p className="text-xs text-gray-400">PNG, JPG or PDF (MAX. 10MB)</p>
+                                        </div>
+                                        <input type="file" className="hidden" accept="image/*,.pdf" onChange={handleFileChange} />
+                                    </label>
+                                ) : (
+                                    <div className="flex items-center justify-between bg-green-50 p-5 rounded-2xl border border-green-100 animate-in fade-in zoom-in duration-300">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-brand-green shadow-sm">
+                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-black text-gray-900 truncate max-w-[200px]">{uploadedFile.name}</p>
+                                                <p className="text-xs text-gray-500 font-bold">{(uploadedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => setUploadedFile(null)}
+                                            className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                        >
+                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex items-center gap-4">
+                                <button
+                                    onClick={handleSaveIdentification}
+                                    disabled={isSaving || !idNumber || !uploadedFile}
+                                    className={`px-10 py-4 rounded-xl font-black transition-all ${isSaving || !idNumber || !uploadedFile
+                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                        : 'bg-brand-green text-white hover:bg-green-700 shadow-xl shadow-green-100 scale-[1.02] active:scale-[0.98]'
+                                        }`}
+                                >
+                                    {isSaving ? 'Verifying...' : 'Submit for Verification'}
+                                </button>
+                                {saveSuccess && (
+                                    <div className="flex items-center gap-2 text-green-600 font-black animate-in fade-in slide-in-from-left-4">
+                                        <IoCheckmarkCircle size={24} />
+                                        <span>Identity Submitted!</span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>

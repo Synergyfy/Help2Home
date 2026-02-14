@@ -13,6 +13,7 @@ import {
 import { IoBedOutline, IoWaterOutline } from 'react-icons/io5';
 import { formatNumber, formatCurrency } from '@/utils/helpers';
 import FadeIn from '@/components/FadeIn';
+import { useUserStore } from '@/store/userStore';
 
 interface PropertyCardProps {
     property: any;
@@ -24,6 +25,9 @@ interface PropertyCardProps {
 
 
 export default function PropertyCard({ property, index, showTotalUpfront = true, onInvest }: PropertyCardProps) {
+    const { wishlist, toggleWishlist } = useUserStore();
+    const isFavorite = wishlist.includes(property.id.toString());
+
     // Normalize images
     const rawImages = property.images && property.images.length > 0 ? property.images : ['/assets/marketplace assets/home1.png'];
     const image = typeof rawImages[0] === 'string' ? rawImages[0] : rawImages[0].url;
@@ -68,8 +72,14 @@ export default function PropertyCard({ property, index, showTotalUpfront = true,
                     </div>
 
                     {/* Like Button */}
-                    <button className="absolute top-4 right-4 bg-white/90 backdrop-blur-md hover:bg-white rounded-full p-2 text-gray-400 hover:text-red-500 transition-all shadow-md z-10 active:scale-90">
-                        <HiOutlineHeart size={18} />
+                    <button 
+                        onClick={(e) => {
+                            e.preventDefault();
+                            toggleWishlist(property.id.toString());
+                        }}
+                        className={`absolute top-4 right-4 bg-white/90 backdrop-blur-md hover:bg-white rounded-full p-2 transition-all shadow-md z-10 active:scale-90 ${isFavorite ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
+                    >
+                        <HiOutlineHeart size={18} fill={isFavorite ? 'currentColor' : 'none'} />
                     </button>
 
                     {/* Location Badge (Bottom) */}

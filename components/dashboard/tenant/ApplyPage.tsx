@@ -52,7 +52,7 @@ export default function Apply() {
     const [applicationData, setApplicationData] = useState<ApplicationData>({
         propertyId: property.id,
         financing: {
-            downPaymentPercent: 25,
+            downPaymentPercent: 30,
             repaymentDuration: 10,
             acceptedTerms: false
         },
@@ -81,7 +81,7 @@ export default function Apply() {
     });
 
     const [installmentPlan, setInstallmentPlan] = useState<InstallmentPlan>({
-        downPaymentPercent: 25,
+        downPaymentPercent: 30,
         downPaymentAmount: 0,
         repaymentDuration: 10,
         monthlyRepayment: 0,

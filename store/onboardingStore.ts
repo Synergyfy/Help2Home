@@ -64,6 +64,8 @@ interface OnboardingStore {
   activeRole: Role | null;
   currentEmail: string;
   currentPhone: string;
+  firstName: string;
+  lastName: string;
 
   
   setStep: (step: number) => void;
@@ -76,6 +78,7 @@ interface OnboardingStore {
   setOnboardingCompleted: (status: boolean) => void;
   setCurrentEmail: (email: string) => void;
   setCurrentPhone: (phone: string) => void;
+  setNames: (firstName: string, lastName: string) => void;
   updateRoleData: (role: Role, data: any) => void;
   completeRoleOnboarding: (role: Role) => void;
   resetOnboarding: () => void;
@@ -98,6 +101,8 @@ export const useOnboardingStore = create<OnboardingStore>()(
       activeRole: null,
       currentEmail: '',
       currentPhone: '',
+      firstName: '',
+      lastName: '',
       onboardingCompleted: false,
       draftData: {},
       roleOnboardingCompleted: {
@@ -118,12 +123,15 @@ export const useOnboardingStore = create<OnboardingStore>()(
           roleOnboardingCompleted: state.roleOnboardingCompleted,
           currentEmail: state.currentEmail,
           currentPhone: state.currentPhone,
+          firstName: state.firstName,
+          lastName: state.lastName,
           ...state.draftData 
         };
       },
 
       setCurrentEmail: (currentEmail) => set({ currentEmail }),
       setCurrentPhone: (currentPhone) => set({ currentPhone }),
+      setNames: (firstName, lastName) => set({ firstName, lastName }),
 
       setStep: (currentStep) => set({ currentStep }),
       goToStep: (step) => set({ currentStep: step }),
