@@ -29,7 +29,7 @@ const ProfileStep = () => {
         setFirstName(parts[0].charAt(0).toUpperCase() + parts[0].slice(1));
       }
       if (parts.length >= 2) {
-        setLastName(parts.slice(1).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' '));
+        setLastName(parts.slice(1).map((p: string) => p.charAt(0).toUpperCase() + p.slice(1)).join(' '));
       }
     }
   }, [isEmailSignup, user?.currentEmail, firstName, lastName]);
