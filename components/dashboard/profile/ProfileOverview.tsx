@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useUser } from '@/components/providers/UserContext';
 import { useUserStore } from '@/store/userStore';
 import EditProfileModal from './EditProfileModal';
@@ -10,6 +11,7 @@ interface ProfileOverviewProps {
 }
 
 export default function ProfileOverview({ onStartVerification }: ProfileOverviewProps) {
+    const router = useRouter();
     const { user: contextUser, getDefaultAvatar } = useUser();
     const { profile, fullName, email: storeEmail, verified: isStoreVerified, activeRole } = useUserStore();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -157,7 +159,10 @@ export default function ProfileOverview({ onStartVerification }: ProfileOverview
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
                     <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <button className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
+                        <button 
+                            onClick={() => router.push('/marketplace')}
+                            className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left w-full"
+                        >
                             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
                                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -169,7 +174,10 @@ export default function ProfileOverview({ onStartVerification }: ProfileOverview
                             </div>
                         </button>
 
-                        <button className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
+                        <button 
+                            onClick={() => router.push(`/dashboard/${displayUser.role}/applications`)}
+                            className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left w-full"
+                        >
                             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center shrink-0">
                                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -196,7 +204,10 @@ export default function ProfileOverview({ onStartVerification }: ProfileOverview
                             <p className="text-sm text-blue-800 mb-4">
                                 Our support team is here to help you with any questions about your profile, applications, or the platform.
                             </p>
-                            <button className="text-sm font-medium text-blue-700 hover:text-blue-900 flex items-center gap-1">
+                            <button 
+                                onClick={() => router.push(`/dashboard/${displayUser.role}/support`)}
+                                className="text-sm font-medium text-blue-700 hover:text-blue-900 flex items-center gap-1"
+                            >
                                 Contact Support
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
