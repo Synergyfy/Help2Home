@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { PaymentItem } from '@/lib/mockLandlordData';
 
 export default function RecentPayments({ payments }: { payments: PaymentItem[] }) {
@@ -11,7 +12,9 @@ export default function RecentPayments({ payments }: { payments: PaymentItem[] }
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-bold text-gray-900">Recent payments</h3>
-                <button className="text-sm text-[#00853E] font-medium hover:underline">View all payments</button>
+                <Link href="/dashboard/landlord/payments" className="text-sm text-[#00853E] font-medium hover:underline">
+                    View all payments
+                </Link>
             </div>
 
             {payments.length === 0 ? (

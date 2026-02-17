@@ -8,16 +8,22 @@ import BankPayoutsTab from './BankPayoutsTab';
 import PrivacySecurityTab from './PrivacySecurityTab';
 import { MOCK_PROFILE, MOCK_DOCUMENTS, MOCK_BANK_ACCOUNTS } from '@/lib/mockLandlordData';
 import { useProfile } from '@/hooks/useProfile';
+import {
+    IoPersonOutline,
+    IoDocumentTextOutline,
+    IoCardOutline,
+    IoShieldCheckmarkOutline,
+} from 'react-icons/io5';
 
 export default function LandlordProfile() {
     const [activeTab, setActiveTab] = useState<'info' | 'verification' | 'bank' | 'security'>('info');
     const { data, isLoading } = useProfile('landlord');
 
     const tabs = [
-        { id: 'info', label: 'Basic Info' },
-        { id: 'verification', label: 'Verification Documents' },
-        { id: 'bank', label: 'Bank & Payouts' },
-        { id: 'security', label: 'Privacy & Security' },
+        { id: 'info', label: 'Basic Info', icon: IoPersonOutline },
+        { id: 'verification', label: 'Documents', icon: IoDocumentTextOutline },
+        { id: 'bank', label: 'Bank & Payouts', icon: IoCardOutline },
+        { id: 'security', label: 'Privacy & Security', icon: IoShieldCheckmarkOutline },
     ];
 
     if (isLoading) {
@@ -33,8 +39,8 @@ export default function LandlordProfile() {
     return (
         <div className="min-h-screen bg-gray-50/50 pb-12">
             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-900">Profile & Verification</h1>
-                <p className="text-gray-500 text-sm">Manage your personal details and verification status.</p>
+                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Profile & Verification</h1>
+                <p className="text-gray-500 text-sm font-medium italic">Complete each section to maintain a verified professional status.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -46,16 +52,17 @@ export default function LandlordProfile() {
                 {/* Right Column */}
                 <div className="lg:col-span-2">
                     {/* Tabs Navigation */}
-                    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-1 mb-6 flex overflow-x-auto">
+                    <div className="flex border-b border-gray-100 mb-8 overflow-x-auto no-scrollbar pb-1">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
-                                className={`flex-1 py-2.5 px-4 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${activeTab === tab.id
-                                    ? 'bg-brand-green text-white shadow-sm'
-                                    : 'text-gray-600 hover:bg-gray-50'
+                                className={`flex items-center gap-2.5 px-6 py-4 text-sm font-black border-b-4 transition-all whitespace-nowrap group ${activeTab === tab.id
+                                    ? 'border-brand-green text-brand-green bg-green-50/30'
+                                    : 'border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50/50'
                                     }`}
                             >
+                                <tab.icon size={18} className={activeTab === tab.id ? 'text-brand-green' : 'text-gray-300 group-hover:text-gray-400'} />
                                 {tab.label}
                             </button>
                         ))}

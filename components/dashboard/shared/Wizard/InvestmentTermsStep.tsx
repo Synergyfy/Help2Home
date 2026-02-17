@@ -5,14 +5,25 @@ import { useFormContext } from 'react-hook-form';
 import { PropertySchema } from '@/lib/validations/propertySchema';
 import { MdMonetizationOn, MdTrendingUp, MdInfo } from 'react-icons/md';
 
-export default function InvestmentTermsStep() {
+interface InvestmentTermsStepProps {
+    navigation?: {
+        onNext: () => void;
+        onBack: () => void;
+        isPending: boolean;
+        isFirstStep: boolean;
+        isLastStep: boolean;
+        submitLabel: string;
+    };
+}
+
+export default function InvestmentTermsStep({ navigation }: InvestmentTermsStepProps) {
     const { register, watch, setValue, formState: { errors } } = useFormContext<PropertySchema>();
 
     // Watch enabled state to toggle fields
     const isInvestmentEnabled = watch("investmentTerms.enabled");
 
     return (
-        <div className="max-w-3xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="max-w-3xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
             <div className="flex items-start gap-4 p-4 bg-purple-50 rounded-xl border border-purple-100">
                 <div className="p-2 bg-purple-100 text-purple-600 rounded-lg shrink-0">
                     <MdMonetizationOn size={24} />
@@ -117,6 +128,36 @@ export default function InvestmentTermsStep() {
                         </p>
 
                     </div>
+                </div>
+            )}
+
+            {/* IN-PAGE NAVIGATION BUTTONS */}
+            {navigation && (
+                <div className="flex items-center justify-between pt-12 border-t border-gray-100">
+                    <button
+                        type="button"
+                        onClick={navigation.onBack}
+                        disabled={navigation.isFirstStep}
+                        className={`px-8 py-4 rounded-2xl font-black text-sm transition-all active:scale-95 ${
+                            navigation.isFirstStep 
+                            ? 'opacity-0 pointer-events-none' 
+                            : 'text-gray-400 hover:text-gray-900 bg-gray-50 hover:bg-gray-100'
+                        }`}
+                    >
+                        Back
+                    </button>
+                    <button
+                        type="button"
+                        onClick={navigation.onNext}
+                        disabled={navigation.isPending}
+                        className="px-12 py-4 bg-brand-green text-white rounded-2xl font-black text-sm hover:bg-green-700 transition-all shadow-xl shadow-green-900/20 active:scale-95 disabled:opacity-50"
+                    >
+                        {navigation.isPending ? (
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                            navigation.isLastStep ? navigation.submitLabel : 'Continue'
+                        )}
+                    </button>
                 </div>
             )}
         </div>

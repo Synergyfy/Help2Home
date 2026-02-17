@@ -3,7 +3,7 @@
 import React from 'react';
 import PropertyWizard from '@/components/dashboard/shared/Wizard/PropertyWizard';
 import { STEP_CONFIG } from '@/config/propertyConfig';
-import { FiArrowLeft } from 'react-icons/fi';
+import { FiArrowLeft } from '@/components/shared/Icons';
 import Link from 'next/link';
 
 export default function AdminListingPage() {

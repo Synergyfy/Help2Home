@@ -129,6 +129,12 @@ export const MOCK_DOCUMENTS_TENANT: VerificationDocument[] = [
     { id: 'ten3', type: 'Other', label: 'Proof of Address', status: 'missing' },
 ];
 
+export const MOCK_DOCUMENTS_CARETAKER: VerificationDocument[] = [
+    { id: 'ct1', type: 'ID', label: 'Government Issued ID', filename: 'caretaker_id.jpg', status: 'approved', uploadedAt: 'Dec 15, 2023' },
+    { id: 'ct2', type: 'License', label: 'Caretaker / Management Certification', status: 'missing' },
+    { id: 'ct3', type: 'Other', label: 'Police Clearance Certificate', status: 'pending', uploadedAt: 'Jan 20, 2024' },
+];
+
 export const MOCK_DOCUMENTS = MOCK_DOCUMENTS_LANDLORD;
 
 

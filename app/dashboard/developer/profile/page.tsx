@@ -1,11 +1,11 @@
 'use client';
 
-import LandlordProfile from '@/components/dashboard/landlord/profile/LandlordProfile';
+import DeveloperProfile from '@/components/dashboard/developer/profile/DeveloperProfile';
 
-export default function LandlordProfilePage() {
+export default function DeveloperProfilePage() {
     return (
         <div className="h-full p-6">
-            <LandlordProfile />
+            <DeveloperProfile />
         </div>
     );
 }

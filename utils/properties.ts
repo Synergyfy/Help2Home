@@ -1290,9 +1290,18 @@ let isInitialized = false;
 const syncToStorage = () => {
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(mockProperties));
-    } catch (error) {
-      console.error('Failed to save properties to storage:', error);
+      // To save space and avoid QuotaExceededError, we only store properties 
+      // that were added by the user (not part of the hardcoded initialProperties)
+      const initialIds = new Set(initialProperties.map(p => p.id));
+      const userAddedProperties = mockProperties.filter(p => !initialIds.has(p.id));
+      
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(userAddedProperties));
+    } catch (error: any) {
+      if (error.name === 'QuotaExceededError' || error.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+        console.error('[PropertiesDB] LocalStorage quota exceeded. Custom properties will not be persisted.');
+      } else {
+        console.error('Failed to save properties to storage:', error);
+      }
     }
   }
 };
@@ -1302,19 +1311,14 @@ const loadFromStorage = () => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          console.log(`[PropertiesDB] Loaded ${parsed.length} properties from storage.`);
-          mockProperties = parsed;
-        } else {
-             // Storage exists but is empty/invalid? fall back to default
-             console.log('[PropertiesDB] Storage empty or invalid, using defaults.');
-             syncToStorage();
+        const userAdded = JSON.parse(stored);
+        if (Array.isArray(userAdded)) {
+          console.log(`[PropertiesDB] Loaded ${userAdded.length} custom properties from storage.`);
+          // Deduplicate just in case an ID clashing happens
+          const initialIds = new Set(initialProperties.map(p => p.id));
+          const filteredUserAdded = userAdded.filter(p => !initialIds.has(p.id));
+          mockProperties = [...filteredUserAdded, ...initialProperties];
         }
-      } else {
-        // First run: save defaults
-        console.log('[PropertiesDB] First run, initializing storage with defaults.');
-        syncToStorage();
       }
     } catch (error) {
       console.error('Failed to load properties from storage:', error);

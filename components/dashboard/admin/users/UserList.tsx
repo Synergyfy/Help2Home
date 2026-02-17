@@ -64,7 +64,7 @@ export default function UserList({ onEditUser }: UserListProps) {
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold">
-                                            {user.firstName[0]}{user.lastName[0]}
+                                            {user.firstName?.[0] || ''}{user.lastName?.[0] || ''}
                                         </div>
                                         <div>
                                             <div className="font-medium text-gray-900">{user.firstName} {user.lastName}</div>

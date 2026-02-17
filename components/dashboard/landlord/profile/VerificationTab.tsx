@@ -1,15 +1,16 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { VerificationDocument, MOCK_DOCUMENTS_LANDLORD, MOCK_DOCUMENTS_DEVELOPER, MOCK_DOCUMENTS_INVESTOR, MOCK_DOCUMENTS_AGENT, MOCK_DOCUMENTS_TENANT } from '@/lib/mockLandlordData';
+import { VerificationDocument, MOCK_DOCUMENTS_LANDLORD, MOCK_DOCUMENTS_DEVELOPER, MOCK_DOCUMENTS_INVESTOR, MOCK_DOCUMENTS_AGENT, MOCK_DOCUMENTS_TENANT, MOCK_DOCUMENTS_CARETAKER } from '@/lib/mockLandlordData';
 import { useUserStore, Role } from '@/store/userStore';
 import { useUpdateProfile } from '@/hooks/useProfile';
 import { IoCheckmarkCircle, IoInformationCircleOutline } from 'react-icons/io5';
+import { toast } from 'react-toastify';
 
-export default function VerificationTab({ role: activeRole }: { role?: Role }) {
+export default function VerificationTab({ role: activeRole = 'tenant' }: { role?: Role }) {
     const { roleData, updateRoleProfileData } = useUserStore();
-    const { mutate: updateProfile } = useUpdateProfile(activeRole || 'tenant');
-    const tenantData = roleData.tenant;
+    const { mutate: updateProfile } = useUpdateProfile(activeRole);
+    const roleSpecificData = roleData[activeRole as keyof typeof roleData];
 
     const [idType, setIdType] = useState('National ID');
     const [idNumber, setIdNumber] = useState('');
@@ -18,7 +19,7 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
     const [saveSuccess, setSaveSuccess] = useState(false);
 
     // Dedicated BVN state
-    const [bvn, setBvn] = useState(tenantData?.bvn || '');
+    const [bvn, setBvn] = useState((roleSpecificData as any)?.bvn || '');
     const [isSavingBvn, setIsSavingBvn] = useState(false);
     const [bvnSaveSuccess, setBvnSaveSuccess] = useState(false);
 
@@ -30,10 +31,10 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
     ];
 
     useEffect(() => {
-        if (tenantData) {
-            setBvn(tenantData.bvn || '');
+        if (roleSpecificData) {
+            setBvn((roleSpecificData as any).bvn || '');
         }
-    }, [tenantData]);
+    }, [roleSpecificData]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -45,7 +46,7 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
     const handleSaveBvn = () => {
         setIsSavingBvn(true);
         setTimeout(() => {
-            updateRoleProfileData('tenant', { bvn });
+            updateRoleProfileData(activeRole, { bvn });
             setIsSavingBvn(false);
             setBvnSaveSuccess(true);
             setTimeout(() => setBvnSaveSuccess(false), 3000);
@@ -60,7 +61,7 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
             const updateObj: any = {};
             if (idType === 'National ID') updateObj.nin = idNumber;
             
-            updateRoleProfileData('tenant', updateObj);
+            updateRoleProfileData(activeRole, updateObj);
             setIsSaving(false);
             setSaveSuccess(true);
             setTimeout(() => {
@@ -78,6 +79,7 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
             case 'investor': return MOCK_DOCUMENTS_INVESTOR;
             case 'agent': return MOCK_DOCUMENTS_AGENT;
             case 'tenant': return MOCK_DOCUMENTS_TENANT;
+            case 'caretaker': return MOCK_DOCUMENTS_CARETAKER;
             default: return MOCK_DOCUMENTS_LANDLORD;
         }
     };
@@ -90,11 +92,17 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
     const handleMockVerify = (docId: string) => {
         // Just a mock interaction to show we can update the store
         // In a real app, this would be an upload + backend verification
+        toast.success('Document uploaded and sent for review!');
+        
         if (activeRole === 'landlord') {
             updateProfile({ isIdentityVerified: true });
         } else if (activeRole === 'developer') {
             updateProfile({ isBusinessVerified: true });
         } else if (activeRole === 'investor') {
+            updateProfile({ isIdentityVerified: true });
+        } else if (activeRole === 'agent') {
+            updateProfile({ isLicenseVerified: true });
+        } else if (activeRole === 'caretaker') {
             updateProfile({ isIdentityVerified: true });
         }
     };
@@ -130,8 +138,8 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
                 </div>
             </div>
 
-            {/* Identity Verification (Tenant Only) */}
-            {activeRole === 'tenant' && (
+            {/* Identity Verification (Tenant, Landlord, Agent & Caretaker) */}
+            {(activeRole === 'tenant' || activeRole === 'landlord' || activeRole === 'agent' || activeRole === 'caretaker') && (
                 <div className="space-y-6">
                     {/* BVN Section */}
                     <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
@@ -326,20 +334,22 @@ export default function VerificationTab({ role: activeRole }: { role?: Role }) {
                                     <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs rounded-full font-medium">
                                         Under Review
                                     </span>
-                                ) : doc.status === 'rejected' ? (
-                                    <button
-                                        onClick={() => handleMockVerify(doc.id)}
-                                        className="px-4 py-2 bg-white border border-red-200 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors"
-                                    >
-                                        Re-upload
-                                    </button>
                                 ) : (
-                                    <button
-                                        onClick={() => handleMockVerify(doc.id)}
-                                        className="px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-                                    >
-                                        Upload
-                                    </button>
+                                    <label className="cursor-pointer">
+                                        <input 
+                                            type="file" 
+                                            className="hidden" 
+                                            accept="image/*,.pdf"
+                                            onChange={() => handleMockVerify(doc.id)} 
+                                        />
+                                        <div className={`px-4 py-2 bg-white border rounded-lg text-sm font-medium transition-colors ${
+                                            doc.status === 'rejected' 
+                                            ? 'border-red-200 text-red-600 hover:bg-red-50' 
+                                            : 'border-gray-200 text-gray-700 hover:bg-gray-50'
+                                        }`}>
+                                            {doc.status === 'rejected' ? 'Re-upload' : 'Upload'}
+                                        </div>
+                                    </label>
                                 )}
                             </div>
                         </div>

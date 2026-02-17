@@ -4,25 +4,25 @@ import ModerationQueue from '@/components/dashboard/admin/shared/ModerationQueue
 import RecentUsersTable from '@/components/dashboard/admin/shared/RecentUsersTable';
 import ActivityLog from '@/components/dashboard/admin/shared/ActivityLog';
 import SupportTracker from '@/components/dashboard/admin/shared/SupportTracker';
-import { 
-  HiOutlineDownload, 
-  HiOutlinePlus, 
-  HiOutlineHome, 
-  HiOutlineReceiptTax, 
-  HiOutlineCog 
-} from 'react-icons/hi';
+import {
+  HiOutlineDownload,
+  HiOutlinePlus,
+  HiOutlineHome,
+  HiOutlineReceiptTax,
+  HiOutlineCog
+} from '@/components/shared/Icons';
 
 export default function AdminOverview() {
   return (
     <main className="flex-1 py-8 px-4 lg:px-8 w-full max-w-[1600px] mx-auto bg-[#f9fafb]">
-      
+
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
           <h1 className="text-brand-green-900 text-3xl font-extrabold tracking-tight">Dashboard Overview</h1>
           <p className="text-brand-green-500 mt-1">Platform performance and moderation alerts.</p>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex bg-white rounded-lg border border-brand-green-200 p-1 shadow-sm">
             {['7D', '30D', '3M', 'YTD'].map((range, i) => (
@@ -47,7 +47,7 @@ export default function AdminOverview() {
 
       {/* Main Grid Layout */}
       <div className="grid grid-cols-12 gap-8">
-        
+
         {/* LEFT COLUMN: Extended Content Area */}
         <div className="col-span-12 xl:col-span-8 flex flex-col gap-8">
           <ModerationQueue />
@@ -58,7 +58,7 @@ export default function AdminOverview() {
 
         {/* RIGHT COLUMN: Sidebar Utilities */}
         <div className="col-span-12 xl:col-span-4 flex flex-col gap-8">
-          
+
           {/* Quick Actions */}
           <section className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
             <h3 className="text-gray-900 text-lg font-bold mb-5 flex items-center gap-2">
@@ -77,18 +77,18 @@ export default function AdminOverview() {
 
           {/* System Health */}
           <section className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 sticky top-8">
-             <div className="flex justify-between items-center mb-6">
-                <h3 className="font-bold text-gray-900 tracking-tight">System Health</h3>
-                <span className="flex items-center gap-1.5 text-[10px] bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
-                  <span className="size-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                  Live
-                </span>
-             </div>
-             <div className="space-y-5">
-               <HealthBar label="Server CPU Load" value={45} />
-               <HealthBar label="Database Usage" value={12} />
-               <HealthBar label="API Latency" value={65} customText="120ms" isWarning />
-             </div>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-gray-900 tracking-tight">System Health</h3>
+              <span className="flex items-center gap-1.5 text-[10px] bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
+                <span className="size-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                Live
+              </span>
+            </div>
+            <div className="space-y-5">
+              <HealthBar label="Server CPU Load" value={45} />
+              <HealthBar label="Database Usage" value={12} />
+              <HealthBar label="API Latency" value={65} customText="120ms" isWarning />
+            </div>
           </section>
         </div>
       </div>
@@ -116,9 +116,9 @@ function HealthBar({ label, value, customText, isWarning }: { label: string, val
         <span className={isWarning ? 'text-amber-600' : 'text-brand-green-900'}>{customText || `${value}%`}</span>
       </div>
       <div className="w-full bg-gray-100 rounded-full h-2">
-        <div 
-          className={`h-2 rounded-full transition-all duration-700 ease-out ${isWarning ? 'bg-amber-500' : 'bg-brand-green'}`} 
-          style={{ width: `${value}%` }} 
+        <div
+          className={`h-2 rounded-full transition-all duration-700 ease-out ${isWarning ? 'bg-amber-500' : 'bg-brand-green'}`}
+          style={{ width: `${value}%` }}
         />
       </div>
     </div>

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useUserStore } from '@/store/userStore';
 import InviteTeamModal from '@/components/dashboard/shared/InviteTeamModal';
-import { HiOutlineUserPlus, HiOutlineUserGroup, HiOutlineEnvelope, HiOutlineClock } from 'react-icons/hi2';
+import { HiOutlineUserPlus, HiOutlineUserGroup, HiOutlineEnvelope, HiOutlineClock } from '@/components/shared/Icons';
 import FadeIn from '@/components/FadeIn';
 
 const MOCK_TEAM = [

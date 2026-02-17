@@ -1,26 +1,26 @@
 'use client';
 
 import { useState } from 'react';
-import { 
-  HiOutlineSearch, 
-  HiOutlineFilter, 
-  HiOutlineTicket, 
-  HiOutlineClock, 
+import {
+  HiOutlineSearch,
+  HiOutlineFilter,
+  HiOutlineTicket,
+  HiOutlineClockOriginal as HiOutlineClock,
   HiOutlineCheckCircle,
-  HiOutlineExclamationCircle 
-} from 'react-icons/hi';
+  HiOutlineExclamationCircle
+} from '@/components/shared/Icons';
 import TicketDetailModal from '@/components/dashboard/admin/support/TicketDetailModal';
 
 // Updated Mock Data to match Modal Requirements
 const TICKETS = [
-  { 
-    id: 'TKT-1023', 
-    user: 'John Smith', 
+  {
+    id: 'TKT-1023',
+    user: 'John Smith',
     userEmail: 'john.smith@example.com',
-    subject: 'Payment failed for User #892', 
-    priority: 'High', 
-    status: 'Open', 
-    category: 'Billing', 
+    subject: 'Payment failed for User #892',
+    priority: 'High',
+    status: 'Open',
+    category: 'Billing',
     date: '2 hours ago',
     createdAt: 'Jan 7, 2026',
     property: 'Sunset Apartments',
@@ -28,14 +28,14 @@ const TICKETS = [
     dueDate: 'Tomorrow, 5:00 PM',
     description: 'Hi Support, I tried to make a payment for my listing #892 using my Verve card, but the transaction kept failing even though I have sufficient funds.'
   },
-  { 
-    id: 'TKT-1021', 
-    user: 'Sarah Wilson', 
+  {
+    id: 'TKT-1021',
+    user: 'Sarah Wilson',
     userEmail: 's.wilson@web.com',
-    subject: 'Landlord photo upload issue', 
-    priority: 'Medium', 
-    status: 'In Progress', 
-    category: 'Technical', 
+    subject: 'Landlord photo upload issue',
+    priority: 'Medium',
+    status: 'In Progress',
+    category: 'Technical',
     date: '5 hours ago',
     createdAt: 'Jan 7, 2026',
     property: 'Green Valley',
@@ -43,14 +43,14 @@ const TICKETS = [
     dueDate: 'Jan 10, 2026',
     description: 'I am trying to upload high-resolution photos of my property, but the system keeps timing out at 90%.'
   },
-  { 
-    id: 'TKT-1019', 
-    user: 'Mike Ade', 
+  {
+    id: 'TKT-1019',
+    user: 'Mike Ade',
     userEmail: 'mike.ade@provider.net',
-    subject: 'Dark mode feature request', 
-    priority: 'Low', 
-    status: 'Resolved', 
-    category: 'Feature', 
+    subject: 'Dark mode feature request',
+    priority: 'Low',
+    status: 'Resolved',
+    category: 'Feature',
     date: 'Yesterday',
     createdAt: 'Jan 6, 2026',
     property: 'City Center Lofts',
@@ -95,9 +95,9 @@ export default function SupportRequestsPage() {
         <div className="p-6 border-b border-brand-green-50 flex flex-col md:flex-row gap-4 justify-between items-center">
           <div className="relative w-full md:w-96">
             <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-green-400" size={20} />
-            <input 
-              type="text" 
-              placeholder="Search by ticket ID..." 
+            <input
+              type="text"
+              placeholder="Search by ticket ID..."
               className="w-full pl-10 pr-4 py-2.5 bg-brand-green-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
             />
           </div>
@@ -106,9 +106,8 @@ export default function SupportRequestsPage() {
               <button
                 key={item}
                 onClick={() => setFilter(item)}
-                className={`flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  filter === item ? 'bg-white text-brand-green-900 shadow-sm' : 'text-brand-green-500 hover:text-brand-green-700'
-                }`}
+                className={`flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filter === item ? 'bg-white text-brand-green-900 shadow-sm' : 'text-brand-green-500 hover:text-brand-green-700'
+                  }`}
               >
                 {item}
               </button>
@@ -144,25 +143,23 @@ export default function SupportRequestsPage() {
                     </span>
                   </td>
                   <td className="px-6 py-5 whitespace-nowrap">
-                    <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md ${
-                      ticket.priority === 'High' ? 'text-red-600 bg-red-50' : 
-                      ticket.priority === 'Medium' ? 'text-amber-600 bg-amber-50' : 'text-blue-600 bg-blue-50'
-                    }`}>
+                    <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md ${ticket.priority === 'High' ? 'text-red-600 bg-red-50' :
+                        ticket.priority === 'Medium' ? 'text-amber-600 bg-amber-50' : 'text-blue-600 bg-blue-50'
+                      }`}>
                       {ticket.priority}
                     </span>
                   </td>
                   <td className="px-6 py-5 whitespace-nowrap">
                     <div className="flex items-center gap-2">
-                      <div className={`size-2 rounded-full ${
-                        ticket.status === 'Open' ? 'bg-red-500' : 
-                        ticket.status === 'In Progress' ? 'bg-amber-500' : 'bg-emerald-500'
-                      }`} />
+                      <div className={`size-2 rounded-full ${ticket.status === 'Open' ? 'bg-red-500' :
+                          ticket.status === 'In Progress' ? 'bg-amber-500' : 'bg-emerald-500'
+                        }`} />
                       <span className="text-sm font-medium text-brand-green-700">{ticket.status}</span>
                     </div>
                   </td>
                   <td className="px-6 py-5 whitespace-nowrap text-right">
-                    <button 
-                      onClick={() => setSelectedTicket(ticket)} 
+                    <button
+                      onClick={() => setSelectedTicket(ticket)}
                       className="text-emerald-500 font-bold text-sm hover:underline decoration-2 underline-offset-4"
                     >
                       View Details
@@ -176,9 +173,9 @@ export default function SupportRequestsPage() {
       </div>
 
       {/* Ticket Modal Instance */}
-      <TicketDetailModal 
-        ticket={selectedTicket} 
-        onClose={() => setSelectedTicket(null)} 
+      <TicketDetailModal
+        ticket={selectedTicket}
+        onClose={() => setSelectedTicket(null)}
       />
     </main>
   );

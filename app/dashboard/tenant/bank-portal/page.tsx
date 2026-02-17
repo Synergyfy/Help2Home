@@ -1,10 +1,12 @@
-import React from 'react';
+'use client';
+
+import { Suspense } from "react";
+import BankPortalPageContent from '@/components/dashboard/tenant/BankPortalPageContent';
 
 export default function BankPortalPage() {
     return (
-        <div className="p-8">
-            <h1 className="text-2xl font-bold mb-4">Bank Portal</h1>
-            <p className="text-gray-600">Redirecting to bank portal...</p>
-        </div>
+        <Suspense fallback={<div className="min-h-screen" />}>
+            <BankPortalPageContent />
+        </Suspense>
     );
 }

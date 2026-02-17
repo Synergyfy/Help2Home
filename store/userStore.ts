@@ -39,12 +39,15 @@ export interface TenantProfileData {
     phone: string;
     email?: string;
   };
-  guarantor?: {
+  guarantors?: {
+    id: string;
     name: string;
     relationship: string;
     phone: string;
     email?: string;
-  };
+    notes?: string;
+    status: 'Contacted' | 'Verified' | 'Rejected';
+  }[];
   bvn?: string;
   isBvnVerified?: boolean;
   nin?: string;
@@ -230,8 +233,13 @@ export const useUserStore = create<UserState>()(
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
       resetUser: () => set({ 
        id: '', email: '', roles: [], activeRole: null, verified: false, fullName: '', phone: '',token: null,
+        onboardingCompleted: false,
+        roleOnboardingCompleted: {},
         profile: { firstName: '', lastName: '', dob: '', gender: '', maritalStatus: '', address: '', state: '', image: '/assets/dashboard/profile-placeholder.png' },
-        roleData: {}
+        roleData: {},
+        draftData: {},
+        followedListers: [],
+        wishlist: []
       }),
     }),
     {

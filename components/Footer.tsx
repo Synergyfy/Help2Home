@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Logo from '@/components/shared/Logo';
 
 export default function Footer() {
     return (
@@ -9,8 +10,13 @@ export default function Footer() {
                 <div className="flex flex-col lg:flex-row justify-between items-start gap-12 mb-16">
                     {/* Brand Column */}
                     <div className="lg:w-1/4">
-                        <Link href="/" className="text-2xl font-bold text-brand-green mb-6 block">
-                            Help2Home
+                        <Link href="/" className="mb-6 block">
+                            <Logo 
+                                width={40} 
+                                height={40} 
+                                className="brightness-0 invert" 
+                                textClassName="text-xl font-black text-white"
+                            />
                         </Link>
                         <p className="text-gray-400 text-sm mb-6 leading-relaxed">
                             Making housing accessible and stress-free for everyone in Nigeria.

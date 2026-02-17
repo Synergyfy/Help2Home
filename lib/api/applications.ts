@@ -14,11 +14,19 @@ export const fetchApplications = async (role: 'tenant' | 'landlord', id: string)
     const parsed = JSON.parse(stored);
     const allApps = parsed.state.applications as Application[];
     
+    let filtered = [];
     if (role === 'tenant') {
-      return allApps.filter(app => app.tenantId === id);
+      filtered = allApps.filter(app => app.tenantId === id);
     } else {
-      return allApps.filter(app => app.landlordId === id && app.status !== 'Draft');
+      filtered = allApps.filter(app => app.landlordId === id && app.status !== 'Draft');
     }
+
+    // Demo Fallback: If no apps for this user, show all apps (except drafts)
+    if (filtered.length === 0) {
+      return allApps.filter(app => app.status !== 'Draft');
+    }
+
+    return filtered;
   }
   
   return [];

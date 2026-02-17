@@ -8,8 +8,8 @@ import GlobalProviders from "@/components/providers/GlobalProvider";
 
 
 export const metadata: Metadata = {
-  title: "| Affordable housing for all",
-  description: "Help2Home",
+  title: "Help2Home | Affordable housing for all",
+  description: "Help2Home - Making housing accessible and stress-free for everyone in Nigeria.",
 };
 
 export default function RootLayout({

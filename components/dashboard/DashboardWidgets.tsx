@@ -285,6 +285,7 @@ export function QuickLinksGrid() {
 // --- Education Preview ---
 interface EducationPreviewProps {
     article: {
+        id: string;
         title: string;
         category: string;
         readTime: string;
@@ -302,23 +303,25 @@ export function EducationPreview({ article }: EducationPreviewProps) {
     }
 
     return (
-        <div className="bg-[#00853E] p-6 rounded-2xl shadow-sm text-white relative overflow-hidden group cursor-pointer">
-            <div className="relative z-10">
-                <div className="flex items-center justify-between mb-3">
-                    <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-white/20 text-white backdrop-blur-sm">
-                        {article.category}
-                    </span>
-                    <span className="text-xs text-white/80">{article.readTime}</span>
+        <Link href={`/dashboard/tenant/education/${article.id}`} className="block">
+            <div className="bg-[#00853E] p-6 rounded-2xl shadow-sm text-white relative overflow-hidden group cursor-pointer h-full transition-transform hover:scale-[1.02] active:scale-[0.98]">
+                <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-3">
+                        <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-white/20 text-white backdrop-blur-sm">
+                            {article.category}
+                        </span>
+                        <span className="text-xs text-white/80">{article.readTime}</span>
+                    </div>
+                    <h3 className="text-lg font-bold mb-2 group-hover:underline decoration-white/50 underline-offset-4 transition-all">{article.title}</h3>
+                    <p className="text-white/80 text-sm mb-4 line-clamp-2">Learn more about how to manage your finances and get the best out of your rental agreement.</p>
+                    <div className="bg-white text-[#00853E] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors shadow-sm inline-block">
+                        Learn more
+                    </div>
                 </div>
-                <h3 className="text-lg font-bold mb-2 group-hover:underline decoration-white/50 underline-offset-4 transition-all">{article.title}</h3>
-                <p className="text-white/80 text-sm mb-4 line-clamp-2">Learn more about how to manage your finances and get the best out of your rental agreement.</p>
-                <button className="bg-white text-[#00853E] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors shadow-sm">
-                    Learn more
-                </button>
+                {/* Decorative circles */}
+                <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 group-hover:scale-110 transition-transform duration-500"></div>
+                <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white/10 group-hover:scale-110 transition-transform duration-500 delay-75"></div>
             </div>
-            {/* Decorative circles */}
-            <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 group-hover:scale-110 transition-transform duration-500"></div>
-            <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white/10 group-hover:scale-110 transition-transform duration-500 delay-75"></div>
-        </div>
+        </Link>
     );
 }

@@ -88,6 +88,31 @@ let mockContent: EducationContent[] = [
         isSaved: false,
         content: '<p>Content placeholder...</p>',
         relatedContentIds: ['3']
+    },
+    {
+        id: '6',
+        title: 'Financial Literacy for Renters',
+        slug: 'financial-literacy-renters',
+        summary: 'Master the fundamentals of financial literacy to better manage your rent, savings, and credit score.',
+        category: 'Financial Literacy',
+        readTime: 7,
+        author: { name: 'Michael Chen', role: 'Financial Advisor' },
+        publishDate: 'Jan 12, 2026',
+        format: 'article',
+        thumbnailUrl: '',
+        isSaved: false,
+        content: `
+            <p>Financial literacy is the foundation of a stable and stress-free life as a renter. By understanding how to manage your money, you can not only pay your rent on time but also build a future where you own your own home.</p>
+            <h3>1. Budgeting Basics</h3>
+            <p>A budget is simply a plan for your money. Start by tracking your income and all your expenses. Use the 50/30/20 rule: 50% for needs, 30% for wants, and 20% for savings and debt repayment.</p>
+            <h3>2. Building Credit</h3>
+            <p>Your credit score is a crucial factor in getting approved for rent financing. Pay your bills on time, keep your credit card balances low, and avoid opening too many new accounts at once.</p>
+            <h3>3. Emergency Savings</h3>
+            <p>Life is full of surprises. Aim to save at least three to six months of living expenses in an emergency fund. This will protect you from falling behind on rent if you face an unexpected job loss or medical expense.</p>
+            <h3>4. Understanding Interest</h3>
+            <p>When you use rent financing or any other loan, you're paying interest. Understand the difference between simple and compound interest, and always read the fine print on any financial agreement.</p>
+        `,
+        relatedContentIds: ['2', '5']
     }
 ];
 

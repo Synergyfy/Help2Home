@@ -133,14 +133,16 @@ export const propertySchema = z.object({
 
   // Landlord Details (Required for Caretakers)
   landlord: z.object({
-    fullName: z.string().optional(),
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
     email: z.string().email('Invalid email address').optional().or(z.literal('')),
     phone: z.string().optional(),
   }).optional(),
 
   // Caretaker Details (Option for Landlords/Agents)
   caretaker: z.object({
-    fullName: z.string().optional(),
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
     email: z.string().email('Invalid email address').optional().or(z.literal('')),
     phone: z.string().optional(),
   }).optional(),
@@ -150,11 +152,18 @@ export const propertySchema = z.object({
 }).superRefine((data, ctx) => {
   // Caretaker: Landlord details are required
   if (data.posterRole === 'caretaker') {
-    if (!data.landlord?.fullName || data.landlord.fullName.trim().length < 3) {
+    if (!data.landlord?.firstName || data.landlord.firstName.trim().length < 2) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Landlord's full name is required for caretaker listings",
-        path: ["landlord", "fullName"]
+        message: "Landlord's first name is required for caretaker listings",
+        path: ["landlord", "firstName"]
+      });
+    }
+    if (!data.landlord?.lastName || data.landlord.lastName.trim().length < 2) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Landlord's last name is required for caretaker listings",
+        path: ["landlord", "lastName"]
       });
     }
     if (!data.landlord?.email || data.landlord.email.trim().length === 0) {

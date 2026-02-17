@@ -1,8 +1,7 @@
 // components/dashboard/admin/shared/StatTile.tsx
 'use client';
 
-import { IconType } from 'react-icons';
-import { HiOutlineUsers, HiOutlineTrendingUp, HiOutlineClock, HiOutlineBan } from 'react-icons/hi';
+import { HiOutlineUsers, HiOutlineTrendingUp, HiOutlineClockOriginal as HiOutlineClock, HiOutlineBan } from '@/components/shared/Icons';
 
 export interface StatTileProps {
   id: string;
@@ -13,7 +12,7 @@ export interface StatTileProps {
   trendValue?: string;
 }
 
-const iconMap: Record<string, IconType> = {
+const iconMap: Record<string, React.ComponentType<any>> = {
   'total': HiOutlineUsers,
   'new': HiOutlineTrendingUp,
   'pending': HiOutlineClock,

@@ -95,7 +95,7 @@ export default function ContractList({ onSelect }: ContractListProps) {
                                     <div className="flex -space-x-2 overflow-hidden">
                                         {contract.signers.map((signer) => (
                                             <div key={signer.id} className="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600" title={`${signer.name} (${signer.status})`}>
-                                                {signer.name[0]}
+                                                {signer.name?.[0] || '?'}
                                             </div>
                                         ))}
                                     </div>

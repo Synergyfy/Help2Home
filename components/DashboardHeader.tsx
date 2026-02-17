@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify'
 import { usePathname } from 'next/navigation';
 import { useUserStore, Role } from '@/store/userStore';
+import { useOnboardingStore } from '@/store/onboardingStore';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import RoleSwitchModal from '@/components/dashboard/shared/RoleSwitchModal';
 
@@ -37,6 +38,7 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
 
     const handleLogout = () => {
         resetUser();
+        useOnboardingStore.getState().resetOnboarding();
         setIsProfileOpen(false);
         toast.success('Logged out successfully');
         router.replace('/signin');

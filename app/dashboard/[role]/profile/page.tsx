@@ -5,7 +5,9 @@ import { useUserStore } from '@/store/userStore';
 import { useNotificationStore } from '@/store/notificationStore';
 import ProfileOnboardingView from '@/components/dashboard/profile/ProfileOnboardingView';
 import SecurityVerification from '@/components/dashboard/profile/SecurityVerification';
-import { HiOutlineUser, HiOutlinePencilSquare, HiOutlineMapPin, HiOutlinePhone, HiOutlineEnvelope, HiOutlinePhoto } from 'react-icons/hi2';
+import { HiOutlineUser, HiOutlinePencilSquare, HiOutlineMapPin, HiOutlinePhone, HiOutlineEnvelope, HiOutlinePhoto, HiOutlineCheckCircle } from '@/components/shared/Icons';
+
+
 import FadeIn from '@/components/FadeIn';
 import { toast } from 'react-toastify';
 
@@ -60,6 +62,7 @@ export default function UnifiedProfilePage() {
                                     <h1 className="text-3xl font-black text-gray-900 tracking-tight">
                                         {profile.firstName} {profile.lastName}
                                     </h1>
+
                                     <span className="px-3 py-1 bg-brand-green/10 text-brand-green text-[10px] font-black uppercase tracking-widest rounded-lg border border-brand-green/20 w-fit mx-auto md:mx-0">
                                         {activeRole}
                                     </span>
@@ -165,18 +168,10 @@ function ProfileInput({ label, value, disabled, onChange }: { label: string, val
                 disabled={disabled}
                 onChange={(e) => onChange(e.target.value)}
                 className={`w-full h-12 px-5 rounded-2xl border-2 transition-all font-bold ${disabled
-                        ? 'bg-gray-50 border-transparent text-gray-500'
-                        : 'bg-white border-gray-100 focus:border-brand-green text-gray-900 outline-none shadow-sm'
+                    ? 'bg-gray-50 border-transparent text-gray-500'
+                    : 'bg-white border-gray-100 focus:border-brand-green text-gray-900 outline-none shadow-sm'
                     }`}
             />
         </div>
     );
-}
-
-function HiOutlineCheckCircle({ size }: { size: number }) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className={`size-${size / 4}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-        </svg>
-    )
 }

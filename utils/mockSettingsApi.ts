@@ -15,10 +15,10 @@ let mockSecurity: SecuritySettings = {
 };
 
 let mockPreferences: NotificationPreference[] = [
-    { type: 'payment_due', channels: { email: true, sms: true, push: true } },
+    { type: 'payment_due', channels: { email: true, sms: false, push: true } },
     { type: 'payment_confirmation', channels: { email: true, sms: false, push: true } },
-    { type: 'application_status', channels: { email: true, sms: true, push: true } },
-    { type: 'contract_action', channels: { email: true, sms: true, push: true } },
+    { type: 'application_status', channels: { email: true, sms: false, push: true } },
+    { type: 'contract_action', channels: { email: true, sms: false, push: true } },
     { type: 'message', channels: { email: true, sms: false, push: true } },
     { type: 'marketing', channels: { email: false, sms: false, push: false } }
 ];
