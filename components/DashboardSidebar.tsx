@@ -52,6 +52,7 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
         { label: 'Listings', href: '/dashboard/admin/listing', icon: GoChecklist },
         { label: 'Audit Logs', href: '/dashboard/admin/audit', icon: MdHistory },
         { label: 'Support Tickets', href: '/dashboard/admin/support', icon: MdSupportAgent },
+        { label: 'Settings', href: '/dashboard/admin/settings', icon: MdSettings },
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
     ],
     tenant: [

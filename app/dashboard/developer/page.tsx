@@ -1,10 +1,12 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { DashboardWidgets } from '@/components/dashboard/developer/DashboardWidgets';
 import { MdAdd, MdArrowForward } from 'react-icons/md';
 
 export default function DeveloperDashboardPage() {
+
     return (
         <div className="h-full py-6 px-2 md:px-0">
             <div className="mb-8">
@@ -49,10 +51,12 @@ export default function DeveloperDashboardPage() {
                         <div className="relative z-10">
                             <h2 className="text-lg font-bold mb-2">Create New Project</h2>
                             <p className="text-white/70 text-sm mb-6">Launch a new development project and start attracting investors.</p>
-                            <button className="w-full py-3 bg-brand-green hover:bg-green-500 text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2">
-                                <MdAdd size={20} />
-                                Start Project
-                            </button>
+                            <Link href="/dashboard/developer/projects" className="w-full">
+                                <button className="w-full py-3 bg-brand-green hover:bg-green-500 text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2">
+                                    <MdAdd size={20} />
+                                    Start Project
+                                </button>
+                            </Link>
                         </div>
                         {/* Abstract Background Shapes */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
@@ -72,6 +76,8 @@ export default function DeveloperDashboardPage() {
                     </div>
                 </div>
             </div>
+
+
         </div>
     );
 }
