@@ -62,6 +62,10 @@ interface AdminState {
   flagProperty: (id: string) => void;
   
   addAuditLog: (log: Omit<AuditLog, 'id' | 'timestamp'>) => void;
+  addUser: (user: PlatformUser) => void;
+  updateUserStatus: (id: string, status: 'Active' | 'Pending' | 'Suspended') => void;
+  deleteUser: (id: string) => void;
+  updateUser: (user: PlatformUser) => void;
 }
 
 export const useAdminStore = create<AdminState>()(
@@ -152,6 +156,18 @@ export const useAdminStore = create<AdminState>()(
           id: `log_${Date.now()}`,
           timestamp: new Date().toLocaleString()
         }, ...state.auditLogs]
+      })),
+      addUser: (user) => set((state) => ({
+        users: [...state.users, user]
+      })),
+      updateUserStatus: (id, status) => set((state) => ({
+        users: state.users.map(u => u.id === id ? { ...u, status } : u)
+      })),
+      deleteUser: (id) => set((state) => ({
+        users: state.users.filter(u => u.id !== id)
+      })),
+      updateUser: (updatedUser) => set((state) => ({
+        users: state.users.map(u => u.id === updatedUser.id ? updatedUser : u)
       }))
     }),
     {

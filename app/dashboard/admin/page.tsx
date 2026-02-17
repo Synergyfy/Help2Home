@@ -1,4 +1,8 @@
 // app/dashboard/admin/overview/page.tsx
+"use client";
+
+import { useState } from 'react';
+import Link from 'next/link';
 import StatCard from '@/components/dashboard/admin/shared/StatCard';
 import ModerationQueue from '@/components/dashboard/admin/shared/ModerationQueue';
 import RecentUsersTable from '@/components/dashboard/admin/shared/RecentUsersTable';
@@ -13,6 +17,76 @@ import {
 } from '@/components/shared/Icons';
 
 export default function AdminOverview() {
+  const [selectedRange, setSelectedRange] = useState('7D');
+  const [stats, setStats] = useState({
+    totalUsers: '12,450',
+    totalUsersTrend: '+12%',
+    activeListings: '854',
+    activeListingsTrend: '+3.2%',
+    pendingApps: '42',
+    pendingAppsTrend: 'Action Required',
+    ytdRevenue: '₦4.2M',
+    ytdRevenueTrend: '+15%',
+  });
+
+  const handleRangeChange = (range: string) => {
+    setSelectedRange(range);
+    // In a real application, you would fetch new data here based on the selected range
+    // For now, let's simulate a change in stats
+    switch (range) {
+      case '7D':
+        setStats({
+          totalUsers: '12,450',
+          totalUsersTrend: '+12%',
+          activeListings: '854',
+          activeListingsTrend: '+3.2%',
+          pendingApps: '42',
+          pendingAppsTrend: 'Action Required',
+          ytdRevenue: '₦4.2M',
+          ytdRevenueTrend: '+15%',
+        });
+        break;
+      case '30D':
+        setStats({
+          totalUsers: '50,123',
+          totalUsersTrend: '+8%',
+          activeListings: '1200',
+          activeListingsTrend: '+5%',
+          pendingApps: '60',
+          pendingAppsTrend: 'Action Required',
+          ytdRevenue: '₦15.5M',
+          ytdRevenueTrend: '+10%',
+        });
+        break;
+      case '3M':
+        setStats({
+          totalUsers: '150,000',
+          totalUsersTrend: '+25%',
+          activeListings: '3500',
+          activeListingsTrend: '+10%',
+          pendingApps: '100',
+          pendingAppsTrend: 'Review Needed',
+          ytdRevenue: '₦45M',
+          ytdRevenueTrend: '+20%',
+        });
+        break;
+      case 'YTD':
+        setStats({
+          totalUsers: '200,000',
+          totalUsersTrend: '+30%',
+          activeListings: '5000',
+          activeListingsTrend: '+12%',
+          pendingApps: '150',
+          pendingAppsTrend: 'High Priority',
+          ytdRevenue: '₦60M',
+          ytdRevenueTrend: '+25%',
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <main className="flex-1 py-8 px-4 lg:px-8 w-full max-w-[1600px] mx-auto bg-[#f9fafb]">
 
@@ -25,8 +99,12 @@ export default function AdminOverview() {
 
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex bg-white rounded-lg border border-brand-green-200 p-1 shadow-sm">
-            {['7D', '30D', '3M', 'YTD'].map((range, i) => (
-              <button key={range} className={`px-3 py-1.5 rounded text-xs font-bold transition-colors ${i === 0 ? 'bg-brand-green-100 text-brand-green-900' : 'hover:bg-brand-green-50 text-brand-green-600'}`}>
+            {['7D', '30D', '3M', 'YTD'].map((range) => (
+              <button
+                key={range}
+                onClick={() => handleRangeChange(range)}
+                className={`px-3 py-1.5 rounded text-xs font-bold transition-colors ${selectedRange === range ? 'bg-brand-green-100 text-brand-green-900' : 'hover:bg-brand-green-50 text-brand-green-600'}`}
+              >
                 {range}
               </button>
             ))}
@@ -39,10 +117,10 @@ export default function AdminOverview() {
 
       {/* 4-Column Stats Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
-        <StatCard label="Total Users" value="12,450" trend="+12%" type="users" />
-        <StatCard label="Active Listings" value="854" trend="+3.2%" type="listings" />
-        <StatCard label="Pending Apps" value="42" trend="Action Required" type="pending" requiresAction />
-        <StatCard label="YTD Revenue" value="₦4.2M" trend="+15%" type="revenue" />
+        <StatCard label="Total Users" value={stats.totalUsers} trend={stats.totalUsersTrend} type="users" />
+        <StatCard label="Active Listings" value={stats.activeListings} trend={stats.activeListingsTrend} type="listings" />
+        <StatCard label="Pending Apps" value={stats.pendingApps} trend={stats.pendingAppsTrend} type="pending" requiresAction />
+        <StatCard label="YTD Revenue" value={stats.ytdRevenue} trend={stats.ytdRevenueTrend} type="revenue" />
       </div>
 
       {/* Main Grid Layout */}
@@ -65,10 +143,16 @@ export default function AdminOverview() {
               Quick Actions
             </h3>
             <div className="grid grid-cols-2 gap-4">
-              <ActionButton icon={HiOutlinePlus} label="Add User" color="text-blue-600 bg-blue-50" />
-              <ActionButton icon={HiOutlineHome} label="New Listing" color="text-emerald-600 bg-emerald-50" />
-              <ActionButton icon={HiOutlineReceiptTax} label="Refunds" color="text-purple-600 bg-purple-50" />
-              <ActionButton icon={HiOutlineCog} label="Settings" color="text-brand-green-600 bg-brand-green-50" />
+              <Link href="/dashboard/admin/users">
+                <ActionButton icon={HiOutlinePlus} label="Add User" color="text-blue-600 bg-blue-50" />
+              </Link>
+              <Link href="/dashboard/admin/listing">
+                <ActionButton icon={HiOutlineHome} label="New Listing" color="text-emerald-600 bg-emerald-50" />
+              </Link>
+
+              <Link href="/dashboard/admin/settings">
+                <ActionButton icon={HiOutlineCog} label="Settings" color="text-brand-green-600 bg-brand-green-50" />
+              </Link>
             </div>
           </section>
 

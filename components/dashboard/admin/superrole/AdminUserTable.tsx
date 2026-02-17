@@ -1,8 +1,10 @@
 'use client'
 
-import React from 'react';
-import { PlatformUser } from '@/store/adminStore';
-import { FiMoreVertical, FiUser, FiMail, FiCalendar, FiShield } from 'react-icons/fi';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { PlatformUser, useAdminStore } from '@/store/adminStore';
+import { FiMoreVertical, FiUser, FiMail, FiCalendar, FiEye, FiEdit, FiTrash2, FiToggleRight, FiToggleLeft } from 'react-icons/fi';
 
 interface AdminUserTableProps {
     users: PlatformUser[];
@@ -10,6 +12,39 @@ interface AdminUserTableProps {
 }
 
 export default function AdminUserTable({ users, title }: AdminUserTableProps) {
+    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+    const router = useRouter();
+    const { updateUserStatus, deleteUser } = useAdminStore();
+
+    const handleMenuToggle = (id: string) => {
+        setOpenMenuId(openMenuId === id ? null : id);
+    };
+
+    const handleViewUser = (id: string) => {
+        router.push(`/dashboard/admin/users/profile/${id}`);
+        setOpenMenuId(null);
+    };
+
+    const handleEditUser = (id: string) => {
+        router.push(`/dashboard/admin/users/edit/${id}`);
+        setOpenMenuId(null);
+    };
+
+    const handleToggleStatus = (user: PlatformUser) => {
+        const newStatus = user.status === 'Active' ? 'Suspended' : 'Active';
+        updateUserStatus(user.id, newStatus);
+        setOpenMenuId(null);
+        alert(`User ${user.name} status changed to ${newStatus}`);
+    };
+
+    const handleDeleteUser = (id: string, name: string) => {
+        if (confirm(`Are you sure you want to delete user ${name}? This action cannot be undone.`)) {
+            deleteUser(id);
+            setOpenMenuId(null);
+            alert(`User ${name} deleted.`);
+        }
+    };
+
     if (users.length === 0) {
         return (
             <div className="bg-white rounded-2xl border border-brand-green-200 p-12 text-center shadow-sm">
@@ -75,10 +110,42 @@ export default function AdminUserTable({ users, title }: AdminUserTableProps) {
                                         {user.joinedAt}
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 text-right">
-                                    <button className="p-2 text-brand-green-400 hover:text-brand-green-900 hover:bg-brand-green-100 rounded-lg transition-all">
+                                <td className="px-6 py-4 text-right relative">
+                                    <button 
+                                        onClick={() => handleMenuToggle(user.id)}
+                                        className="p-2 text-brand-green-400 hover:text-brand-green-900 hover:bg-brand-green-100 rounded-lg transition-all"
+                                    >
                                         <FiMoreVertical size={18} />
                                     </button>
+                                    {openMenuId === user.id && (
+                                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-1000">
+                                            <button 
+                                                onClick={() => handleViewUser(user.id)}
+                                                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                            >
+                                                <FiEye size={16} /> View User
+                                            </button>
+                                            <button 
+                                                onClick={() => handleEditUser(user.id)}
+                                                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                            >
+                                                <FiEdit size={16} /> Edit User
+                                            </button>
+                                            <button 
+                                                onClick={() => handleToggleStatus(user)}
+                                                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                            >
+                                                {user.status === 'Active' ? <FiToggleLeft size={16} /> : <FiToggleRight size={16} />} 
+                                                {user.status === 'Active' ? 'Suspend User' : 'Activate User'}
+                                            </button>
+                                            <button 
+                                                onClick={() => handleDeleteUser(user.id, user.name)}
+                                                className="flex items-center gap-2 px-4 py-2 text-sm text-red-700 hover:bg-red-100 w-full text-left"
+                                            >
+                                                <FiTrash2 size={16} /> Delete User
+                                            </button>
+                                        </div>
+                                    )}
                                 </td>
                             </tr>
                         ))}

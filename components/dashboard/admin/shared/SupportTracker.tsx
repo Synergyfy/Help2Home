@@ -1,6 +1,7 @@
 // components/dashboard/admin/shared/SupportTracker.tsx
 'use client';
 
+import Link from 'next/link';
 import { HiOutlineTicket } from 'react-icons/hi';
 
 const TICKETS = [
@@ -18,20 +19,22 @@ export default function SupportTracker() {
       </div>
       <div className="divide-y divide-brand-green-50">
         {TICKETS.map((ticket) => (
-          <div key={ticket.id} className="p-4 hover:bg-brand-green-50 cursor-pointer transition-colors group">
-            <div className="flex justify-between items-start mb-1">
-              <p className="text-sm font-bold text-brand-green-900">Ticket #{ticket.id}</p>
-              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${ticket.statusColor}`}>
-                {ticket.priority}
-              </span>
+          <Link key={ticket.id} href={`/dashboard/admin/support/${ticket.id}`}>
+            <div className="p-4 hover:bg-brand-green-50 cursor-pointer transition-colors group">
+              <div className="flex justify-between items-start mb-1">
+                <p className="text-sm font-bold text-brand-green-900">Ticket #{ticket.id}</p>
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${ticket.statusColor}`}>
+                  {ticket.priority}
+                </span>
+              </div>
+              <p className="text-xs text-brand-green-500 line-clamp-1 group-hover:text-brand-green-700">{ticket.title}</p>
             </div>
-            <p className="text-xs text-brand-green-500 line-clamp-1 group-hover:text-brand-green-700">{ticket.title}</p>
-          </div>
+          </Link>
         ))}
       </div>
-      <button className="w-full py-3 bg-brand-green-50 text-xs font-bold text-brand-green hover:bg-brand-green/5 transition-colors">
+      <Link href="/dashboard/admin/support" className="w-full py-3 bg-brand-green-50 text-xs font-bold text-brand-green hover:bg-brand-green/5 transition-colors block text-center">
         View All Tickets
-      </button>
+      </Link>
     </div>
   );
 }
