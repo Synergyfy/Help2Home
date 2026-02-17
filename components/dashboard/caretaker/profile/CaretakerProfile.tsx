@@ -7,15 +7,20 @@ import VerificationTab from '@/components/dashboard/landlord/profile/Verificatio
 import PrivacySecurityTab from '@/components/dashboard/landlord/profile/PrivacySecurityTab';
 import { MOCK_DOCUMENTS } from '@/lib/mockLandlordData'; // Reusing for now
 import ProfileSummaryCard from '@/components/dashboard/landlord/profile/ProfileSummaryCard';
+import {
+    IoPersonOutline,
+    IoDocumentTextOutline,
+    IoShieldCheckmarkOutline,
+} from 'react-icons/io5';
 
 export default function CaretakerProfile() {
     const [activeTab, setActiveTab] = useState<'info' | 'verification' | 'security'>('info');
     const { data, isLoading } = useProfile('caretaker');
 
     const tabs = [
-        { id: 'info', label: 'Caretaker Details' },
-        { id: 'verification', label: 'ID & Verification' },
-        { id: 'security', label: 'Privacy & Security' },
+        { id: 'info', label: 'Caretaker Details', icon: IoPersonOutline },
+        { id: 'verification', label: 'ID & Verification', icon: IoDocumentTextOutline },
+        { id: 'security', label: 'Privacy & Security', icon: IoShieldCheckmarkOutline },
     ];
 
     if (isLoading) {
@@ -31,8 +36,8 @@ export default function CaretakerProfile() {
     return (
         <div className="min-h-screen bg-gray-50/50 pb-12">
             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-900">Caretaker Profile</h1>
-                <p className="text-gray-500 text-sm">Manage your skills, services, and profile visibility.</p>
+                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Caretaker Profile</h1>
+                <p className="text-gray-500 text-sm font-medium italic">Manage your skills, services, and profile visibility.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -44,16 +49,17 @@ export default function CaretakerProfile() {
                 {/* Right Column */}
                 <div className="lg:col-span-2">
                     {/* Tabs Navigation */}
-                    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-1 mb-6 flex overflow-x-auto">
+                    <div className="flex border-b border-gray-100 mb-8 overflow-x-auto no-scrollbar pb-1">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
-                                className={`flex-1 py-2.5 px-4 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${activeTab === tab.id
-                                    ? 'bg-brand-green text-white shadow-sm'
-                                    : 'text-gray-600 hover:bg-gray-50'
+                                className={`flex items-center gap-2.5 px-6 py-4 text-sm font-black border-b-4 transition-all whitespace-nowrap group ${activeTab === tab.id
+                                    ? 'border-brand-green text-brand-green bg-green-50/30'
+                                    : 'border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50/50'
                                     }`}
                             >
+                                <tab.icon size={18} className={activeTab === tab.id ? 'text-brand-green' : 'text-gray-300 group-hover:text-gray-400'} />
                                 {tab.label}
                             </button>
                         ))}

@@ -7,8 +7,9 @@ import {
     HiOutlineXMark,
     HiOutlineClipboardDocument,
     HiOutlineEnvelope,
-    HiOutlineCheckCircle
-} from 'react-icons/hi2';
+    HiOutlineCheckCircle,
+    HiOutlineUserPlus
+} from './Icons';
 import { FaWhatsapp } from 'react-icons/fa';
 
 interface InvitePartnerModalProps {
@@ -21,16 +22,17 @@ interface User {
     id: string;
     name: string;
     email: string;
+    phone: string;
     role: string;
     avatar?: string;
 }
 
 const MOCK_USERS: User[] = [
-    { id: '1', name: 'John Doe', email: 'john@example.com', role: 'Agent' },
-    { id: '2', name: 'Jane Smith', email: 'jane@example.com', role: 'Caretaker' },
-    { id: '3', name: 'Mike Johnson', email: 'mike@example.com', role: 'Landlord' },
-    { id: '4', name: 'Sarah Williams', email: 'sarah@example.com', role: 'Agent' },
-    { id: '5', name: 'David Brown', email: 'david@example.com', role: 'Caretaker' },
+    { id: '1', name: 'John Doe', email: 'john@example.com', phone: '+234 801 234 5678', role: 'Agent' },
+    { id: '2', name: 'Jane Smith', email: 'jane@example.com', phone: '+234 802 345 6789', role: 'Caretaker' },
+    { id: '3', name: 'Mike Johnson', email: 'mike@example.com', phone: '+234 803 456 7890', role: 'Landlord' },
+    { id: '4', name: 'Sarah Williams', email: 'sarah@example.com', phone: '+234 804 567 8901', role: 'Agent' },
+    { id: '5', name: 'David Brown', email: 'david@example.com', phone: '+234 805 678 9012', role: 'Caretaker' },
 ];
 
 export default function InvitePartnerModal({ isOpen, onClose, currentRole }: InvitePartnerModalProps) {
@@ -73,7 +75,8 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
 
     const filteredUsers = MOCK_USERS.filter(user =>
         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchQuery.toLowerCase())
+        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.phone.includes(searchQuery)
     );
 
     return (
@@ -98,8 +101,8 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                     <button
                         onClick={() => setActiveTab('link')}
                         className={`flex items-center gap-2 px-6 py-4 font-bold text-sm transition-all border-b-2 ${activeTab === 'link'
-                                ? 'border-brand-green text-brand-green'
-                                : 'border-transparent text-gray-400 hover:text-gray-600'
+                            ? 'border-brand-green text-brand-green'
+                            : 'border-transparent text-gray-400 hover:text-gray-600'
                             }`}
                     >
                         <HiOutlineLink size={20} />
@@ -108,8 +111,8 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                     <button
                         onClick={() => setActiveTab('search')}
                         className={`flex items-center gap-2 px-6 py-4 font-bold text-sm transition-all border-b-2 ${activeTab === 'search'
-                                ? 'border-brand-green text-brand-green'
-                                : 'border-transparent text-gray-400 hover:text-gray-600'
+                            ? 'border-brand-green text-brand-green'
+                            : 'border-transparent text-gray-400 hover:text-gray-600'
                             }`}
                     >
                         <HiOutlineMagnifyingGlass size={20} />
@@ -193,7 +196,7 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                                         type="text"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        placeholder="Search by name or email..."
+                                        placeholder="Search by name, number or email..."
                                         className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:border-brand-green outline-none transition-all"
                                     />
                                 </div>
@@ -212,11 +215,11 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                                                 </div>
                                                 <div>
                                                     <h4 className="font-bold text-gray-900">{user.name}</h4>
-                                                    <p className="text-sm text-gray-500">{user.email}</p>
+                                                    <p className="text-xs text-gray-500">{user.email} • {user.phone}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-3">
-                                                <span className="text-xs font-black px-3 py-1 rounded-full bg-blue-50 text-blue-600 uppercase tracking-widest">
+                                                <span className="text-[10px] font-black px-3 py-1 rounded-full bg-blue-50 text-blue-600 uppercase tracking-widest">
                                                     {user.role}
                                                 </span>
                                                 {invitedUsers.has(user.id) ? (

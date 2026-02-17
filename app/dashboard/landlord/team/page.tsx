@@ -1,64 +1,30 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import InvitePartnerModal from '@/components/shared/InvitePartnerModal';
+import { MOCK_PARTNERS, Partner } from '@/lib/mockPartnerData';
+import { toast } from 'react-toastify';
 import {
     HiOutlineUserGroup,
     HiOutlinePlus,
     HiOutlineEnvelope,
     HiOutlinePhone,
     HiOutlineCheckCircle,
-    HiOutlineClock
+    HiOutlineClock,
+    HiOutlineChatBubbleLeftRight
 } from 'react-icons/hi2';
 
-interface Partner {
-    id: string;
-    name: string;
-    role: 'Agent' | 'Caretaker';
-    email: string;
-    phone: string;
-    properties: number;
-    status: 'Active' | 'Pending' | 'Inactive';
-    joinedDate: string;
-}
-
-const MOCK_PARTNERS: Partner[] = [
-    {
-        id: '1',
-        name: 'Ngozi Okafor',
-        role: 'Agent',
-        email: 'ngozi@example.com',
-        phone: '+234 801 234 5678',
-        properties: 3,
-        status: 'Active',
-        joinedDate: '2025-09-10'
-    },
-    {
-        id: '2',
-        name: 'Yusuf Ibrahim',
-        role: 'Caretaker',
-        email: 'yusuf@example.com',
-        phone: '+234 802 345 6789',
-        properties: 5,
-        status: 'Active',
-        joinedDate: '2025-10-22'
-    },
-    {
-        id: '3',
-        name: 'Grace Adeola',
-        role: 'Agent',
-        email: 'grace@example.com',
-        phone: '+234 803 456 7890',
-        properties: 2,
-        status: 'Pending',
-        joinedDate: '2026-01-08'
-    }
-];
-
 export default function TeamPage() {
+    const router = useRouter();
     const [partners] = useState<Partner[]>(MOCK_PARTNERS);
     const [filter, setFilter] = useState<'All' | 'Agent' | 'Caretaker'>('All');
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
+    const handleMessagePartner = (partner: Partner) => {
+        toast.info(`Opening conversation with ${partner.name}...`);
+        router.push(`/dashboard/landlord/support/inbox?tenantId=${partner.email}`);
+    };
 
     const filteredPartners = filter === 'All'
         ? partners
@@ -175,8 +141,12 @@ export default function TeamPage() {
                                         </div>
 
                                         <div className="flex gap-2">
-                                            <button className="p-2.5 bg-brand-green text-white rounded-xl hover:bg-green-700 transition-colors">
-                                                <HiOutlineEnvelope size={18} />
+                                            <button 
+                                                onClick={() => handleMessagePartner(partner)}
+                                                className="p-2.5 bg-brand-green text-white rounded-xl hover:bg-green-700 transition-colors shadow-sm active:scale-95"
+                                                title={`Message ${partner.name}`}
+                                            >
+                                                <HiOutlineChatBubbleLeftRight size={18} />
                                             </button>
                                             <button className="p-2.5 border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors">
                                                 <HiOutlinePhone size={18} />

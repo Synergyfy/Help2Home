@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Logo from '@/components/shared/Logo';
 
 export default function Header() {
     const router = useRouter();
@@ -43,7 +44,7 @@ export default function Header() {
             <div className="container mx-auto flex items-center justify-between px-6 md:px-12 py-4">
                 {/* Logo */}
                 <Link href="/" className="flex items-center">
-                    <span className="text-2xl font-bold text-brand-green">Help2Home</span>
+                    <Logo width={40} height={40} textClassName="text-xl font-black text-brand-green" />
                 </Link>
 
                 {/* Desktop Nav */}

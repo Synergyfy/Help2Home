@@ -35,7 +35,7 @@ export interface Guarantor {
 
 export interface DocumentItem {
     id: string;
-    type: 'NIN' | 'BVN' | 'Government ID' | 'Payslip' | 'Proof of Address';
+    type: 'NIN' | 'BVN' | 'Government ID' | 'Bank Statement' | 'Proof of Address';
     name: string;
     status: 'Pending' | 'In Review' | 'Verified' | 'Rejected';
     fileUrl?: string;

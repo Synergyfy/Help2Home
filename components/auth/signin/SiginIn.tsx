@@ -11,6 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuth } from '@/hooks/useAuth';
 import AuthHero from '@/components/auth/AuthHero';
+import Logo from '@/components/shared/Logo';
 
 const signInSchema = z.object({
     email: z.string().email('Valid email required'),
@@ -54,10 +55,8 @@ export default function SignInPage() {
 
             <div className="flex-1 flex flex-col justify-center px-8 md:px-16 lg:px-24 py-12 bg-white">
                 <div className="max-w-md w-full mx-auto">
-                    <div className="mb-10">
-                        <div className="w-12 h-12 bg-gray-900 rounded-xl mb-6 flex items-center justify-center text-white font-bold shadow-lg shadow-gray-200">
-                            H2H
-                        </div>
+                    <div className="mb-10 flex flex-col items-start">
+                        <Logo width={40} height={40} textClassName="text-2xl font-black text-brand-green" className="mb-6" />
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign in to account</h1>
                         <p className="text-gray-500">Welcome back! Please enter your details.</p>
                     </div>

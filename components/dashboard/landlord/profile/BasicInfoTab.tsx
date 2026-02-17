@@ -116,7 +116,10 @@ export default function BasicInfoTab({ profile: initialProfile }: { profile: Pro
                 </div>
 
                 <div className="col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Business / Agency Name</label>
+                    <div className="flex items-center gap-2 mb-1">
+                        <label className="block text-sm font-medium text-gray-700">Business / Agency Name</label>
+                        <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-md uppercase tracking-wider">(Optional)</span>
+                    </div>
                     <input
                         type="text"
                         {...register('businessName')}

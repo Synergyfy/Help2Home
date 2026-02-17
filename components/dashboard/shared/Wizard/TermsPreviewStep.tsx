@@ -12,15 +12,33 @@ import {
     HiOutlineCheckBadge,
     HiOutlineExclamationTriangle
 } from 'react-icons/hi2';
+import { toast } from 'react-toastify';
 
 interface TermsPreviewStepProps {
     role?: 'landlord' | 'agent' | 'caretaker' | 'developer';
     onEditStep?: (step: number) => void;
+    navigation?: {
+        onNext: () => void;
+        onBack: () => void;
+        isPending: boolean;
+        isFirstStep: boolean;
+        isLastStep: boolean;
+        submitLabel: string;
+    };
 }
 
-export default function TermsPreviewStep({ role, onEditStep }: TermsPreviewStepProps = {}) {
+export default function TermsPreviewStep({ role, onEditStep, navigation }: TermsPreviewStepProps = {}) {
     const { watch, register } = useFormContext<PropertySchema>();
     const data = watch();
+    const [isConfirmed, setIsConfirmed] = React.useState(false);
+
+    const handlePublishClick = () => {
+        if (!isConfirmed) {
+            toast.error('Please confirm that you agree to the terms before publishing.');
+            return;
+        }
+        navigation?.onNext();
+    };
 
     const sectionClasses = "bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm mb-6";
     const headerClasses = "border-b border-gray-100 p-4 bg-gray-50/50 flex justify-between items-center";
@@ -85,7 +103,7 @@ export default function TermsPreviewStep({ role, onEditStep }: TermsPreviewStepP
                         </div>
                         <button
                             type="button"
-                            onClick={() => onEditStep?.(3)}
+                            onClick={() => onEditStep?.(2)}
                             className="text-brand-green text-sm font-bold hover:underline"
                         >
                             Edit
@@ -127,11 +145,15 @@ export default function TermsPreviewStep({ role, onEditStep }: TermsPreviewStepP
                     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
                         <div>
                             <p className={labelClasses}>Landlord Name</p>
-                            <p className={valueClasses}>{data.landlord?.fullName || 'Self'}</p>
+                            <p className={valueClasses}>
+                                {data.landlord?.firstName ? `${data.landlord.firstName} ${data.landlord.lastName}` : 'Self'}
+                            </p>
                         </div>
                         <div>
                             <p className={labelClasses}>Landlord Contact</p>
-                            <p className={valueClasses}>{data.landlord?.email || 'N/A'}</p>
+                            <p className={valueClasses}>
+                                {data.landlord?.email || 'N/A'} {data.landlord?.phone ? `(${data.landlord.phone})` : ''}
+                            </p>
                         </div>
                         <div className="md:col-span-2">
                             <p className={labelClasses}>Listing Authority</p>
@@ -177,7 +199,7 @@ export default function TermsPreviewStep({ role, onEditStep }: TermsPreviewStepP
                         <p className="text-sm font-bold text-blue-900 mb-1">Verification Process</p>
                         <p className="text-xs text-blue-700/80 leading-relaxed font-medium">
                             Upon submission, an automated verification request will be sent to the Landlord
-                            {data.landlord?.fullName ? ` (${data.landlord.fullName})` : ''}.
+                            {data.landlord?.firstName || data.landlord?.lastName ? ` (${[data.landlord?.firstName, data.landlord?.lastName].filter(Boolean).join(' ')})` : ''}.
                             The listing will remain in "Pending" status until they confirm your authorization.
                         </p>
                     </div>
@@ -188,7 +210,8 @@ export default function TermsPreviewStep({ role, onEditStep }: TermsPreviewStepP
                     <label className="flex items-start gap-4 cursor-pointer max-w-2xl group">
                         <input
                             type="checkbox"
-                            required
+                            checked={isConfirmed}
+                            onChange={(e) => setIsConfirmed(e.target.checked)}
                             className="size-5 mt-1 rounded border-gray-300 text-brand-green focus:ring-brand-green bg-white transition-all cursor-pointer"
                         />
                         <span className="text-sm text-gray-500 font-medium leading-relaxed group-hover:text-gray-700">
@@ -196,6 +219,36 @@ export default function TermsPreviewStep({ role, onEditStep }: TermsPreviewStepP
                             on behalf of the owner. I agree to the <a href="#" className="text-brand-green font-bold hover:underline">Terms of Service</a>.
                         </span>
                     </label>
+
+                    {/* IN-PAGE NAVIGATION BUTTONS */}
+                    {navigation && (
+                        <div className="w-full flex items-center justify-between pt-8 border-t border-gray-100 mt-8">
+                            <button
+                                type="button"
+                                onClick={navigation.onBack}
+                                disabled={navigation.isFirstStep}
+                                className={`px-8 py-4 rounded-2xl font-black text-sm transition-all active:scale-95 ${
+                                    navigation.isFirstStep 
+                                    ? 'opacity-0 pointer-events-none' 
+                                    : 'text-gray-400 hover:text-gray-900 bg-gray-50 hover:bg-gray-100'
+                                }`}
+                            >
+                                Back
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handlePublishClick}
+                                disabled={navigation.isPending}
+                                className="px-12 py-4 bg-brand-green text-white rounded-2xl font-black text-sm hover:bg-green-700 transition-all shadow-xl shadow-green-900/20 active:scale-95 disabled:opacity-50"
+                            >
+                                {navigation.isPending ? (
+                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                ) : (
+                                    navigation.submitLabel
+                                )}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

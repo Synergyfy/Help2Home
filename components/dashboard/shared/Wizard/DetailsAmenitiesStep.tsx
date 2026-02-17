@@ -31,9 +31,17 @@ const AMENITIES_LIST = [
 
 interface DetailsAmenitiesStepProps {
     role?: 'landlord' | 'agent' | 'caretaker' | 'developer';
+    navigation?: {
+        onNext: () => void;
+        onBack: () => void;
+        isPending: boolean;
+        isFirstStep: boolean;
+        isLastStep: boolean;
+        submitLabel: string;
+    };
 }
 
-export default function DetailsAmenitiesStep({ role }: DetailsAmenitiesStepProps = {}) {
+export default function DetailsAmenitiesStep({ role, navigation }: DetailsAmenitiesStepProps = {}) {
     const { register, setValue, watch } = useFormContext<PropertySchema>();
     const amenities = useWatch({ name: 'amenities' }) || [];
     const [customName, setCustomName] = React.useState('');
@@ -92,7 +100,7 @@ export default function DetailsAmenitiesStep({ role }: DetailsAmenitiesStepProps
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {/* (Sections for Bedrooms, Bathrooms, Area Size, Furnishing remain unchanged - keeping them for context in replacement) */}
+                    {/* Sections for Bedrooms, Bathrooms, Area Size, Furnishing */}
                     <div className="p-4 rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-md transition-all group">
                         <div className="flex items-center gap-2 mb-3">
                             <HiOutlineMoon className="text-gray-400 group-hover:text-brand-green transition-colors" />
@@ -270,7 +278,7 @@ export default function DetailsAmenitiesStep({ role }: DetailsAmenitiesStepProps
                         </button>
 
                         {/* Display Added Custom Charges */}
-                        <div className="mt-6 space-y-2">
+                        <div className="mt-6 space-y-2 mb-10">
                             {amenities.filter((a: any) => !STANDARD_FEES.includes(a.name) && !AMENITIES_LIST.includes(a.name)).map((custom: any, i: number) => (
                                 <div key={i} className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 animate-in slide-in-from-right-4">
                                     <div className="flex items-center gap-3">
@@ -290,6 +298,36 @@ export default function DetailsAmenitiesStep({ role }: DetailsAmenitiesStepProps
                                 </div>
                             ))}
                         </div>
+
+                        {/* IN-PAGE NAVIGATION BUTTONS */}
+                        {navigation && (
+                            <div className="flex items-center justify-between pt-8 border-t border-gray-100">
+                                <button
+                                    type="button"
+                                    onClick={navigation.onBack}
+                                    disabled={navigation.isFirstStep}
+                                    className={`px-8 py-4 rounded-2xl font-black text-sm transition-all active:scale-95 ${
+                                        navigation.isFirstStep 
+                                        ? 'opacity-0 pointer-events-none' 
+                                        : 'text-gray-400 hover:text-gray-900 bg-gray-50 hover:bg-gray-100'
+                                    }`}
+                                >
+                                    Back
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={navigation.onNext}
+                                    disabled={navigation.isPending}
+                                    className="px-12 py-4 bg-brand-green text-white rounded-2xl font-black text-sm hover:bg-green-700 transition-all shadow-xl shadow-green-900/20 active:scale-95 disabled:opacity-50"
+                                >
+                                    {navigation.isPending ? (
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    ) : (
+                                        navigation.isLastStep ? navigation.submitLabel : 'Continue to Media'
+                                    )}
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </section>

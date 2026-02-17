@@ -1,5 +1,7 @@
 'use client';
 
+import { Suspense } from 'react';
+
 import React from 'react';
 import DashboardSidebar from '@/components/DashboardSidebar';
 import DashboardHeader from '@/components/DashboardHeader';
@@ -46,7 +48,9 @@ export default function DashboardLayout({
                     <ContextBar />
 
                     {/* Page specific content */}
-                    {children}
+                    <Suspense fallback={<div>Loading dashboard...</div>}>
+                        {children}
+                    </Suspense>
                 </main>
             </div>
             <ProfileCompletionModal />

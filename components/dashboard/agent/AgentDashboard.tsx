@@ -1,11 +1,22 @@
 'use client';
 
+import React from 'react';
 import {
     MdTrendingUp, MdPeople, MdHome, MdVpnKey,
     MdSchedule, MdMoreVert, MdArrowForward
 } from 'react-icons/md';
-
+import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify';
+import { 
+    HiOutlineRocketLaunch, 
+    HiOutlineXMark, 
+    HiOutlineEye, 
+    HiOutlineChatBubbleLeftRight,
+    HiOutlineCalendarDays,
+    HiOutlineArchiveBox
+} from 'react-icons/hi2';
+import InspectionDetailsModal, { Inspection } from './InspectionDetailsModal';
 
 // Professional Summary Component
 const StatCard = ({ label, value, trend, icon: Icon, color }: any) => (
@@ -30,17 +41,85 @@ const StatCard = ({ label, value, trend, icon: Icon, color }: any) => (
 export default function AgentDashboard() {
 
     const router = useRouter();
+    const [isComingSoonOpen, setIsComingSoonOpen] = React.useState(false);
+    const [activeLeadMenuId, setActiveLeadMenuId] = React.useState<string | null>(null);
+    const [selectedInspection, setSelectedInspection] = React.useState<Inspection | null>(null);
+    const [leads, setLeads] = React.useState([
+        { id: 'lead_1', name: 'Sarah Jenkins', type: 'Buyer', time: '2m ago' },
+        { id: 'lead_2', name: 'David Chen', type: 'Tenant', time: '1h ago' },
+        { id: 'lead_3', name: 'Musa Ibrahim', type: 'Investor', time: '4h ago' },
+    ]);
 
     const handleAddProperty = () => {
         router.push('/dashboard/agent/properties/add')
     }
+
+    const handleArchiveLead = (id: string, name: string) => {
+        setLeads(prev => prev.filter(l => l.id !== id));
+        setActiveLeadMenuId(null);
+        toast.success(`Lead "${name}" archived successfully`);
+    };
+
+    const handleAction = (action: string, leadName: string) => {
+        setActiveLeadMenuId(null);
+        switch(action) {
+            case 'profile':
+                toast.info(`Opening ${leadName}'s profile...`);
+                router.push('/dashboard/agent/leads');
+                break;
+            case 'message':
+                toast.success(`Starting chat with ${leadName}...`);
+                router.push('/dashboard/agent/leads');
+                break;
+            case 'schedule':
+                router.push('/dashboard/agent/schedule');
+                break;
+        }
+    };
+
     return (
         <div className="space-y-6 pb-12">
+            <AnimatePresence>
+                {isComingSoonOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="bg-white rounded-[2.5rem] w-full max-w-md shadow-2xl overflow-hidden p-8 text-center relative"
+                        >
+                            <button 
+                                onClick={() => setIsComingSoonOpen(false)}
+                                className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400"
+                            >
+                                <HiOutlineXMark size={24} />
+                            </button>
+
+                            <div className="size-20 rounded-3xl bg-brand-green/10 flex items-center justify-center text-brand-green mx-auto mb-6">
+                                <HiOutlineRocketLaunch size={40} />
+                            </div>
+
+                            <h2 className="text-2xl font-black text-gray-900 mb-2">Coming Soon!</h2>
+                            <p className="text-gray-500 font-medium leading-relaxed mb-8">
+                                We're building advanced marketing tools to help you reach more potential clients. This feature will be available in the next update!
+                            </p>
+
+                            <button 
+                                onClick={() => setIsComingSoonOpen(false)}
+                                className="w-full py-4 bg-brand-green text-white rounded-2xl font-black shadow-xl shadow-green-900/20 hover:bg-green-700 transition-all active:scale-95"
+                            >
+                                Got it, Thanks!
+                            </button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
             {/* Top Bar - Responsive Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Developer Portfolio</h1>
-                    <p className="text-sm text-gray-500">Managing 12 active projects across Lagos.</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Agent Portfolio</h1>
+                    <p className="text-sm text-gray-500">Managing your active listings and client pipeline.</p>
                 </div>
                 <button onClick={handleAddProperty} className="bg-brand-green text-white px-6 py-2.5 rounded-xl font-medium text-sm shadow-lg shadow-green-900/20 hover:bg-green-700 transition-all w-full md:w-auto">
                     + New Listing
@@ -61,7 +140,12 @@ export default function AgentDashboard() {
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                         <div className="p-6 border-b border-gray-50 flex justify-between items-center">
                             <h2 className="font-bold text-gray-900">High-Performance Listings</h2>
-                            <button className="text-brand-green text-sm font-semibold hover:underline">View All</button>
+                            <button 
+                                onClick={() => router.push('/dashboard/agent/properties')}
+                                className="text-brand-green text-sm font-semibold hover:underline"
+                            >
+                                View All
+                            </button>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
@@ -105,20 +189,33 @@ export default function AgentDashboard() {
                             <MdSchedule className="text-brand-green" /> Scheduled Inspections
                         </h2>
                         <div className="space-y-4">
-                            {[1, 2].map((_, i) => (
-                                <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-gray-50 bg-gray-50/30">
+                            {[
+                                { id: 1, name: 'Mr. Adebayo', prop: 'Skyline Terrace', time: '10:30 AM', day: '28', month: 'Dec', type: 'Initial Viewing' },
+                                { id: 2, name: 'Grace Emmanuel', prop: 'Palm Grove Villa', time: '02:00 PM', day: '30', month: 'Dec', type: 'Final Inspection' },
+                            ].map((visit) => (
+                                <div 
+                                    key={visit.id} 
+                                    onClick={() => setSelectedInspection(visit)}
+                                    className="flex items-center justify-between p-4 rounded-xl border border-gray-50 bg-gray-50/30 group hover:bg-white hover:shadow-md transition-all cursor-pointer"
+                                >
                                     <div className="flex gap-4 items-center">
-                                        <div className="text-center bg-white p-2 rounded-lg border border-gray-100 min-w-[60px]">
-                                            <div className="text-xs text-gray-400 font-bold uppercase">Dec</div>
-                                            <div className="text-lg font-bold text-gray-900">28</div>
+                                        <div className="text-center bg-white p-2 rounded-lg border border-gray-100 min-w-[60px] group-hover:border-brand-green/30 transition-colors">
+                                            <div className="text-xs text-gray-400 font-bold uppercase">{visit.month}</div>
+                                            <div className="text-lg font-bold text-gray-900">{visit.day}</div>
                                         </div>
                                         <div>
-                                            <div className="font-bold text-sm">Mr. Adebayo - Inspection</div>
-                                            <div className="text-xs text-gray-500">Skyline Terrace • 10:30 AM</div>
+                                            <div className="font-bold text-sm text-gray-900">{visit.name} - Inspection</div>
+                                            <div className="text-xs text-gray-500">{visit.prop} • {visit.time}</div>
                                         </div>
                                     </div>
-                                    <button className="p-2 hover:bg-white rounded-full transition-colors">
-                                        <MdArrowForward className="text-gray-400" />
+                                    <button 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            router.push('/dashboard/agent/schedule');
+                                        }}
+                                        className="p-2 hover:bg-brand-green hover:text-white rounded-full transition-all text-gray-400"
+                                    >
+                                        <MdArrowForward size={20} />
                                     </button>
                                 </div>
                             ))}
@@ -134,7 +231,10 @@ export default function AgentDashboard() {
                             <p className="text-white/80 text-xs mt-2 leading-relaxed">
                                 Your listings are currently reaching 40% more people this week.
                             </p>
-                            <button className="mt-4 bg-white text-brand-green px-4 py-2 rounded-xl text-xs font-bold hover:bg-opacity-90 transition-all">
+                            <button 
+                                onClick={() => setIsComingSoonOpen(true)}
+                                className="mt-4 bg-white text-brand-green px-4 py-2 rounded-xl text-xs font-bold hover:bg-opacity-90 transition-all active:scale-95 shadow-lg shadow-black/10"
+                            >
                                 Run Campaign
                             </button>
                         </div>
@@ -145,33 +245,83 @@ export default function AgentDashboard() {
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                         <h2 className="font-bold text-gray-900 mb-4">Recent Leads</h2>
                         <div className="space-y-5">
-                            {[
-                                { name: 'Sarah Jenkins', type: 'Buyer', time: '2m ago' },
-                                { name: 'David Chen', type: 'Tenant', time: '1h ago' },
-                                { name: 'Musa Ibrahim', type: 'Investor', time: '4h ago' },
-                            ].map((lead, idx) => (
-                                <div key={idx} className="flex items-center justify-between">
+                            {leads.map((lead, idx) => (
+                                <div key={idx} className="flex items-center justify-between relative">
                                     <div className="flex items-center gap-3">
                                         <div className="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs text-gray-600">
-                                            {lead.name[0]}
+                                            {lead.name?.[0] || '?'}
                                         </div>
                                         <div>
                                             <div className="text-sm font-bold text-gray-900">{lead.name}</div>
                                             <div className="text-[10px] text-gray-400 font-medium">{lead.type} • {lead.time}</div>
                                         </div>
                                     </div>
-                                    <button className="p-1 text-gray-400 hover:text-gray-600">
-                                        <MdMoreVert size={20} />
-                                    </button>
+                                    <div className="relative">
+                                        <button 
+                                            onClick={() => setActiveLeadMenuId(activeLeadMenuId === lead.id ? null : lead.id)}
+                                            className={`p-1 rounded-lg transition-colors ${activeLeadMenuId === lead.id ? 'bg-gray-100 text-brand-green' : 'text-gray-400 hover:text-gray-600'}`}
+                                        >
+                                            <MdMoreVert size={20} />
+                                        </button>
+
+                                        {activeLeadMenuId === lead.id && (
+                                            <>
+                                                <div 
+                                                    className="fixed inset-0 z-10" 
+                                                    onClick={() => setActiveLeadMenuId(null)}
+                                                />
+                                                <div className="absolute right-0 top-8 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-20 animate-in fade-in zoom-in-95 duration-200">
+                                                    <button 
+                                                        onClick={() => handleAction('profile', lead.name)}
+                                                        className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                                                    >
+                                                        <HiOutlineEye size={16} className="text-gray-400" />
+                                                        View Profile
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => handleAction('message', lead.name)}
+                                                        className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                                                    >
+                                                        <HiOutlineChatBubbleLeftRight size={16} className="text-gray-400" />
+                                                        Send Message
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => handleAction('schedule', lead.name)}
+                                                        className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                                                    >
+                                                        <HiOutlineCalendarDays size={16} className="text-gray-400" />
+                                                        Schedule Viewing
+                                                    </button>
+                                                    <div className="h-px bg-gray-100 my-1 mx-2" />
+                                                    <button 
+                                                        onClick={() => handleArchiveLead(lead.id, lead.name)}
+                                                        className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors"
+                                                    >
+                                                        <HiOutlineArchiveBox size={16} className="text-red-400" />
+                                                        Archive Lead
+                                                    </button>
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
                                 </div>
                             ))}
                         </div>
-                        <button className="w-full mt-6 py-3 border-2 border-dashed border-gray-100 rounded-xl text-gray-400 text-xs font-bold hover:bg-gray-50 transition-colors">
+                        <button 
+                            onClick={() => router.push('/dashboard/agent/leads')}
+                            className="w-full mt-6 py-3 border-2 border-dashed border-gray-100 rounded-xl text-gray-400 text-xs font-bold hover:bg-gray-50 hover:text-brand-green hover:border-brand-green/30 transition-all active:scale-[0.98]"
+                        >
                             Manage Pipeline
                         </button>
                     </div>
                 </div>
             </div>
+
+            <InspectionDetailsModal 
+                isOpen={!!selectedInspection}
+                onClose={() => setSelectedInspection(null)}
+                inspection={selectedInspection}
+            />
         </div>
     );
 }

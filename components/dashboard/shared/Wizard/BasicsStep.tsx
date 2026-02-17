@@ -31,9 +31,17 @@ const SuccessStep = dynamic(() => import('./SuccessStep'), { ssr: false });
 
 interface BasicsStepProps {
     role?: 'landlord' | 'agent' | 'caretaker' | 'developer';
+    navigation?: {
+        onNext: () => void;
+        onBack: () => void;
+        isPending: boolean;
+        isFirstStep: boolean;
+        isLastStep: boolean;
+        submitLabel: string;
+    };
 }
 
-export default function BasicsStep({ role }: BasicsStepProps = {}) {
+export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
     const { register, setValue, control, formState: { errors } } = useFormContext<PropertySchema>();
     const { activeRole, setActiveRole } = useUserStore();
     const { draftData, roleOnboardingCompleted } = useOnboardingStore();
@@ -46,6 +54,7 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
     const [hasCaretaker, setHasCaretaker] = useState(false);
 
     const selectedListingType = useWatch({ control, name: 'listingType' });
+    const selectedCategory = useWatch({ control, name: 'propertyCategory' });
 
     const inputClasses = "w-full h-12 px-4 rounded-xl border border-gray-200 bg-white text-[#111811] focus:border-brand-green focus:ring-1 focus:ring-[brand-green] outline-none transition-all placeholder:text-gray-400 shadow-sm";
     const labelClasses = "block text-sm font-bold text-[#111811] mb-2";
@@ -139,8 +148,8 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
 
                                         {hasLandlord && (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                                                <input {...register('landlord.fullName')} className={inputClasses} placeholder="Landlord Full Name" />
-                                                <input {...register('landlord.email')} className={inputClasses} placeholder="Landlord Email" />
+                                                                                                 <input {...register('landlord.firstName')} className={inputClasses} placeholder="Landlord First Name" />
+                                                                                                 <input {...register('landlord.lastName')} className={inputClasses} placeholder="Landlord Last Name" />                                                <input {...register('landlord.email')} className={inputClasses} placeholder="Landlord Email" />
                                             </div>
                                         )}
                                     </div>
@@ -170,8 +179,10 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
 
                                     {hasCaretaker && (
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                                            <input {...register('caretaker.fullName')} className={inputClasses} placeholder="Caretaker Full Name" />
+                                            <input {...register('caretaker.firstName')} className={inputClasses} placeholder="Caretaker First Name" />
+                                            <input {...register('caretaker.lastName')} className={inputClasses} placeholder="Caretaker Last Name" />
                                             <input {...register('caretaker.email')} className={inputClasses} placeholder="Caretaker Email" />
+                                            <input {...register('caretaker.phone')} className={inputClasses} placeholder="Caretaker Phone" />
                                         </div>
                                     )}
                                 </div>
@@ -197,10 +208,15 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
-                                        <div className="md:col-span-2">
-                                            <label className={labelClasses}>Landlord Full Name</label>
-                                            <input {...register('landlord.fullName')} className={inputClasses} placeholder="e.g. John Doe" />
-                                            {errors.landlord?.fullName && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.fullName.message}</p>}
+                                        <div>
+                                            <label className={labelClasses}>Landlord First Name</label>
+                                            <input {...register('landlord.firstName')} className={inputClasses} placeholder="e.g. John" />
+                                            {errors.landlord?.firstName && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.firstName.message}</p>}
+                                        </div>
+                                        <div>
+                                            <label className={labelClasses}>Landlord Last Name</label>
+                                            <input {...register('landlord.lastName')} className={inputClasses} placeholder="e.g. Doe" />
+                                            {errors.landlord?.lastName && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.lastName.message}</p>}
                                         </div>
                                         <div>
                                             <label className={labelClasses}>Landlord Email</label>
@@ -246,8 +262,10 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
 
                                     {hasCaretaker && (
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                                            <input {...register('caretaker.fullName')} className={inputClasses} placeholder="Caretaker Full Name" />
+                                            <input {...register('caretaker.firstName')} className={inputClasses} placeholder="Caretaker First Name" />
+                                            <input {...register('caretaker.lastName')} className={inputClasses} placeholder="Caretaker Last Name" />
                                             <input {...register('caretaker.email')} className={inputClasses} placeholder="Caretaker Email" />
+                                            <input {...register('caretaker.phone')} className={inputClasses} placeholder="Caretaker Phone" />
                                         </div>
                                     )}
                                 </div>
@@ -367,7 +385,16 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 {PROPERTY_CATEGORIES.map((cat) => (
                                     <label key={cat.id} className="relative cursor-pointer group">
-                                        <input {...register('propertyCategory')} type="radio" value={cat.label} className="peer sr-only" />
+                                        <input 
+                                            {...register('propertyCategory')} 
+                                            type="radio" 
+                                            value={cat.label} 
+                                            className="peer sr-only" 
+                                            onChange={(e) => {
+                                                setValue('propertyCategory', e.target.value as any);
+                                                setValue('propertyType', ''); // Reset type when category changes
+                                            }}
+                                        />
                                         <div className="flex flex-col items-center justify-center p-4 rounded-xl border border-gray-200 bg-white transition-all peer-checked:border-brand-green peer-checked:bg-green-50 peer-checked:shadow-sm hover:border-brand-green/50 min-h-[80px]">
                                             <span className="text-sm font-bold text-gray-700 peer-checked:text-brand-green">{cat.label}</span>
                                             <span className="text-[10px] text-gray-400 font-normal mt-1 text-center hidden sm:block">{cat.description}</span>
@@ -377,12 +404,12 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                             </div>
                         </div>
 
-                        {/* Property Type - DYNAMIC CARDS ENABLED */}
-                        {selectedListingType && (
-                            <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                        {/* Property Type - CATEGORY DRIVEN */}
+                        {selectedCategory && (
+                            <div className="animate-in fade-in slide-in-from-top-4 duration-500 mb-10">
                                 <label className={labelClasses}>Property Type</label>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                                    {(PROPERTY_TYPES_BY_LISTING[selectedListingType] || []).map((type) => (
+                                    {(PROPERTY_CATEGORIES.find(c => c.label === selectedCategory)?.types || []).map((type) => (
                                         <label key={type} className="relative cursor-pointer group">
                                             <input {...register('propertyType')} type="radio" value={type} className="peer sr-only" />
                                             <div className="flex items-center gap-3 p-4 rounded-xl border border-gray-200 bg-white transition-all peer-checked:border-brand-green peer-checked:bg-green-50 peer-checked:ring-1 peer-checked:ring-brand-green hover:bg-gray-50">
@@ -392,6 +419,36 @@ export default function BasicsStep({ role }: BasicsStepProps = {}) {
                                         </label>
                                     ))}
                                 </div>
+                            </div>
+                        )}
+
+                        {/* IN-PAGE NAVIGATION BUTTONS */}
+                        {navigation && (
+                            <div className="flex items-center justify-between pt-8 border-t border-gray-100">
+                                <button
+                                    type="button"
+                                    onClick={navigation.onBack}
+                                    disabled={navigation.isFirstStep}
+                                    className={`px-8 py-4 rounded-2xl font-black text-sm transition-all active:scale-95 ${
+                                        navigation.isFirstStep 
+                                        ? 'opacity-0 pointer-events-none' 
+                                        : 'text-gray-400 hover:text-gray-900 bg-gray-50 hover:bg-gray-100'
+                                    }`}
+                                >
+                                    Back
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={navigation.onNext}
+                                    disabled={navigation.isPending}
+                                    className="px-12 py-4 bg-brand-green text-white rounded-2xl font-black text-sm hover:bg-green-700 transition-all shadow-xl shadow-green-900/20 active:scale-95 disabled:opacity-50"
+                                >
+                                    {navigation.isPending ? (
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    ) : (
+                                        navigation.isLastStep ? navigation.submitLabel : 'Continue to Location'
+                                    )}
+                                </button>
                             </div>
                         )}
                     </section>

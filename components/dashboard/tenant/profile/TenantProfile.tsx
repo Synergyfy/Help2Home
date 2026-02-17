@@ -10,7 +10,7 @@ import GuarantorCard from '@/components/dashboard/profile/GuarantorCard';
 import VerificationTab from '@/components/dashboard/landlord/profile/VerificationTab';
 import HelpTipsCard from '@/components/dashboard/profile/HelpTipsCard';
 import TenantPreferencesTab from './TenantPreferencesTab';
-import { ProfileData, EmploymentData } from '@/components/dashboard/profile/types';
+import { ProfileData, EmploymentData, Guarantor } from '@/components/dashboard/profile/types';
 import { useUserStore } from '@/store/userStore';
 import {
     IoPersonOutline,
@@ -39,7 +39,7 @@ export default function TenantProfile() {
         basic: !!(profile.firstName && profile.lastName && profile.dob),
         work: !!(tenantProfile?.employmentStatus && (tenantProfile.employmentStatus !== 'Unemployed' ? tenantProfile.employerName : true)),
         nok: !!(tenantProfile?.nextOfKin?.name),
-        guarantor: !!(tenantProfile?.guarantor?.name),
+        guarantor: !!(tenantProfile?.guarantors && tenantProfile.guarantors.length > 0),
         documents: false // Placeholder for doc check
     };
 
@@ -82,7 +82,22 @@ export default function TenantProfile() {
     };
 
     const handleEmploymentSave = (data: EmploymentData) => {
-        // Handled within component or here
+        // Handled within component
+    };
+
+    const handleGuarantorAdd = (newG: Omit<Guarantor, 'id' | 'status'>) => {
+        const guarantors = tenantProfile?.guarantors || [];
+        const guarantorWithId: Guarantor = {
+            ...newG,
+            id: Math.random().toString(36).substr(2, 9),
+            status: 'Contacted'
+        };
+        updateRoleProfileData('tenant', { guarantors: [...guarantors, guarantorWithId] });
+    };
+
+    const handleGuarantorRemove = (id: string) => {
+        const guarantors = tenantProfile?.guarantors || [];
+        updateRoleProfileData('tenant', { guarantors: guarantors.filter(g => g.id !== id) });
     };
 
     const tabs: { id: TabType; label: string; icon: any; verified: boolean }[] = [
@@ -158,9 +173,9 @@ export default function TenantProfile() {
                         {activeTab === 'guarantor' && (
                             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                                 <GuarantorCard
-                                    guarantors={[]}
-                                    onAdd={() => { }}
-                                    onRemove={() => { }}
+                                    guarantors={tenantProfile?.guarantors || []}
+                                    onAdd={handleGuarantorAdd}
+                                    onRemove={handleGuarantorRemove}
                                 />
                             </div>
                         )}

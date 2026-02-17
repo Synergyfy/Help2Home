@@ -18,6 +18,12 @@ export interface LandlordData {
   managementStyle: string;
   services: string[];
   experience: string;
+  managerDetails?: {
+    firstName: string;
+    lastName: string;
+    phone: string;
+    email?: string;
+  };
 }
 
 export interface CaretakerData {

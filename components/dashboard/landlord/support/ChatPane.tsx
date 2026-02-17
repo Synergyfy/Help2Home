@@ -49,18 +49,32 @@ export default function ChatPane({ conversation, messages, onSendMessage }: Chat
         }
     };
 
+    const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const value = e.target.value;
+        setNewMessage(value);
+
+        // Trigger templates on "/"
+        if (value.endsWith('/')) {
+            setShowTemplates(true);
+        } else if (showTemplates && !value.includes('/')) {
+            setShowTemplates(false);
+        }
+    };
+
     const insertTemplate = (template: Template) => {
         // Simple placeholder replacement logic (mock)
         let content = template.content;
         content = content.replace('{applicantName}', otherParticipant.name);
         content = content.replace('{propertyTitle}', conversation.linkedObject?.title || 'the property');
 
-        setNewMessage(content);
+        // Remove the trigger character if it's there
+        const textWithoutSlash = newMessage.endsWith('/') ? newMessage.slice(0, -1) : newMessage;
+        setNewMessage(textWithoutSlash + content);
         setShowTemplates(false);
     };
 
     return (
-        <div className="flex-1 flex flex-col h-full bg-white">
+        <div className="flex-1 flex flex-col h-full bg-white relative">
             {/* Header */}
             <div className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white shrink-0">
                 <div className="flex items-center gap-3">
@@ -187,10 +201,10 @@ export default function ChatPane({ conversation, messages, onSendMessage }: Chat
 
                     <textarea
                         value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
+                        onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
-                        placeholder="Type a message..."
-                        className="flex-1 bg-transparent border-none focus:ring-0 text-sm text-gray-900 placeholder-gray-500 resize-none max-h-32 py-3"
+                        placeholder="Type a message (type / for templates)..."
+                        className="flex-1 bg-transparent border-none focus:ring-0 text-sm text-gray-900 placeholder:text-gray-400 resize-none max-h-32 py-3"
                         rows={1}
                         style={{ minHeight: '44px' }}
                     />

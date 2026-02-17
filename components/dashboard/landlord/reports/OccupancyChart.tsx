@@ -26,7 +26,12 @@ export default function OccupancyChart({ data }: OccupancyChartProps) {
                     <YAxis dataKey="property" type="category" width={100} tick={{ fontSize: 12, fill: '#374151', fontWeight: 500 }} axisLine={false} tickLine={false} />
                     <Tooltip
                         cursor={{ fill: '#F3F4F6' }}
-                        formatter={(value: number) => [`${value}%`, 'Occupancy']}
+                        formatter={(value: number | undefined) => {
+                            if (typeof value === 'number') {
+                                return [`${value}%`, 'Occupancy'];
+                            }
+                            return ['', 'Occupancy']; // Return an empty array of strings if value is undefined
+                        }}
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
                     />
                     <Bar dataKey="occupancy" radius={[0, 4, 4, 0]} barSize={32}>

@@ -57,9 +57,12 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                     >
                         Edit Listing
                     </Link>
-                    <button className="px-4 py-2 bg-brand-green text-white rounded-lg hover:bg-green-700 font-medium transition-colors">
+                    <Link
+                        href={`/marketplace/${property.id}`}
+                        className="px-4 py-2 bg-brand-green text-white rounded-lg hover:bg-green-700 font-medium transition-colors"
+                    >
                         View Public Page
-                    </button>
+                    </Link>
                 </div>
             </div>
 
@@ -297,9 +300,33 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                             <p className="text-xs text-green-700 leading-relaxed mb-4">
                                 This property supports flexible payment plans tailored to your budget.
                             </p>
-                            <button className="w-full py-2 bg-brand-green text-white text-xs font-bold rounded-lg hover:bg-green-700 transition-colors">
-                                View Payment Plan
-                            </button>
+                            {(() => {
+                                const processedAmenities = (property.amenities || []).map(amenity => {
+                                    if (typeof amenity === 'string') return { name: amenity, price: 0 };
+                                    return amenity;
+                                });
+                                const legalFees = processedAmenities.find(a => a.name.toLowerCase().includes('legal'))?.price || 0;
+                                const tenancyAgreement = processedAmenities.find(a => a.name.toLowerCase().includes('agreement'))?.price || 0;
+
+                                const calcUrl = new URLSearchParams({
+                                    amount: property.price.toString(),
+                                    serviceCharge: totalServiceCharges.toString(),
+                                    legalFees: legalFees.toString(),
+                                    tenancyAgreement: tenancyAgreement.toString(),
+                                    propertyId: property.id.toString(),
+                                    interestRate: (property.interestRate || 0).toString(),
+                                    isInstallmentEnabled: 'true'
+                                }).toString();
+
+                                return (
+                                    <Link 
+                                        href={`/tenant-rent-calculator?${calcUrl}`}
+                                        className="block w-full py-2 bg-brand-green text-white text-xs font-bold text-center rounded-lg hover:bg-green-700 transition-colors"
+                                    >
+                                        View Payment Plan
+                                    </Link>
+                                );
+                            })()}
                         </div>
                     )}
                 </div>

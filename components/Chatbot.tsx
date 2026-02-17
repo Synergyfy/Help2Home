@@ -10,6 +10,7 @@ import {
     IoPersonCircle,
     IoShieldCheckmark
 } from 'react-icons/io5';
+import { useUserStore } from '@/store/userStore';
 
 interface Message {
     id: string;
@@ -19,18 +20,33 @@ interface Message {
 }
 
 export default function Chatbot() {
+    const { fullName, profile, hasHydrated } = useUserStore();
     const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: '1',
-            text: "Hi there! 👋 I'm Homey, your Help2Home assistant. How can I help you find your dream home or manage your properties today?",
-            sender: 'bot',
-            timestamp: new Date()
+    const [messages, setMessages] = useState<Message[]>([]);
+
+    useEffect(() => {
+        if (hasHydrated) {
+            const firstName = profile?.firstName || fullName?.split(' ')[0] || 'there';
+            setMessages([
+                {
+                    id: '1',
+                    text: `Hi ${firstName}! 👋 I'm Homey, your Help2Home assistant. How can I help you find your dream home or manage your properties today?`,
+                    sender: 'bot',
+                    timestamp: new Date()
+                }
+            ]);
         }
-    ]);
+    }, [hasHydrated, fullName, profile?.firstName]);
+
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleOpenChat = () => setIsOpen(true);
+        window.addEventListener('open-chatbot', handleOpenChat);
+        return () => window.removeEventListener('open-chatbot', handleOpenChat);
+    }, []);
 
     useEffect(() => {
         if (scrollRef.current) {

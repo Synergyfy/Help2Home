@@ -1,14 +1,37 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import ConversationList from '@/components/dashboard/landlord/support/ConversationList';
 import ChatPane from '@/components/dashboard/landlord/support/ChatPane';
 import { MOCK_CONVERSATIONS, MOCK_MESSAGES, Message } from '@/lib/mockSupportData';
 
 export default function InboxPage() {
-    const [selectedId, setSelectedId] = useState<string | null>(MOCK_CONVERSATIONS[0]?.id || null);
+    const searchParams = useSearchParams();
+    const tenantId = searchParams.get('tenantId');
+    
+    const [selectedId, setSelectedId] = useState<string | null>(null);
     const [conversations, setConversations] = useState(MOCK_CONVERSATIONS);
     const [messages, setMessages] = useState<Record<string, Message[]>>(MOCK_MESSAGES);
+
+    useEffect(() => {
+        if (tenantId) {
+            // Robust lookup: Check ID, Name, or Email
+            const foundConv = conversations.find(c => 
+                c.participants.some(p => 
+                    p.id === tenantId || 
+                    p.id === `tenant_${tenantId}` ||
+                    p.name.toLowerCase().includes(tenantId.toLowerCase()) ||
+                    (p as any).email?.toLowerCase() === tenantId.toLowerCase()
+                )
+            );
+            if (foundConv) {
+                setSelectedId(foundConv.id);
+            }
+        } else if (!selectedId && conversations.length > 0) {
+            setSelectedId(conversations[0].id);
+        }
+    }, [tenantId, conversations]);
 
     const handleSelectConversation = (id: string) => {
         setSelectedId(id);

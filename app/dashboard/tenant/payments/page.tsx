@@ -2,10 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import DownPaymentSection from '@/components/dashboard/payments/DownPaymentSection';
 import RepaymentSchedule from '@/components/dashboard/payments/RepaymentSchedule';
 import PaymentHistory from '@/components/dashboard/payments/PaymentHistory';
 import ReminderSettings from '@/components/dashboard/payments/ReminderSettings';
+import PaymentCalendar from '@/components/dashboard/payments/PaymentCalendar';
+import PaymentProgressBar from '@/components/dashboard/payments/PaymentProgressBar';
 import { DownPaymentDetails, Installment, PaymentHistoryItem, ReminderSettings as ReminderSettingsType } from '@/components/dashboard/payments/types';
 import { getPaymentData, initiatePayment, updateReminderSettings } from '@/utils/mockPaymentApi';
 
@@ -105,6 +108,8 @@ export default function PaymentsPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
+                    <PaymentProgressBar schedule={schedule} />
+
                     {downPayment && (
                         <DownPaymentSection
                             details={downPayment}
@@ -112,6 +117,11 @@ export default function PaymentsPage() {
                             onViewApplication={() => router.push('/dashboard/tenant/applications')}
                         />
                     )}
+
+                    <PaymentCalendar 
+                        schedule={schedule}
+                        downPayment={downPayment}
+                    />
 
                     <RepaymentSchedule
                         schedule={schedule}
@@ -138,12 +148,15 @@ export default function PaymentsPage() {
                         <p className="text-sm text-blue-800 mb-4">
                             If you're having trouble making a payment or need to discuss a payment plan, our support team is here to help.
                         </p>
-                        <button className="text-sm font-medium text-blue-700 hover:text-blue-900 flex items-center gap-1">
+                        <Link 
+                            href="/dashboard/tenant/support?view=create"
+                            className="text-sm font-medium text-blue-700 hover:text-blue-900 flex items-center gap-1 w-fit"
+                        >
                             Contact Support
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                             </svg>
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

@@ -62,19 +62,8 @@ const ProfileStep = () => {
     useOnboardingStore.getState().setNames(firstName, lastName);
     useUserStore.getState().updateProfile({ firstName, lastName });
 
-    // Handle skip logic directly here to avoid multiple intermediate transitions
-    const roles = user?.roles || [];
-    if (roles.length === 1) {
-      // Single role (Tenant, Investor, etc.) -> Jump to Role Onboarding (Step 5+)
-      useOnboardingStore.getState().setActiveRole(roles[0]);
-      useOnboardingStore.getState().goToStep(5);
-    } else if (roles.length > 1) {
-      // Multiple roles (Property Management) -> Jump to Role Chooser (Step 4)
-      useOnboardingStore.getState().goToStep(4);
-    } else {
-      // No roles pre-selected -> Go to Role Selection (Step 3)
-      nextStep();
-    }
+    // Proceed to the next step (Role Selection)
+    nextStep();
   };
 
   return (

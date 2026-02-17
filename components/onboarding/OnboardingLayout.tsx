@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import testimonialImage from "@/assets/alexander-andrews-A3DPhhAL6Zg-unsplash(1).jpg";
+import Logo from "@/components/shared/Logo";
 
 const testimonials = [
   {
@@ -85,8 +86,12 @@ const OnboardingLayout = ({ children, currentStep, totalSteps }: OnboardingLayou
           {/* Logo Badge */}
           <div className="relative z-10 p-8 flex justify-end">
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-4 py-2 flex items-center gap-2">
-
-              <span className="font-semibold text-white text-sm">Help2Home</span>
+              <Logo 
+                width={24} 
+                height={24} 
+                className="brightness-0 invert opacity-80" 
+                textClassName="text-sm font-semibold text-white"
+              />
             </div>
           </div>
 
@@ -142,14 +147,9 @@ const OnboardingLayout = ({ children, currentStep, totalSteps }: OnboardingLayou
             transition={{ delay: 0.2 }}
             className="flex items-center justify-between mb-8"
           >
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground text-xs font-bold">H2H</span>
-              </div>
-              <span className="font-semibold text-foreground">Help2Home</span>
-            </div>
-
-            {/* Progress Indicator */}
+                                          <div className="flex items-center gap-2">
+                                            <Logo width={40} height={40} textClassName="font-semibold text-foreground" />
+                                          </div>            {/* Progress Indicator */}
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">
                 Step {currentStep + 1} of {totalSteps}

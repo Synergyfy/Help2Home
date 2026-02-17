@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useUserStore, Role } from '@/store/userStore';
+import { useOnboardingStore } from '@/store/onboardingStore';
 import {
     MdDashboard, MdPerson, MdFavorite, MdDescription, MdHistory,
     MdPayment, MdSupportAgent, MdSettings, MdNotifications,
@@ -11,11 +12,13 @@ import {
     MdFolder, MdStorefront, MdAssignment, MdLogout, MdClose, MdSecurity,
     MdChevronRight, MdExpandMore
 } from 'react-icons/md';
+import { HiOutlineWrenchScrewdriver, HiOutlineChatBubbleLeftRight } from 'react-icons/hi2';
 import { GoChecklist } from "react-icons/go";
 import { RxDashboard } from "react-icons/rx";
 import { useState } from 'react';
 
 import { toast } from 'react-toastify';
+import Logo from '@/components/shared/Logo';
 
 interface NavItem {
     label: string;
@@ -70,8 +73,11 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
         { label: 'Applications', href: '/dashboard/landlord/applications', icon: MdAssignment },
         { label: 'Payments', href: '/dashboard/landlord/payments', icon: MdPayment },
         { label: 'Contracts', href: '/dashboard/landlord/contracts', icon: MdDescription },
+        { label: 'Maintenance', href: '/dashboard/landlord/maintenance', icon: HiOutlineWrenchScrewdriver },
         { label: 'Partner Network', href: '/dashboard/landlord/team', icon: MdGroup },
+        { label: 'Chat', href: '/dashboard/landlord/support/inbox', icon: HiOutlineChatBubbleLeftRight },
         { label: 'Support', href: '/dashboard/landlord/support', icon: MdSupportAgent },
+        { label: 'Education Hub', href: '/dashboard/landlord/education', icon: MdSchool },
         { label: 'Settings', href: '/dashboard/landlord/settings', icon: MdSettings },
     ],
     investor: [
@@ -100,6 +106,7 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
         { label: 'Marketing Tools', href: '/dashboard/agent/marketing', icon: MdTrendingUp },
         { label: 'Documents', href: '/dashboard/agent/documents', icon: MdFolder },
         { label: 'Partner Network', href: '/dashboard/agent/team', icon: MdGroup },
+        { label: 'Chat', href: '/dashboard/agent/support/inbox', icon: HiOutlineChatBubbleLeftRight },
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
         { label: 'Settings', href: '/dashboard/agent/settings', icon: MdSettings },
     ],
@@ -208,6 +215,7 @@ export default function DashboardSidebar({ isOpen = false, onClose }: { isOpen?:
 
     const handleLogout = () => {
         resetUser();
+        useOnboardingStore.getState().resetOnboarding();
         toast.success('Signed out successfully');
         router.replace('/signin');
     };
@@ -224,7 +232,14 @@ export default function DashboardSidebar({ isOpen = false, onClose }: { isOpen?:
         `}>
             {/* Logo */}
             <div className="p-6 flex items-center justify-between">
-                <Link href="/" className="text-xl font-bold tracking-tight">Help2Home</Link>
+                <Link href="/" className="tracking-tight">
+                    <Logo 
+                        width={40} 
+                        height={40} 
+                        className="brightness-0 invert" 
+                        textClassName="text-lg font-black text-white"
+                    />
+                </Link>
                 <button onClick={onClose} className="md:hidden p-2 hover:bg-white/10 rounded-lg">
                     <MdClose size={24} />
                 </button>

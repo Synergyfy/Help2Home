@@ -1,14 +1,26 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import TicketList from '@/components/dashboard/landlord/support/TicketList';
 import TicketDetail from '@/components/dashboard/landlord/support/TicketDetail';
+import CreateTicketModal from '@/components/dashboard/landlord/support/CreateTicketModal';
 import { MOCK_TICKETS, Ticket } from '@/lib/mockSupportData';
 
 export default function TicketsPage() {
+    const searchParams = useSearchParams();
+    const action = searchParams.get('action');
+    
     const [tickets, setTickets] = useState<Ticket[]>(MOCK_TICKETS);
     const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+    useEffect(() => {
+        if (action === 'create') {
+            setIsCreateModalOpen(true);
+        }
+    }, [action]);
 
     const handleSelectTicket = (id: string) => {
         setSelectedTicketId(id);
@@ -26,6 +38,10 @@ export default function TicketsPage() {
         ));
     };
 
+    const handleCreateTicket = (newTicket: Ticket) => {
+        setTickets(prev => [newTicket, ...prev]);
+    };
+
     const selectedTicket = tickets.find(t => t.id === selectedTicketId);
 
     return (
@@ -37,7 +53,10 @@ export default function TicketsPage() {
                     </Link>
                     <h1 className="text-2xl font-bold text-gray-900">Support Tickets</h1>
                 </div>
-                <button className="px-4 py-2 bg-[#00853E] text-white rounded-lg hover:bg-green-700 font-medium transition-colors shadow-sm flex items-center gap-2">
+                <button 
+                    onClick={() => setIsCreateModalOpen(true)}
+                    className="px-4 py-2 bg-[#00853E] text-white rounded-lg hover:bg-green-700 font-medium transition-colors shadow-sm flex items-center gap-2"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
@@ -61,6 +80,12 @@ export default function TicketsPage() {
                     />
                 )}
             </div>
+
+            <CreateTicketModal 
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onCreate={handleCreateTicket}
+            />
         </div>
     );
 }

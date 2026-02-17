@@ -1,6 +1,6 @@
 'use client';
 
-import { MdLock, MdNotificationsActive, MdAccountCircle, MdSecurity } from 'react-icons/md';
+import { MdLock, MdNotificationsActive, MdAccountCircle, MdSecurity } from '@/components/shared/Icons';
 
 export default function SettingsPage() {
     return (

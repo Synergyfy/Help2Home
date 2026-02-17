@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import Leads from "@/components/dashboard/agent/Leads";
+import Leads from "../../../../components/dashboard/agent/Leads";
 
 export default function LeadsPage() {
     return (

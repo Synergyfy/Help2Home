@@ -1,5 +1,5 @@
 export type ContentFormat = 'article' | 'video' | 'tip';
-export type ContentCategory = 'Beginner' | 'Credit' | 'Savings' | 'Rent Management' | 'Legal' | 'Tenant Rights' | 'Budgeting';
+export type ContentCategory = 'Beginner' | 'Credit' | 'Savings' | 'Rent Management' | 'Legal' | 'Tenant Rights' | 'Budgeting' | 'Financial Literacy';
 
 export interface Author {
     name: string;

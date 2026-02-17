@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiMail, FiArrowRight, FiPhone } from "react-icons/fi";
 import { useOnboardingStore } from "@/store/onboardingStore";
 import { Role } from "@/store/userStore";
+import Logo from "@/components/shared/Logo";
 
 const EmailStep = () => {
   const { 
@@ -66,7 +67,7 @@ const EmailStep = () => {
       className="flex-1 flex flex-col"
     >
       <div className="mb-8">
-        <p className="text-sm text-brand-green font-bold uppercase tracking-wider mb-2">Welcome to Help2Home</p>
+        <Logo width={40} height={40} textClassName="text-sm font-bold text-brand-green uppercase tracking-wider" className="mb-4" />
         <h1 className="text-3xl font-bold text-gray-900 leading-tight mb-2">
           Let&apos;s get you started
         </h1>

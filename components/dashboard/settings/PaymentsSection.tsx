@@ -1,16 +1,23 @@
-'use client';
-
-import React from 'react';
+import React, { useState } from 'react';
 import { BankAccount, PaymentMethod } from './types';
+import AddBankAccountModal from './AddBankAccountModal';
+import AddCardModal from './AddCardModal';
 
 interface PaymentsSectionProps {
     bankAccounts: BankAccount[];
     paymentMethods: PaymentMethod[];
     onUnlinkBank: (id: string) => void;
     onRemoveCard: (id: string) => void;
+    onAddBank: (data: { bankName: string; accountNumber: string; accountHolder: string }) => void;
+    onSetPrimaryBank: (id: string) => void;
+    onAddCard: (data: { last4: string; expiry: string; cardholderName: string; brand: 'visa' | 'mastercard' | 'verve' }) => void;
+    onSetDefaultCard: (id: string) => void;
 }
 
-export default function PaymentsSection({ bankAccounts, paymentMethods, onUnlinkBank, onRemoveCard }: PaymentsSectionProps) {
+export default function PaymentsSection({ bankAccounts, paymentMethods, onUnlinkBank, onRemoveCard, onAddBank, onSetPrimaryBank, onAddCard, onSetDefaultCard }: PaymentsSectionProps) {
+    const [isBankModalOpen, setIsBankModalOpen] = useState(false);
+    const [isCardModalOpen, setIsCardModalOpen] = useState(false);
+
     return (
         <div className="space-y-8">
             <div>
@@ -22,7 +29,10 @@ export default function PaymentsSection({ bankAccounts, paymentMethods, onUnlink
             <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-gray-900">Linked Bank Accounts</h3>
-                    <button className="text-sm font-medium text-[#00853E] hover:underline">
+                    <button 
+                        onClick={() => setIsBankModalOpen(true)}
+                        className="text-sm font-medium text-[#00853E] hover:underline"
+                    >
                         + Add Bank Account
                     </button>
                 </div>
@@ -40,8 +50,15 @@ export default function PaymentsSection({ bankAccounts, paymentMethods, onUnlink
                                     <p className="font-medium text-gray-900">{account.bankName}</p>
                                     <p className="text-sm text-gray-500">{account.accountNumberMasked}</p>
                                 </div>
-                                {account.isPrimary && (
+                                {account.isPrimary ? (
                                     <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Primary</span>
+                                ) : (
+                                    <button 
+                                        onClick={() => onSetPrimaryBank(account.id)}
+                                        className="text-[10px] font-bold text-brand-green hover:underline uppercase tracking-tighter"
+                                    >
+                                        Set as Primary
+                                    </button>
                                 )}
                             </div>
                             <button
@@ -55,11 +72,22 @@ export default function PaymentsSection({ bankAccounts, paymentMethods, onUnlink
                 </div>
             </div>
 
+            <AddBankAccountModal
+                isOpen={isBankModalOpen}
+                onClose={() => setIsBankModalOpen(false)}
+                onAdd={(data) => {
+                    onAddBank(data);
+                }}
+            />
+
             {/* Payment Methods */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-gray-900">Saved Payment Methods</h3>
-                    <button className="text-sm font-medium text-[#00853E] hover:underline">
+                    <button 
+                        onClick={() => setIsCardModalOpen(true)}
+                        className="text-sm font-medium text-[#00853E] hover:underline"
+                    >
                         + Add New Card
                     </button>
                 </div>
@@ -77,8 +105,15 @@ export default function PaymentsSection({ bankAccounts, paymentMethods, onUnlink
                                     <p className="font-medium text-gray-900 capitalize">{method.brand} ending in {method.last4}</p>
                                     <p className="text-sm text-gray-500">Expires {method.expiry}</p>
                                 </div>
-                                {method.isDefault && (
+                                {method.isDefault ? (
                                     <span className="px-2 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded-full">Default</span>
+                                ) : (
+                                    <button 
+                                        onClick={() => onSetDefaultCard(method.id)}
+                                        className="text-[10px] font-bold text-brand-green hover:underline uppercase tracking-tighter"
+                                    >
+                                        Set as Default
+                                    </button>
                                 )}
                             </div>
                             <button
@@ -91,6 +126,14 @@ export default function PaymentsSection({ bankAccounts, paymentMethods, onUnlink
                     ))}
                 </div>
             </div>
+
+            <AddCardModal
+                isOpen={isCardModalOpen}
+                onClose={() => setIsCardModalOpen(false)}
+                onAdd={(data) => {
+                    onAddCard(data);
+                }}
+            />
         </div>
     );
 }
