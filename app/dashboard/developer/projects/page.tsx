@@ -4,14 +4,23 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import FadeIn from '@/components/FadeIn';
 import {
-    HiOutlinePlusCircle,
-    HiOutlineEye,
-    HiOutlinePencilSquare,
-    HiOutlineCheckCircle,
-    HiOutlineClock,
-    HiOutlineLightBulb,
-    HiOutlineBanknotes
+    HiOutlinePlusCircle as OriginalHiOutlinePlusCircle,
+    HiOutlineEye as OriginalHiOutlineEye,
+    HiOutlinePencilSquare as OriginalHiOutlinePencilSquare,
+    HiOutlineCheckCircle as OriginalHiOutlineCheckCircle,
+    HiOutlineClock as OriginalHiOutlineClock,
+    HiOutlineLightBulb as OriginalHiOutlineLightBulb,
+    HiOutlineBanknotes as OriginalHiOutlineBanknotes
 } from 'react-icons/hi2';
+
+const HiOutlinePlusCircle = (OriginalHiOutlinePlusCircle as any);
+const HiOutlineEye = (OriginalHiOutlineEye as any);
+const HiOutlinePencilSquare = (OriginalHiOutlinePencilSquare as any);
+const HiOutlineCheckCircle = (OriginalHiOutlineCheckCircle as any);
+const HiOutlineClock = (OriginalHiOutlineClock as any);
+const HiOutlineLightBulb = (OriginalHiOutlineLightBulb as any);
+const HiOutlineBanknotes = (OriginalHiOutlineBanknotes as any);
+
 
 const STATUS_CONFIG = {
     planning: { label: 'Planning', color: 'bg-purple-50 text-purple-700', icon: HiOutlineLightBulb },

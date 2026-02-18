@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer as RechartsResponsiveContainer, Legend } from 'recharts';
+
+const ResponsiveContainer = RechartsResponsiveContainer as any;
 import { IncomeData } from '@/lib/mockAnalyticsData';
 
 interface IncomeChartProps {
@@ -45,7 +47,12 @@ export default function IncomeChart({ data }: IncomeChartProps) {
                     <YAxis tickFormatter={formatCurrency} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                     <Tooltip
-                        formatter={(value: number) => [new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(value), '']}
+                        formatter={(value: number | undefined) => {
+                            if (typeof value === 'number') {
+                                return [new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(value), ''];
+                            }
+                            return ['', ''];
+                        }}
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
                     />
                     <Legend verticalAlign="top" height={36} iconType="circle" />

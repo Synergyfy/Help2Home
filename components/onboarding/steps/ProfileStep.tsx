@@ -2,7 +2,20 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FiUser, FiPhone, FiArrowRight, FiArrowLeft, FiMail } from "react-icons/fi";
+import {
+  FiUser as OriginalFiUser,
+  FiPhone as OriginalFiPhone,
+  FiArrowRight as OriginalFiArrowRight,
+  FiArrowLeft as OriginalFiArrowLeft,
+  FiMail as OriginalFiMail
+} from "react-icons/fi";
+
+const FiUser = (OriginalFiUser as any);
+const FiPhone = (OriginalFiPhone as any);
+const FiArrowRight = (OriginalFiArrowRight as any);
+const FiArrowLeft = (OriginalFiArrowLeft as any);
+const FiMail = (OriginalFiMail as any);
+
 import { useOnboardingStore } from "@/store/onboardingStore";
 import { useUserStore } from "@/store/userStore";
 import { useEffect } from "react";
@@ -23,7 +36,7 @@ const ProfileStep = () => {
   // Auto-detect name from email if email signup
   useEffect(() => {
     if (isEmailSignup && user?.currentEmail && !fullName) {
-      const nameFromEmail = user.currentEmail.split('@')[0].split(/[._-]/).map(part => 
+      const nameFromEmail = user.currentEmail.split('@')[0].split(/[._-]/).map((part: string) =>
         part.charAt(0).toUpperCase() + part.slice(1)
       ).join(' ');
       if (nameFromEmail) setFullName(nameFromEmail);

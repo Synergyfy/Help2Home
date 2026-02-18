@@ -5,7 +5,22 @@ import { useUserStore } from '@/store/userStore';
 import { useNotificationStore } from '@/store/notificationStore';
 import ProfileOnboardingView from '@/components/dashboard/profile/ProfileOnboardingView';
 import SecurityVerification from '@/components/dashboard/profile/SecurityVerification';
-import { HiOutlineUser, HiOutlinePencilSquare, HiOutlineMapPin, HiOutlinePhone, HiOutlineEnvelope, HiOutlinePhoto } from 'react-icons/hi2';
+import {
+    HiOutlineUser as OriginalHiOutlineUser,
+    HiOutlinePencilSquare as OriginalHiOutlinePencilSquare,
+    HiOutlineMapPin as OriginalHiOutlineMapPin,
+    HiOutlinePhone as OriginalHiOutlinePhone,
+    HiOutlineEnvelope as OriginalHiOutlineEnvelope,
+    HiOutlinePhoto as OriginalHiOutlinePhoto
+} from 'react-icons/hi2';
+
+const HiOutlineUser = (OriginalHiOutlineUser as any);
+const HiOutlinePencilSquare = (OriginalHiOutlinePencilSquare as any);
+const HiOutlineMapPin = (OriginalHiOutlineMapPin as any);
+const HiOutlinePhone = (OriginalHiOutlinePhone as any);
+const HiOutlineEnvelope = (OriginalHiOutlineEnvelope as any);
+const HiOutlinePhoto = (OriginalHiOutlinePhoto as any);
+
 import FadeIn from '@/components/FadeIn';
 import { toast } from 'react-toastify';
 
@@ -165,8 +180,8 @@ function ProfileInput({ label, value, disabled, onChange }: { label: string, val
                 disabled={disabled}
                 onChange={(e) => onChange(e.target.value)}
                 className={`w-full h-12 px-5 rounded-2xl border-2 transition-all font-bold ${disabled
-                        ? 'bg-gray-50 border-transparent text-gray-500'
-                        : 'bg-white border-gray-100 focus:border-brand-green text-gray-900 outline-none shadow-sm'
+                    ? 'bg-gray-50 border-transparent text-gray-500'
+                    : 'bg-white border-gray-100 focus:border-brand-green text-gray-900 outline-none shadow-sm'
                     }`}
             />
         </div>

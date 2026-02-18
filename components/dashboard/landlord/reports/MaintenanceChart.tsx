@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer as RechartsResponsiveContainer, Cell } from 'recharts';
+
+const ResponsiveContainer = RechartsResponsiveContainer as any;
 import { MaintenanceData } from '@/lib/mockAnalyticsData';
 
 interface MaintenanceChartProps {
@@ -34,7 +36,12 @@ export default function MaintenanceChart({ data }: MaintenanceChartProps) {
                     <XAxis dataKey="category" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} dy={10} />
                     <YAxis tickFormatter={formatCurrency} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
                     <Tooltip
-                        formatter={(value: number) => [new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(value), 'Spend']}
+                        formatter={(value: number | undefined) => {
+                            if (typeof value === 'number') {
+                                return [new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(value), 'Spend'];
+                            }
+                            return ['', 'Spend'];
+                        }}
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
                     />
                     <Bar dataKey="spend" radius={[4, 4, 0, 0]} fill="#3B82F6" barSize={40} />

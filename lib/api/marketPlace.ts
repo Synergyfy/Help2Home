@@ -15,8 +15,8 @@ export interface SearchFilters {
   category?: string;
   bedrooms?: number | null;
   bathrooms?: number | null;
-  priceMin?: number; 
-  priceMax?: number; 
+  priceMin?: number;
+  priceMax?: number;
   radius?: number;
   status?: string;
   sortBy?: 'featured' | 'price-low' | 'price-high' | 'newest';
@@ -26,9 +26,9 @@ export interface SearchFilters {
   furnished?: boolean | null;
   parking?: boolean | null;
   garden?: boolean | null;
-  gym?: boolean | null;      
+  gym?: boolean | null;
   pool?: boolean | null;
-  verified?: boolean | null; 
+  verified?: boolean | null;
   serviced?: boolean | null;
   electricity?: boolean | null;
   waterSupply?: boolean | null;
@@ -37,15 +37,15 @@ export interface SearchFilters {
   chainFree?: boolean | null;
   reducedPrice?: boolean | null;
   underOffer?: boolean | null;
-  
+
   // Tri-State (InclusionMode)
   retirementHomes?: 'include' | 'exclude' | 'only';
   sharedOwnership?: 'include' | 'exclude' | 'only';
-  ownership?:'freehold' | 'leasehold' | 'share-of-freehold',
+  ownership?: 'freehold' | 'leasehold' | 'share-of-freehold',
   auctions?: 'include' | 'exclude' | 'only';
-  newBuild?: 'include' | 'exclude' | 'only'; 
-  offPlan?: 'include' | 'exclude' | 'only';  
-  
+  newBuild?: 'include' | 'exclude' | 'only';
+  offPlan?: 'include' | 'exclude' | 'only';
+
   addedToZoopla?: string;
   ownerId?: string;
 }
@@ -101,37 +101,38 @@ export async function searchProperties(
 ): Promise<PropertySearchResult> {
   await delay(400);
 
-    const allProperties = getMockProperties();
-    let filtered = [...allProperties];
-    console.log(`[searchProperties] Total properties in mock DB: ${allProperties.length}`);
-    console.log(`[searchProperties] Initial Filters:`, JSON.stringify(filters, null, 2));
-  
-    // Modify Section 1: Basic Filters
-    if (filters.propertyType && filters.propertyType !== 'all' as any) {
-      filtered = filtered.filter(p => p.propertyType === filters.propertyType);
-      console.log(`[searchProperties] After propertyType(${filters.propertyType}): ${filtered.length}`);
-    }
-    
-    if (filters.category && filters.category !== 'all' && filters.category !== 'undefined') {
-      filtered = filtered.filter(p => p.category === filters.category || filters.category.includes(p.category));
-      console.log(`[searchProperties] After category(${filters.category}): ${filtered.length}`);
-    }
-  
-    // 2. Location Search
-    if (filters.location?.trim()) {
-      const q = filters.location.toLowerCase().trim();
-      filtered = filtered.filter(p => 
-        p.location.toLowerCase().includes(q) || 
-        p.city.toLowerCase().includes(q) || 
-        p.address.toLowerCase().includes(q)
-      );
-      console.log(`[searchProperties] After location(${filters.location}): ${filtered.length}`);
-    }
-    // 3. Keywords
+  const allProperties = getMockProperties();
+  let filtered = [...allProperties];
+  console.log(`[searchProperties] Total properties in mock DB: ${allProperties.length}`);
+  console.log(`[searchProperties] Initial Filters:`, JSON.stringify(filters, null, 2));
+
+  // Modify Section 1: Basic Filters
+  if (filters.propertyType && filters.propertyType !== 'all' as any) {
+    filtered = filtered.filter(p => p.propertyType === filters.propertyType);
+    console.log(`[searchProperties] After propertyType(${filters.propertyType}): ${filtered.length}`);
+  }
+
+  if (filters.category && filters.category !== 'all' && filters.category !== 'undefined') {
+    const categoryFilter = filters.category;
+    filtered = filtered.filter(p => p.category === categoryFilter || categoryFilter.includes(p.category));
+    console.log(`[searchProperties] After category(${categoryFilter}): ${filtered.length}`);
+  }
+
+  // 2. Location Search
+  if (filters.location?.trim()) {
+    const q = filters.location.toLowerCase().trim();
+    filtered = filtered.filter(p =>
+      p.location.toLowerCase().includes(q) ||
+      p.city.toLowerCase().includes(q) ||
+      p.address.toLowerCase().includes(q)
+    );
+    console.log(`[searchProperties] After location(${filters.location}): ${filtered.length}`);
+  }
+  // 3. Keywords
   if (filters.keywords?.trim()) {
     const k = filters.keywords.toLowerCase().trim();
-    filtered = filtered.filter(p => 
-      p.title.toLowerCase().includes(k) || 
+    filtered = filtered.filter(p =>
+      p.title.toLowerCase().includes(k) ||
       p.description.toLowerCase().includes(k) ||
       p.keywords?.some(kw => kw.toLowerCase().includes(k))
     );
@@ -184,7 +185,7 @@ export async function searchProperties(
       filtered = filtered.filter(p => p[field] === true);
     }
   };
-  
+
   applyTriState('isRetirementHome', filters.retirementHomes);
   applyTriState('isSharedOwnership', filters.sharedOwnership);
   applyTriState('isAuction', filters.auctions);
@@ -201,7 +202,7 @@ export async function searchProperties(
 
   const total = filtered.length;
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
-  
+
   return { properties: paginated, total, page, pageSize };
 }
 
@@ -230,13 +231,13 @@ export async function fetchPriceStats(location: string) {
 
 export async function updateProperty(id: number, updates: Partial<Property>): Promise<Property> {
   await delay(800);
-  
+
   const allProperties = getMockProperties();
   const index = allProperties.findIndex(p => p.id === id);
   if (index === -1) throw new Error("Property not found");
 
   const updatedProperty = { ...allProperties[index], ...updates };
-  
+
   const newDb = [...allProperties];
   newDb[index] = updatedProperty;
   updateMockDb(newDb);

@@ -2,14 +2,22 @@
 
 import { useState } from 'react';
 import {
-    HiOutlineLink,
-    HiOutlineMagnifyingGlass,
-    HiOutlineXMark,
-    HiOutlineClipboardDocument,
-    HiOutlineEnvelope,
-    HiOutlineCheckCircle
+    HiOutlineLink as OriginalHiOutlineLink,
+    HiOutlineMagnifyingGlass as OriginalHiOutlineMagnifyingGlass,
+    HiOutlineXMark as OriginalHiOutlineXMark,
+    HiOutlineClipboardDocument as OriginalHiOutlineClipboardDocument,
+    HiOutlineEnvelope as OriginalHiOutlineEnvelope,
+    HiOutlineCheckCircle as OriginalHiOutlineCheckCircle
 } from 'react-icons/hi2';
-import { FaWhatsapp } from 'react-icons/fa';
+import { FaWhatsapp as OriginalFaWhatsapp } from 'react-icons/fa';
+
+const HiOutlineLink = (OriginalHiOutlineLink as any);
+const HiOutlineMagnifyingGlass = (OriginalHiOutlineMagnifyingGlass as any);
+const HiOutlineXMark = (OriginalHiOutlineXMark as any);
+const HiOutlineClipboardDocument = (OriginalHiOutlineClipboardDocument as any);
+const HiOutlineEnvelope = (OriginalHiOutlineEnvelope as any);
+const HiOutlineCheckCircle = (OriginalHiOutlineCheckCircle as any);
+const FaWhatsapp = (OriginalFaWhatsapp as any);
 
 interface InvitePartnerModalProps {
     isOpen: boolean;
@@ -98,8 +106,8 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                     <button
                         onClick={() => setActiveTab('link')}
                         className={`flex items-center gap-2 px-6 py-4 font-bold text-sm transition-all border-b-2 ${activeTab === 'link'
-                                ? 'border-brand-green text-brand-green'
-                                : 'border-transparent text-gray-400 hover:text-gray-600'
+                            ? 'border-brand-green text-brand-green'
+                            : 'border-transparent text-gray-400 hover:text-gray-600'
                             }`}
                     >
                         <HiOutlineLink size={20} />
@@ -108,8 +116,8 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                     <button
                         onClick={() => setActiveTab('search')}
                         className={`flex items-center gap-2 px-6 py-4 font-bold text-sm transition-all border-b-2 ${activeTab === 'search'
-                                ? 'border-brand-green text-brand-green'
-                                : 'border-transparent text-gray-400 hover:text-gray-600'
+                            ? 'border-brand-green text-brand-green'
+                            : 'border-transparent text-gray-400 hover:text-gray-600'
                             }`}
                     >
                         <HiOutlineMagnifyingGlass size={20} />

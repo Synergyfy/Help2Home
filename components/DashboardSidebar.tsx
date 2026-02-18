@@ -8,11 +8,19 @@ import {
     MdDashboard, MdPerson, MdFavorite, MdDescription, MdHistory,
     MdPayment, MdSupportAgent, MdSettings, MdNotifications,
     MdSchool, MdHomeWork, MdGroup, MdTrendingUp, MdPieChart,
-    MdFolder, MdStorefront, MdAssignment, MdLogout, MdClose, MdSecurity,
-    MdChevronRight, MdExpandMore
+    MdFolder, MdStorefront, MdAssignment, MdSecurity,
+    MdExpandMore as RawMdExpandMore, MdClose as RawMdClose, MdLogout as RawMdLogout, MdChevronRight as RawMdChevronRight
 } from 'react-icons/md';
-import { GoChecklist } from "react-icons/go";
-import { RxDashboard } from "react-icons/rx";
+
+const MdExpandMore = RawMdExpandMore as any;
+const MdClose = RawMdClose as any;
+const MdLogout = RawMdLogout as any;
+const MdChevronRight = RawMdChevronRight as any;
+import { GoChecklist as RawGoChecklist } from "react-icons/go";
+import { RxDashboard as RawRxDashboard } from "react-icons/rx";
+
+const GoChecklist = RawGoChecklist as any;
+const RxDashboard = RawRxDashboard as any;
 import { useState } from 'react';
 
 import { toast } from 'react-toastify';
@@ -123,7 +131,7 @@ const NavLink = ({ item, pathname, depth = 0, onClose }: { item: NavItem, pathna
     const [isOpen, setIsOpen] = useState(false);
     const hasSubItems = item.subItems && item.subItems.length > 0;
     const isActive = item.href ? pathname === item.href || (item.href.includes('?') && pathname + (typeof window !== 'undefined' ? window.location.search : '') === item.href) : false;
-    const Icon = item.icon;
+    const Icon = item.icon as any;
 
     const handleClick = () => {
         if (hasSubItems) {

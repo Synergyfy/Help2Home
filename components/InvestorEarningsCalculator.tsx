@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import FadeIn from './FadeIn';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer as RechartsResponsiveContainer, Legend } from 'recharts';
+
+const ResponsiveContainer = RechartsResponsiveContainer as any;
 
 export default function InvestorEarningsCalculator() {
     // Inputs (raw values)
@@ -281,7 +283,15 @@ export default function InvestorEarningsCalculator() {
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                                         <XAxis dataKey="month" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
                                         <YAxis tick={{ fontSize: 12 }} tickFormatter={(val) => `₦${val.toLocaleString()}`} tickLine={false} axisLine={false} />
-                                        <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                                        <Tooltip
+                                            formatter={(value: number | undefined) => {
+                                                if (typeof value === 'number') {
+                                                    return [new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(value), ''];
+                                                }
+                                                return ['', ''];
+                                            }}
+                                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                                        />
                                         <Legend />
                                         <Line type="monotone" dataKey="principal" stroke="#e5e7eb" strokeWidth={2} dot={false} name="Principal" />
                                         <Line type="monotone" dataKey="value" stroke="#10B981" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} name="Portfolio Value" />
