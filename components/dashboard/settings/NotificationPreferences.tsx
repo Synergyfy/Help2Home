@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { NotificationPreference, NotificationType } from './types';
+import { IoCloseOutline, IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 
 interface NotificationPreferencesProps {
     preferences: NotificationPreference[];
@@ -18,6 +19,13 @@ const TYPE_LABELS: Record<NotificationType, string> = {
 };
 
 export default function NotificationPreferences({ preferences, onUpdatePreference }: NotificationPreferencesProps) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleSmsToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        setIsModalOpen(true);
+    };
+
     return (
         <div className="space-y-6">
             <div>
@@ -58,7 +66,11 @@ export default function NotificationPreferences({ preferences, onUpdatePreferenc
                                         type="checkbox"
                                         className="sr-only peer"
                                         checked={pref.channels.sms}
-                                        onChange={(e) => onUpdatePreference(pref.type, 'sms', e.target.checked)}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setIsModalOpen(true);
+                                        }}
+                                        onChange={() => {}} // Dummy to avoid console warning
                                     />
                                     <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#00853E]"></div>
                                 </label>
@@ -79,6 +91,31 @@ export default function NotificationPreferences({ preferences, onUpdatePreferenc
                     ))}
                 </div>
             </div>
+
+            {/* Coming Soon Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white rounded-[2rem] shadow-2xl max-w-sm w-full overflow-hidden animate-in zoom-in duration-300">
+                        <div className="p-8 text-center">
+                            <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-brand-green mx-auto mb-6">
+                                <IoChatbubbleEllipsesOutline size={32} />
+                            </div>
+                            
+                            <h3 className="text-xl font-black text-gray-900 mb-2">SMS Notifications</h3>
+                            <p className="text-gray-500 font-medium leading-relaxed mb-8">
+                                We're currently finalizing our SMS integration. This feature will be available in a future update!
+                            </p>
+
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="w-full py-4 bg-brand-green text-white font-black rounded-2xl shadow-lg shadow-green-100 hover:bg-green-700 transition-all active:scale-[0.98]"
+                            >
+                                Got it
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -51,7 +51,7 @@ export default function IncomeChart({ data }: IncomeChartProps) {
                             if (typeof value === 'number') {
                                 return [new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(value), ''];
                             }
-                            return ['', ''];
+                            return ['', '']; // Return an empty array of strings if value is undefined
                         }}
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
                     />

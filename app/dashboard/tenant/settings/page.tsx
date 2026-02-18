@@ -84,6 +84,46 @@ export default function SettingsPage() {
         setSessions(updated);
     };
 
+    const handleAddBank = async (data: { bankName: string; accountNumber: string; accountHolder: string }) => {
+        // In a real app, this would call an API
+        const newAccount: BankAccount = {
+            id: `bank_${Date.now()}`,
+            bankName: data.bankName,
+            accountNumberMasked: `**** ${data.accountNumber.slice(-4)}`,
+            isPrimary: bankAccounts.length === 0,
+            isVerified: true,
+            dateLinked: new Date().toLocaleDateString()
+        };
+        setBankAccounts([...bankAccounts, newAccount]);
+    };
+
+    const handleSetPrimaryBank = async (id: string) => {
+        setBankAccounts(prev => prev.map(acc => ({
+            ...acc,
+            isPrimary: acc.id === id
+        })));
+    };
+
+    const handleSetDefaultCard = async (id: string) => {
+        setPaymentMethods(prev => prev.map(card => ({
+            ...card,
+            isDefault: card.id === id
+        })));
+    };
+
+    const handleAddCard = async (data: { last4: string; expiry: string; cardholderName: string; brand: 'visa' | 'mastercard' | 'verve' }) => {
+        const newCard: PaymentMethod = {
+            id: `card_${Date.now()}`,
+            type: 'card',
+            last4: data.last4,
+            expiry: data.expiry,
+            cardholderName: data.cardholderName,
+            isDefault: paymentMethods.length === 0,
+            brand: data.brand
+        };
+        setPaymentMethods([...paymentMethods, newCard]);
+    };
+
     if (isLoading) {
         return <div className="min-h-screen flex items-center justify-center">Loading settings...</div>;
     }
@@ -131,6 +171,10 @@ export default function SettingsPage() {
                             paymentMethods={paymentMethods}
                             onUnlinkBank={handleUnlinkBank}
                             onRemoveCard={handleRemoveCard}
+                            onAddBank={handleAddBank}
+                            onSetPrimaryBank={handleSetPrimaryBank}
+                            onAddCard={handleAddCard}
+                            onSetDefaultCard={handleSetDefaultCard}
                         />
                     )}
                     {activeTab === 'sessions' && (

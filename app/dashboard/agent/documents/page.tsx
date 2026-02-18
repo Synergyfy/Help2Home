@@ -1,6 +1,6 @@
 'use client';
 
-import { MdPictureAsPdf, MdOutlineCloudUpload, MdMoreVert, MdFileDownload } from 'react-icons/md';
+import { MdPictureAsPdf, MdOutlineCloudUpload, MdMoreVert, MdFileDownload } from '@/components/shared/Icons';
 
 export default function DocumentsPage() {
     const docs = [

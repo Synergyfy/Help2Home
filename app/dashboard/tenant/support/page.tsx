@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import CreateTicketForm from '@/components/dashboard/support/CreateTicketForm';
 import TicketList from '@/components/dashboard/support/TicketList';
 import TicketThread from '@/components/dashboard/support/TicketThread';
@@ -8,8 +9,10 @@ import FAQSection from '@/components/dashboard/support/FAQSection';
 import { Ticket, CreateTicketData, FAQItem } from '@/components/dashboard/support/types';
 import { getTickets, getFAQs, createTicket, sendMessage } from '@/utils/mockSupportApi';
 
-export default function SupportPage() {
-    const [view, setView] = useState<'list' | 'create' | 'thread'>('list');
+function SupportContent() {
+    const searchParams = useSearchParams();
+    const initialView = searchParams.get('view') === 'create' ? 'create' : 'list';
+    const [view, setView] = useState<'list' | 'create' | 'thread'>(initialView);
     const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [faqs, setFaqs] = useState<FAQItem[]>([]);
@@ -29,6 +32,14 @@ export default function SupportPage() {
         };
         loadData();
     }, []);
+
+    // Sync view with query param if it changes
+    useEffect(() => {
+        const queryView = searchParams.get('view');
+        if (queryView === 'create') {
+            setView('create');
+        }
+    }, [searchParams]);
 
     // Poll for updates when in thread view
     useEffect(() => {
@@ -137,5 +148,13 @@ export default function SupportPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function SupportPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+            <SupportContent />
+        </Suspense>
     );
 }

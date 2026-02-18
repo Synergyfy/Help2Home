@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FiAward, FiMapPin, FiTarget, FiArrowRight, FiArrowLeft, FiCheck } from "react-icons/fi";
 import { useOnboardingStore, AgentData } from "@/store/onboardingStore";
+import { useUserStore } from "@/store/userStore";
 
 const specializations = ["Residential", "Commercial", "Luxury", "Land", "Industrial", "Mixed-use"];
 const experienceOptions = ["Less than 1 year", "1-3 years", "3-5 years", "5-10 years", "10+ years"];
@@ -33,6 +34,7 @@ const AgentStep = ({ stepNumber }: AgentStepProps) => {
 
   const handleComplete = () => {
     updateRoleData("agent", formData);
+    useUserStore.getState().updateRoleProfileData("agent", formData);
     completeRoleOnboarding("agent");
 
     // Check if there are other roles selected that haven't been completed yet

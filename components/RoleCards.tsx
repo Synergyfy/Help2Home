@@ -8,7 +8,7 @@ import { useUserStore } from '@/store/userStore';
 
 type Role = 'tenant' | 'landlord' | 'caretaker' | 'agent' | 'investor';
 
-const roles: { title: string; description: string; icon: JSX.Element; roleParam: Role }[] = [
+const roles: { title: string; description: string; icon: React.ReactElement; roleParam: Role }[] = [
   {
     title: 'Landlord / Agent',
     description: 'List your property, verify tenants, and receive rent upfront or monthly guaranteed.',

@@ -47,9 +47,10 @@ export default function TenantDashboard() {
             await new Promise(resolve => setTimeout(resolve, 1000));
 
             setEducationArticle({
-                title: 'Understanding Rent Financing',
+                id: '6',
+                title: 'Financial Literacy for Renters',
                 category: 'Financial Literacy',
-                readTime: '3 min read',
+                readTime: '7 min read',
                 image: '/images/education-1.jpg',
             });
         };

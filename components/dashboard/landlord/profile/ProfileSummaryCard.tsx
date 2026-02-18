@@ -40,7 +40,7 @@ export default function ProfileSummaryCard({ profile: initialProfile }: { profil
                             <img src={profile.avatarUrl} alt={profile.displayName} className="w-full h-full object-cover" />
                         ) : (
                             <span className="text-3xl font-bold text-gray-400">
-                                {profile.firstName[0]}{profile.lastName[0]}
+                                {profile.firstName?.[0] || ''}{profile.lastName?.[0] || ''}
                             </span>
                         )}
                     </div>
@@ -81,9 +81,6 @@ export default function ProfileSummaryCard({ profile: initialProfile }: { profil
                             Complete verification
                         </button>
                     )}
-                    <button className="w-full bg-white border border-gray-200 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
-                        Add bank details
-                    </button>
                 </div>
             </div>
         </div>

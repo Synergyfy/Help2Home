@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useUserStore } from '@/store/userStore';
+import { MOCK_PARTNERS } from '@/lib/mockPartnerData';
 
 export default function QuickActions() {
 
@@ -11,6 +12,8 @@ export default function QuickActions() {
     const handleNavigate = () => {
         router.push(`/dashboard/${activeRole || 'landlord'}/properties/add`)
     }
+
+    const hasCaretaker = MOCK_PARTNERS.some(p => p.role === 'Caretaker');
 
 
     return (
@@ -44,12 +47,14 @@ export default function QuickActions() {
                     >
                         Request payout
                     </button>
-                    <button
-                        onClick={() => router.push(`/dashboard/${activeRole || 'landlord'}/team`)}
-                        className="bg-gray-50 text-gray-700 py-3 px-2 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200"
-                    >
-                        Invite caretaker
-                    </button>
+                    {!hasCaretaker && (
+                        <button
+                            onClick={() => router.push(`/dashboard/${activeRole || 'landlord'}/team`)}
+                            className="bg-gray-50 text-gray-700 py-3 px-2 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200"
+                        >
+                            Invite caretaker
+                        </button>
+                    )}
                 </div>
             </div>
 

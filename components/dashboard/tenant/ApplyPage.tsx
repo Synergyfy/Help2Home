@@ -52,7 +52,7 @@ export default function Apply() {
     const [applicationData, setApplicationData] = useState<ApplicationData>({
         propertyId: property.id,
         financing: {
-            downPaymentPercent: 25,
+            downPaymentPercent: 30,
             repaymentDuration: 10,
             acceptedTerms: false
         },
@@ -66,22 +66,20 @@ export default function Apply() {
             monthlySalary: tenantProfile?.monthlySalary || ''
         },
         guarantor: {
-            name: tenantProfile?.guarantor?.name || '',
-            phone: tenantProfile?.guarantor?.phone || '',
-            relationship: tenantProfile?.guarantor?.relationship || '',
-            email: tenantProfile?.guarantor?.email || ''
+            name: tenantProfile?.guarantors?.[0]?.name || '',
+            phone: tenantProfile?.guarantors?.[0]?.phone || '',
+            relationship: tenantProfile?.guarantors?.[0]?.relationship || '',
+            email: tenantProfile?.guarantors?.[0]?.email || ''
         },
         notes: '',
         documents: [
             { id: '1', type: 'ID', name: 'Government ID', status: 'Pending' },
-            { id: '2', type: 'Income', name: '3 Months Payslips', status: 'Pending' },
-            { id: '3', type: 'Statement', name: '3 Months Bank Statement', status: 'Pending' },
-            { id: '4', type: 'Address', name: 'Proof of Address', status: 'Pending' }
-        ]
+                    { id: '2', type: 'Income', name: '3 Months Bank Statement', status: 'Pending' },
+                    { id: '4', type: 'Address', name: 'Proof of Address', status: 'Pending' }        ]
     });
 
     const [installmentPlan, setInstallmentPlan] = useState<InstallmentPlan>({
-        downPaymentPercent: 25,
+        downPaymentPercent: 30,
         downPaymentAmount: 0,
         repaymentDuration: 10,
         monthlyRepayment: 0,
@@ -171,8 +169,8 @@ export default function Apply() {
         }
 
         // Guarantor Validation
-        if (!applicationData.guarantor.name || !applicationData.guarantor.phone) {
-            newErrors.push("Guarantor details are incomplete.");
+        if (!tenantProfile?.guarantors || tenantProfile.guarantors.length === 0) {
+            newErrors.push("At least one guarantor is required in your profile.");
         }
 
         // Credit Score / Eligibility Check

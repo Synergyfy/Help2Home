@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import FadeIn from '@/components/FadeIn';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { Role } from '@/store/userStore';
+import Logo from '@/components/shared/Logo';
 
 export default function SignUp() {
   const router = useRouter();
@@ -70,9 +71,9 @@ export default function SignUp() {
 
       <div className="container mx-auto px-6">
         <FadeIn direction="up">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Join <span className="text-brand-green">Help2Home</span>
+          <div className="text-center max-w-3xl mx-auto mb-16 flex flex-col items-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+              Join <Logo width={40} height={40} textClassName="text-4xl md:text-5xl font-black text-brand-green" />
             </h1>
             <p className="text-lg text-gray-600">
               Select your primary path to get started. You can add additional management roles later in your profile.
@@ -80,7 +81,7 @@ export default function SignUp() {
           </div>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {/* Tenant Card */}
           <FadeIn direction="up">
             <button

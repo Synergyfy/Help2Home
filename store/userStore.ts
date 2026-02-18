@@ -39,12 +39,15 @@ export interface TenantProfileData {
     phone: string;
     email?: string;
   };
-  guarantor?: {
+  guarantors?: {
+    id: string;
     name: string;
     relationship: string;
     phone: string;
     email?: string;
-  };
+    notes?: string;
+    status: 'Contacted' | 'Verified' | 'Rejected';
+  }[];
   bvn?: string;
   isBvnVerified?: boolean;
   nin?: string;
@@ -157,6 +160,7 @@ interface UserState {
     developer?: DeveloperProfileData;
   };
   followedListers: string[];
+  wishlist: string[];
   draftData: Record<string, any>;
   
   
@@ -165,6 +169,7 @@ interface UserState {
   updateProfile: (data: Partial<CommonProfile>) => void;
   updateRoleProfileData: (role: Role, data: any) => void;
   toggleFollowLister: (listerId: string) => void;
+  toggleWishlist: (propertyId: string) => void;
   setActiveRole: (role: Role) => void;
   setEmailVerified: (status: boolean) => void;
   setPhoneVerified: (status: boolean) => void;
@@ -199,6 +204,7 @@ export const useUserStore = create<UserState>()(
       },
       roleData: {},
       followedListers: [],
+      wishlist: [],
       draftData: {},
 
       setUser: (data) => set((state) => ({ ...state, ...data })),
@@ -216,14 +222,24 @@ export const useUserStore = create<UserState>()(
           ? state.followedListers.filter(id => id !== listerId)
           : [...state.followedListers, listerId]
       })),
+      toggleWishlist: (propertyId) => set((state) => ({
+        wishlist: state.wishlist.includes(propertyId)
+          ? state.wishlist.filter(id => id !== propertyId)
+          : [...state.wishlist, propertyId]
+      })),
       setActiveRole: (activeRole) => set({ activeRole }),
       setEmailVerified: (verified) => set({ verified }),
       setPhoneVerified: (verified) => set({ verified }),
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
       resetUser: () => set({ 
        id: '', email: '', roles: [], activeRole: null, verified: false, fullName: '', phone: '',token: null,
+        onboardingCompleted: false,
+        roleOnboardingCompleted: {},
         profile: { firstName: '', lastName: '', dob: '', gender: '', maritalStatus: '', address: '', state: '', image: '/assets/dashboard/profile-placeholder.png' },
-        roleData: {}
+        roleData: {},
+        draftData: {},
+        followedListers: [],
+        wishlist: []
       }),
     }),
     {

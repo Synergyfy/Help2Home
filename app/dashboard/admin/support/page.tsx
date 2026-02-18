@@ -1,199 +1,117 @@
-'use client';
+// app/dashboard/admin/support/page.tsx
+"use client";
 
-import { useState } from 'react';
-import { 
-  HiOutlineSearch, 
-  HiOutlineFilter, 
-  HiOutlineTicket, 
-  HiOutlineClock, 
-  HiOutlineCheckCircle,
-  HiOutlineExclamationCircle 
-} from 'react-icons/hi';
-import TicketDetailModal from '@/components/dashboard/admin/support/TicketDetailModal';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { HiOutlineTicket, HiOutlineFilter } from 'react-icons/hi';
+import { MdSearch } from 'react-icons/md';
 
-// Updated Mock Data to match Modal Requirements
-const TICKETS = [
-  { 
-    id: 'TKT-1023', 
-    user: 'John Smith', 
-    userEmail: 'john.smith@example.com',
-    subject: 'Payment failed for User #892', 
-    priority: 'High', 
-    status: 'Open', 
-    category: 'Billing', 
-    date: '2 hours ago',
-    createdAt: 'Jan 7, 2026',
-    property: 'Sunset Apartments',
-    unit: '4B',
-    dueDate: 'Tomorrow, 5:00 PM',
-    description: 'Hi Support, I tried to make a payment for my listing #892 using my Verve card, but the transaction kept failing even though I have sufficient funds.'
-  },
-  { 
-    id: 'TKT-1021', 
-    user: 'Sarah Wilson', 
-    userEmail: 's.wilson@web.com',
-    subject: 'Landlord photo upload issue', 
-    priority: 'Medium', 
-    status: 'In Progress', 
-    category: 'Technical', 
-    date: '5 hours ago',
-    createdAt: 'Jan 7, 2026',
-    property: 'Green Valley',
-    unit: '12A',
-    dueDate: 'Jan 10, 2026',
-    description: 'I am trying to upload high-resolution photos of my property, but the system keeps timing out at 90%.'
-  },
-  { 
-    id: 'TKT-1019', 
-    user: 'Mike Ade', 
-    userEmail: 'mike.ade@provider.net',
-    subject: 'Dark mode feature request', 
-    priority: 'Low', 
-    status: 'Resolved', 
-    category: 'Feature', 
-    date: 'Yesterday',
-    createdAt: 'Jan 6, 2026',
-    property: 'City Center Lofts',
-    unit: 'Penthouse 1',
-    dueDate: 'Completed',
-    description: 'Would love to see a dark mode option for the dashboard. It gets quite bright working late at night!'
-  },
+// Mock data for demonstration
+const ALL_TICKETS = [
+    { id: '1023', priority: 'High', title: 'Payment failed for User #892', status: 'Open', statusColor: 'bg-red-100 text-red-600', submittedBy: 'John Doe', date: 'Oct 24, 2023', category: 'Billing' },
+    { id: '1021', priority: 'Medium', title: 'Photo upload limit issue', status: 'Open', statusColor: 'bg-amber-100 text-amber-600', submittedBy: 'Sarah Smith', date: 'Oct 23, 2023', category: 'Technical' },
+    { id: '1019', priority: 'Low', title: 'Dark mode feature request', status: 'Closed', statusColor: 'bg-green-100 text-green-600', submittedBy: 'Alice Lee', date: 'Oct 22, 2023', category: 'Feature Request' },
+    { id: '1018', priority: 'High', title: 'Account suspended incorrectly', status: 'Open', statusColor: 'bg-red-100 text-red-600', submittedBy: 'Bob Johnson', date: 'Oct 21, 2023', category: 'Account' },
+    { id: '1017', priority: 'Medium', title: 'Property listing not appearing', status: 'Pending', statusColor: 'bg-blue-100 text-blue-600', submittedBy: 'Charlie Brown', date: 'Oct 20, 2023', category: 'Listings' },
 ];
 
-export default function SupportRequestsPage() {
-  const [filter, setFilter] = useState('All');
-  const [selectedTicket, setSelectedTicket] = useState<any | null>(null);
+export default function AdminSupportTicketsPage() {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterStatus, setFilterStatus] = useState('All');
+    const [filterPriority, setFilterPriority] = useState('All');
 
-  return (
-    <main className="flex-1 py-8 px-4 lg:px-8 w-full max-w-[1600px] mx-auto bg-[#f9fafb]">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-        <div>
-          <h1 className="text-brand-green-900 text-3xl font-extrabold tracking-tight">Support Requests</h1>
-          <p className="text-brand-green-500 mt-1">Manage and respond to user inquiries and technical issues.</p>
-        </div>
-        <div className="flex gap-3">
-          <button className="flex items-center gap-2 bg-white border border-brand-green-200 text-brand-green-700 px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-brand-green-50 transition-all">
-            <HiOutlineFilter size={18} /> Filters
-          </button>
-          <button className="flex items-center gap-2 bg-emerald-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all">
-            New Ticket
-          </button>
-        </div>
-      </div>
+    const filteredTickets = ALL_TICKETS.filter(ticket => {
+        const matchesSearch = ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                              ticket.submittedBy.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                              ticket.id.includes(searchTerm);
+        const matchesStatus = filterStatus === 'All' || ticket.status === filterStatus;
+        const matchesPriority = filterPriority === 'All' || ticket.priority === filterPriority;
+        return matchesSearch && matchesStatus && matchesPriority;
+    });
 
-      {/* Quick Stats Overview */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <SupportStat label="Total Tickets" value="154" icon={HiOutlineTicket} color="text-blue-600 bg-blue-50" />
-        <SupportStat label="Open Now" value="12" icon={HiOutlineExclamationCircle} color="text-red-600 bg-red-50" />
-        <SupportStat label="In Progress" value="8" icon={HiOutlineClock} color="text-amber-600 bg-amber-50" />
-        <SupportStat label="Resolved Today" value="45" icon={HiOutlineCheckCircle} color="text-emerald-600 bg-emerald-50" />
-      </div>
+    return (
+        <main className="flex-1 py-8 px-4 lg:px-8 w-full max-w-[1600px] mx-auto bg-[#f9fafb]">
+            <h1 className="text-brand-green-900 text-3xl font-extrabold tracking-tight mb-8">Support Tickets</h1>
 
-      <div className="bg-white rounded-2xl border border-brand-green-100 shadow-sm overflow-hidden">
-        {/* Table Toolbar */}
-        <div className="p-6 border-b border-brand-green-50 flex flex-col md:flex-row gap-4 justify-between items-center">
-          <div className="relative w-full md:w-96">
-            <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-green-400" size={20} />
-            <input 
-              type="text" 
-              placeholder="Search by ticket ID..." 
-              className="w-full pl-10 pr-4 py-2.5 bg-brand-green-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
-            />
-          </div>
-          <div className="flex bg-brand-green-50 p-1 rounded-xl w-full md:w-auto">
-            {['All', 'Open', 'In Progress', 'Resolved'].map((item) => (
-              <button
-                key={item}
-                onClick={() => setFilter(item)}
-                className={`flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  filter === item ? 'bg-white text-brand-green-900 shadow-sm' : 'text-brand-green-500 hover:text-brand-green-700'
-                }`}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Tickets Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-brand-green-50/50 border-b border-brand-green-100">
-                <th className="px-6 py-4 text-xs font-bold text-brand-green-500 uppercase tracking-wider">Ticket ID</th>
-                <th className="px-6 py-4 text-xs font-bold text-brand-green-500 uppercase tracking-wider">User</th>
-                <th className="px-6 py-4 text-xs font-bold text-brand-green-500 uppercase tracking-wider">Subject & Category</th>
-                <th className="px-6 py-4 text-xs font-bold text-brand-green-500 uppercase tracking-wider">Priority</th>
-                <th className="px-6 py-4 text-xs font-bold text-brand-green-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-xs font-bold text-brand-green-500 uppercase tracking-wider text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-brand-green-50">
-              {TICKETS.map((ticket) => (
-                <tr key={ticket.id} className="hover:bg-brand-green-50/50 transition-colors group">
-                  <td className="px-6 py-5 whitespace-nowrap text-sm font-bold text-brand-green-900">{ticket.id}</td>
-                  <td className="px-6 py-5 whitespace-nowrap">
-                    <div className="text-sm font-semibold text-brand-green-900">{ticket.user}</div>
-                    <div className="text-[10px] text-brand-green-400">{ticket.date}</div>
-                  </td>
-                  <td className="px-6 py-5 max-w-xs">
-                    <div className="text-sm font-medium text-brand-green-900 line-clamp-1">{ticket.subject}</div>
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-brand-green-100 text-brand-green-500 font-bold uppercase tracking-tight">
-                      {ticket.category}
-                    </span>
-                  </td>
-                  <td className="px-6 py-5 whitespace-nowrap">
-                    <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md ${
-                      ticket.priority === 'High' ? 'text-red-600 bg-red-50' : 
-                      ticket.priority === 'Medium' ? 'text-amber-600 bg-amber-50' : 'text-blue-600 bg-blue-50'
-                    }`}>
-                      {ticket.priority}
-                    </span>
-                  </td>
-                  <td className="px-6 py-5 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <div className={`size-2 rounded-full ${
-                        ticket.status === 'Open' ? 'bg-red-500' : 
-                        ticket.status === 'In Progress' ? 'bg-amber-500' : 'bg-emerald-500'
-                      }`} />
-                      <span className="text-sm font-medium text-brand-green-700">{ticket.status}</span>
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden p-6">
+                <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
+                    <div className="relative w-full md:w-1/3">
+                        <input
+                            type="text"
+                            placeholder="Search tickets..."
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-brand-green focus:border-brand-green"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        <MdSearch size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     </div>
-                  </td>
-                  <td className="px-6 py-5 whitespace-nowrap text-right">
-                    <button 
-                      onClick={() => setSelectedTicket(ticket)} 
-                      className="text-emerald-500 font-bold text-sm hover:underline decoration-2 underline-offset-4"
-                    >
-                      View Details
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
 
-      {/* Ticket Modal Instance */}
-      <TicketDetailModal 
-        ticket={selectedTicket} 
-        onClose={() => setSelectedTicket(null)} 
-      />
-    </main>
-  );
-}
+                    <div className="flex gap-4 w-full md:w-auto">
+                        <select
+                            className="p-2 border border-gray-300 rounded-md text-sm"
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                        >
+                            <option value="All">All Statuses</option>
+                            <option value="Open">Open</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                        <select
+                            className="p-2 border border-gray-300 rounded-md text-sm"
+                            value={filterPriority}
+                            onChange={(e) => setFilterPriority(e.target.value)}
+                        >
+                            <option value="All">All Priorities</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                </div>
 
-function SupportStat({ label, value, icon: Icon, color }: { label: string, value: string, icon: any, color: string }) {
-  return (
-    <div className="bg-white p-6 rounded-2xl border border-brand-green-100 shadow-sm flex items-center gap-4">
-      <div className={`p-3 rounded-xl ${color}`}>
-        <Icon size={24} />
-      </div>
-      <div>
-        <p className="text-xs font-bold text-brand-green-500 uppercase tracking-tight">{label}</p>
-        <p className="text-2xl font-black text-brand-green-900">{value}</p>
-      </div>
-    </div>
-  );
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ticket ID</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted By</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th scope="col" className="relative px-6 py-3">
+                                    <span className="sr-only">View</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {filteredTickets.map((ticket) => (
+                                <tr key={ticket.id} className="hover:bg-gray-50">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{ticket.id}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{ticket.title}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${ticket.statusColor}`}>
+                                            {ticket.status}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{ticket.priority}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{ticket.submittedBy}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{ticket.date}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <Link href={`/dashboard/admin/support/${ticket.id}`} className="text-brand-green hover:text-brand-green/80">
+                                            View
+                                        </Link>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                {filteredTickets.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">No tickets found matching your criteria.</div>
+                )}
+            </div>
+        </main>
+    );
 }

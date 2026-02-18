@@ -80,7 +80,7 @@ export default function BackgroundPanel({
    ========================================================= */
 
 /* Example 1: Simple text content */
-export function SimpleExample(): JSX.Element {
+export function SimpleExample(): React.ReactElement {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <div className="w-full md:w-[45%] flex items-center justify-center p-8">
@@ -105,7 +105,7 @@ export function SimpleExample(): JSX.Element {
 }
 
 /* Example 2: Custom positioned content */
-export function CustomPositionExample(): JSX.Element {
+export function CustomPositionExample(): React.ReactElement {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <div className="w-full md:w-[45%] flex items-center justify-center p-8">
@@ -146,7 +146,7 @@ export function CustomPositionExample(): JSX.Element {
 }
 
 /* Example 3: Complex custom component */
-export function ComplexExample(): JSX.Element {
+export function ComplexExample(): React.ReactElement {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <div className="w-full md:w-[45%] flex items-center justify-center p-8">
@@ -197,7 +197,7 @@ export function ComplexExample(): JSX.Element {
 }
 
 /* Example 4: No image, gradient-only background */
-export function ColoredBackgroundExample(): JSX.Element {
+export function ColoredBackgroundExample(): React.ReactElement {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <div className="w-full md:w-[45%] flex items-center justify-center p-8">

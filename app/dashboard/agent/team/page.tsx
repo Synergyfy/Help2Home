@@ -9,8 +9,10 @@ import {
     HiOutlinePhone,
     HiOutlineCheckCircle,
     HiOutlineClock,
-    HiOutlineXCircle
+    HiOutlineXCircle,
+    HiOutlineChatBubbleLeftRight
 } from 'react-icons/hi2';
+import { useRouter } from 'next/navigation';
 
 interface Partner {
     id: string;
@@ -57,9 +59,14 @@ const MOCK_PARTNERS: Partner[] = [
 ];
 
 export default function TeamPage() {
+    const router = useRouter();
     const [partners] = useState<Partner[]>(MOCK_PARTNERS);
     const [filter, setFilter] = useState<'All' | 'Landlord' | 'Caretaker'>('All');
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
+    const handleChat = (partner: Partner) => {
+        router.push(`/dashboard/agent/support/inbox?partnerId=${partner.id}`);
+    };
 
     const filteredPartners = filter === 'All'
         ? partners
@@ -176,8 +183,12 @@ export default function TeamPage() {
                                         </div>
 
                                         <div className="flex gap-2">
-                                            <button className="p-2.5 bg-brand-green text-white rounded-xl hover:bg-green-700 transition-colors">
-                                                <HiOutlineEnvelope size={18} />
+                                            <button 
+                                                onClick={() => handleChat(partner)}
+                                                className="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                                                title="Chat with partner"
+                                            >
+                                                <HiOutlineChatBubbleLeftRight size={18} strokeWidth={2} />
                                             </button>
                                             <button className="p-2.5 border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors">
                                                 <HiOutlinePhone size={18} />

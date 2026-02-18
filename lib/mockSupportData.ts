@@ -3,7 +3,7 @@ import { subMinutes, subHours, subDays } from 'date-fns';
 // --- Interfaces ---
 
 export type MessageType = 'text' | 'image' | 'document' | 'system';
-export type ParticipantRole = 'landlord' | 'tenant' | 'agent' | 'support' | 'applicant';
+export type ParticipantRole = 'landlord' | 'tenant' | 'agent' | 'support' | 'applicant' | 'caretaker';
 export type TicketStatus = 'Open' | 'In Progress' | 'Resolved' | 'Closed';
 export type TicketPriority = 'Low' | 'Medium' | 'High';
 
@@ -32,6 +32,7 @@ export interface Participant {
     id: string;
     name: string;
     role: ParticipantRole;
+    email?: string;
     avatar?: string;
 }
 
@@ -115,8 +116,8 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
     {
         id: 'conv_1',
         participants: [
-            { id: 'user_1', name: 'You', role: 'landlord' },
-            { id: 'tenant_1', name: 'John Smith', role: 'applicant' }
+            { id: 'user_1', name: 'You', role: 'landlord', email: 'landlord@example.com' },
+            { id: 'tenant_1', name: 'John Smith', role: 'applicant', email: 'john@example.com' }
         ],
         lastMessage: {
             id: 'msg_103',
@@ -141,8 +142,8 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
     {
         id: 'conv_2',
         participants: [
-            { id: 'user_1', name: 'You', role: 'landlord' },
-            { id: 'tenant_2', name: 'Sarah Connor', role: 'tenant' }
+            { id: 'user_1', name: 'You', role: 'landlord', email: 'landlord@example.com' },
+            { id: 'tenant_2', name: 'Sarah Connor', role: 'tenant', email: 'sarah.c@example.com' }
         ],
         lastMessage: {
             id: 'msg_205',
@@ -165,10 +166,52 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
         updatedAt: subHours(new Date(), 2).toISOString()
     },
     {
+        id: 'conv_partner_1',
+        participants: [
+            { id: 'user_1', name: 'You', role: 'landlord', email: 'landlord@example.com' },
+            { id: 'partner_1', name: 'Ngozi Okafor', role: 'agent', email: 'ngozi@example.com' }
+        ],
+        lastMessage: {
+            id: 'msg_p1_1',
+            conversationId: 'conv_partner_1',
+            senderId: 'partner_1',
+            senderName: 'Ngozi Okafor',
+            role: 'agent',
+            text: 'I have scheduled three viewings for the Lekki property tomorrow.',
+            type: 'text',
+            createdAt: subHours(new Date(), 1).toISOString(),
+            isRead: true
+        },
+        unreadCount: 0,
+        labels: ['Agent'],
+        updatedAt: subHours(new Date(), 1).toISOString()
+    },
+    {
+        id: 'conv_partner_2',
+        participants: [
+            { id: 'user_1', name: 'You', role: 'landlord', email: 'landlord@example.com' },
+            { id: 'partner_2', name: 'Yusuf Ibrahim', role: 'caretaker', email: 'yusuf@example.com' }
+        ],
+        lastMessage: {
+            id: 'msg_p2_1',
+            conversationId: 'conv_partner_2',
+            senderId: 'partner_2',
+            senderName: 'Yusuf Ibrahim',
+            role: 'caretaker',
+            text: 'The plumber has finished fixing the leak in Apt 4B.',
+            type: 'text',
+            createdAt: subDays(new Date(), 1).toISOString(),
+            isRead: true
+        },
+        unreadCount: 0,
+        labels: ['Caretaker'],
+        updatedAt: subDays(new Date(), 1).toISOString()
+    },
+    {
         id: 'conv_3',
         participants: [
-            { id: 'user_1', name: 'You', role: 'landlord' },
-            { id: 'support_1', name: 'Help2Home Support', role: 'support' }
+            { id: 'user_1', name: 'You', role: 'landlord', email: 'landlord@example.com' },
+            { id: 'support_1', name: 'Help2Home Support', role: 'support', email: 'support@help2home.com' }
         ],
         lastMessage: {
             id: 'msg_302',

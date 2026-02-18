@@ -5,21 +5,8 @@ import { useUserStore } from '@/store/userStore';
 import { useNotificationStore } from '@/store/notificationStore';
 import ProfileOnboardingView from '@/components/dashboard/profile/ProfileOnboardingView';
 import SecurityVerification from '@/components/dashboard/profile/SecurityVerification';
-import {
-    HiOutlineUser as OriginalHiOutlineUser,
-    HiOutlinePencilSquare as OriginalHiOutlinePencilSquare,
-    HiOutlineMapPin as OriginalHiOutlineMapPin,
-    HiOutlinePhone as OriginalHiOutlinePhone,
-    HiOutlineEnvelope as OriginalHiOutlineEnvelope,
-    HiOutlinePhoto as OriginalHiOutlinePhoto
-} from 'react-icons/hi2';
+import { HiOutlineUser, HiOutlinePencilSquare, HiOutlineMapPin, HiOutlinePhone, HiOutlineEnvelope, HiOutlinePhoto, HiOutlineCheckCircle } from '@/components/shared/Icons';
 
-const HiOutlineUser = (OriginalHiOutlineUser as any);
-const HiOutlinePencilSquare = (OriginalHiOutlinePencilSquare as any);
-const HiOutlineMapPin = (OriginalHiOutlineMapPin as any);
-const HiOutlinePhone = (OriginalHiOutlinePhone as any);
-const HiOutlineEnvelope = (OriginalHiOutlineEnvelope as any);
-const HiOutlinePhoto = (OriginalHiOutlinePhoto as any);
 
 import FadeIn from '@/components/FadeIn';
 import { toast } from 'react-toastify';
@@ -75,6 +62,7 @@ export default function UnifiedProfilePage() {
                                     <h1 className="text-3xl font-black text-gray-900 tracking-tight">
                                         {profile.firstName} {profile.lastName}
                                     </h1>
+
                                     <span className="px-3 py-1 bg-brand-green/10 text-brand-green text-[10px] font-black uppercase tracking-widest rounded-lg border border-brand-green/20 w-fit mx-auto md:mx-0">
                                         {activeRole}
                                     </span>
@@ -186,12 +174,4 @@ function ProfileInput({ label, value, disabled, onChange }: { label: string, val
             />
         </div>
     );
-}
-
-function HiOutlineCheckCircle({ size }: { size: number }) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className={`size-${size / 4}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-        </svg>
-    )
 }

@@ -79,11 +79,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     };
 
     const logout = () => {
-        localStorage.removeItem('user_data');
-        localStorage.removeItem('user_session');
-        localStorage.removeItem('user_firstName');
-        localStorage.removeItem('user_lastName');
-        localStorage.removeItem('user_email');
+        localStorage.clear(); // Comprehensive clear
         setUser(null);
         router.push('/signin');
     };

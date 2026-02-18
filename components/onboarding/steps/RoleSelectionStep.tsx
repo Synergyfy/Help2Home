@@ -23,12 +23,12 @@ const RoleSelectionStep = () => {
   const handleContinue = () => {
     if (selectedRoles.length === 0) return;
 
-    // If only one role is picked, skip the Chooser (Step 4) and go to Step 5
-    if (selectedRoles.length === 1) {
+    // Skip Chooser ONLY for Tenant-only selection
+    if (selectedRoles.length === 1 && selectedRoles[0] === 'tenant') {
       setActiveRole(selectedRoles[0]);
       goToStep(5);
     } else {
-      // Multiple roles selected, go to Chooser to pick which one to start with
+      // For multiple roles or non-tenant single roles, go to Chooser
       nextStep();
     }
   };
@@ -68,10 +68,13 @@ const RoleSelectionStep = () => {
               onClick={() => {
                 if (!isDisabled) {
                   toggleRole(role.id);
-                  // If it's a single-select role (not multiSelect), auto-proceed
-                  if (!role.multiSelect) {
+                  // Auto-proceed logic
+                  if (role.id === 'tenant') {
                     setActiveRole(role.id);
                     goToStep(5);
+                  } else if (!role.multiSelect) {
+                    // For other single-select roles (like Investor), go to Chooser
+                    nextStep();
                   }
                 }
               }}

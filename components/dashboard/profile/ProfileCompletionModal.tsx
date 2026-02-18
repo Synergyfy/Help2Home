@@ -21,7 +21,7 @@ export default function ProfileCompletionModal() {
                     ...baseChecks,
                     { label: 'Employment Details', done: !!(roleData.tenant?.employmentStatus && roleData.tenant?.employmentStatus !== 'Unemployed' ? roleData.tenant?.employerName : true) },
                     { label: 'Next of Kin', done: !!(roleData.tenant?.nextOfKin?.name && roleData.tenant?.nextOfKin?.phone) },
-                    { label: 'Guarantor Details', done: !!(roleData.tenant?.guarantor?.name && roleData.tenant?.guarantor?.phone) },
+                    { label: 'Guarantor Details', done: !!(roleData.tenant?.guarantors && roleData.tenant.guarantors.length > 0) },
                     { label: 'BVN Verification', done: !!roleData.tenant?.isBvnVerified }
                 ];
             case 'landlord':

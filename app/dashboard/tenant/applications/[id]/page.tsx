@@ -47,7 +47,7 @@ export default function ApplicationStatusPage() {
                 ],
                 documents: [
                     { id: '1', type: 'ID', name: 'Government ID', status: 'Verified', fileUrl: '#', size: '2.4 MB' },
-                    { id: '2', type: 'Income', name: '3 Months Payslips', status: 'In Review', fileUrl: '#', size: '1.8 MB' },
+                    { id: '2', type: 'Income', name: '3 Months Bank Statement', status: 'In Review', fileUrl: '#', size: '1.8 MB' },
                     { id: '3', type: 'Statement', name: '3 Months Bank Statement', status: 'Rejected', rejectionReason: 'Image too blurry', size: '5.2 MB' },
                 ],
                 contract: {

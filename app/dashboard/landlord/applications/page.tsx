@@ -19,8 +19,10 @@ export default function LandlordApplicationsPage() {
     const [initialTenantData, setInitialTenantData] = useState<any>(null);
 
     const handleOnboard = (app: any) => {
+        const nameParts = app.tenantName.split(' ');
         setInitialTenantData({
-            name: app.tenantName,
+            firstName: nameParts[0] || '',
+            lastName: nameParts.slice(1).join(' ') || '',
             email: app.tenantEmail,
             phone: app.tenantPhone,
             propertyId: app.propertyId,
@@ -314,7 +316,7 @@ export default function LandlordApplicationsPage() {
                                 <div className="space-y-4">
                                     <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider">Verification Documents</h4>
                                     <div className="space-y-3">
-                                        {['Government ID', 'Employment Letter', '3 Months Payslips', 'Bank Statement'].map((doc, idx) => (
+                                        {['Government ID', 'Employment Letter', 'Bank Statement'].map((doc, idx) => (
                                             <div key={doc} className="flex items-center justify-between p-4 border border-gray-100 rounded-xl group hover:border-brand-green hover:bg-green-50/30 transition-all cursor-pointer">
                                                 <div className="flex items-center gap-3">
                                                     <div className="p-2 bg-gray-100 group-hover:bg-brand-green/10 rounded-lg text-gray-500 group-hover:text-brand-green transition-colors">

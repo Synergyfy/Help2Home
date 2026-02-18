@@ -28,27 +28,35 @@ const ProfileStep = () => {
   const isEmailSignup = !!user?.currentEmail;
   const isPhoneSignup = !!user?.currentPhone;
 
-  const [fullName, setFullName] = useState(user?.fullName || "");
+  const [firstName, setFirstName] = useState(user?.firstName || "");
+  const [lastName, setLastName] = useState(user?.lastName || "");
   const [phone, setPhone] = useState(user?.phone || "");
   const [email, setEmail] = useState(user?.email || "");
-  const [errors, setErrors] = useState<{ fullName?: string; phone?: string; email?: string }>({});
+  const [errors, setErrors] = useState<{ firstName?: string; lastName?: string; phone?: string; email?: string }>({});
 
-  // Auto-detect name from email if email signup
+  // Auto-detect names from email if email signup
   useEffect(() => {
-    if (isEmailSignup && user?.currentEmail && !fullName) {
-      const nameFromEmail = user.currentEmail.split('@')[0].split(/[._-]/).map((part: string) =>
-        part.charAt(0).toUpperCase() + part.slice(1)
-      ).join(' ');
-      if (nameFromEmail) setFullName(nameFromEmail);
+    if (isEmailSignup && user?.currentEmail && !firstName && !lastName) {
+      const parts = user.currentEmail.split('@')[0].split(/[._-]/);
+      if (parts.length >= 1) {
+        setFirstName(parts[0].charAt(0).toUpperCase() + parts[0].slice(1));
+      }
+      if (parts.length >= 2) {
+        setLastName(parts.slice(1).map((p: string) => p.charAt(0).toUpperCase() + p.slice(1)).join(' '));
+      }
     }
-  }, [isEmailSignup, user?.currentEmail, fullName]);
+  }, [isEmailSignup, user?.currentEmail, firstName, lastName]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors: { fullName?: string; phone?: string; email?: string } = {};
+    const newErrors: { firstName?: string; lastName?: string; phone?: string; email?: string } = {};
 
-    if (!fullName.trim()) {
-      newErrors.fullName = "Please enter your full name";
+    if (!firstName.trim()) {
+      newErrors.firstName = "Please enter your first name";
+    }
+
+    if (!lastName.trim()) {
+      newErrors.lastName = "Please enter your last name";
     }
 
     if (isEmailSignup && !phone.trim()) {
@@ -64,25 +72,11 @@ const ProfileStep = () => {
       return;
     }
 
-    const nameParts = fullName.trim().split(/\s+/);
-    const firstName = nameParts[0] || "";
-    const lastName = nameParts.slice(1).join(" ") || "";
-
+    useOnboardingStore.getState().setNames(firstName, lastName);
     useUserStore.getState().updateProfile({ firstName, lastName });
 
-    // Handle skip logic directly here to avoid multiple intermediate transitions
-    const roles = user?.roles || [];
-    if (roles.length === 1) {
-      // Single role (Tenant, Investor, etc.) -> Jump to Role Onboarding (Step 5+)
-      useOnboardingStore.getState().setActiveRole(roles[0]);
-      useOnboardingStore.getState().goToStep(5);
-    } else if (roles.length > 1) {
-      // Multiple roles (Property Management) -> Jump to Role Chooser (Step 4)
-      useOnboardingStore.getState().goToStep(4);
-    } else {
-      // No roles pre-selected -> Go to Role Selection (Step 3)
-      nextStep();
-    }
+    // Proceed to the next step (Role Selection)
+    nextStep();
   };
 
   return (
@@ -106,29 +100,56 @@ const ProfileStep = () => {
 
       <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
         <div className="space-y-6 flex-1">
-          <div>
-            <label htmlFor="fullName" className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
-              Full Name
-            </label>
-            <div className="relative group">
-              <FiUser
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors"
-                size={20}
-              />
-              <input
-                type="text"
-                id="fullName"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="John Doe"
-                className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-100 bg-white text-gray-900 font-medium placeholder:text-gray-400 focus:outline-none focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 transition-all"
-              />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label htmlFor="firstName" className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
+                First Name
+              </label>
+              <div className="relative group">
+                <FiUser
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors"
+                  size={20}
+                />
+                <input
+                  type="text"
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="John"
+                  className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-100 bg-white text-gray-900 font-medium placeholder:text-gray-400 focus:outline-none focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 transition-all"
+                />
+              </div>
+              {errors.firstName && (
+                <p className="mt-2 text-sm text-red-500 font-bold flex items-center gap-1">
+                  <span>•</span> {errors.firstName}
+                </p>
+              )}
             </div>
-            {errors.fullName && (
-              <p className="mt-2 text-sm text-red-500 font-bold flex items-center gap-1">
-                <span>•</span> {errors.fullName}
-              </p>
-            )}
+
+            <div>
+              <label htmlFor="lastName" className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
+                Last Name
+              </label>
+              <div className="relative group">
+                <FiUser
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors"
+                  size={20}
+                />
+                <input
+                  type="text"
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Doe"
+                  className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-100 bg-white text-gray-900 font-medium placeholder:text-gray-400 focus:outline-none focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 transition-all"
+                />
+              </div>
+              {errors.lastName && (
+                <p className="mt-2 text-sm text-red-500 font-bold flex items-center gap-1">
+                  <span>•</span> {errors.lastName}
+                </p>
+              )}
+            </div>
           </div>
 
           {isEmailSignup ? (

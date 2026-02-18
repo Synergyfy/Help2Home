@@ -1,14 +1,32 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTenants } from '@/hooks/useTenants';
 import AddTenantModal from '@/components/dashboard/landlord/tenants/AddTenantModal';
+import TenantDetailsModal from '@/components/dashboard/landlord/tenants/TenantDetailsModal';
+import TerminateLeaseModal from '@/components/dashboard/landlord/tenants/TerminateLeaseModal';
+import { 
+    HiOutlineEllipsisHorizontal, 
+    HiOutlineEye, 
+    HiOutlineChatBubbleLeftRight,
+    HiOutlineDocumentText,
+    HiOutlineTrash
+} from 'react-icons/hi2';
+import { Tenant } from '@/lib/mockLandlordData';
+import { toast } from 'react-toastify';
 
 export default function TenantsPage() {
+    const router = useRouter();
     const { tenants, isLoading } = useTenants();
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    
+    const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
+    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
     const filteredTenants = tenants.filter(tenant => {
         const matchesSearch = tenant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -25,6 +43,41 @@ export default function TenantsPage() {
         );
     }
 
+    const handleViewTenant = (tenant: Tenant) => {
+        setSelectedTenant(tenant);
+        setIsDetailsModalOpen(true);
+        setOpenMenuId(null);
+    };
+
+    const handleMessageTenant = (tenant: Tenant) => {
+        setOpenMenuId(null);
+        toast.info(`Opening conversation with ${tenant.name}...`);
+        router.push(`/dashboard/landlord/support/inbox?tenantId=${tenant.id}`);
+    };
+
+    const handleDownloadLease = (tenant: Tenant) => {
+        setOpenMenuId(null);
+        toast.promise(
+            new Promise(resolve => setTimeout(resolve, 2000)),
+            {
+                pending: 'Generating lease agreement PDF...',
+                success: 'Lease agreement downloaded successfully! 📄',
+                error: 'Failed to generate document.'
+            }
+        );
+    };
+
+    const handleTerminateClick = (tenant: Tenant) => {
+        setSelectedTenant(tenant);
+        setIsTerminateModalOpen(true);
+        setOpenMenuId(null);
+    };
+
+    const handleConfirmTermination = (tenantId: string) => {
+        // In a real app, this would be an API call
+        console.log('Terminating lease for:', tenantId);
+    };
+
     const getPaymentStatusColor = (status: string) => {
         switch (status) {
             case 'Up to date': return 'bg-green-100 text-green-800';
@@ -37,6 +90,18 @@ export default function TenantsPage() {
     return (
         <div className="space-y-6">
             <AddTenantModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+            <TenantDetailsModal 
+                isOpen={isDetailsModalOpen} 
+                onClose={() => setIsDetailsModalOpen(false)} 
+                tenant={selectedTenant} 
+            />
+            <TerminateLeaseModal 
+                isOpen={isTerminateModalOpen}
+                onClose={() => setIsTerminateModalOpen(false)}
+                tenant={selectedTenant}
+                onConfirm={handleConfirmTermination}
+            />
+            
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Tenants</h1>
@@ -132,12 +197,53 @@ export default function TenantsPage() {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                             {tenant.leaseEnd}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <button className="text-gray-400 hover:text-gray-600">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                </svg>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium relative">
+                                            <button 
+                                                onClick={() => setOpenMenuId(openMenuId === tenant.id ? null : tenant.id)}
+                                                className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-all"
+                                            >
+                                                <HiOutlineEllipsisHorizontal size={20} />
                                             </button>
+
+                                            {openMenuId === tenant.id && (
+                                                <>
+                                                    <div 
+                                                        className="fixed inset-0 z-10" 
+                                                        onClick={() => setOpenMenuId(null)}
+                                                    />
+                                                    <div className="absolute right-6 top-12 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-20 animate-in fade-in zoom-in-95 duration-200">
+                                                        <button 
+                                                            onClick={() => handleViewTenant(tenant)}
+                                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                                        >
+                                                            <HiOutlineEye className="text-gray-400" size={18} />
+                                                            View Info
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => handleMessageTenant(tenant)}
+                                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                                        >
+                                                            <HiOutlineChatBubbleLeftRight className="text-gray-400" size={18} />
+                                                            Message
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => handleDownloadLease(tenant)}
+                                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                                        >
+                                                            <HiOutlineDocumentText className="text-gray-400" size={18} />
+                                                            Lease Agreement
+                                                        </button>
+                                                        <div className="h-px bg-gray-100 my-1 mx-2" />
+                                                        <button 
+                                                            onClick={() => handleTerminateClick(tenant)}
+                                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                                        >
+                                                            <HiOutlineTrash className="text-red-400" size={18} />
+                                                            Terminate Lease
+                                                        </button>
+                                                    </div>
+                                                </>
+                                            )}
                                         </td>
                                     </tr>
                                 ))

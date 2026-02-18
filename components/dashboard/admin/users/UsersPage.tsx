@@ -5,12 +5,14 @@ import { useState, useEffect } from 'react';
 import { useAdminStore } from '@/store/adminStore';
 import AdminUserTable from '@/components/dashboard/admin/superrole/AdminUserTable';
 import { FiUsers, FiHome, FiTrendingUp, FiActivity, FiShield, FiPlus } from 'react-icons/fi';
+import AddUserModal from '@/components/dashboard/admin/users/AddUserModal'; // Import the new modal
 
 export default function AdminUsersPage() {
     const searchParams = useSearchParams();
     const queryTab = searchParams.get('tab');
 
     const [activeTab, setActiveTab] = useState<'ecosystem' | 'tenants' | 'investors' | 'landlords' | 'agents' | 'caretakers'>('ecosystem');
+    const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false); // State for modal visibility
 
     // URL Sync
     useEffect(() => {
@@ -19,7 +21,16 @@ export default function AdminUsersPage() {
         }
     }, [queryTab]);
 
-    const { users } = useAdminStore();
+    const { users, addUser } = useAdminStore(); // Assuming useAdminStore has an addUser action
+
+    // Mock onAddUser function for now
+    const handleAddUser = (userData: any) => {
+      console.log('New user added:', userData);
+      // In a real application, you would send this to an API and then update your store
+      // For now, let's assume useAdminStore has an addUser function
+      addUser(userData); // If the store supports adding mock users
+      setIsAddUserModalOpen(false); // Close modal after adding
+    };
 
     // Mapping of tabs and hierarchy
     const tabs = [
@@ -37,7 +48,10 @@ export default function AdminUsersPage() {
                     <h1 className="text-3xl font-black text-brand-green-900 tracking-tight">Organization Control</h1>
                     <p className="text-brand-green-500 font-medium">Coordinate the Help2Home stakeholder ecosystem.</p>
                 </div>
-                <button className="px-6 py-3 bg-emerald-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg active:scale-95 flex items-center gap-2">
+                <button 
+                    onClick={() => setIsAddUserModalOpen(true)} // Open modal on click
+                    className="px-6 py-3 bg-emerald-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg active:scale-95 flex items-center gap-2"
+                >
                     <FiPlus size={18} /> Add New Member
                 </button>
             </div>
@@ -110,6 +124,13 @@ export default function AdminUsersPage() {
                     )}
                 </div>
             </div>
+
+            {/* Add User Modal */}
+            <AddUserModal
+                isOpen={isAddUserModalOpen}
+                onClose={() => setIsAddUserModalOpen(false)}
+                onAddUser={handleAddUser}
+            />
         </div>
     );
 }

@@ -12,7 +12,18 @@ const PropertyMap = dynamic(() => import('./PropertyMap'), {
     loading: () => <div className="h-64 w-full bg-gray-100 animate-pulse rounded-xl flex items-center justify-center text-gray-400">Loading Map...</div>
 });
 
-export default function LocationStep() {
+interface LocationStepProps {
+    navigation?: {
+        onNext: () => void;
+        onBack: () => void;
+        isPending: boolean;
+        isFirstStep: boolean;
+        isLastStep: boolean;
+        submitLabel: string;
+    };
+}
+
+export default function LocationStep({ navigation }: LocationStepProps) {
     const { register, setValue, control } = useFormContext<PropertySchema>();
 
     const street = useWatch({ control, name: 'address.street' });
@@ -84,7 +95,7 @@ export default function LocationStep() {
                     </div>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-4 mb-10">
                     <div className="flex items-center justify-between">
                         <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Interactive Map Preview</p>
                         <p className="text-[10px] text-brand-green font-bold">Auto-pin enabled</p>
@@ -96,6 +107,36 @@ export default function LocationStep() {
                         We use the address above to automatically pinpoint your property on the map.
                     </p>
                 </div>
+
+                {/* IN-PAGE NAVIGATION BUTTONS */}
+                {navigation && (
+                    <div className="flex items-center justify-between pt-8 border-t border-gray-100">
+                        <button
+                            type="button"
+                            onClick={navigation.onBack}
+                            disabled={navigation.isFirstStep}
+                            className={`px-8 py-4 rounded-2xl font-black text-sm transition-all active:scale-95 ${
+                                navigation.isFirstStep 
+                                ? 'opacity-0 pointer-events-none' 
+                                : 'text-gray-400 hover:text-gray-900 bg-gray-50 hover:bg-gray-100'
+                            }`}
+                        >
+                            Back
+                        </button>
+                        <button
+                            type="button"
+                            onClick={navigation.onNext}
+                            disabled={navigation.isPending}
+                            className="px-12 py-4 bg-brand-green text-white rounded-2xl font-black text-sm hover:bg-green-700 transition-all shadow-xl shadow-green-900/20 active:scale-95 disabled:opacity-50"
+                        >
+                            {navigation.isPending ? (
+                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            ) : (
+                                navigation.isLastStep ? navigation.submitLabel : 'Continue to Financials'
+                            )}
+                        </button>
+                    </div>
+                )}
             </section>
         </div>
     );

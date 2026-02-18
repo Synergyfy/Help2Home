@@ -11,8 +11,8 @@ const mockDownPayment: DownPaymentDetails = {
 };
 
 const mockSchedule: Installment[] = [
-    { id: '1', installmentNumber: 1, dueDate: 'Apr 1, 2026', principal: 250000, interest: 41666, fees: 0, totalDue: 291666, status: 'Upcoming' },
-    { id: '2', installmentNumber: 2, dueDate: 'May 1, 2026', principal: 250000, interest: 41666, fees: 0, totalDue: 291666, status: 'Upcoming' },
+    { id: '1', installmentNumber: 1, dueDate: 'Apr 1, 2026', principal: 250000, interest: 41666, fees: 0, totalDue: 291666, status: 'Paid' },
+    { id: '2', installmentNumber: 2, dueDate: 'May 1, 2026', principal: 250000, interest: 41666, fees: 0, totalDue: 291666, status: 'Paid' },
     { id: '3', installmentNumber: 3, dueDate: 'Jun 1, 2026', principal: 250000, interest: 41666, fees: 0, totalDue: 291666, status: 'Upcoming' },
     { id: '4', installmentNumber: 4, dueDate: 'Jul 1, 2026', principal: 250000, interest: 41666, fees: 0, totalDue: 291666, status: 'Upcoming' },
     { id: '5', installmentNumber: 5, dueDate: 'Aug 1, 2026', principal: 250000, interest: 41666, fees: 0, totalDue: 291666, status: 'Upcoming' },

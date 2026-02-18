@@ -134,6 +134,18 @@ export default function PropertyWizard({
         enabled: false,
         roiFrequency: 'annually',
       },
+      landlord: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+      },
+      caretaker: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+      },
       ...initialData
     },
     mode: 'onChange'
@@ -169,7 +181,14 @@ export default function PropertyWizard({
       setCurrentStep(s => s + 1);
       window.scrollTo(0, 0);
     } else {
-      await handleSubmit(onSubmit as any)();
+      await handleSubmit(onSubmit as any, (errors) => {
+        console.error('Property Submission Errors:', errors);
+        const firstError = Object.values(errors)[0];
+        const errorMessage = typeof firstError?.message === 'string' 
+          ? firstError.message 
+          : 'Please check all required fields and try again.';
+        toast.error(errorMessage);
+      })();
     }
   };
 
@@ -181,9 +200,12 @@ export default function PropertyWizard({
   };
 
   const onSubmit: SubmitHandler<PropertySchema> = (data) => {
+    // Determine final status based on role
+    const finalStatus = roleKey === 'caretaker' ? 'draft' : 'available'; 
+    
     const submissionData = {
       ...data,
-      status: roleKey === 'caretaker' ? 'pending_review' : undefined
+      status: finalStatus
     };
 
     createProperty(submissionData, {
@@ -208,40 +230,44 @@ export default function PropertyWizard({
 
   const isSuccessStep = currentStep === activeSteps.length;
 
+  const navigation = {
+    onNext: handleNext,
+    onBack: handleBack,
+    isPending,
+    isFirstStep: currentStep === 0,
+    isLastStep: currentStep === activeSteps.length - 1,
+    submitLabel: ROLE_ACTIONS[roleKey].submitLabel
+  };
+
   return (
     <FormProvider {...methods}>
-      <div className="pb-20">
-        <h1 className="text-2xl font-bold mb-6">
-          {isEditing ? 'Edit Property' : 'Add New Property'}
-        </h1>
+      <div className="pb-20 max-w-7xl mx-auto px-4">
+        <div className="mb-8">
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight">
+            {isEditing ? 'Edit Property' : 'Add New Property'}
+          </h1>
+          <p className="text-gray-500 mt-1 font-medium">Follow the steps to list your property on Help2Home marketplace.</p>
+        </div>
 
         <StepIndicator steps={stepsForIndicator} currentStep={currentStep} />
 
-        {isSuccessStep ? (
-          <SuccessStep />
-        ) : (
-          <form>
-            {activeSteps[currentStep]?.key === 'preview'
-              ? React.cloneElement(
-                activeSteps[currentStep].component as React.ReactElement<any>,
-                { onEditStep: setCurrentStep }
-              )
-              : activeSteps[currentStep]?.component}
-          </form>
-        )}
-
-        {!isSuccessStep && (
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-between">
-            <button onClick={handleBack} disabled={currentStep === 0}>
-              Back
-            </button>
-            <button onClick={handleNext} disabled={isPending}>
-              {currentStep === activeSteps.length - 1
-                ? ROLE_ACTIONS[roleKey].submitLabel
-                : 'Next'}
-            </button>
-          </div>
-        )}
+        <div className="mt-8">
+          {isSuccessStep ? (
+            <SuccessStep />
+          ) : (
+            <form onSubmit={(e) => e.preventDefault()}>
+              {activeSteps[currentStep]?.key === 'preview'
+                ? React.cloneElement(
+                  activeSteps[currentStep].component as React.ReactElement<any>,
+                  { onEditStep: setCurrentStep, navigation }
+                )
+                : React.cloneElement(
+                  activeSteps[currentStep].component as React.ReactElement<any>,
+                  { navigation }
+                )}
+            </form>
+          )}
+        </div>
       </div>
     </FormProvider>
   );

@@ -1,6 +1,12 @@
 'use client';
 
+import Link from 'next/link';
+
 export default function HelpSupport() {
+    const handleChatClick = () => {
+        window.dispatchEvent(new CustomEvent('open-chatbot'));
+    };
+
     return (
         <div className="bg-linear-to-br from-brand-green to-green-800 rounded-xl shadow-sm p-6 text-white">
             <h3 className="text-lg font-bold mb-2">Need help?</h3>
@@ -9,16 +15,25 @@ export default function HelpSupport() {
             </p>
 
             <div className="space-y-2">
-                <button className="w-full bg-white text-brand-green py-2 rounded-lg font-bold text-sm hover:bg-green-50 transition-colors">
+                <button 
+                    onClick={handleChatClick}
+                    className="w-full bg-white text-brand-green py-2 rounded-lg font-bold text-sm hover:bg-green-50 transition-colors"
+                >
                     Chat now
                 </button>
                 <div className="grid grid-cols-2 gap-2">
-                    <button className="bg-green-700/50 text-white py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors border border-green-600">
+                    <Link 
+                        href="/dashboard/landlord/support/tickets?action=create"
+                        className="bg-green-700/50 text-white py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors border border-green-600 text-center"
+                    >
                         Create ticket
-                    </button>
-                    <button className="bg-green-700/50 text-white py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors border border-green-600">
+                    </Link>
+                    <Link 
+                        href="/dashboard/landlord/education"
+                        className="bg-green-700/50 text-white py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors border border-green-600 text-center"
+                    >
                         Docs
-                    </button>
+                    </Link>
                 </div>
             </div>
         </div>
