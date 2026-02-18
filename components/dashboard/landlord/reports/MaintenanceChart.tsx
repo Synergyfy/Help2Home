@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer as RechartsResponsiveContainer, Cell } from 'recharts';
+
+const ResponsiveContainer = RechartsResponsiveContainer as any;
 import { MaintenanceData } from '@/lib/mockAnalyticsData';
 
 interface MaintenanceChartProps {

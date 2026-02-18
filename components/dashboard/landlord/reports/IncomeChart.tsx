@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer as RechartsResponsiveContainer, Legend } from 'recharts';
+
+const ResponsiveContainer = RechartsResponsiveContainer as any;
 import { IncomeData } from '@/lib/mockAnalyticsData';
 
 interface IncomeChartProps {
