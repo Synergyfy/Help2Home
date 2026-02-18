@@ -430,7 +430,7 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                                     <div className="flex items-center gap-3">
                                         <div className="relative size-12 rounded-xl bg-gray-50 border-2 border-white shadow-sm overflow-hidden group-hover:scale-105 transition-transform">
                                             {property.listerImage ? (
-                                                <img src={property.listerImage} alt={property.listerName} className="size-full object-cover" />
+                                                <Image src={property.listerImage} alt={property.listerName || 'Lister'} fill className="object-cover" />
                                             ) : (
                                                 <div className="size-full flex items-center justify-center text-brand-green bg-brand-green/5">
                                                     <MdOutlineVilla size={24} />

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useUserStore } from '@/store/userStore';
 import { useNotificationStore } from '@/store/notificationStore';
 import ProfileOnboardingView from '@/components/dashboard/profile/ProfileOnboardingView';
@@ -43,10 +44,12 @@ export default function UnifiedProfilePage() {
                         <div className="bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-gray-100 flex flex-col md:flex-row items-center md:items-end gap-8">
                             <div className="relative group">
                                 <div className="size-32 md:size-40 rounded-3xl border-4 border-white overflow-hidden shadow-2xl bg-gray-100">
-                                    <img
+                                    <Image
                                         src={profile.image || '/assets/dashboard/profile-placeholder.png'}
                                         alt="Profile"
-                                        className="w-full h-full object-cover"
+                                        fill
+                                        sizes="(max-width: 768px) 128px, 160px"
+                                        className="object-cover"
                                     />
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
                                         <HiOutlinePhoto size={32} className="text-white" />

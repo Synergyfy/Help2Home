@@ -21,7 +21,7 @@ export default function CookiesPage() {
 
                     <div className="prose prose-lg prose-green max-w-none">
                         <p>
-                            This Cookie Policy explains how Help2Home ("we", "us", and "our") uses cookies and similar technologies to recognize you when you visit our website. It explains what these technologies are and why we use them, as well as your rights to control our use of them.
+                            This Cookie Policy explains how Help2Home (&quot;we&quot;, &quot;us&quot;, and &quot;our&quot;) uses cookies and similar technologies to recognize you when you visit our website. It explains what these technologies are and why we use them, as well as your rights to control our use of them.
                         </p>
 
                         <h3>1. What are cookies?</h3>
@@ -31,7 +31,7 @@ export default function CookiesPage() {
 
                         <h3>2. Why do we use cookies?</h3>
                         <p>
-                            We use first-party and third-party cookies for several reasons. Some cookies are required for technical reasons in order for our Website to operate, and we refer to these as "essential" or "strictly necessary" cookies. Other cookies also enable us to track and target the interests of our users to enhance the experience on our Online Properties. Third parties serve cookies through our Website for advertising, analytics, and other purposes.
+                            We use first-party and third-party cookies for several reasons. Some cookies are required for technical reasons in order for our Website to operate, and we refer to these as &quot;essential&quot; or &quot;strictly necessary&quot; cookies. Other cookies also enable us to track and target the interests of our users to enhance the experience on our Online Properties. Third parties serve cookies through our Website for advertising, analytics, and other purposes.
                         </p>
 
                         <h3>3. Types of Cookies We Use</h3>

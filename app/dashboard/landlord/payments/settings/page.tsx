@@ -3,10 +3,10 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import BankDetailsModal from '@/components/dashboard/landlord/payments/BankDetailsModal';
-import { MOCK_PAYOUT_SETTINGS } from '@/lib/mockPaymentData';
+import { MOCK_PAYOUT_SETTINGS, PayoutSettings } from '@/lib/mockPaymentData';
 
 export default function PayoutSettingsPage() {
-    const [settings, setSettings] = useState(MOCK_PAYOUT_SETTINGS);
+    const [settings, setSettings] = useState<PayoutSettings>(MOCK_PAYOUT_SETTINGS);
     const [isBankModalOpen, setIsBankModalOpen] = useState(false);
     const [isSecurityPromptOpen, setIsSecurityPromptOpen] = useState(false);
     const [pendingAction, setPendingAction] = useState<string | null>(null);
@@ -19,7 +19,7 @@ export default function PayoutSettingsPage() {
     const handleSecurityConfirm = () => {
         // Simulate security check success
         if (pendingAction?.includes('frequency')) {
-            const newFreq = pendingAction.split('to ')[1] as any;
+            const newFreq = pendingAction.split('to ')[1] as PayoutSettings['frequency'];
             setSettings({ ...settings, frequency: newFreq });
         }
         setIsSecurityPromptOpen(false);
@@ -142,8 +142,8 @@ export default function PayoutSettingsPage() {
                             }
                         ].map((option) => (
                             <label key={option.id} className={`relative p-6 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md ${settings.frequency === option.id
-                                    ? 'border-[#00853E] bg-green-50/30 ring-1 ring-[#00853E]'
-                                    : 'border-gray-100 hover:border-gray-300 bg-white'
+                                ? 'border-[#00853E] bg-green-50/30 ring-1 ring-[#00853E]'
+                                : 'border-gray-100 hover:border-gray-300 bg-white'
                                 }`}>
                                 <input
                                     type="radio"

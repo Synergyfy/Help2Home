@@ -8,11 +8,12 @@ import ContractEditor from '@/components/dashboard/landlord/contracts/ContractEd
 import PropertySelectModal from '@/components/dashboard/landlord/contracts/PropertySelectModal';
 import { addDays } from 'date-fns';
 import { HiOutlineHome, HiOutlineDocumentDuplicate, HiOutlineChevronRight } from 'react-icons/hi2';
+import { Property } from '@/utils/properties';
 
 export default function NewContractPage() {
     const router = useRouter();
     const [step, setStep] = useState<'property' | 'template' | 'details'>('property');
-    const [selectedProperty, setSelectedProperty] = useState<any>(null);
+    const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
     const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
 
     const [contractFields, setContractFields] = useState<ContractFields>({
@@ -23,7 +24,7 @@ export default function NewContractPage() {
         noticePeriod: 30
     });
 
-    const handlePropertySelect = (property: any) => {
+    const handlePropertySelect = (property: Property) => {
         setSelectedProperty(property);
         setContractFields(prev => ({
             ...prev,
@@ -41,9 +42,9 @@ export default function NewContractPage() {
 
     const mockContract: Contract = {
         id: 'new',
-        propertyId: selectedProperty?.id || '',
+        propertyId: selectedProperty?.id?.toString() || '',
         propertyTitle: selectedProperty?.title || 'New Contract',
-        propertyAddress: selectedProperty?.address ? `${selectedProperty.address.street}, ${selectedProperty.address.city}, ${selectedProperty.address.state}` : '',
+        propertyAddress: selectedProperty?.address || '',
         title: `Tenancy Agreement - ${selectedProperty?.title || 'Draft'}`,
         status: 'Draft',
         signers: [],
@@ -74,17 +75,17 @@ export default function NewContractPage() {
                         </div>
                         <h2 className="text-2xl font-black text-gray-900 mb-2">Start with a Property</h2>
                         <p className="text-gray-500 mb-8 max-w-sm mx-auto">Select the property you want to generate this agreement for to auto-fill the legal details.</p>
-                        <button 
+                        <button
                             onClick={() => setStep('property')} // Modal is controlled by separate state if needed, but here we can just show it
                             className="bg-brand-green text-white px-10 py-4 rounded-2xl font-black shadow-xl shadow-green-900/20 hover:bg-green-700 transition-all active:scale-95"
                         >
                             Select Property to Begin
                         </button>
                     </div>
-                    <PropertySelectModal 
-                        isOpen={step === 'property'} 
-                        onClose={() => router.back()} 
-                        onSelect={handlePropertySelect} 
+                    <PropertySelectModal
+                        isOpen={step === 'property'}
+                        onClose={() => router.back()}
+                        onSelect={handlePropertySelect}
                     />
                 </div>
             )}
@@ -123,7 +124,7 @@ export default function NewContractPage() {
                             </button>
                         ))}
                     </div>
-                    <button 
+                    <button
                         onClick={() => setStep('property')}
                         className="text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors"
                     >

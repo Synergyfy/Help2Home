@@ -44,7 +44,7 @@ export default function CaretakerDashboardPage() {
                     <h1 className="text-3xl font-black text-gray-900 leading-tight">
                         Caretaker <span className="text-brand-green">Hub</span>
                     </h1>
-                    <p className="text-gray-500 font-medium">Welcome back, John. Here's what's happening today.</p>
+                    <p className="text-gray-500 font-medium">Welcome back, John. Here&apos;s what&apos;s happening today.</p>
                 </div>
                 <div className="flex gap-3 w-full md:w-auto">
                     <Link

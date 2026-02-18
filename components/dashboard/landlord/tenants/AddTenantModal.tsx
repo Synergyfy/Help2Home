@@ -4,14 +4,25 @@ import React, { useState, useEffect } from 'react';
 import { useTenants } from '@/hooks/useTenants';
 import { useLandlordProperties } from '@/hooks/useLandlordQueries';
 import { Tenant } from '@/lib/mockLandlordData';
+import { Property } from '@/utils/properties';
 import { FiX, FiUser, FiHome, FiCalendar, FiArrowRight, FiArrowLeft, FiCheck } from 'react-icons/fi';
 import { HiOutlineBanknotes } from 'react-icons/hi2';
 import { motion, AnimatePresence } from 'framer-motion';
 
+export interface AddTenantInitialData extends Omit<Partial<Tenant>, 'status' | 'rentAmount'> {
+    firstName?: string;
+    lastName?: string;
+    employmentStatus?: string;
+    employerName?: string;
+    monthlySalary?: string | number;
+    status?: string;
+    rentAmount?: string | number;
+}
+
 interface AddTenantModalProps {
     isOpen: boolean;
     onClose: () => void;
-    initialData?: any;
+    initialData?: AddTenantInitialData | null;
 }
 
 export default function AddTenantModal({ isOpen, onClose, initialData }: AddTenantModalProps) {
@@ -68,7 +79,15 @@ export default function AddTenantModal({ isOpen, onClose, initialData }: AddTena
                 notes: initialData.details?.notes || '',
             });
             if (initialData.details?.documents) {
-                setDocuments(initialData.details.documents.filter((d: any) => !d.name.toLowerCase().includes('payslip')));
+                setDocuments(initialData.details.documents
+                    .filter(d => !d.name.toLowerCase().includes('payslip'))
+                    .map(d => ({
+                        id: d.id,
+                        type: d.type,
+                        name: d.name,
+                        status: d.status
+                    }))
+                );
             }
         }
     }, [initialData, isOpen]);
@@ -101,7 +120,7 @@ export default function AddTenantModal({ isOpen, onClose, initialData }: AddTena
             phone: formData.phone,
             propertyId: formData.propertyId || 'manual',
             propertyName: formData.propertyName,
-            status: initialData?.status || 'Active',
+            status: (initialData?.status as Tenant['status']) || 'Active',
             rentAmount: Number(formData.rentAmount.toString().replace(/,/g, '')),
             leaseStart: formData.leaseStart,
             leaseEnd: formData.leaseEnd,
@@ -126,8 +145,8 @@ export default function AddTenantModal({ isOpen, onClose, initialData }: AddTena
             }
         };
 
-        if (initialData) {
-            updateTenant({ id: initialData.id, data: newTenant }, {
+        if (initialData?.id) {
+            updateTenant({ id: initialData.id as string, data: newTenant }, {
                 onSuccess: () => {
                     onClose();
                 }
@@ -173,7 +192,7 @@ export default function AddTenantModal({ isOpen, onClose, initialData }: AddTena
 
                 {/* Progress Bar */}
                 <div className="w-full bg-gray-100 h-1">
-                    <motion.div 
+                    <motion.div
                         initial={{ width: '50%' }}
                         animate={{ width: step === 1 ? '50%' : '100%' }}
                         className="bg-brand-green h-full"
@@ -258,7 +277,7 @@ export default function AddTenantModal({ isOpen, onClose, initialData }: AddTena
                                                     value={formData.propertyId}
                                                     onChange={e => {
                                                         const propId = e.target.value;
-                                                        const prop = properties.find((p: any) => p.id.toString() === propId);
+                                                        const prop = (properties as Property[]).find(p => p.id.toString() === propId);
                                                         setFormData({
                                                             ...formData,
                                                             propertyId: propId,
@@ -268,7 +287,7 @@ export default function AddTenantModal({ isOpen, onClose, initialData }: AddTena
                                                     }}
                                                 >
                                                     <option value="">Choose a property...</option>
-                                                    {properties.map((prop: any) => (
+                                                    {properties.map((prop: Property) => (
                                                         <option key={prop.id} value={prop.id}>
                                                             {prop.title} - ₦{prop.price.toLocaleString()}
                                                         </option>

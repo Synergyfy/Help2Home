@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import Image from 'next/image';
 import { Property } from '@/utils/properties';
 import Link from 'next/link';
 
@@ -35,10 +35,11 @@ export default function PropertyCard({ property, onDelete }: PropertyCardProps) 
             <div className="h-48 w-full bg-gray-200 relative">
                 {/* Image Handling for flat string array */}
                 {property.images && property.images[0] ? (
-                    <img
-                        className="h-full w-full object-cover absolute inset-0"
+                    <Image
+                        className="object-cover"
                         src={property.images[0]}
                         alt={property.title}
+                        fill
                     />
                 ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-gray-400">

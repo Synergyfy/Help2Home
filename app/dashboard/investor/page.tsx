@@ -11,7 +11,7 @@ export default function InvestorDashboard() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-[#111811]">Overview</h1>
-                    <p className="text-gray-500">Welcome back, Investor. Here's how your portfolio is performing.</p>
+                    <p className="text-gray-500">Welcome back, Investor. Here&apos;s how your portfolio is performing.</p>
                 </div>
                 <Link
                     href="/dashboard/investor/invest"
@@ -65,7 +65,7 @@ export default function InvestorDashboard() {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Start Your Journey</h3>
                 <p className="text-gray-500 max-w-sm mx-auto mb-8">
-                    You haven't made any investments yet. Browse our vetted developer projects to find high-yield opportunities.
+                    You haven&apos;t made any investments yet. Browse our vetted developer projects to find high-yield opportunities.
                 </p>
                 <Link
                     href="/dashboard/investor/invest"

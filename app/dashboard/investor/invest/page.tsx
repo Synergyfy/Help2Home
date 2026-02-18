@@ -60,8 +60,26 @@ const MOCK_OPPORTUNITIES = [
     }
 ];
 
+interface InvestmentOpportunity {
+    id: string;
+    title: string;
+    developer: string;
+    location: string;
+    image: string;
+    investmentTerms: {
+        minInvestment: number;
+        roi: number;
+        duration: number;
+        expectedReturn: string;
+        timeline: string;
+        riskLevel: string;
+        roiFrequency: string;
+    };
+    tags: string[];
+}
+
 export default function InvestmentMarketplace() {
-    const [selectedProperty, setSelectedProperty] = useState<any>(null);
+    const [selectedProperty, setSelectedProperty] = useState<InvestmentOpportunity | null>(null);
     const [showPartnerModal, setShowPartnerModal] = useState(false);
     const [selectedDeveloper, setSelectedDeveloper] = useState('');
 

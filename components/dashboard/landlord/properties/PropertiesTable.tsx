@@ -3,6 +3,7 @@
 import React from 'react';
 import { Property } from '@/utils/properties';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface PropertiesTableProps {
     properties: Property[];
@@ -12,7 +13,7 @@ interface PropertiesTableProps {
 }
 
 export default function PropertiesTable({ properties, onDelete }: PropertiesTableProps) {
-    
+
     const formatPrice = (price: number, currency: string = 'NGN') => {
         return new Intl.NumberFormat('en-NG', {
             style: 'currency',
@@ -41,7 +42,7 @@ export default function PropertiesTable({ properties, onDelete }: PropertiesTabl
                                     <div className="h-12 w-16 shrink-0 relative rounded-lg overflow-hidden bg-gray-100">
                                         {/* property.images is an array of strings */}
                                         {property.images?.[0] && (
-                                            <img className="h-full w-full object-cover" src={property.images[0]} alt="" />
+                                            <Image className="object-cover" src={property.images[0]} alt="" fill sizes="64px" />
                                         )}
                                     </div>
                                     <div className="ml-4">

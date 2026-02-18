@@ -8,18 +8,26 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify';
-import { 
-    HiOutlineRocketLaunch, 
-    HiOutlineXMark, 
-    HiOutlineEye, 
+import {
+    HiOutlineRocketLaunch,
+    HiOutlineXMark,
+    HiOutlineEye,
     HiOutlineChatBubbleLeftRight,
     HiOutlineCalendarDays,
     HiOutlineArchiveBox
 } from 'react-icons/hi2';
 import InspectionDetailsModal, { Inspection } from './InspectionDetailsModal';
 
+interface StatCardProps {
+    label: string;
+    value: string;
+    trend?: string;
+    icon: React.ElementType;
+    color: string;
+}
+
 // Professional Summary Component
-const StatCard = ({ label, value, trend, icon: Icon, color }: any) => (
+const StatCard = ({ label, value, trend, icon: Icon, color }: StatCardProps) => (
     <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
         <div className="flex justify-between items-start">
             <div className={`p-3 rounded-xl ${color} bg-opacity-10 text-xl`}>
@@ -62,7 +70,7 @@ export default function AgentDashboard() {
 
     const handleAction = (action: string, leadName: string) => {
         setActiveLeadMenuId(null);
-        switch(action) {
+        switch (action) {
             case 'profile':
                 toast.info(`Opening ${leadName}'s profile...`);
                 router.push('/dashboard/agent/leads');
@@ -88,7 +96,7 @@ export default function AgentDashboard() {
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             className="bg-white rounded-[2.5rem] w-full max-w-md shadow-2xl overflow-hidden p-8 text-center relative"
                         >
-                            <button 
+                            <button
                                 onClick={() => setIsComingSoonOpen(false)}
                                 className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400"
                             >
@@ -104,7 +112,7 @@ export default function AgentDashboard() {
                                 We're building advanced marketing tools to help you reach more potential clients. This feature will be available in the next update!
                             </p>
 
-                            <button 
+                            <button
                                 onClick={() => setIsComingSoonOpen(false)}
                                 className="w-full py-4 bg-brand-green text-white rounded-2xl font-black shadow-xl shadow-green-900/20 hover:bg-green-700 transition-all active:scale-95"
                             >
@@ -140,7 +148,7 @@ export default function AgentDashboard() {
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                         <div className="p-6 border-b border-gray-50 flex justify-between items-center">
                             <h2 className="font-bold text-gray-900">High-Performance Listings</h2>
-                            <button 
+                            <button
                                 onClick={() => router.push('/dashboard/agent/properties')}
                                 className="text-brand-green text-sm font-semibold hover:underline"
                             >
@@ -193,8 +201,8 @@ export default function AgentDashboard() {
                                 { id: 1, name: 'Mr. Adebayo', prop: 'Skyline Terrace', time: '10:30 AM', day: '28', month: 'Dec', type: 'Initial Viewing' },
                                 { id: 2, name: 'Grace Emmanuel', prop: 'Palm Grove Villa', time: '02:00 PM', day: '30', month: 'Dec', type: 'Final Inspection' },
                             ].map((visit) => (
-                                <div 
-                                    key={visit.id} 
+                                <div
+                                    key={visit.id}
                                     onClick={() => setSelectedInspection(visit)}
                                     className="flex items-center justify-between p-4 rounded-xl border border-gray-50 bg-gray-50/30 group hover:bg-white hover:shadow-md transition-all cursor-pointer"
                                 >
@@ -208,7 +216,7 @@ export default function AgentDashboard() {
                                             <div className="text-xs text-gray-500">{visit.prop} • {visit.time}</div>
                                         </div>
                                     </div>
-                                    <button 
+                                    <button
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             router.push('/dashboard/agent/schedule');
@@ -231,7 +239,7 @@ export default function AgentDashboard() {
                             <p className="text-white/80 text-xs mt-2 leading-relaxed">
                                 Your listings are currently reaching 40% more people this week.
                             </p>
-                            <button 
+                            <button
                                 onClick={() => setIsComingSoonOpen(true)}
                                 className="mt-4 bg-white text-brand-green px-4 py-2 rounded-xl text-xs font-bold hover:bg-opacity-90 transition-all active:scale-95 shadow-lg shadow-black/10"
                             >
@@ -257,7 +265,7 @@ export default function AgentDashboard() {
                                         </div>
                                     </div>
                                     <div className="relative">
-                                        <button 
+                                        <button
                                             onClick={() => setActiveLeadMenuId(activeLeadMenuId === lead.id ? null : lead.id)}
                                             className={`p-1 rounded-lg transition-colors ${activeLeadMenuId === lead.id ? 'bg-gray-100 text-brand-green' : 'text-gray-400 hover:text-gray-600'}`}
                                         >
@@ -266,26 +274,26 @@ export default function AgentDashboard() {
 
                                         {activeLeadMenuId === lead.id && (
                                             <>
-                                                <div 
-                                                    className="fixed inset-0 z-10" 
+                                                <div
+                                                    className="fixed inset-0 z-10"
                                                     onClick={() => setActiveLeadMenuId(null)}
                                                 />
                                                 <div className="absolute right-0 top-8 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-20 animate-in fade-in zoom-in-95 duration-200">
-                                                    <button 
+                                                    <button
                                                         onClick={() => handleAction('profile', lead.name)}
                                                         className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
                                                     >
                                                         <HiOutlineEye size={16} className="text-gray-400" />
                                                         View Profile
                                                     </button>
-                                                    <button 
+                                                    <button
                                                         onClick={() => handleAction('message', lead.name)}
                                                         className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
                                                     >
                                                         <HiOutlineChatBubbleLeftRight size={16} className="text-gray-400" />
                                                         Send Message
                                                     </button>
-                                                    <button 
+                                                    <button
                                                         onClick={() => handleAction('schedule', lead.name)}
                                                         className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
                                                     >
@@ -293,7 +301,7 @@ export default function AgentDashboard() {
                                                         Schedule Viewing
                                                     </button>
                                                     <div className="h-px bg-gray-100 my-1 mx-2" />
-                                                    <button 
+                                                    <button
                                                         onClick={() => handleArchiveLead(lead.id, lead.name)}
                                                         className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors"
                                                     >
@@ -307,7 +315,7 @@ export default function AgentDashboard() {
                                 </div>
                             ))}
                         </div>
-                        <button 
+                        <button
                             onClick={() => router.push('/dashboard/agent/leads')}
                             className="w-full mt-6 py-3 border-2 border-dashed border-gray-100 rounded-xl text-gray-400 text-xs font-bold hover:bg-gray-50 hover:text-brand-green hover:border-brand-green/30 transition-all active:scale-[0.98]"
                         >
@@ -317,7 +325,7 @@ export default function AgentDashboard() {
                 </div>
             </div>
 
-            <InspectionDetailsModal 
+            <InspectionDetailsModal
                 isOpen={!!selectedInspection}
                 onClose={() => setSelectedInspection(null)}
                 inspection={selectedInspection}

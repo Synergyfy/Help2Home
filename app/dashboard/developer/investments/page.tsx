@@ -50,7 +50,7 @@ export default function InvestmentDashboardPage() {
                                 <MdAccountBalanceWallet size={32} />
                             </div>
                             <h3 className="text-lg font-bold text-gray-900 mb-1">No Active Investments</h3>
-                            <p className="text-sm text-gray-500">You haven't accepted any investments on your projects yet.</p>
+                            <p className="text-sm text-gray-500">You haven&apos;t accepted any investments on your projects yet.</p>
                         </div>
                     </div>
                 )}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import FadeIn from './FadeIn';
 
@@ -20,17 +20,7 @@ export default function LandlordEarningsCalculator() {
     const [newFeeName, setNewFeeName] = useState('');
     const [newFeeAmount, setNewFeeAmount] = useState<string>('0');
 
-    // Outputs
-    const [downPaymentAmount, setDownPaymentAmount] = useState(0);
-    const [installmentPrincipal, setInstallmentPrincipal] = useState(0);
-    const [monthlyPayment, setMonthlyPayment] = useState(0);
-    const [totalInstallmentPaid, setTotalInstallmentPaid] = useState(0);
-    const [totalEarningsInstallment, setTotalEarningsInstallment] = useState(0);
-    const [totalEarningsUpfront, setTotalEarningsUpfront] = useState(0);
-    const [extraEarnings, setExtraEarnings] = useState(0);
-    const [extraEarningsPercent, setExtraEarningsPercent] = useState(0);
-    const [totalFees, setTotalFees] = useState(0);
-
+    // Outputs (derived)
     const router = useRouter();
 
     // Helper: parse string to number safely
@@ -54,38 +44,47 @@ export default function LandlordEarningsCalculator() {
     }
 
     // Recalculate whenever inputs change
-    useEffect(() => {
+    const {
+        downPaymentAmount,
+        installmentPrincipal,
+        monthlyPayment,
+        totalInstallmentPaid,
+        totalEarningsInstallment,
+        totalEarningsUpfront,
+        extraEarnings,
+        extraEarningsPercent,
+        totalFees
+    } = useMemo(() => {
         const rent = Math.max(parseNumber(annualRent), 50000);
         const dpPercent = Math.min(Math.max(downPaymentPercent, 30), 70);
         const dur = Math.min(Math.max(duration, 1), 10);
         const rate = Math.min(Math.max(interestRate, 0), 5);
 
         const dpAmount = rent * (dpPercent / 100);
-        setDownPaymentAmount(dpAmount);
-
         const principal = rent - dpAmount;
-        setInstallmentPrincipal(principal);
 
         // Monthly interest added to principal
         const monthlyPrincipal = principal / dur;
         const monthlyInterest = principal * (rate / 100);
         const monthly = monthlyPrincipal + monthlyInterest;
-        setMonthlyPayment(monthly);
 
         const totalInstallment = monthly * dur;
-        setTotalInstallmentPaid(totalInstallment);
-
         const totalInstallmentEarnings = dpAmount + totalInstallment;
-        setTotalEarningsInstallment(totalInstallmentEarnings);
-
-        setTotalEarningsUpfront(rent);
 
         const extra = totalInstallmentEarnings - rent;
-        setExtraEarnings(extra);
-        setExtraEarningsPercent((extra / rent) * 100);
-
         const feesSum = fees.reduce((acc, fee) => acc + fee.amount, 0);
-        setTotalFees(feesSum);
+
+        return {
+            downPaymentAmount: dpAmount,
+            installmentPrincipal: principal,
+            monthlyPayment: monthly,
+            totalInstallmentPaid: totalInstallment,
+            totalEarningsInstallment: totalInstallmentEarnings,
+            totalEarningsUpfront: rent,
+            extraEarnings: extra,
+            extraEarningsPercent: (extra / rent) * 100,
+            totalFees: feesSum
+        };
     }, [annualRent, downPaymentPercent, duration, interestRate, fees]);
 
     // Add a new fee

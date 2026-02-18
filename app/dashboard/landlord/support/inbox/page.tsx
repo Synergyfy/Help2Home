@@ -9,29 +9,38 @@ import { MOCK_CONVERSATIONS, MOCK_MESSAGES, Message } from '@/lib/mockSupportDat
 export default function InboxPage() {
     const searchParams = useSearchParams();
     const tenantId = searchParams.get('tenantId');
-    
+
     const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [prevTenantId, setPrevTenantId] = useState(tenantId);
     const [conversations, setConversations] = useState(MOCK_CONVERSATIONS);
     const [messages, setMessages] = useState<Record<string, Message[]>>(MOCK_MESSAGES);
 
-    useEffect(() => {
+    if (tenantId !== prevTenantId || (!selectedId && conversations.length > 0)) {
+        setPrevTenantId(tenantId);
+        let nextId = selectedId;
+
         if (tenantId) {
-            // Robust lookup: Check ID, Name, or Email
-            const foundConv = conversations.find(c => 
-                c.participants.some(p => 
-                    p.id === tenantId || 
+            const foundConv = conversations.find(c =>
+                c.participants.some(p =>
+                    p.id === tenantId ||
                     p.id === `tenant_${tenantId}` ||
                     p.name.toLowerCase().includes(tenantId.toLowerCase()) ||
                     (p as any).email?.toLowerCase() === tenantId.toLowerCase()
                 )
             );
             if (foundConv) {
-                setSelectedId(foundConv.id);
+                nextId = foundConv.id;
             }
-        } else if (!selectedId && conversations.length > 0) {
-            setSelectedId(conversations[0].id);
         }
-    }, [tenantId, conversations]);
+
+        if (!nextId && conversations.length > 0) {
+            nextId = conversations[0].id;
+        }
+
+        if (nextId !== selectedId) {
+            setSelectedId(nextId);
+        }
+    }
 
     const handleSelectConversation = (id: string) => {
         setSelectedId(id);
@@ -41,7 +50,7 @@ export default function InboxPage() {
         ));
     };
 
-    const handleSendMessage = (text: string, attachments?: File[]) => {
+    const handleSendMessage = (text: string, _attachments?: File[]) => {
         if (!selectedId) return;
 
         const newMessage: Message = {

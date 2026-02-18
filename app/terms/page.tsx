@@ -21,13 +21,13 @@ export default function TermsPage() {
 
                     <div className="prose prose-lg prose-green max-w-none">
                         <p>
-                            Welcome to Help2Home. These Terms and Conditions ("Terms") govern your use of our website, mobile application, and services (collectively, the "Platform"). By accessing or using our Platform, you agree to be bound by these Terms.
+                            Welcome to Help2Home. These Terms and Conditions (&quot;Terms&quot;) govern your use of our website, mobile application, and services (collectively, the &quot;Platform&quot;). By accessing or using our Platform, you agree to be bound by these Terms.
                         </p>
 
                         <h3>1. Definitions</h3>
                         <p>
-                            "Help2Home", "we", "us", or "our" refers to Help2Home Limited, a company registered in Nigeria.
-                            "User", "you", or "your" refers to any individual or entity that accesses or uses our Platform.
+                            &quot;Help2Home&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot; refers to Help2Home Limited, a company registered in Nigeria.
+                            &quot;User&quot;, &quot;you&quot;, or &quot;your&quot; refers to any individual or entity that accesses or uses our Platform.
                         </p>
 
                         <h3>2. Eligibility</h3>

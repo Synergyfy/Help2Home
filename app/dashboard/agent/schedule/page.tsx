@@ -11,7 +11,16 @@ import {
 } from '@/components/shared/Icons';
 import RescheduleModal from '@/components/dashboard/agent/RescheduleModal';
 
-const initialSchedule = [
+interface ScheduleItem {
+    id: number;
+    client: string;
+    property: string;
+    time: string;
+    date: string;
+    type: string;
+}
+
+const initialSchedule: ScheduleItem[] = [
     { id: 1, client: 'Princewill Amadi', property: 'Skyline Terrace - Apt 4B', time: '10:30 AM', date: 'Dec 31', type: 'Initial Viewing' },
     { id: 2, client: 'Fatima Lawal', property: 'Palm Grove Villa', time: '02:00 PM', date: 'Jan 02', type: 'Final Inspection' },
 ];
@@ -22,8 +31,8 @@ const appointments = [
 ];
 
 export default function SchedulePage() {
-    const [schedule, setSchedule] = React.useState(initialSchedule);
-    const [reschedulingAppt, setReschedulingAppt] = React.useState<any>(null);
+    const [schedule, setSchedule] = React.useState<ScheduleItem[]>(initialSchedule);
+    const [reschedulingAppt, setReschedulingAppt] = React.useState<ScheduleItem | null>(null);
 
     const handleReschedule = (newDate: string, newTime: string) => {
         if (!reschedulingAppt) return;
@@ -36,7 +45,7 @@ export default function SchedulePage() {
         const formattedDate = `${monthStr} ${dayStr}`;
 
         // Convert 24h to 12h for time display
-        let [hours, mins] = newTime.split(':');
+        const [hours, mins] = newTime.split(':');
         const h = parseInt(hours);
         const ampm = h >= 12 ? 'PM' : 'AM';
         const h12 = h % 12 || 12;
@@ -98,8 +107,8 @@ export default function SchedulePage() {
                                     <div
                                         key={i}
                                         className={`aspect-square rounded-2xl flex flex-col items-center justify-center relative cursor-pointer transition-all group ${isToday ? 'bg-brand-green text-white shadow-lg shadow-green-900/20 scale-110 z-10' :
-                                                isBooked ? 'bg-blue-50 text-blue-600 border border-blue-100' :
-                                                    'hover:bg-gray-50 text-gray-600'
+                                            isBooked ? 'bg-blue-50 text-blue-600 border border-blue-100' :
+                                                'hover:bg-gray-50 text-gray-600'
                                             }`}
                                     >
                                         <span className={`text-sm font-black ${isToday ? 'text-white' : 'text-gray-900'}`}>{day}</span>
@@ -124,7 +133,7 @@ export default function SchedulePage() {
                     <div className="space-y-6">
                         <div className="bg-brand-green text-white p-8 rounded-[2.5rem] shadow-xl relative overflow-hidden shadow-green-900/20">
                             <div className="relative z-10">
-                                <h4 className="text-[10px] font-black text-white/60 uppercase tracking-[0.2em] mb-2">Today's Focus</h4>
+                                <h4 className="text-[10px] font-black text-white/60 uppercase tracking-[0.2em] mb-2">Today&apos;s Focus</h4>
                                 <p className="text-2xl font-black">0 Pending Viewings</p>
                                 <p className="text-xs text-white/70 mt-2 font-medium">Your schedule is clear for today. Use this time to follow up on leads.</p>
                             </div>

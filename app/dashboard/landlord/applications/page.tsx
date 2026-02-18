@@ -8,17 +8,18 @@ import { FiCheck, FiX, FiEye, FiClock, FiFileText, FiUserPlus, FiDollarSign } fr
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTenants } from '@/hooks/useTenants';
 import { Tenant } from '@/lib/mockLandlordData';
-import AddTenantModal from '@/components/dashboard/landlord/tenants/AddTenantModal';
+import AddTenantModal, { AddTenantInitialData } from '@/components/dashboard/landlord/tenants/AddTenantModal';
+import { Application } from '@/store/applicationStore';
 
 export default function LandlordApplicationsPage() {
     const { applications, isLoading, updateStatus, isUpdating } = useApplications();
     const { addTenant, isAdding } = useTenants();
     const [filter, setFilter] = useState<ApplicationStatus | 'All'>('All');
-    const [selectedApp, setSelectedApp] = useState<any | null>(null);
+    const [selectedApp, setSelectedApp] = useState<Application | null>(null);
     const [isAddTenantModalOpen, setIsAddTenantModalOpen] = useState(false);
-    const [initialTenantData, setInitialTenantData] = useState<any>(null);
+    const [initialTenantData, setInitialTenantData] = useState<AddTenantInitialData | null>(null);
 
-    const handleOnboard = (app: any) => {
+    const handleOnboard = (app: Application) => {
         const nameParts = app.tenantName.split(' ');
         setInitialTenantData({
             firstName: nameParts[0] || '',

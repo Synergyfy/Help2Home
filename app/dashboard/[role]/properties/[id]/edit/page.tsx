@@ -1,9 +1,10 @@
 'use client';
 
 import React, { use } from 'react';
-import PropertyWizard from '@/components/dashboard/shared/Wizard/PropertyWizard'
+import PropertyWizard from '@/components/dashboard/shared/Wizard/PropertyWizard';
 import { mockProperties } from '@/utils/properties';
 import { STEP_CONFIG } from '@/config/propertyConfig';
+import { PropertySchema } from '@/lib/validations/propertySchema';
 
 interface PageProps {
     params: Promise<{ id: string; role: string }>;
@@ -19,9 +20,15 @@ export default function EditPropertyPage({ params }: PageProps) {
     const dataToEdit = property || mockProperties[0];
 
     // 4. Transform to match PropertySchema expected by the Wizard
-    const initialData = {
+    const initialData: Partial<PropertySchema> = {
         ...dataToEdit,
-        posterRole: dataToEdit.posterRole || ('landlord' as any),
+        installments: dataToEdit.installments ? {
+            enabled: dataToEdit.installments.enabled,
+            depositType: 'percentage', // Default for now
+            depositValue: 10, // Default for now
+            interestRate: dataToEdit.installments.interestRate || 0,
+        } : undefined,
+        posterRole: (dataToEdit.posterRole as PropertySchema['posterRole']) || 'landlord',
         address: {
             street: dataToEdit.address || '',
             city: dataToEdit.city || '',
@@ -33,14 +40,18 @@ export default function EditPropertyPage({ params }: PageProps) {
         },
         price: {
             amount: dataToEdit.price || 0,
-            currency: (dataToEdit.currency as any) || 'NGN',
-            period: (dataToEdit as any).period || (dataToEdit.propertyType === 'rent' ? 'year' : undefined),
+            currency: (dataToEdit.currency as 'NGN' | 'USD') || 'NGN',
+            period: ((dataToEdit as any).period as PropertySchema['price']['period']) || (dataToEdit.propertyType === 'rent' ? 'year' : undefined),
         },
         specs: {
             bedrooms: dataToEdit.bedrooms || 0,
             bathrooms: dataToEdit.bathrooms || 0,
             area: (dataToEdit as any).floorSize || 0,
+            areaUnit: 'sqm',
         },
+        amenities: (dataToEdit.amenities || []).map((a: any) =>
+            typeof a === 'string' ? { name: a, price: 0 } : a
+        ),
         images: (dataToEdit.images || []).map((url: string, index: number) => ({
             id: String(index),
             url: url,
@@ -52,7 +63,7 @@ export default function EditPropertyPage({ params }: PageProps) {
         <PropertyWizard
             roleKey={roleKey}
             availableStepsKeys={STEP_CONFIG[roleKey] || STEP_CONFIG.landlord}
-            initialData={initialData as any}
+            initialData={initialData}
             isEditing={true}
         />
     );

@@ -1,5 +1,9 @@
 {
   "name": "help2home",
+  "engine": {
+    "node": "24.13.0",
+    "npm": "11.6.2"
+  },
   "version": "0.1.0",
   "private": true,
   "scripts": {

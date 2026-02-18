@@ -51,7 +51,7 @@ export default function MarketingPage() {
                         transition={{ delay: 0.2 }}
                         className="text-gray-400 text-lg font-medium leading-relaxed mb-10"
                     >
-                        We're engineering a suite of professional marketing tools designed specifically for high-performance agents. From automated marketplace boosting to lead retargeting, your growth is about to get a major upgrade.
+                        We&apos;re engineering a suite of professional marketing tools designed specifically for high-performance agents. From automated marketplace boosting to lead retargeting, your growth is about to get a major upgrade.
                     </motion.p>
 
                     <motion.div

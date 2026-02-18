@@ -10,30 +10,39 @@ function InboxContent() {
     const searchParams = useSearchParams();
     const leadId = searchParams.get('leadId');
     const partnerId = searchParams.get('partnerId');
-    
+
     const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [prevParams, setPrevParams] = useState({ leadId, partnerId });
     const [conversations, setConversations] = useState(MOCK_CONVERSATIONS);
     const [messages, setMessages] = useState<Record<string, Message[]>>(MOCK_MESSAGES);
 
-    useEffect(() => {
+    if (leadId !== prevParams.leadId || partnerId !== prevParams.partnerId || (!selectedId && conversations.length > 0)) {
+        setPrevParams({ leadId, partnerId });
         const targetId = leadId || partnerId;
+        let nextId = selectedId;
+
         if (targetId) {
-            // Lookup: Check ID, Name, or specific role IDs
-            const foundConv = conversations.find(c => 
-                c.participants.some(p => 
-                    p.id === targetId || 
+            const foundConv = conversations.find(c =>
+                c.participants.some(p =>
+                    p.id === targetId ||
                     p.id === `lead_${targetId}` ||
                     p.id === `partner_${targetId}` ||
                     p.name.toLowerCase().includes(targetId.toLowerCase())
                 )
             );
             if (foundConv) {
-                setSelectedId(foundConv.id);
+                nextId = foundConv.id;
             }
-        } else if (!selectedId && conversations.length > 0) {
-            setSelectedId(conversations[0].id);
         }
-    }, [leadId, partnerId, conversations]);
+
+        if (!nextId && conversations.length > 0) {
+            nextId = conversations[0].id;
+        }
+
+        if (nextId !== selectedId) {
+            setSelectedId(nextId);
+        }
+    }
 
     const handleSelectConversation = (id: string) => {
         setSelectedId(id);
@@ -42,7 +51,7 @@ function InboxContent() {
         ));
     };
 
-    const handleSendMessage = (text: string, attachments?: File[]) => {
+    const handleSendMessage = (text: string, _attachments?: File[]) => {
         if (!selectedId) return;
 
         const newMessage: Message = {

@@ -9,12 +9,13 @@ import {
   FiArrowLeft as OriginalFiArrowLeft,
   FiMail as OriginalFiMail
 } from "react-icons/fi";
+import { IconType } from 'react-icons';
 
-const FiUser = (OriginalFiUser as any);
-const FiPhone = (OriginalFiPhone as any);
-const FiArrowRight = (OriginalFiArrowRight as any);
-const FiArrowLeft = (OriginalFiArrowLeft as any);
-const FiMail = (OriginalFiMail as any);
+const FiUser = (OriginalFiUser as IconType);
+const FiPhone = (OriginalFiPhone as IconType);
+const FiArrowRight = (OriginalFiArrowRight as IconType);
+const FiArrowLeft = (OriginalFiArrowLeft as IconType);
+const FiMail = (OriginalFiMail as IconType);
 
 import { useOnboardingStore } from "@/store/onboardingStore";
 import { useUserStore } from "@/store/userStore";

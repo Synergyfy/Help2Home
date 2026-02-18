@@ -56,7 +56,7 @@ export default function LandlordProfile() {
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
-                                onClick={() => setActiveTab(tab.id as any)}
+                                onClick={() => setActiveTab(tab.id as 'info' | 'verification' | 'bank' | 'security')}
                                 className={`flex items-center gap-2.5 px-6 py-4 text-sm font-black border-b-4 transition-all whitespace-nowrap group ${activeTab === tab.id
                                     ? 'border-brand-green text-brand-green bg-green-50/30'
                                     : 'border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50/50'

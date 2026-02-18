@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import FadeIn from '@/components/FadeIn';
 import {
     HiOutlinePlusCircle as OriginalHiOutlinePlusCircle,
@@ -13,13 +14,15 @@ import {
     HiOutlineBanknotes as OriginalHiOutlineBanknotes
 } from 'react-icons/hi2';
 
-const HiOutlinePlusCircle = (OriginalHiOutlinePlusCircle as any);
-const HiOutlineEye = (OriginalHiOutlineEye as any);
-const HiOutlinePencilSquare = (OriginalHiOutlinePencilSquare as any);
-const HiOutlineCheckCircle = (OriginalHiOutlineCheckCircle as any);
-const HiOutlineClock = (OriginalHiOutlineClock as any);
-const HiOutlineLightBulb = (OriginalHiOutlineLightBulb as any);
-const HiOutlineBanknotes = (OriginalHiOutlineBanknotes as any);
+import { IconType } from 'react-icons';
+
+const HiOutlinePlusCircle = (OriginalHiOutlinePlusCircle as IconType);
+const HiOutlineEye = (OriginalHiOutlineEye as IconType);
+const HiOutlinePencilSquare = (OriginalHiOutlinePencilSquare as IconType);
+const HiOutlineCheckCircle = (OriginalHiOutlineCheckCircle as IconType);
+const HiOutlineClock = (OriginalHiOutlineClock as IconType);
+const HiOutlineLightBulb = (OriginalHiOutlineLightBulb as IconType);
+const HiOutlineBanknotes = (OriginalHiOutlineBanknotes as IconType);
 
 
 const STATUS_CONFIG = {
@@ -173,10 +176,12 @@ export default function ProjectsPage() {
                                 >
                                     {/* Image */}
                                     <div className="relative h-56 overflow-hidden">
-                                        <img
+                                        <Image
                                             src={project.images[0]}
                                             alt={project.title}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            fill
+                                            sizes="(max-width: 1024px) 100vw, 50vw"
+                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
                                         />
                                         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
                                             <span className={`flex items-center gap-1.5 px-3 py-1.5 ${STATUS_CONFIG[project.status].color} rounded-full text-xs font-black uppercase tracking-wider backdrop-blur-sm`}>

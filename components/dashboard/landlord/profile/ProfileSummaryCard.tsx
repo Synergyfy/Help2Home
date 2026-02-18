@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { ProfileData } from '@/lib/mockLandlordData';
 import { useUserStore } from '@/store/userStore';
 
@@ -35,9 +36,9 @@ export default function ProfileSummaryCard({ profile: initialProfile }: { profil
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-6">
             <div className="flex flex-col items-center text-center">
                 <div className="relative mb-4 group cursor-pointer">
-                    <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border-4 border-white shadow-sm">
+                    <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border-4 border-white shadow-sm relative">
                         {profile.avatarUrl ? (
-                            <img src={profile.avatarUrl} alt={profile.displayName} className="w-full h-full object-cover" />
+                            <Image src={profile.avatarUrl} alt={profile.displayName} fill className="object-cover" />
                         ) : (
                             <span className="text-3xl font-bold text-gray-400">
                                 {profile.firstName?.[0] || ''}{profile.lastName?.[0] || ''}

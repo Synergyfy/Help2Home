@@ -3,6 +3,7 @@
 import React, { use } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import Image from 'next/image';
 import { getMockProperties } from '@/utils/properties';
 import PropertyInviteSection from '@/components/dashboard/caretaker/PropertyInviteSection';
 
@@ -74,15 +75,15 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                     <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
                         <div className="h-96 bg-gray-200 relative">
                             {property.images && property.images[0] ? (
-                                <img src={property.images[0]} alt="Cover" className="w-full h-full object-cover" />
+                                <Image src={property.images[0]} alt="Cover" fill className="object-cover" />
                             ) : (
                                 <div className="absolute inset-0 flex items-center justify-center text-gray-400">No Image</div>
                             )}
                         </div>
                         <div className="p-4 flex gap-2 overflow-x-auto">
                             {property.images?.map((imgUrl, index) => (
-                                <div key={index} className="h-20 w-20 shrink-0 rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:ring-2 hover:ring-brand-green">
-                                    <img src={imgUrl} alt="" className="w-full h-full object-cover" />
+                                <div key={index} className="h-20 w-20 shrink-0 rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:ring-2 hover:ring-brand-green relative">
+                                    <Image src={imgUrl} alt={`Property image ${index + 1}`} fill className="object-cover" />
                                 </div>
                             ))}
                         </div>
@@ -319,7 +320,7 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                                 }).toString();
 
                                 return (
-                                    <Link 
+                                    <Link
                                         href={`/tenant-rent-calculator?${calcUrl}`}
                                         className="block w-full py-2 bg-brand-green text-white text-xs font-bold text-center rounded-lg hover:bg-green-700 transition-colors"
                                     >

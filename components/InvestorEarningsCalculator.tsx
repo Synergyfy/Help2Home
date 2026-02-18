@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import FadeIn from './FadeIn';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer as RechartsResponsiveContainer, Legend } from 'recharts';
 
-const ResponsiveContainer = RechartsResponsiveContainer as any;
+const ResponsiveContainer = RechartsResponsiveContainer as React.ComponentType<any>;
 
 export default function InvestorEarningsCalculator() {
     // Inputs (raw values)
@@ -17,14 +17,8 @@ export default function InvestorEarningsCalculator() {
     const [monthlyRateInput, setMonthlyRateInput] = useState<string>('2');
     const [advancedMode, setAdvancedMode] = useState(false);
 
-    // Outputs
-    const [monthlyEarnings, setMonthlyEarnings] = useState<number>(0);
-    const [totalEarnings, setTotalEarnings] = useState<number>(0);
-    const [totalPayout, setTotalPayout] = useState<number>(0);
-    const [apr, setApr] = useState<number>(0);
-    const [chartData, setChartData] = useState<any[]>([]);
-
-    const router = useRouter()
+    // Outputs (derived)
+    const router = useRouter();
 
     // Format numbers with commas
     const formatCurrency = (val: number) =>
@@ -67,7 +61,7 @@ export default function InvestorEarningsCalculator() {
     }
 
     // Calculations
-    useEffect(() => {
+    const { monthlyEarnings, totalEarnings, totalPayout, apr, chartData } = useMemo(() => {
         const amount = investmentAmount;
         const dur = duration;
         const rate = monthlyRate / 100;
@@ -76,7 +70,7 @@ export default function InvestorEarningsCalculator() {
         let tEarnings = 0;
         let tPayout = 0;
         let effectiveApr = 0;
-        const data: any[] = [];
+        const data: { month: number; principal: number; value: number }[] = [];
 
         if (mode === 'fixed') {
             mEarnings = amount * rate;
@@ -106,11 +100,13 @@ export default function InvestorEarningsCalculator() {
             }
         }
 
-        setMonthlyEarnings(mEarnings);
-        setTotalEarnings(tEarnings);
-        setTotalPayout(tPayout);
-        setApr(effectiveApr);
-        setChartData(data);
+        return {
+            monthlyEarnings: mEarnings,
+            totalEarnings: tEarnings,
+            totalPayout: tPayout,
+            apr: effectiveApr,
+            chartData: data
+        };
 
     }, [investmentAmount, duration, mode, monthlyRate]);
 
