@@ -21,7 +21,7 @@ export default function PropertyInviteSection({ propertyId, propertyTitle }: Pro
     return (
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
                     <HiOutlineUserPlus size={20} className="text-brand-green" />
                     Property Collaboration
                 </h3>
@@ -41,7 +41,7 @@ export default function PropertyInviteSection({ propertyId, propertyTitle }: Pro
                             <HiOutlineUserPlus size={20} />
                         </div>
                         <div className="text-left">
-                            <div className="text-sm font-bold text-gray-900">Invite Landlord</div>
+                            <div className="text-sm font-semibold text-gray-900">Invite Landlord</div>
                             <div className="text-[10px] text-gray-500">For ownership and financial oversight</div>
                         </div>
                     </div>
@@ -56,7 +56,7 @@ export default function PropertyInviteSection({ propertyId, propertyTitle }: Pro
                             <HiOutlineUserPlus size={20} />
                         </div>
                         <div className="text-left">
-                            <div className="text-sm font-bold text-gray-900">Invite Agent</div>
+                            <div className="text-sm font-semibold text-gray-900">Invite Agent</div>
                             <div className="text-[10px] text-gray-500">For marketing and showings</div>
                         </div>
                     </div>

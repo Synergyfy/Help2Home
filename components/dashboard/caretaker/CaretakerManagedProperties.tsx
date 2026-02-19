@@ -16,13 +16,13 @@ export default function CaretakerManagedProperties({ properties, role }: Caretak
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="p-6 border-b border-gray-50 flex justify-between items-center">
-                <h2 className="font-bold text-gray-900 flex items-center gap-2">
+                <h2 className="font-semibold text-gray-900 flex items-center gap-2">
                     <HiOutlineHome size={20} className="text-brand-green" />
                     Managed Properties
                 </h2>
                 <Link
                     href={`/dashboard/${role}/properties`}
-                    className="text-xs font-bold text-brand-green hover:underline flex items-center gap-1"
+                    className="text-xs font-semibold text-brand-green hover:underline flex items-center gap-1"
                 >
                     View All <HiOutlineChevronRight />
                 </Link>
@@ -46,7 +46,7 @@ export default function CaretakerManagedProperties({ properties, role }: Caretak
                                 )}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <h3 className="text-sm font-bold text-gray-900 truncate group-hover:text-brand-green transition-colors">
+                                <h3 className="text-sm font-semibold text-gray-900 truncate group-hover:text-brand-green transition-colors">
                                     {property.title}
                                 </h3>
                                 <div className="flex items-center gap-1 text-gray-500 text-[10px] mt-1">
@@ -55,11 +55,11 @@ export default function CaretakerManagedProperties({ properties, role }: Caretak
                                 </div>
                             </div>
                             <div className="text-right">
-                                <div className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full ${property.status === 'available' ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700'
+                                <div className={`text-[9px] font-semibold uppercase tracking-widest px-2 py-1 rounded-full ${property.status === 'available' ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700'
                                     }`}>
                                     {property.status}
                                 </div>
-                                <div className="text-[10px] font-bold text-gray-400 mt-2">
+                                <div className="text-[10px] font-semibold text-gray-400 mt-2">
                                     {property.views || 0} views
                                 </div>
                             </div>
@@ -70,7 +70,7 @@ export default function CaretakerManagedProperties({ properties, role }: Caretak
                         <p className="text-sm text-gray-500">No properties under your management yet.</p>
                         <Link
                             href={`/dashboard/${role}/properties/add`}
-                            className="inline-block mt-4 text-xs font-bold text-brand-green hover:underline"
+                            className="inline-block mt-4 text-xs font-semibold text-brand-green hover:underline"
                         >
                             Add your first property
                         </Link>

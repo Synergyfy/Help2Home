@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { MdArrowBack, MdSave, MdCancel } from 'react-icons/md';
+import { MdArrowBack, MdSave, MdCancel, MdPersonPin } from 'react-icons/md';
 import { useAdminStore, PlatformUser } from '@/store/adminStore';
 
 export default function UserEditPage() {
@@ -24,14 +24,17 @@ export default function UserEditPage() {
 
   if (!user) {
     return (
-      <main className="flex-1 py-8 px-4 lg:px-8 w-full max-w-[1600px] mx-auto bg-[#f9fafb]">
-        <div className="flex items-center gap-4 mb-8">
-          <Link href="/dashboard/admin/users" className="p-2 rounded-full hover:bg-gray-200">
-            <MdArrowBack size={24} />
+      <main className="flex-1 min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-[2.5rem] shadow-2xl border border-gray-100 max-w-md w-full text-center">
+          <div className="size-20 bg-red-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
+            <MdCancel size={40} className="text-red-500" />
+          </div>
+          <h1 className="text-3xl font-semibold text-gray-900 mb-2">User Not Found</h1>
+          <p className="text-gray-500 mb-8">The identity record for <span className="font-mono text-red-500">{id}</span> does not exist in our systems.</p>
+          <Link href="/dashboard/admin/users" className="block w-full py-4 bg-gray-900 text-white rounded-2xl font-semibold hover:bg-gray-800 transition-all">
+            Return to Directory
           </Link>
-          <h1 className="text-brand-green-900 text-3xl font-extrabold tracking-tight">User Not Found</h1>
         </div>
-        <p className="text-gray-600">The user with ID &quot;{id}&quot; could not be found.</p>
       </main>
     );
   }
@@ -44,103 +47,176 @@ export default function UserEditPage() {
   const handleSave = () => {
     if (user) {
       updateUser(user);
-      setMessage('User details saved successfully!');
-      setTimeout(() => router.push('/dashboard/admin/users'), 1500); // Redirect after save
+      setMessage('User details synchronized successfully!');
+      setTimeout(() => router.push('/dashboard/admin/users'), 1500);
     }
   };
 
   const handleCancel = () => {
-    router.push('/dashboard/admin/users'); // Go back to the users list
+    router.push('/dashboard/admin/users');
   };
 
   return (
-    <main className="flex-1 py-8 px-4 lg:px-8 w-full max-w-[1600px] mx-auto bg-[#f9fafb]">
-      <div className="flex items-center gap-4 mb-8">
-        <Link href="/dashboard/admin/users" className="p-2 rounded-full hover:bg-gray-200">
-          <MdArrowBack size={24} />
-        </Link>
-        <h1 className="text-brand-green-900 text-3xl font-extrabold tracking-tight">Edit User: {user.name}</h1>
-      </div>
-
-      {message && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-          <span className="block sm:inline">{message}</span>
-          <span className="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onClick={() => setMessage('')}>
-            <svg className="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
-          </span>
-        </div>
-      )}
-
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-            <input
-              type="text"
-              name="name"
-              id="name"
-              value={user.name}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-brand-green focus:border-brand-green sm:text-sm"
-            />
-          </div>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              value={user.email}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-brand-green focus:border-brand-green sm:text-sm"
-            />
-          </div>
-          <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-            <select
-              name="role"
-              id="role"
-              value={user.role}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-brand-green focus:border-brand-green sm:text-sm"
-            >
-              <option value="Landlord">Landlord</option>
-              <option value="Tenant">Tenant</option>
-              <option value="Agent">Agent</option>
-              <option value="Caretaker">Caretaker</option>
-              <option value="Investor">Investor</option>
-              <option value="Admin">Admin</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <select
-              name="status"
-              id="status"
-              value={user.status}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-brand-green focus:border-brand-green sm:text-sm"
-            >
-              <option value="Active">Active</option>
-              <option value="Pending">Pending</option>
-              <option value="Suspended">Suspended</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-3 mt-6">
+    <main className="flex-1 py-8 px-4 lg:px-12 w-full max-w-[1400px] mx-auto space-y-8 animate-in fade-in duration-500">
+      {/* Premium Breadcrumb/Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex items-center gap-4">
           <button
             onClick={handleCancel}
-            className="flex items-center gap-2 px-5 py-2.5 border border-gray-300 text-gray-700 rounded-xl font-bold hover:bg-gray-50 transition-colors"
+            className="p-3 bg-white rounded-2xl border border-gray-200 text-gray-400 hover:text-brand-green hover:border-brand-green transition-all shadow-sm group"
           >
-            <MdCancel size={20} /> Cancel
+            <MdArrowBack size={24} className="group-hover:-translate-x-1 transition-transform" />
+          </button>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[10px] font-semibold text-brand-green uppercase tracking-widest bg-brand-green-50 px-2 py-0.5 rounded-md">Edit Mode</span>
+              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">System Management</span>
+            </div>
+            <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Modify Parameters</h1>
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={handleCancel}
+            className="px-6 py-3 border border-gray-200 text-gray-600 rounded-2xl font-semibold hover:bg-gray-50 transition-all text-sm"
+          >
+            Discard Changes
           </button>
           <button
             onClick={handleSave}
-            className="flex items-center gap-2 px-5 py-2.5 bg-brand-green text-white rounded-xl font-bold hover:bg-brand-green/90 transition-colors"
+            className="flex items-center gap-2 px-8 py-3 bg-brand-green text-white rounded-2xl font-semibold hover:bg-brand-green-hover transition-all shadow-lg shadow-brand-green/20 text-sm"
           >
-            <MdSave size={20} /> Save Changes
+            <MdSave size={20} /> Deploy Updates
           </button>
+        </div>
+      </div>
+
+      {message && (
+        <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl flex items-center justify-between animate-in slide-in-from-top-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-emerald-500 rounded-xl text-white">
+              <MdSave size={20} />
+            </div>
+            <p className="text-emerald-900 font-semibold">{message}</p>
+          </div>
+          <button onClick={() => setMessage('')} className="text-emerald-500 hover:text-emerald-700 font-bold">Dismiss</button>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column: Quick Profile Info */}
+        <div className="lg:col-span-1 space-y-6">
+          <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden p-8 text-center flex flex-col items-center">
+            <div className="relative mb-6">
+              <div className="size-32 bg-gradient-to-tr from-brand-green to-emerald-400 rounded-[2.5rem] flex items-center justify-center text-white text-5xl font-semibold shadow-2xl border-4 border-white">
+                {user.name.charAt(0)}
+              </div>
+              <div className="absolute -bottom-2 -right-2 p-3 bg-white rounded-2xl shadow-lg border border-gray-50 text-gray-400">
+                <MdPersonPin size={24} />
+              </div>
+            </div>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-1">{user.name}</h2>
+            <p className="text-gray-400 font-medium mb-4">{user.email}</p>
+            <span className={`px-4 py-1 rounded-full text-[10px] font-semibold uppercase tracking-widest ${user.status === 'Active' ? 'bg-emerald-100 text-emerald-700' :
+              user.status === 'Pending' ? 'bg-amber-100 text-amber-700' :
+                'bg-red-100 text-red-700'
+              }`}>
+              {user.status}
+            </span>
+          </div>
+
+          <div className="bg-gray-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16" />
+            <h3 className="text-lg font-semibold mb-4 relative z-10">Access Logs</h3>
+            <div className="space-y-4 relative z-10">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-white/50">Joined At</span>
+                <span className="font-bold">{user.joinedAt}</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-white/50">System Role</span>
+                <span className="font-bold">{user.role}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Form */}
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 lg:p-12">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-8 flex items-center gap-3">
+              <div className="w-1.5 h-8 bg-brand-green rounded-full" />
+              Identity Details
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <label htmlFor="name" className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  value={user.name}
+                  onChange={handleChange}
+                  className="w-full bg-gray-50 border-2 border-gray-50 rounded-2xl px-5 py-4 font-semibold text-gray-900 focus:bg-white focus:border-brand-green focus:ring-0 transition-all outline-none"
+                  placeholder="John Doe"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  value={user.email}
+                  onChange={handleChange}
+                  className="w-full bg-gray-50 border-2 border-gray-50 rounded-2xl px-5 py-4 font-semibold text-gray-900 focus:bg-white focus:border-brand-green focus:ring-0 transition-all outline-none"
+                  placeholder="john@example.com"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="role" className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-1">Administrative Role</label>
+                <select
+                  name="role"
+                  id="role"
+                  value={user.role}
+                  onChange={handleChange}
+                  className="w-full bg-gray-50 border-2 border-gray-50 rounded-2xl px-5 py-4 font-semibold text-gray-900 focus:bg-white focus:border-brand-green focus:ring-0 transition-all outline-none appearance-none"
+                >
+                  <option value="Landlord">Landlord</option>
+                  <option value="Tenant">Tenant</option>
+                  <option value="Agent">Agent</option>
+                  <option value="Caretaker">Caretaker</option>
+                  <option value="Investor">Investor</option>
+                  <option value="Admin">Admin</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="status" className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-1">Access Protocol</label>
+                <select
+                  name="status"
+                  id="status"
+                  value={user.status}
+                  onChange={handleChange}
+                  className="w-full bg-gray-50 border-2 border-gray-50 rounded-2xl px-5 py-4 font-semibold text-gray-900 focus:bg-white focus:border-brand-green focus:ring-0 transition-all outline-none appearance-none"
+                >
+                  <option value="Active">Authorized</option>
+                  <option value="Pending">Pending Review</option>
+                  <option value="Suspended">Suspended</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="mt-12 flex items-center p-6 bg-brand-green-50 rounded-3xl border border-brand-green-100">
+              <div className="p-3 bg-white rounded-2xl text-brand-green shadow-sm mr-4">
+                <MdPersonPin size={24} />
+              </div>
+              <p className="text-sm text-brand-green-900 font-semibold leading-relaxed">
+                Updating these parameters will immediately synchronize across the entire Help2Home matrix. Please ensure all data is verified before deployment.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </main>

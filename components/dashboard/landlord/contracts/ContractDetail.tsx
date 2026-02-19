@@ -3,9 +3,9 @@
 import React from 'react';
 import { Contract, Signer } from '@/lib/mockContractData';
 import { format } from 'date-fns';
-import { 
-    HiOutlineDocumentText, 
-    HiOutlineMagnifyingGlassPlus, 
+import {
+    HiOutlineDocumentText,
+    HiOutlineMagnifyingGlassPlus,
     HiOutlineMagnifyingGlassMinus,
     HiOutlinePrinter,
     HiOutlineArrowDownTray,
@@ -59,7 +59,7 @@ export default function ContractDetail({ contract, onSendForSignature, onDownloa
                     {/* Document Surface */}
                     <div className="flex-1 bg-gray-100/50 p-8 md:p-12 flex justify-center overflow-y-auto custom-scrollbar">
                         <div className="bg-white shadow-2xl w-full max-w-[210mm] min-h-[297mm] p-[20mm] md:p-[25mm] flex flex-col font-serif text-[#1a1a1a] leading-relaxed relative print:shadow-none print:p-0">
-                            
+
                             {/* Watermark for Unsigned */}
                             {contract.status !== 'Signed' && (
                                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] select-none">
@@ -74,77 +74,85 @@ export default function ContractDetail({ contract, onSendForSignature, onDownloa
                             </div>
 
                             <div className="space-y-10 text-sm">
-                                {/* Section 1: The Parties */}
-                                <section>
-                                    <h4 className="font-bold border-b border-gray-900 mb-4 pb-1">1. THE PARTIES</h4>
-                                    <div className="space-y-4">
-                                        <p>This agreement is made on this <span className="font-bold underline">{format(new Date(contract.createdAt), 'do')}</span> day of <span className="font-bold underline">{format(new Date(contract.createdAt), 'MMMM, yyyy')}</span>, between:</p>
-                                        <div className="pl-4 border-l-2 border-gray-100">
-                                            <p className="font-bold mb-1">THE LANDLORD:</p>
-                                            <p className="italic">{contract.signers.find(s => s.role === 'Landlord')?.name || 'Help2Home Registered Owner'}</p>
-                                            <p className="text-xs text-gray-500 mt-1">Represented by Help2Home Digital Management Services.</p>
-                                        </div>
-                                        <div className="pl-4 border-l-2 border-gray-100">
-                                            <p className="font-bold mb-1">THE TENANT:</p>
-                                            <p className="italic">{contract.signers.find(s => s.role === 'Tenant')?.name || 'Registered Applicant'}</p>
-                                        </div>
+                                {contract.content ? (
+                                    <div className="whitespace-pre-wrap font-serif text-gray-800 leading-relaxed text-sm">
+                                        {contract.content}
                                     </div>
-                                </section>
-
-                                {/* Section 2: The Property */}
-                                <section>
-                                    <h4 className="font-bold border-b border-gray-900 mb-4 pb-1">2. THE PROPERTY</h4>
-                                    <p>The Landlord agrees to let and the Tenant agrees to take the premises known as:</p>
-                                    <p className="font-bold mt-2 p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
-                                        {contract.propertyTitle} — {contract.propertyAddress}
-                                    </p>
-                                </section>
-
-                                {/* Section 3: Term & Rent */}
-                                <section>
-                                    <h4 className="font-bold border-b border-gray-900 mb-4 pb-1">3. TERM AND RENT</h4>
-                                    <ul className="list-disc pl-5 space-y-2">
-                                        <li>The tenancy shall be for a period of <span className="font-bold underline">12 Months</span> commencing on <span className="font-bold underline">{format(new Date(contract.fields.startDate), 'MMM d, yyyy')}</span>.</li>
-                                        <li>The Rent for the said term shall be <span className="font-bold">₦{contract.fields.rentAmount.toLocaleString()}</span>, payable <span className="font-bold underline">{contract.fields.paymentFrequency}</span> in advance.</li>
-                                        <li>A security deposit of <span className="font-bold text-brand-green">₦{contract.fields.depositAmount.toLocaleString()}</span> is required and will be held in escrow by Help2Home.</li>
-                                    </ul>
-                                </section>
-
-                                {/* Section 4: General Covenants (Mock legal text) */}
-                                <section>
-                                    <h4 className="font-bold border-b border-gray-900 mb-4 pb-1">4. GENERAL COVENANTS</h4>
-                                    <p className="text-[11px] text-gray-600 text-justify">
-                                        The Tenant hereby covenants with the Landlord to pay the rent at the times and in the manner aforesaid. To keep the interior of the premises including all fixtures and fittings in good and tenantable repair. Not to make any structural alterations to the premises without the prior written consent of the Landlord. To use the premises strictly for residential purposes and not to sublet or part with possession of the premises or any part thereof.
-                                    </p>
-                                </section>
-
-                                {/* Section 5: Signatures */}
-                                <section className="pt-12 mt-auto">
-                                    <h4 className="font-bold border-b border-gray-900 mb-10 pb-1 uppercase">Signatures & Execution</h4>
-                                    <div className="grid grid-cols-2 gap-16">
-                                        {contract.signers.map(signer => (
-                                            <div key={signer.id} className="space-y-4">
-                                                <div className="h-20 border-b border-gray-300 relative flex items-center justify-center">
-                                                    {signer.status === 'Signed' ? (
-                                                        <div className="text-center animate-in fade-in zoom-in duration-700">
-                                                            <p className="font-serif italic text-blue-600 text-xl font-bold select-none">{signer.name}</p>
-                                                            <div className="absolute top-0 right-0">
-                                                                <HiOutlineCheckCircle className="text-green-500 bg-white rounded-full" size={24} />
-                                                            </div>
-                                                            <p className="text-[8px] text-gray-400 mt-1 uppercase font-sans">Digitally Verified: {format(new Date(signer.signedAt || ''), 'yyyy-MM-dd HH:mm:ss')}</p>
-                                                        </div>
-                                                    ) : (
-                                                        <p className="text-[10px] text-gray-300 uppercase font-sans tracking-[0.3em]">Awaiting Signature</p>
-                                                    )}
+                                ) : (
+                                    <>
+                                        {/* Section 1: The Parties */}
+                                        <section>
+                                            <h4 className="font-bold border-b border-gray-900 mb-4 pb-1">1. THE PARTIES</h4>
+                                            <div className="space-y-4">
+                                                <p>This agreement is made on this <span className="font-bold underline">{format(new Date(contract.createdAt), 'do')}</span> day of <span className="font-bold underline">{format(new Date(contract.createdAt), 'MMMM, yyyy')}</span>, between:</p>
+                                                <div className="pl-4 border-l-2 border-gray-100">
+                                                    <p className="font-bold mb-1">THE LANDLORD:</p>
+                                                    <p className="italic">{contract.signers.find(s => s.role === 'Landlord')?.name || 'Help2Home Registered Owner'}</p>
+                                                    <p className="text-xs text-gray-500 mt-1">Represented by Help2Home Digital Management Services.</p>
                                                 </div>
-                                                <div>
-                                                    <p className="font-bold text-xs uppercase">{signer.role}</p>
-                                                    <p className="text-[10px] text-gray-500">{signer.name}</p>
+                                                <div className="pl-4 border-l-2 border-gray-100">
+                                                    <p className="font-bold mb-1">THE TENANT:</p>
+                                                    <p className="italic">{contract.signers.find(s => s.role === 'Tenant')?.name || 'Registered Applicant'}</p>
                                                 </div>
                                             </div>
-                                        ))}
-                                    </div>
-                                </section>
+                                        </section>
+
+                                        {/* Section 2: The Property */}
+                                        <section>
+                                            <h4 className="font-bold border-b border-gray-900 mb-4 pb-1">2. THE PROPERTY</h4>
+                                            <p>The Landlord agrees to let and the Tenant agrees to take the premises known as:</p>
+                                            <p className="font-bold mt-2 p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
+                                                {contract.propertyTitle} — {contract.propertyAddress}
+                                            </p>
+                                        </section>
+
+                                        {/* Section 3: Term & Rent */}
+                                        <section>
+                                            <h4 className="font-bold border-b border-gray-900 mb-4 pb-1">3. TERM AND RENT</h4>
+                                            <ul className="list-disc pl-5 space-y-2">
+                                                <li>The tenancy shall be for a period of <span className="font-bold underline">12 Months</span> commencing on <span className="font-bold underline">{format(new Date(contract.fields.startDate), 'MMM d, yyyy')}</span>.</li>
+                                                <li>The Rent for the said term shall be <span className="font-bold">₦{contract.fields.rentAmount.toLocaleString()}</span>, payable <span className="font-bold underline">{contract.fields.paymentFrequency}</span> in advance.</li>
+                                                <li>A security deposit of <span className="font-bold text-brand-green">₦{contract.fields.depositAmount.toLocaleString()}</span> is required and will be held in escrow by Help2Home.</li>
+                                            </ul>
+                                        </section>
+
+                                        {/* Section 4: General Covenants (Mock legal text) */}
+                                        <section>
+                                            <h4 className="font-bold border-b border-gray-900 mb-4 pb-1">4. GENERAL COVENANTS</h4>
+                                            <p className="text-[11px] text-gray-600 text-justify">
+                                                The Tenant hereby covenants with the Landlord to pay the rent at the times and in the manner aforesaid. To keep the interior of the premises including all fixtures and fittings in good and tenantable repair. Not to make any structural alterations to the premises without the prior written consent of the Landlord. To use the premises strictly for residential purposes and not to sublet or part with possession of the premises or any part thereof.
+                                            </p>
+                                        </section>
+
+                                        {/* Section 5: Signatures */}
+                                        <section className="pt-12 mt-auto">
+                                            <h4 className="font-bold border-b border-gray-900 mb-10 pb-1 uppercase">Signatures & Execution</h4>
+                                            <div className="grid grid-cols-2 gap-16">
+                                                {contract.signers.map(signer => (
+                                                    <div key={signer.id} className="space-y-4">
+                                                        <div className="h-20 border-b border-gray-300 relative flex items-center justify-center">
+                                                            {signer.status === 'Signed' ? (
+                                                                <div className="text-center animate-in fade-in zoom-in duration-700">
+                                                                    <p className="font-serif italic text-blue-600 text-xl font-bold select-none">{signer.name}</p>
+                                                                    <div className="absolute top-0 right-0">
+                                                                        <HiOutlineCheckCircle className="text-green-500 bg-white rounded-full" size={24} />
+                                                                    </div>
+                                                                    <p className="text-[8px] text-gray-400 mt-1 uppercase font-sans">Digitally Verified: {format(new Date(signer.signedAt || ''), 'yyyy-MM-dd HH:mm:ss')}</p>
+                                                                </div>
+                                                            ) : (
+                                                                <p className="text-[10px] text-gray-300 uppercase font-sans tracking-[0.3em]">Awaiting Signature</p>
+                                                            )}
+                                                        </div>
+                                                        <div>
+                                                            <p className="font-bold text-xs uppercase">{signer.role}</p>
+                                                            <p className="text-[10px] text-gray-500">{signer.name}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </section>
+                                    </>
+                                )}
                             </div>
 
                             {/* Document Footer */}

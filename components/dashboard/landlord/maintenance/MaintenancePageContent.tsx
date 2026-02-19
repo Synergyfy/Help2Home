@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    HiOutlineWrenchScrewdriver, 
-    HiOutlineClock, 
-    HiOutlineCheckCircle, 
+import {
+    HiOutlineWrenchScrewdriver,
+    HiOutlineClock,
+    HiOutlineCheckCircle,
     HiOutlineXCircle,
     HiOutlineExclamationTriangle,
     HiOutlineFunnel,
@@ -28,14 +28,14 @@ export default function MaintenancePageContent() {
 
     const filteredRequests = requests.filter(req => {
         const matchesFilter = filter === 'All' || req.status === filter;
-        const matchesSearch = req.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                             req.property.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             req.tenant.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = req.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            req.property.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            req.tenant.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesFilter && matchesSearch;
     });
 
     const handleUpdateStatus = (id: string, newStatus: MaintenanceStatus) => {
-        setRequests(prev => prev.map(req => 
+        setRequests(prev => prev.map(req =>
             req.id === id ? { ...req, status: newStatus } : req
         ));
         toast.success(`Request ${newStatus.toLowerCase()} successfully`);
@@ -68,7 +68,7 @@ export default function MaintenancePageContent() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-gray-900 tracking-tight">Maintenance Requests</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Maintenance Requests</h1>
                     <p className="text-gray-500 mt-1">Review and manage maintenance issues reported by your tenants.</p>
                 </div>
             </div>
@@ -86,7 +86,7 @@ export default function MaintenancePageContent() {
                             <stat.icon size={20} />
                         </div>
                         <div>
-                            <div className="text-xl font-black text-gray-900">{stat.count}</div>
+                            <div className="text-xl font-bold text-gray-900">{stat.count}</div>
                             <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.label}</div>
                         </div>
                     </div>
@@ -97,7 +97,7 @@ export default function MaintenancePageContent() {
             <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
                     <HiOutlineMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                    <input 
+                    <input
                         type="text"
                         placeholder="Search by title, property or tenant..."
                         value={searchTerm}
@@ -106,7 +106,7 @@ export default function MaintenancePageContent() {
                     />
                 </div>
                 <div className="flex gap-2">
-                    <select 
+                    <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value as any)}
                         className="px-4 py-3 rounded-2xl bg-white border border-gray-200 focus:border-brand-green outline-none font-bold text-sm cursor-pointer"
@@ -125,7 +125,7 @@ export default function MaintenancePageContent() {
             <div className="grid grid-cols-1 gap-4">
                 <AnimatePresence mode="popLayout">
                     {filteredRequests.map((req) => (
-                        <motion.div 
+                        <motion.div
                             key={req.id}
                             layout
                             initial={{ opacity: 0, y: 10 }}
@@ -141,7 +141,7 @@ export default function MaintenancePageContent() {
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-3 mb-1">
-                                            <h3 className="font-black text-gray-900 text-lg">{req.title}</h3>
+                                            <h3 className="font-bold text-gray-900 text-lg">{req.title}</h3>
                                             <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest border ${getStatusColor(req.status)}`}>
                                                 {req.status}
                                             </span>
@@ -167,7 +167,7 @@ export default function MaintenancePageContent() {
                                     {req.estimatedCost && (
                                         <div className="text-right hidden sm:block">
                                             <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Est. Cost</div>
-                                            <div className="font-black text-gray-900">{formatCurrency(req.estimatedCost)}</div>
+                                            <div className="font-bold text-gray-900">{formatCurrency(req.estimatedCost)}</div>
                                         </div>
                                     )}
                                     <HiOutlineChevronRight size={24} className="text-gray-300 group-hover:text-brand-green group-hover:translate-x-1 transition-all" />
@@ -190,7 +190,7 @@ export default function MaintenancePageContent() {
             <AnimatePresence>
                 {selectedRequest && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -198,7 +198,7 @@ export default function MaintenancePageContent() {
                         >
                             {/* Modal Header */}
                             <div className={`p-8 ${getPriorityColor(selectedRequest.priority)} relative`}>
-                                <button 
+                                <button
                                     onClick={() => setSelectedRequest(null)}
                                     className="absolute top-6 right-6 p-2 rounded-full bg-black/10 hover:bg-black/20 text-white transition-all"
                                 >
@@ -235,7 +235,7 @@ export default function MaintenancePageContent() {
                                     </div>
                                     <div className="p-4 bg-gray-50 rounded-2xl border-2 border-brand-green/10">
                                         <div className="text-[10px] font-black text-brand-green uppercase tracking-widest mb-1">Estimated Cost</div>
-                                        <div className="text-2xl font-black text-gray-900">{formatCurrency(selectedRequest.estimatedCost || 0)}</div>
+                                        <div className="text-2xl font-bold text-gray-900">{formatCurrency(selectedRequest.estimatedCost || 0)}</div>
                                     </div>
                                 </div>
 
@@ -266,14 +266,14 @@ export default function MaintenancePageContent() {
                             <div className="p-8 border-t border-gray-100 bg-gray-50 flex gap-4">
                                 {selectedRequest.status === 'Pending' ? (
                                     <>
-                                        <button 
+                                        <button
                                             onClick={() => handleUpdateStatus(selectedRequest.id, 'Rejected')}
                                             className="flex-1 py-4 px-6 border-2 border-red-100 text-red-600 font-black rounded-2xl hover:bg-red-50 transition-all flex items-center justify-center gap-2"
                                         >
                                             <HiOutlineXCircle size={20} />
                                             Reject
                                         </button>
-                                        <button 
+                                        <button
                                             onClick={() => handleUpdateStatus(selectedRequest.id, 'Approved')}
                                             className="flex-[2] py-4 px-6 bg-brand-green text-white font-black rounded-2xl hover:bg-green-700 transition-all shadow-xl shadow-green-900/20 flex items-center justify-center gap-2"
                                         >
@@ -282,7 +282,7 @@ export default function MaintenancePageContent() {
                                         </button>
                                     </>
                                 ) : (
-                                    <button 
+                                    <button
                                         onClick={() => setSelectedRequest(null)}
                                         className="w-full py-4 px-6 bg-gray-900 text-white font-black rounded-2xl hover:bg-black transition-all"
                                     >

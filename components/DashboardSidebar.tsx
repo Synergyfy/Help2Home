@@ -41,10 +41,12 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
         { label: 'My Profile', href: '/dashboard/admin/profile', icon: MdPerson },
         {
             label: 'User Management',
+            href: '/dashboard/admin/users',
             icon: MdGroup,
             subItems: [
                 {
                     label: 'Service Network',
+                    href: '/dashboard/admin/users?tab=ecosystem',
                     icon: MdAssignment,
                     subItems: [
                         { label: 'Landlords', href: '/dashboard/admin/users?tab=landlords', icon: MdPerson },
@@ -138,54 +140,80 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
 const NavLink = ({ item, pathname, depth = 0, onClose }: { item: NavItem, pathname: string, depth?: number, onClose?: () => void }) => {
     const [isOpen, setIsOpen] = useState(false);
     const hasSubItems = item.subItems && item.subItems.length > 0;
-    const isActive = item.href ? pathname === item.href || (item.href.includes('?') && pathname + (typeof window !== 'undefined' ? window.location.search : '') === item.href) : false;
+
+    // Improved active detection for query params
+    const getIsActive = () => {
+        if (!item.href) return false;
+        if (typeof window === 'undefined') return pathname === item.href;
+
+        const currentFullUrl = pathname + window.location.search;
+        if (item.href.includes('?')) {
+            return currentFullUrl.includes(item.href);
+        }
+        return pathname === item.href;
+    };
+
+    const isActive = getIsActive();
     const Icon = item.icon as IconType;
 
-    const handleClick = () => {
-        if (hasSubItems) {
-            setIsOpen(!isOpen);
-        } else if (onClose) {
-            onClose();
-        }
+    const toggleOpen = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsOpen(!isOpen);
     };
 
     return (
         <div className="space-y-1">
-            {item.href ? (
-                <Link
-                    href={item.href}
-                    onClick={onClose}
-                    className={`
-                        flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group
-                        ${isActive
-                            ? 'bg-white text-brand-green font-bold shadow-lg shadow-black/10'
-                            : 'text-white/80 hover:bg-white/10 hover:text-white'}
-                        ${depth > 0 ? 'ml-4 py-2 text-[12px]' : 'text-[13px]'}
-                    `}
-                >
-                    <div className="flex items-center gap-3">
-                        <Icon size={depth > 0 ? 16 : 20} className={isActive ? 'text-brand-green' : 'text-white/70 group-hover:text-white'} />
-                        <span className="font-medium">{item.label}</span>
+            <div className="relative">
+                {item.href ? (
+                    <div className="flex items-center group">
+                        <Link
+                            href={item.href}
+                            onClick={onClose}
+                            className={`
+                                flex-1 flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200
+                                ${isActive
+                                    ? 'bg-white text-brand-green font-bold shadow-lg shadow-black/10'
+                                    : 'text-white/80 hover:bg-white/10 hover:text-white'}
+                                ${depth > 0 ? 'ml-4 py-2 text-[12px]' : 'text-[13px]'}
+                            `}
+                        >
+                            <div className="flex items-center gap-3">
+                                <Icon size={depth > 0 ? 16 : 20} className={isActive ? 'text-brand-green' : 'text-white/70 group-hover:text-white'} />
+                                <span className="font-medium text-left">{item.label}</span>
+                            </div>
+                        </Link>
+                        {hasSubItems && (
+                            <button
+                                onClick={toggleOpen}
+                                className={`
+                                    absolute right-2 p-1.5 rounded-lg transition-all
+                                    ${isActive ? 'text-brand-green hover:bg-brand-green/5' : 'text-white/40 hover:bg-white/10 hover:text-white'}
+                                `}
+                            >
+                                {isOpen ? <MdExpandMore size={18} /> : <MdChevronRight size={18} />}
+                            </button>
+                        )}
                     </div>
-                </Link>
-            ) : (
-                <button
-                    onClick={handleClick}
-                    className={`
-                        w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group
-                        text-white/80 hover:bg-white/10 hover:text-white
-                        ${depth > 0 ? 'ml-4 py-2 text-[12px]' : 'text-[13px]'}
-                    `}
-                >
-                    <div className="flex items-center gap-3">
-                        <Icon size={depth > 0 ? 16 : 20} className="text-white/70 group-hover:text-white" />
-                        <span className="font-medium text-left">{item.label}</span>
-                    </div>
-                    {hasSubItems && (
-                        isOpen ? <MdExpandMore size={18} /> : <MdChevronRight size={18} />
-                    )}
-                </button>
-            )}
+                ) : (
+                    <button
+                        onClick={toggleOpen}
+                        className={`
+                            w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group
+                            text-white/80 hover:bg-white/10 hover:text-white
+                            ${depth > 0 ? 'ml-4 py-2 text-[12px]' : 'text-[13px]'}
+                        `}
+                    >
+                        <div className="flex items-center gap-3">
+                            <Icon size={depth > 0 ? 16 : 20} className="text-white/70 group-hover:text-white" />
+                            <span className="font-medium text-left">{item.label}</span>
+                        </div>
+                        {hasSubItems && (
+                            isOpen ? <MdExpandMore size={18} /> : <MdChevronRight size={18} />
+                        )}
+                    </button>
+                )}
+            </div>
 
             {hasSubItems && isOpen && (
                 <div className="space-y-1 border-l border-white/10 ml-6">

@@ -25,7 +25,7 @@ export default function CaretakerInfoTab({ profile: initialProfile }: { profile:
     return (
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
             <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-bold text-gray-900">Service Details</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Service Details</h3>
                 {!isEditing ? (
                     <button
                         onClick={() => setIsEditing(true)}
@@ -44,7 +44,7 @@ export default function CaretakerInfoTab({ profile: initialProfile }: { profile:
                         <button
                             onClick={handleSubmit(onSubmit)}
                             disabled={isPending}
-                            className="flex items-center gap-2 bg-brand-green text-white px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm hover:bg-green-700 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="flex items-center gap-2 bg-brand-green text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow-sm hover:bg-green-700 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             {isPending ? 'Saving...' : <><FiSave /> Save</>}
                         </button>

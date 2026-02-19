@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import ProfileSummaryCard from './ProfileSummaryCard';
 import BasicInfoTab from './BasicInfoTab';
 import VerificationTab from './VerificationTab';
@@ -15,9 +16,19 @@ import {
     IoShieldCheckmarkOutline,
 } from 'react-icons/io5';
 
+type TabId = 'info' | 'verification' | 'bank' | 'security';
+
 export default function LandlordProfile() {
-    const [activeTab, setActiveTab] = useState<'info' | 'verification' | 'bank' | 'security'>('info');
+    const searchParams = useSearchParams();
+    const [activeTab, setActiveTab] = useState<TabId>('info');
     const { data, isLoading } = useProfile('landlord');
+
+    useEffect(() => {
+        const tab = searchParams.get('tab') as TabId;
+        if (tab && ['info', 'verification', 'bank', 'security'].includes(tab)) {
+            setActiveTab(tab);
+        }
+    }, [searchParams]);
 
     const tabs = [
         { id: 'info', label: 'Basic Info', icon: IoPersonOutline },
@@ -39,8 +50,8 @@ export default function LandlordProfile() {
     return (
         <div className="min-h-screen bg-gray-50/50 pb-12">
             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Profile & Verification</h1>
-                <p className="text-gray-500 text-sm font-medium italic">Complete each section to maintain a verified professional status.</p>
+                <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Profile & Verification</h1>
+                <p className="text-gray-500 text-sm font-medium">Complete each section to maintain a verified professional status.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -57,7 +68,7 @@ export default function LandlordProfile() {
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as 'info' | 'verification' | 'bank' | 'security')}
-                                className={`flex items-center gap-2.5 px-6 py-4 text-sm font-black border-b-4 transition-all whitespace-nowrap group ${activeTab === tab.id
+                                className={`flex items-center gap-2.5 px-6 py-4 text-sm font-semibold border-b-4 transition-all whitespace-nowrap group ${activeTab === tab.id
                                     ? 'border-brand-green text-brand-green bg-green-50/30'
                                     : 'border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50/50'
                                     }`}

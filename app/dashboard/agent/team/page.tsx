@@ -80,12 +80,12 @@ export default function TeamPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-gray-900 tracking-tight">Partner Network</h1>
+                    <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Partner Network</h1>
                     <p className="text-gray-500 mt-1">Collaborate with landlords and caretakers to grow your business.</p>
                 </div>
                 <button
                     onClick={() => setIsInviteModalOpen(true)}
-                    className="flex items-center gap-2 px-6 py-3 bg-brand-green text-white rounded-2xl font-bold hover:bg-green-700 transition-all shadow-lg shadow-green-100"
+                    className="flex items-center gap-2 px-6 py-3 bg-brand-green text-white rounded-2xl font-semibold hover:bg-green-700 transition-all shadow-lg shadow-green-100"
                 >
                     <HiOutlinePlus size={20} />
                     Invite Partner
@@ -98,22 +98,22 @@ export default function TeamPage() {
                     <div className="size-12 rounded-2xl bg-brand-green/10 flex items-center justify-center text-brand-green mb-4">
                         <HiOutlineUserGroup size={24} />
                     </div>
-                    <div className="text-2xl font-black text-gray-900">{activePartners}</div>
-                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Active Partners</div>
+                    <div className="text-2xl font-semibold text-gray-900">{activePartners}</div>
+                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Active Partners</div>
                 </div>
                 <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
                     <div className="size-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-500 mb-4">
                         <HiOutlineClock size={24} />
                     </div>
-                    <div className="text-2xl font-black text-gray-900">{pendingInvites}</div>
-                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Pending Invites</div>
+                    <div className="text-2xl font-semibold text-gray-900">{pendingInvites}</div>
+                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Pending Invites</div>
                 </div>
                 <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
                     <div className="size-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-4">
                         <HiOutlineCheckCircle size={24} />
                     </div>
-                    <div className="text-2xl font-black text-gray-900">{partners.reduce((acc, p) => acc + p.properties, 0)}</div>
-                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Properties</div>
+                    <div className="text-2xl font-semibold text-gray-900">{partners.reduce((acc, p) => acc + p.properties, 0)}</div>
+                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Total Properties</div>
                 </div>
             </div>
 
@@ -123,7 +123,7 @@ export default function TeamPage() {
                     <button
                         key={tab}
                         onClick={() => setFilter(tab)}
-                        className={`px-6 py-3 font-bold text-sm transition-all border-b-2 ${filter === tab
+                        className={`px-6 py-3 font-semibold text-sm transition-all border-b-2 ${filter === tab
                             ? 'border-brand-green text-brand-green'
                             : 'border-transparent text-gray-400 hover:text-gray-600'
                             }`}
@@ -141,19 +141,19 @@ export default function TeamPage() {
                             <div key={partner.id} className="p-6 hover:bg-gray-50/50 transition-colors">
                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                     <div className="flex items-center gap-4">
-                                        <div className="size-14 rounded-2xl bg-brand-green/10 flex items-center justify-center text-brand-green font-black text-lg">
+                                        <div className="size-14 rounded-2xl bg-brand-green/10 flex items-center justify-center text-brand-green font-semibold text-lg">
                                             {partner.name.split(' ').map(n => n[0]).join('')}
                                         </div>
                                         <div>
-                                            <h3 className="font-black text-gray-900">{partner.name}</h3>
+                                            <h3 className="font-semibold text-gray-900">{partner.name}</h3>
                                             <div className="flex items-center gap-2 mt-1">
-                                                <span className={`text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-widest ${partner.role === 'Landlord'
+                                                <span className={`text-[10px] font-semibold px-2 py-1 rounded-full uppercase tracking-widest ${partner.role === 'Landlord'
                                                     ? 'bg-blue-50 text-blue-600'
                                                     : 'bg-purple-50 text-purple-600'
                                                     }`}>
                                                     {partner.role}
                                                 </span>
-                                                <span className={`text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-widest ${partner.status === 'Active'
+                                                <span className={`text-[10px] font-semibold px-2 py-1 rounded-full uppercase tracking-widest ${partner.status === 'Active'
                                                     ? 'bg-green-50 text-green-600'
                                                     : partner.status === 'Pending'
                                                         ? 'bg-orange-50 text-orange-600'
@@ -178,12 +178,12 @@ export default function TeamPage() {
                                         </div>
 
                                         <div className="text-right">
-                                            <div className="text-sm font-black text-gray-900">{partner.properties} Properties</div>
+                                            <div className="text-sm font-semibold text-gray-900">{partner.properties} Properties</div>
                                             <div className="text-xs text-gray-400 mt-1">Joined {new Date(partner.joinedDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</div>
                                         </div>
 
                                         <div className="flex gap-2">
-                                            <button 
+                                            <button
                                                 onClick={() => handleChat(partner)}
                                                 className="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm"
                                                 title="Chat with partner"
@@ -202,7 +202,7 @@ export default function TeamPage() {
                         <div className="p-12 text-center">
                             <HiOutlineUserGroup className="size-16 text-gray-300 mx-auto mb-4" />
                             <p className="text-gray-500 font-medium">No {filter.toLowerCase()} partners found.</p>
-                            <button className="mt-4 text-sm font-bold text-brand-green hover:underline">
+                            <button className="mt-4 text-sm font-semibold text-brand-green hover:underline">
                                 Invite your first {filter.toLowerCase()} partner
                             </button>
                         </div>

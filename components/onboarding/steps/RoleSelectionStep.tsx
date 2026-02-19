@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiHome, FiKey, FiBriefcase, FiTrendingUp, FiArrowRight, FiArrowLeft, FiCheck, FiUsers, FiCode } from "react-icons/fi";
 import { useOnboardingStore, UserRole, MULTI_SELECT_ROLES } from "@/store/onboardingStore";
@@ -19,12 +20,21 @@ const RoleSelectionStep = () => {
   const selectedRoles = user?.roles || [];
 
   const isMultiSelectMode = selectedRoles.some(r => MULTI_SELECT_ROLES.includes(r));
+  const isTenantOnly = selectedRoles.length === 1 && selectedRoles[0] === 'tenant';
+
+  // Auto-skip logic for Tenant-only selection from signup
+  useEffect(() => {
+    if (isTenantOnly) {
+      setActiveRole('tenant');
+      goToStep(5);
+    }
+  }, [isTenantOnly, setActiveRole, goToStep]);
 
   const handleContinue = () => {
     if (selectedRoles.length === 0) return;
 
     // Skip Chooser ONLY for Tenant-only selection
-    if (selectedRoles.length === 1 && selectedRoles[0] === 'tenant') {
+    if (isTenantOnly) {
       setActiveRole(selectedRoles[0]);
       goToStep(5);
     } else {
@@ -55,33 +65,41 @@ const RoleSelectionStep = () => {
       </div>
 
       <div className="flex-1 overflow-y-auto space-y-3 no-scrollbar pb-4">
-        {roles.map((role, index) => {
-          const isSelected = selectedRoles.includes(role.id);
-          const isDisabled = isRoleDisabled(role.id);
+        {roles
+          .filter(role => {
+            // If user already has 'tenant' from signup, only show tenant
+            if (isTenantOnly) return role.id === 'tenant';
+            // If in multi-select mode, hide individual roles (tenant and investor)
+            if (isMultiSelectMode && !MULTI_SELECT_ROLES.includes(role.id)) return false;
+            return true;
+          })
+          .map((role, index) => {
+            const isSelected = selectedRoles.includes(role.id);
+            const isDisabled = isRoleDisabled(role.id);
 
-          return (
-            <motion.button
-              key={role.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.03 }}
-              onClick={() => {
-                if (!isDisabled) {
-                  toggleRole(role.id);
-                  // Auto-proceed logic
-                  if (role.id === 'tenant') {
-                    setActiveRole(role.id);
-                    goToStep(5);
-                  } else if (!role.multiSelect) {
-                    // For other single-select roles (like Investor), go to Chooser
-                    nextStep();
+            return (
+              <motion.button
+                key={role.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.03 }}
+                onClick={() => {
+                  if (!isDisabled) {
+                    toggleRole(role.id);
+                    // Auto-proceed logic
+                    if (role.id === 'tenant') {
+                      setActiveRole(role.id);
+                      goToStep(5);
+                    } else if (!role.multiSelect) {
+                      // For other single-select roles (like Investor), go to Chooser
+                      nextStep();
+                    }
                   }
-                }
-              }}
-              disabled={isDisabled}
-              className={`w-full relative p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 text-left transition-all duration-200 flex items-center gap-3 sm:gap-4 ${isSelected ? "border-brand-green bg-brand-green/5 shadow-sm" : isDisabled ? "border-gray-50 bg-gray-50/50 opacity-40 cursor-not-allowed" : "border-gray-100 hover:border-brand-green/30 bg-white"
-                }`}
-            >
+                }}
+                disabled={isDisabled}
+                className={`w-full relative p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 text-left transition-all duration-200 flex items-center gap-3 sm:gap-4 ${isSelected ? "border-brand-green bg-brand-green/5 shadow-sm" : isDisabled ? "border-gray-50 bg-gray-50/50 opacity-40 cursor-not-allowed" : "border-gray-100 hover:border-brand-green/30 bg-white"
+                  }`}
+              >
               <div className={`shrink-0 w-10 h-10 sm:w-14 sm:h-14 rounded-lg sm:rounded-2xl flex items-center justify-center transition-all ${isSelected ? "bg-brand-green text-white" : "bg-gray-100 text-gray-500"}`}>
                 {role.icon}
               </div>

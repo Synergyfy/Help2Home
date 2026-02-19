@@ -15,8 +15,8 @@ export default function MarketingPage() {
         <div className="space-y-10 pb-12">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-black text-gray-900 tracking-tight">Marketing Hub</h1>
-                <p className="text-gray-500 font-medium italic">Grow your reach and accelerate your sales pipeline.</p>
+                <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Marketing Hub</h1>
+                <p className="text-gray-500 font-medium">Grow your reach and accelerate your sales pipeline.</p>
             </div>
 
             {/* Coming Soon Hero */}
@@ -40,7 +40,7 @@ export default function MarketingPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight"
+                        className="text-4xl md:text-5xl font-semibold text-white mb-6 tracking-tight"
                     >
                         Something Big is <span className="text-brand-green">Launching Soon.</span>
                     </motion.h2>
@@ -60,11 +60,11 @@ export default function MarketingPage() {
                         transition={{ delay: 0.3 }}
                         className="flex flex-wrap justify-center gap-4"
                     >
-                        <button className="px-8 py-4 bg-brand-green text-white rounded-2xl font-black shadow-xl shadow-green-900/40 hover:bg-green-700 transition-all active:scale-95 flex items-center gap-2">
+                        <button className="px-8 py-4 bg-brand-green text-white rounded-2xl font-semibold shadow-xl shadow-green-900/40 hover:bg-green-700 transition-all active:scale-95 flex items-center gap-2">
                             Get Early Access
                             <HiOutlineArrowRight size={18} strokeWidth={3} />
                         </button>
-                        <button className="px-8 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-2xl font-black hover:bg-white/20 transition-all">
+                        <button className="px-8 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-2xl font-semibold hover:bg-white/20 transition-all">
                             View Roadmap
                         </button>
                     </motion.div>
@@ -77,7 +77,7 @@ export default function MarketingPage() {
                     <div className="size-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-6">
                         <HiOutlineChartBar size={28} />
                     </div>
-                    <h3 className="font-black text-gray-900 text-lg mb-2">Performance Insights</h3>
+                    <h3 className="font-semibold text-gray-900 text-lg mb-2">Performance Insights</h3>
                     <p className="text-gray-500 text-sm font-medium leading-relaxed">
                         Deep analytics into how many people are viewing your listings and where they come from.
                     </p>
@@ -87,7 +87,7 @@ export default function MarketingPage() {
                     <div className="size-14 rounded-2xl bg-brand-green/10 flex items-center justify-center text-brand-green mb-6">
                         <HiOutlineMegaphone size={28} />
                     </div>
-                    <h3 className="font-black text-gray-900 text-lg mb-2">Listing Booster</h3>
+                    <h3 className="font-semibold text-gray-900 text-lg mb-2">Listing Booster</h3>
                     <p className="text-gray-500 text-sm font-medium leading-relaxed">
                         One-click visibility boost to get your properties featured at the top of marketplace searches.
                     </p>
@@ -97,7 +97,7 @@ export default function MarketingPage() {
                     <div className="size-14 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-600 mb-6">
                         <HiOutlineSparkles size={28} />
                     </div>
-                    <h3 className="font-black text-gray-900 text-lg mb-2">AI Descriptions</h3>
+                    <h3 className="font-semibold text-gray-900 text-lg mb-2">AI Descriptions</h3>
                     <p className="text-gray-500 text-sm font-medium leading-relaxed">
                         Automatically generate high-converting property descriptions based on your photos and details.
                     </p>

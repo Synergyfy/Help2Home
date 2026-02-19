@@ -3,15 +3,17 @@
 import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { MOCK_CONTRACTS, Signer } from '@/lib/mockContractData';
+import { Signer } from '@/lib/mockContractData';
+import { useContractStore } from '@/store/contractStore';
 import ContractDetail from '@/components/dashboard/landlord/contracts/ContractDetail';
 import SignatureRequestModal from '@/components/dashboard/landlord/contracts/SignatureRequestModal';
 
 export default function ContractDetailPage() {
     const params = useParams();
     const router = useRouter();
+    const { contracts } = useContractStore();
     const contractId = params.id as string;
-    const contract = MOCK_CONTRACTS.find(c => c.id === contractId);
+    const contract = contracts.find(c => c.id === contractId);
 
     const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
 

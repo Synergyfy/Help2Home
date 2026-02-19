@@ -41,7 +41,7 @@ export default function VerificationChecklist({ checklist, onSave, onSubmit }: V
         <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-4 bg-gray-50 border-b border-gray-100">
-                    <h3 className="font-bold text-gray-900">Checklist Items</h3>
+                    <h3 className="font-semibold text-gray-900">Checklist Items</h3>
                 </div>
                 <div className="divide-y divide-gray-100">
                     {items.map(item => (

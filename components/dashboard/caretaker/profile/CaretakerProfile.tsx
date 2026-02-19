@@ -36,8 +36,8 @@ export default function CaretakerProfile() {
     return (
         <div className="min-h-screen bg-gray-50/50 pb-12">
             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Caretaker Profile</h1>
-                <p className="text-gray-500 text-sm font-medium italic">Manage your skills, services, and profile visibility.</p>
+                <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Caretaker Profile</h1>
+                <p className="text-gray-500 text-sm font-medium">Manage your skills, services, and profile visibility.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -54,7 +54,7 @@ export default function CaretakerProfile() {
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
-                                className={`flex items-center gap-2.5 px-6 py-4 text-sm font-black border-b-4 transition-all whitespace-nowrap group ${activeTab === tab.id
+                                className={`flex items-center gap-2.5 px-6 py-4 text-sm font-semibold border-b-4 transition-all whitespace-nowrap group ${activeTab === tab.id
                                     ? 'border-brand-green text-brand-green bg-green-50/30'
                                     : 'border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50/50'
                                     }`}

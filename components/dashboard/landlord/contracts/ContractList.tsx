@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Contract, MOCK_CONTRACTS, ContractStatus } from '@/lib/mockContractData';
+import { Contract, ContractStatus } from '@/lib/mockContractData';
+import { useContractStore } from '@/store/contractStore';
 import { format } from 'date-fns';
 
 interface ContractListProps {
@@ -10,10 +11,11 @@ interface ContractListProps {
 }
 
 export default function ContractList({ onSelect }: ContractListProps) {
+    const { contracts } = useContractStore();
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<ContractStatus | 'All'>('All');
 
-    const filteredContracts = MOCK_CONTRACTS.filter(contract => {
+    const filteredContracts = contracts.filter(contract => {
         const matchesSearch = contract.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             contract.propertyTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
             contract.signers.some(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -45,8 +47,8 @@ export default function ContractList({ onSelect }: ContractListProps) {
                             key={status}
                             onClick={() => setStatusFilter(status as any)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${statusFilter === status
-                                    ? 'bg-[#00853E] text-white'
-                                    : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                                ? 'bg-[#00853E] text-white'
+                                : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
                                 }`}
                         >
                             {status}

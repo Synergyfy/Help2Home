@@ -41,7 +41,7 @@ export default function CaretakerDashboardPage() {
             {/* Header / Welcome */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-gray-900 leading-tight">
+                    <h1 className="text-3xl font-semibold text-gray-900 leading-tight">
                         Caretaker <span className="text-brand-green">Hub</span>
                     </h1>
                     <p className="text-gray-500 font-medium">Welcome back, John. Here&apos;s what&apos;s happening today.</p>
@@ -49,14 +49,14 @@ export default function CaretakerDashboardPage() {
                 <div className="flex gap-3 w-full md:w-auto">
                     <Link
                         href="/dashboard/caretaker/properties/add"
-                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-brand-green text-white rounded-2xl font-bold hover:bg-green-700 transition-all shadow-lg shadow-green-100"
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-brand-green text-white rounded-2xl font-semibold hover:bg-green-700 transition-all shadow-lg shadow-green-100"
                     >
                         <HiOutlinePlus size={20} />
                         Add Property
                     </Link>
                     <Link
                         href="/dashboard/caretaker/team"
-                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-2xl font-bold hover:bg-gray-50 transition-all shadow-sm"
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-2xl font-semibold hover:bg-gray-50 transition-all shadow-sm"
                     >
                         <HiOutlineUserGroup size={20} />
                         Invite Partner
@@ -100,11 +100,11 @@ export default function CaretakerDashboardPage() {
                     {/* Maintenance / Tasks Highlights */}
                     <div>
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                            <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
                                 <HiOutlineWrenchScrewdriver size={24} className="text-blue-500" />
                                 Maintenance Tasks
                             </h2>
-                            <Link href="/dashboard/caretaker/tasks" className="text-sm font-bold text-brand-green hover:underline">
+                            <Link href="/dashboard/caretaker/tasks" className="text-sm font-semibold text-brand-green hover:underline">
                                 View Full Schedule
                             </Link>
                         </div>
@@ -133,9 +133,9 @@ export default function CaretakerDashboardPage() {
                     {/* Partner Network Quick Link */}
                     <div className="bg-linear-to-br from-gray-900 to-gray-800 p-8 rounded-[2.5rem] shadow-xl text-white relative overflow-hidden group">
                         <div className="relative z-10">
-                            <h3 className="text-xl font-bold mb-2">Partner Network</h3>
+                            <h3 className="text-xl font-semibold mb-2">Partner Network</h3>
                             <p className="text-white/60 text-sm mb-6">Collaborate with Landlords and Agents to streamline property management.</p>
-                            <Link href="/dashboard/caretaker/team" className="inline-flex items-center gap-2 bg-brand-green text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-green-700 transition-all">
+                            <Link href="/dashboard/caretaker/team" className="inline-flex items-center gap-2 bg-brand-green text-white px-6 py-3 rounded-xl font-semibold text-sm hover:bg-green-700 transition-all">
                                 Manage Team
                                 <HiOutlineChevronRight />
                             </Link>
@@ -145,7 +145,7 @@ export default function CaretakerDashboardPage() {
 
                     {/* Alerts / Activity Feed */}
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                        <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                             <HiOutlineBellAlert size={20} className="text-orange-500" />
                             Recent Activity
                         </h3>
@@ -189,8 +189,8 @@ function StatCard({ label, value, icon, color }: { label: string, value: number,
             <div className={`size-12 rounded-2xl ${colors[color]} flex items-center justify-center mb-4`}>
                 {icon}
             </div>
-            <div className="text-2xl font-black text-gray-900">{value}</div>
-            <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">{label}</div>
+            <div className="text-2xl font-semibold text-gray-900">{value}</div>
+            <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">{label}</div>
         </div>
     );
 }
@@ -203,7 +203,7 @@ function ActivityItem({ title, description, time, icon }: { title: string, descr
             </div>
             <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-baseline gap-2">
-                    <h4 className="text-xs font-bold text-gray-900 truncate">{title}</h4>
+                    <h4 className="text-xs font-semibold text-gray-900 truncate">{title}</h4>
                     <span className="text-[10px] text-gray-400 shrink-0">{time}</span>
                 </div>
                 <p className="text-[10px] text-gray-500 truncate">{description}</p>

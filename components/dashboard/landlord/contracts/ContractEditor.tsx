@@ -41,9 +41,12 @@ export default function ContractEditor({ initialData, onSave, onCancel }: Contra
                     </button>
                     <button
                         type="submit"
-                        className="px-4 py-2 bg-[#00853E] text-white rounded-lg text-sm font-medium hover:bg-green-700"
+                        className="px-6 py-2 bg-[#00853E] text-white rounded-lg text-sm font-bold hover:bg-green-700 transition-all flex items-center gap-2"
                     >
-                        Save Changes
+                        <span>Preview & Edit Legal Text</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
                     </button>
                 </div>
             </div>

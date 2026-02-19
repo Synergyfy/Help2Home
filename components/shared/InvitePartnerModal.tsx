@@ -73,11 +73,29 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
         }, 3000);
     };
 
-    const filteredUsers = MOCK_USERS.filter(user =>
-        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.phone.includes(searchQuery)
-    );
+    const filteredUsers = MOCK_USERS.filter(user => {
+        const query = searchQuery.toLowerCase();
+        const nameMatch = user.name.toLowerCase().includes(query);
+        const emailMatch = user.email.toLowerCase().includes(query);
+
+        // Normalize phone numbers for better search (especially for Nigerian formats)
+        const cleanQuery = searchQuery.replace(/\D/g, '');
+        const cleanPhone = user.phone.replace(/\D/g, '');
+
+        let phoneMatch = false;
+        if (cleanQuery.length > 0) {
+            // Direct match on digits
+            phoneMatch = cleanPhone.includes(cleanQuery);
+
+            // Handle Nigerian local format: 080... should match 23480...
+            if (!phoneMatch && cleanQuery.startsWith('0')) {
+                const internationalFormat = '234' + cleanQuery.slice(1);
+                phoneMatch = cleanPhone.includes(internationalFormat);
+            }
+        }
+
+        return nameMatch || emailMatch || phoneMatch;
+    });
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
@@ -85,7 +103,7 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                 {/* Header */}
                 <div className="flex items-center justify-between p-8 border-b border-gray-100">
                     <div>
-                        <h2 className="text-2xl font-black text-gray-900">Invite Partner</h2>
+                        <h2 className="text-2xl font-semibold text-gray-900">Invite Partner</h2>
                         <p className="text-sm text-gray-500 mt-1">Grow your network and collaborate efficiently</p>
                     </div>
                     <button
@@ -100,7 +118,7 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                 <div className="flex border-b border-gray-100 px-8">
                     <button
                         onClick={() => setActiveTab('link')}
-                        className={`flex items-center gap-2 px-6 py-4 font-bold text-sm transition-all border-b-2 ${activeTab === 'link'
+                        className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm transition-all border-b-2 ${activeTab === 'link'
                             ? 'border-brand-green text-brand-green'
                             : 'border-transparent text-gray-400 hover:text-gray-600'
                             }`}
@@ -110,7 +128,7 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                     </button>
                     <button
                         onClick={() => setActiveTab('search')}
-                        className={`flex items-center gap-2 px-6 py-4 font-bold text-sm transition-all border-b-2 ${activeTab === 'search'
+                        className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm transition-all border-b-2 ${activeTab === 'search'
                             ? 'border-brand-green text-brand-green'
                             : 'border-transparent text-gray-400 hover:text-gray-600'
                             }`}
@@ -125,7 +143,7 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                     {activeTab === 'link' ? (
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-sm font-bold text-gray-900 mb-3">
+                                <label className="block text-sm font-semibold text-gray-900 mb-3">
                                     Your Invite Link
                                 </label>
                                 <div className="flex gap-2">
@@ -137,7 +155,7 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                                     />
                                     <button
                                         onClick={handleCopyLink}
-                                        className="px-6 py-3 bg-brand-green text-white rounded-xl font-bold hover:bg-green-700 transition-all flex items-center gap-2"
+                                        className="px-6 py-3 bg-brand-green text-white rounded-xl font-semibold hover:bg-green-700 transition-all flex items-center gap-2"
                                     >
                                         {copied ? (
                                             <>
@@ -155,18 +173,18 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                             </div>
 
                             <div className="pt-6 border-t border-gray-100">
-                                <p className="text-sm font-bold text-gray-900 mb-4">Share via</p>
+                                <p className="text-sm font-semibold text-gray-900 mb-4">Share via</p>
                                 <div className="flex gap-3">
                                     <button
                                         onClick={handleShareEmail}
-                                        className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-blue-50 text-blue-600 rounded-xl font-bold hover:bg-blue-100 transition-all border border-blue-100"
+                                        className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-blue-50 text-blue-600 rounded-xl font-semibold hover:bg-blue-100 transition-all border border-blue-100"
                                     >
                                         <HiOutlineEnvelope size={20} />
                                         Email
                                     </button>
                                     <button
                                         onClick={handleShareWhatsApp}
-                                        className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-50 text-green-600 rounded-xl font-bold hover:bg-green-100 transition-all border border-green-100"
+                                        className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-50 text-green-600 rounded-xl font-semibold hover:bg-green-100 transition-all border border-green-100"
                                     >
                                         <FaWhatsapp size={20} />
                                         WhatsApp
@@ -179,7 +197,7 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                                     <HiOutlineCheckCircle size={20} />
                                 </div>
                                 <div className="text-sm text-blue-900">
-                                    <span className="font-bold block mb-1">How it works:</span>
+                                    <span className="font-semibold block mb-1">How it works:</span>
                                     Share this link with partners not yet on the platform. When they sign up using your link, they'll automatically be added to your network.
                                 </div>
                             </div>
@@ -187,7 +205,7 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                     ) : (
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-sm font-bold text-gray-900 mb-3">
+                                <label className="block text-sm font-semibold text-gray-900 mb-3">
                                     Search for existing users
                                 </label>
                                 <div className="relative">
@@ -210,22 +228,22 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                                             className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-brand-green/30 transition-all"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <div className="size-12 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green font-black">
+                                                <div className="size-12 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green font-semibold">
                                                     {user.name.split(' ').map(n => n[0]).join('')}
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-bold text-gray-900">{user.name}</h4>
+                                                    <h4 className="font-semibold text-gray-900">{user.name}</h4>
                                                     <p className="text-xs text-gray-500">{user.email} • {user.phone}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-3">
-                                                <span className="text-[10px] font-black px-3 py-1 rounded-full bg-blue-50 text-blue-600 uppercase tracking-widest">
+                                                <span className="text-[10px] font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-600 uppercase tracking-widest">
                                                     {user.role}
                                                 </span>
                                                 {invitedUsers.has(user.id) ? (
                                                     <button
                                                         disabled
-                                                        className="px-6 py-2 bg-green-50 text-green-600 rounded-xl font-bold text-sm flex items-center gap-2 border border-green-100"
+                                                        className="px-6 py-2 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex items-center gap-2 border border-green-100"
                                                     >
                                                         <HiOutlineCheckCircle size={18} />
                                                         Invited
@@ -233,7 +251,7 @@ export default function InvitePartnerModal({ isOpen, onClose, currentRole }: Inv
                                                 ) : (
                                                     <button
                                                         onClick={() => handleInviteUser(user.id)}
-                                                        className="px-6 py-2 bg-brand-green text-white rounded-xl font-bold text-sm hover:bg-green-700 transition-all"
+                                                        className="px-6 py-2 bg-brand-green text-white rounded-xl font-semibold text-sm hover:bg-green-700 transition-all"
                                                     >
                                                         Invite
                                                     </button>

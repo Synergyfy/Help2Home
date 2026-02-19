@@ -37,6 +37,7 @@ export interface Contract {
     createdAt: string;
     updatedAt: string;
     createdBy: string;
+    content?: string; // Final legal text
     previewUrl?: string; // Mock URL for PDF preview
     signedUrl?: string; // Mock URL for signed PDF
 }
@@ -166,12 +167,57 @@ export const MOCK_TEMPLATES: ContractTemplate[] = [
         id: 'temp_1',
         name: 'Standard Residential Tenancy',
         description: 'Standard agreement for residential properties in Lagos.',
-        content: '...'
+        content: `
+# TENANCY AGREEMENT
+
+**THIS AGREEMENT** is made on {{today_date}}
+
+**BETWEEN:**
+**LANDLORD:** {{landlord_name}} of {{landlord_address}} (hereinafter called "the Landlord") of the one part.
+**AND**
+**TENANT:** {{tenant_name}} of {{tenant_phone}} (hereinafter called "the Tenant") of the other part.
+
+**WHEREAS:**
+1. The Landlord is the owner of the property situated at **{{property_address}}** (hereinafter called "the Premises").
+2. The Landlord has agreed to let and the Tenant has agreed to take the Premises for a period of {{lease_duration}} commencing from **{{start_date}}**.
+
+**IT IS HEREBY AGREED AS FOLLOWS:**
+1. **RENT:** The rent shall be **₦{{rent_amount}}** per {{payment_frequency}}, payable in advance.
+2. **SECURITY DEPOSIT:** The Tenant shall pay the sum of **₦{{deposit_amount}}** as security deposit against damages.
+3. **NOTICE PERIOD:** Either party may terminate this agreement by giving **{{notice_period}} days** notice in writing.
+4. **UTILITIES:** The Tenant shall be responsible for payment of all utility bills including electricity, water, and waste management.
+
+**SPECIAL CLAUSES:**
+{{special_clauses}}
+
+SIGNED BY THE LANDLORD: ____________________
+SIGNED BY THE TENANT: ____________________
+`
     },
     {
         id: 'temp_2',
-        name: 'Short-let Agreement',
-        description: 'For short-term rentals less than 6 months.',
-        content: '...'
+        name: 'Short-let & Vacation Rental',
+        description: 'Simplified agreement for short-term stays and holiday rentals.',
+        content: `
+# SHORT-LET RENTAL AGREEMENT
+
+**PROPERTY:** {{property_address}}
+**GUEST:** {{tenant_name}}
+**START DATE:** {{start_date}}
+**END DATE:** {{end_date}}
+
+**RENTAL TERMS:**
+- Total Rent: ₦{{rent_amount}}
+- Security Deposit: ₦{{deposit_amount}}
+- Check-in Time: 2:00 PM
+- Check-out Time: 11:00 AM
+
+**HOUSE RULES:**
+1. No smoking inside the premises.
+2. No loud parties or events without prior approval.
+3. Maximum occupancy: {{max_occupants}} persons.
+
+SIGNED: ____________________
+`
     }
 ];

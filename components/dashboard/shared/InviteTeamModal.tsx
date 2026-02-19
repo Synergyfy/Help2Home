@@ -82,7 +82,7 @@ export default function InviteTeamModal({ isOpen, onClose, initialRole }: Invite
                         <div className="p-8">
                             <div className="flex items-center justify-between mb-8">
                                 <div>
-                                    <h3 className="text-2xl font-black text-gray-900">Invite Partner</h3>
+                                    <h3 className="text-2xl font-semibold text-gray-900">Invite Partner</h3>
                                     <p className="text-sm text-gray-500">Add trusted members to your property network.</p>
                                 </div>
                                 <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
@@ -92,7 +92,7 @@ export default function InviteTeamModal({ isOpen, onClose, initialRole }: Invite
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="space-y-2">
-                                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Email Address</label>
+                                    <label className="text-xs font-semibold uppercase tracking-widest text-gray-400 ml-1">Email Address</label>
                                     <div className="relative">
                                         <HiOutlineEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                                         <input
@@ -100,14 +100,14 @@ export default function InviteTeamModal({ isOpen, onClose, initialRole }: Invite
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             placeholder="partner@example.com"
-                                            className="w-full pl-12 pr-4 py-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-brand-green focus:bg-white outline-none transition-all font-bold"
+                                            className="w-full pl-12 pr-4 py-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-brand-green focus:bg-white outline-none transition-all font-semibold"
                                             required
                                         />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Assign Role</label>
+                                    <label className="text-xs font-semibold uppercase tracking-widest text-gray-400 ml-1">Assign Role</label>
                                     <div className="grid grid-cols-1 gap-3">
                                         {availableRoles.map((role) => (
                                             <button
@@ -124,7 +124,7 @@ export default function InviteTeamModal({ isOpen, onClose, initialRole }: Invite
                                                         }`}>
                                                         <HiOutlineUserGroup size={20} />
                                                     </div>
-                                                    <span className={`font-bold capitalize ${targetRole === role ? 'text-gray-900' : 'text-gray-500'}`}>
+                                                    <span className={`font-semibold capitalize ${targetRole === role ? 'text-gray-900' : 'text-gray-500'}`}>
                                                         {role}
                                                     </span>
                                                 </div>
@@ -143,7 +143,7 @@ export default function InviteTeamModal({ isOpen, onClose, initialRole }: Invite
                                 <button
                                     type="submit"
                                     disabled={isSubmitting || !email || !targetRole}
-                                    className="w-full bg-brand-green text-white py-5 rounded-2xl font-black text-lg shadow-lg shadow-brand-green/20 hover:bg-green-700 transition-all active:scale-[0.98] disabled:opacity-50 disabled:grayscale"
+                                    className="w-full bg-brand-green text-white py-5 rounded-2xl font-semibold text-lg shadow-lg shadow-brand-green/20 hover:bg-green-700 transition-all active:scale-[0.98] disabled:opacity-50 disabled:grayscale"
                                 >
                                     {isSubmitting ? 'Sending Invitation...' : 'Send Invitation'}
                                 </button>
@@ -151,7 +151,7 @@ export default function InviteTeamModal({ isOpen, onClose, initialRole }: Invite
                         </div>
 
                         <div className="bg-gray-50 p-6 border-t border-gray-100 text-center">
-                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                            <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">
                                 Your current role is {activeRole}. Restrictions apply.
                             </p>
                         </div>

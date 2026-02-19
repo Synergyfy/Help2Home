@@ -19,7 +19,7 @@ export default function TaskDetailPage() {
     if (!task) {
         return (
             <div className="p-8 text-center">
-                <h2 className="text-xl font-bold text-gray-900">Task Not Found</h2>
+                <h2 className="text-xl font-semibold text-gray-900">Task Not Found</h2>
                 <Link href="/dashboard/caretaker" className="text-[#00853E] hover:underline mt-4 inline-block">
                     Back to Dashboard
                 </Link>
@@ -48,10 +48,10 @@ export default function TaskDetailPage() {
                     Back to Dashboard
                 </Link>
                 <div className="flex justify-between items-start">
-                    <h1 className="text-2xl font-bold text-gray-900">{task.title}</h1>
+                    <h1 className="text-2xl font-semibold text-gray-900">{task.title}</h1>
                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${status === 'Completed' ? 'bg-green-100 text-green-800' :
-                            status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
-                                'bg-yellow-100 text-yellow-800'
+                        status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                            'bg-yellow-100 text-yellow-800'
                         }`}>
                         {status}
                     </span>
@@ -77,8 +77,8 @@ export default function TaskDetailPage() {
                         <div>
                             <h3 className="text-sm font-medium text-gray-500">Priority</h3>
                             <p className={`font-medium ${task.priority === 'Critical' ? 'text-red-600' :
-                                    task.priority === 'High' ? 'text-orange-600' :
-                                        'text-blue-600'
+                                task.priority === 'High' ? 'text-orange-600' :
+                                    'text-blue-600'
                                 }`}>{task.priority}</p>
                         </div>
                     </div>
@@ -88,7 +88,7 @@ export default function TaskDetailPage() {
             {/* Actions */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
                 <div className="p-4 bg-gray-50 border-b border-gray-100">
-                    <h3 className="font-bold text-gray-900">Update Status</h3>
+                    <h3 className="font-semibold text-gray-900">Update Status</h3>
                 </div>
                 <div className="p-6 space-y-6">
                     {status === 'Assigned' && (
@@ -149,7 +149,7 @@ export default function TaskDetailPage() {
 
             {/* Timeline */}
             <div className="space-y-4">
-                <h3 className="font-bold text-gray-900">Activity Timeline</h3>
+                <h3 className="font-semibold text-gray-900">Activity Timeline</h3>
                 <div className="space-y-4 pl-4 border-l-2 border-gray-200">
                     {task.timeline.map((event, index) => (
                         <div key={event.id} className="relative pl-4">

@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-    HiOutlineXMark, 
-    HiOutlineMagnifyingGlass, 
+import {
+    HiOutlineXMark,
+    HiOutlineMagnifyingGlass,
     HiOutlineStar,
     HiOutlineMapPin,
     HiOutlineCheckBadge,
@@ -100,8 +100,8 @@ export default function ArtisanSearchModal({ isOpen, onClose, taskTitle }: Artis
     const categories = ['All', 'Plumber', 'Electrician', 'Carpenter', 'Painter', 'AC Technician', 'Cleaner'];
 
     const filteredArtisans = MOCK_ARTISANS.filter(artisan => {
-        const matchesSearch = artisan.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                             artisan.category.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesSearch = artisan.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            artisan.category.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCategory = selectedCategory === 'All' || artisan.category === selectedCategory;
         return matchesSearch && matchesCategory;
     });
@@ -114,7 +114,7 @@ export default function ArtisanSearchModal({ isOpen, onClose, taskTitle }: Artis
                 {/* Header */}
                 <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-10">
                     <div>
-                        <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+                        <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
                             <HiOutlineWrench className="text-brand-green" />
                             Find an Artisan
                         </h2>
@@ -122,7 +122,7 @@ export default function ArtisanSearchModal({ isOpen, onClose, taskTitle }: Artis
                             <p className="text-sm text-gray-500 font-medium">To fix: <span className="text-brand-green">{taskTitle}</span></p>
                         )}
                     </div>
-                    <button 
+                    <button
                         onClick={onClose}
                         className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                     >
@@ -134,12 +134,12 @@ export default function ArtisanSearchModal({ isOpen, onClose, taskTitle }: Artis
                 <div className="p-6 space-y-4 bg-gray-50/50 border-b border-gray-100">
                     <div className="relative">
                         <HiOutlineMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                        <input 
+                        <input
                             type="text"
                             placeholder="Search by name or skill..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-green-50 focus:border-brand-green outline-none transition-all font-bold text-gray-900"
+                            className="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-green-50 focus:border-brand-green outline-none transition-all font-semibold text-gray-900"
                         />
                     </div>
                     <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
@@ -147,11 +147,10 @@ export default function ArtisanSearchModal({ isOpen, onClose, taskTitle }: Artis
                             <button
                                 key={cat}
                                 onClick={() => setSelectedCategory(cat)}
-                                className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap border-2 ${
-                                    selectedCategory === cat 
-                                    ? 'bg-brand-green border-brand-green text-white shadow-lg shadow-green-100' 
-                                    : 'bg-white border-gray-100 text-gray-500 hover:border-brand-green/30 hover:text-brand-green'
-                                }`}
+                                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap border-2 ${selectedCategory === cat
+                                        ? 'bg-brand-green border-brand-green text-white shadow-lg shadow-green-100'
+                                        : 'bg-white border-gray-100 text-gray-500 hover:border-brand-green/30 hover:text-brand-green'
+                                    }`}
                             >
                                 {cat}
                             </button>
@@ -170,37 +169,37 @@ export default function ArtisanSearchModal({ isOpen, onClose, taskTitle }: Artis
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-start justify-between gap-2">
                                         <div>
-                                            <h4 className="font-black text-gray-900 flex items-center gap-1 group-hover:text-brand-green transition-colors">
+                                            <h4 className="font-semibold text-gray-900 flex items-center gap-1 group-hover:text-brand-green transition-colors">
                                                 {artisan.name}
                                                 {artisan.verified && <HiOutlineCheckBadge className="text-brand-green" />}
                                             </h4>
-                                            <p className="text-xs font-bold text-brand-green uppercase tracking-wider">{artisan.category}</p>
+                                            <p className="text-xs font-semibold text-brand-green uppercase tracking-wider">{artisan.category}</p>
                                         </div>
                                         <div className="text-right">
-                                            <div className="flex items-center gap-1 text-amber-500 font-black text-sm">
+                                            <div className="flex items-center gap-1 text-amber-500 font-semibold text-sm">
                                                 <HiOutlineStar className="fill-current" />
                                                 {artisan.rating}
                                                 <span className="text-gray-400 font-medium text-xs">({artisan.reviews})</span>
                                             </div>
-                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-tighter mt-1">{artisan.availability}</p>
+                                            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-tighter mt-1">{artisan.availability}</p>
                                         </div>
                                     </div>
-                                    
+
                                     <div className="mt-3 flex items-center justify-between gap-2">
-                                        <div className="flex items-center gap-1 text-[10px] font-bold text-gray-500 bg-gray-50 px-2 py-1 rounded-lg">
+                                        <div className="flex items-center gap-1 text-[10px] font-semibold text-gray-500 bg-gray-50 px-2 py-1 rounded-lg">
                                             <HiOutlineMapPin size={14} className="text-gray-400" />
                                             {artisan.location}
                                         </div>
-                                        <div className="text-sm font-black text-gray-900">
+                                        <div className="text-sm font-semibold text-gray-900">
                                             {artisan.priceRange}
                                         </div>
                                     </div>
 
                                     <div className="mt-4 flex gap-2">
-                                        <button className="flex-1 py-2 bg-brand-green text-white text-xs font-black rounded-xl hover:bg-green-700 transition-all shadow-md shadow-green-100">
+                                        <button className="flex-1 py-2 bg-brand-green text-white text-xs font-semibold rounded-xl hover:bg-green-700 transition-all shadow-md shadow-green-100">
                                             Hire Now
                                         </button>
-                                        <button className="flex-1 py-2 bg-gray-50 text-gray-700 text-xs font-black rounded-xl hover:bg-gray-100 transition-all border border-gray-100">
+                                        <button className="flex-1 py-2 bg-gray-50 text-gray-700 text-xs font-semibold rounded-xl hover:bg-gray-100 transition-all border border-gray-100">
                                             View Profile
                                         </button>
                                     </div>
@@ -210,14 +209,14 @@ export default function ArtisanSearchModal({ isOpen, onClose, taskTitle }: Artis
                     ) : (
                         <div className="py-20 text-center">
                             <HiOutlineWrench size={48} className="text-gray-200 mx-auto mb-4" />
-                            <p className="text-gray-500 font-bold">No artisans found matching your criteria.</p>
+                            <p className="text-gray-500 font-semibold">No artisans found matching your criteria.</p>
                         </div>
                     )}
                 </div>
 
                 {/* Footer */}
                 <div className="p-4 bg-brand-green/5 border-t border-brand-green/10 flex items-center justify-center gap-2">
-                    <p className="text-[10px] font-bold text-brand-green uppercase tracking-[0.2em]">Powered by Artisan Platform</p>
+                    <p className="text-[10px] font-semibold text-brand-green uppercase tracking-[0.2em]">Powered by Artisan Platform</p>
                 </div>
             </div>
         </div>

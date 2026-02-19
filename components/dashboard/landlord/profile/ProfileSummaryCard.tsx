@@ -38,9 +38,9 @@ export default function ProfileSummaryCard({ profile: initialProfile }: { profil
                 <div className="relative mb-4 group cursor-pointer">
                     <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border-4 border-white shadow-sm relative">
                         {profile.avatarUrl ? (
-                            <Image src={profile.avatarUrl} alt={profile.displayName} fill className="object-cover" />
+                            <Image src={profile.avatarUrl} alt={profile.displayName || 'Profile Picture'} fill className="object-cover" />
                         ) : (
-                            <span className="text-3xl font-bold text-gray-400">
+                            <span className="text-3xl font-semibold text-gray-400">
                                 {profile.firstName?.[0] || ''}{profile.lastName?.[0] || ''}
                             </span>
                         )}
@@ -53,12 +53,12 @@ export default function ProfileSummaryCard({ profile: initialProfile }: { profil
                     </div>
                 </div>
 
-                <h2 className="text-xl font-bold text-gray-900 mb-1">{profile.displayName}</h2>
+                <h2 className="text-xl font-semibold text-gray-900 mb-1">{profile.displayName}</h2>
                 <div className="flex gap-2 mb-4">
                     <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md font-medium">{profile.role}</span>
                 </div>
 
-                <div className={`px-3 py-1.5 rounded-full text-sm font-bold flex items-center gap-1.5 mb-2 ${getStatusColor(profile.verificationStatus)}`}>
+                <div className={`px-3 py-1.5 rounded-full text-sm font-semibold flex items-center gap-1.5 mb-2 ${getStatusColor(profile.verificationStatus)}`}>
                     {profile.verificationStatus === 'verified' && (
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />

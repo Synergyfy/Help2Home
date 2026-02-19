@@ -41,7 +41,7 @@ export default function TasksPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-gray-900 tracking-tight">Maintenance Tasks</h1>
+                    <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Maintenance Tasks</h1>
                     <p className="text-gray-500 mt-1">Manage all your property maintenance and administrative tasks.</p>
                 </div>
             </div>
@@ -52,29 +52,29 @@ export default function TasksPage() {
                     <div className="size-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-500 mb-4">
                         <HiOutlineClock size={24} />
                     </div>
-                    <div className="text-2xl font-black text-gray-900">{assignedCount}</div>
-                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Assigned</div>
+                    <div className="text-2xl font-semibold text-gray-900">{assignedCount}</div>
+                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Assigned</div>
                 </div>
                 <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
                     <div className="size-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-4">
                         <HiOutlineWrenchScrewdriver size={24} />
                     </div>
-                    <div className="text-2xl font-black text-gray-900">{inProgressCount}</div>
-                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">In Progress</div>
+                    <div className="text-2xl font-semibold text-gray-900">{inProgressCount}</div>
+                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">In Progress</div>
                 </div>
                 <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
                     <div className="size-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 mb-4">
                         <HiOutlineCheckCircle size={24} />
                     </div>
-                    <div className="text-2xl font-black text-gray-900">{completedCount}</div>
-                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Completed</div>
+                    <div className="text-2xl font-semibold text-gray-900">{completedCount}</div>
+                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Completed</div>
                 </div>
                 <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
                     <div className="size-12 rounded-2xl bg-red-50 flex items-center justify-center text-red-600 mb-4">
                         <HiOutlineBellAlert size={24} />
                     </div>
-                    <div className="text-2xl font-black text-gray-900">{highPriorityCount}</div>
-                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">High Priority</div>
+                    <div className="text-2xl font-semibold text-gray-900">{highPriorityCount}</div>
+                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">High Priority</div>
                 </div>
             </div>
 
@@ -84,9 +84,9 @@ export default function TasksPage() {
                     <button
                         key={tab}
                         onClick={() => setFilter(tab)}
-                        className={`px-6 py-3 font-bold text-sm transition-all border-b-2 ${filter === tab
-                                ? 'border-brand-green text-brand-green'
-                                : 'border-transparent text-gray-400 hover:text-gray-600'
+                        className={`px-6 py-3 font-semibold text-sm transition-all border-b-2 ${filter === tab
+                            ? 'border-brand-green text-brand-green'
+                            : 'border-transparent text-gray-400 hover:text-gray-600'
                             }`}
                     >
                         {tab}

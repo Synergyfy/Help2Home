@@ -8,16 +8,16 @@ import { Role } from "@/store/userStore";
 import Logo from "@/components/shared/Logo";
 
 const EmailStep = () => {
-  const { 
-    setCurrentEmail, 
+  const {
+    setCurrentEmail,
     setCurrentPhone,
-    nextStep, 
-    currentEmail: storedEmail, 
+    nextStep,
+    currentEmail: storedEmail,
     currentPhone: storedPhone,
-    currentStep, 
-    selectedRoles 
+    currentStep,
+    selectedRoles
   } = useOnboardingStore();
-  
+
   const [inputType, setInputType] = useState<'email' | 'phone'>('email');
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
@@ -49,11 +49,11 @@ const EmailStep = () => {
       setCurrentPhone(value.trim());
       setCurrentEmail(""); // Clear email if phone is used
     }
-    
+
     nextStep();
   };
 
-  const hasProgress = 
+  const hasProgress =
     (inputType === 'email' && value.toLowerCase().trim() === storedEmail?.toLowerCase() && storedEmail) ||
     (inputType === 'phone' && value.trim() === storedPhone && storedPhone);
 
@@ -67,7 +67,6 @@ const EmailStep = () => {
       className="flex-1 flex flex-col"
     >
       <div className="mb-8">
-        <Logo width={40} height={40} textClassName="text-sm font-bold text-brand-green uppercase tracking-wider" className="mb-4" />
         <h1 className="text-3xl font-bold text-gray-900 leading-tight mb-2">
           Let&apos;s get you started
         </h1>
@@ -106,9 +105,9 @@ const EmailStep = () => {
               </label>
               <div className="relative group">
                 {inputType === 'email' ? (
-                  <FiMail 
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors" 
-                    size={20} 
+                  <FiMail
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors"
+                    size={20}
                   />
                 ) : (
                   <FiPhone

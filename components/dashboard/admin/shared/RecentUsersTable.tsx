@@ -46,7 +46,7 @@ export default function RecentUsersTable() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
         <h3 className="text-gray-900 text-lg font-bold">Recent Users</h3>
         <div className="flex gap-2 items-center">
@@ -77,7 +77,7 @@ export default function RecentUsersTable() {
         </div>
       </div>
       
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto pb-20 -mb-20">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50/50 border-b border-gray-100">
@@ -120,7 +120,7 @@ export default function RecentUsersTable() {
                     <HiOutlineDotsVertical size={20} />
                   </button>
                   {openMenuId === user.id && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-[110]">
                       <button 
                         onClick={() => handleViewUser(user.id)}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"

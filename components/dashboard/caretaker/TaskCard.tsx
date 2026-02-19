@@ -36,12 +36,12 @@ export default function TaskCard({ task, onAccept, onStart }: TaskCardProps) {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow h-full flex flex-col">
             <div className="flex justify-between items-start mb-3">
                 <div>
-                    <span className={`text-xs px-2 py-0.5 rounded border ${getPriorityColor(task.priority)} mb-2 inline-block font-bold`}>
+                    <span className={`text-xs px-2 py-0.5 rounded border ${getPriorityColor(task.priority)} mb-2 inline-block font-semibold`}>
                         {task.priority}
                     </span>
-                    <h3 className="font-bold text-gray-900 line-clamp-1">{task.title}</h3>
+                    <h3 className="font-semibold text-gray-900 line-clamp-1">{task.title}</h3>
                 </div>
-                <span className={`text-xs px-2 py-1 rounded-full font-black uppercase tracking-tight ${getStatusColor(task.status)}`}>
+                <span className={`text-xs px-2 py-1 rounded-full font-semibold uppercase tracking-tight ${getStatusColor(task.status)}`}>
                     {task.status}
                 </span>
             </div>
@@ -69,7 +69,7 @@ export default function TaskCard({ task, onAccept, onStart }: TaskCardProps) {
                 <div className="flex gap-2">
                     <Link
                         href={`/dashboard/caretaker/tasks/${task.id}`}
-                        className="flex-1 py-2.5 text-center text-xs font-black uppercase tracking-widest text-gray-700 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border border-gray-100"
+                        className="flex-1 py-2.5 text-center text-xs font-semibold uppercase tracking-widest text-gray-700 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border border-gray-100"
                     >
                         Details
                     </Link>
@@ -77,7 +77,7 @@ export default function TaskCard({ task, onAccept, onStart }: TaskCardProps) {
                     {task.status !== 'Completed' && task.status !== 'Cancelled' && (
                         <button
                             onClick={() => setIsArtisanModalOpen(true)}
-                            className="flex-1 py-2.5 flex items-center justify-center gap-1.5 text-xs font-black uppercase tracking-widest text-brand-green bg-green-50 rounded-xl hover:bg-green-100 transition-colors border border-green-100"
+                            className="flex-1 py-2.5 flex items-center justify-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-brand-green bg-green-50 rounded-xl hover:bg-green-100 transition-colors border border-green-100"
                         >
                             <HiOutlineWrench size={14} />
                             Artisan
@@ -88,7 +88,7 @@ export default function TaskCard({ task, onAccept, onStart }: TaskCardProps) {
                 {task.status === 'Assigned' && onAccept && (
                     <button
                         onClick={() => onAccept(task.id)}
-                        className="w-full py-3 text-center text-xs font-black uppercase tracking-[0.2em] text-white bg-brand-green rounded-xl hover:bg-green-700 transition-all shadow-lg shadow-green-100"
+                        className="w-full py-3 text-center text-xs font-semibold uppercase tracking-[0.2em] text-white bg-brand-green rounded-xl hover:bg-green-700 transition-all shadow-lg shadow-green-100"
                     >
                         Accept Task
                     </button>
@@ -97,16 +97,16 @@ export default function TaskCard({ task, onAccept, onStart }: TaskCardProps) {
                 {task.status === 'Accepted' && onStart && (
                     <button
                         onClick={() => onStart(task.id)}
-                        className="w-full py-3 text-center text-xs font-black uppercase tracking-[0.2em] text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
+                        className="w-full py-3 text-center text-xs font-semibold uppercase tracking-[0.2em] text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
                     >
                         Start Work
                     </button>
                 )}
             </div>
 
-            <ArtisanSearchModal 
-                isOpen={isArtisanModalOpen} 
-                onClose={() => setIsArtisanModalOpen(false)} 
+            <ArtisanSearchModal
+                isOpen={isArtisanModalOpen}
+                onClose={() => setIsArtisanModalOpen(false)}
                 taskTitle={task.title}
             />
         </div>

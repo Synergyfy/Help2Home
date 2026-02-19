@@ -15,7 +15,7 @@ export default function VerificationPage() {
     if (!checklist) {
         return (
             <div className="p-8 text-center">
-                <h2 className="text-xl font-bold text-gray-900">Checklist Not Found</h2>
+                <h2 className="text-xl font-semibold text-gray-900">Checklist Not Found</h2>
                 <Link href="/dashboard/caretaker" className="text-[#00853E] hover:underline mt-4 inline-block">
                     Back to Dashboard
                 </Link>
@@ -63,7 +63,7 @@ export default function VerificationPage() {
                 </Link>
                 <div className="flex justify-between items-start">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">
+                        <h1 className="text-2xl font-semibold text-gray-900">
                             {checklist.type === 'move-in' ? 'Move-In Verification' : 'Move-Out Verification'}
                         </h1>
                         <p className="text-gray-500">{checklist.propertyTitle} {checklist.unit ? `• Unit ${checklist.unit}` : ''}</p>

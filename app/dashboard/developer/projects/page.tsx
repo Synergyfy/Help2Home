@@ -94,11 +94,11 @@ export default function ProjectsPage() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
-                        <h1 className="text-3xl font-black text-gray-900 tracking-tight italic">My Projects</h1>
+                        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">My Projects</h1>
                         <p className="text-gray-500 mt-1">Manage all your development projects</p>
                     </div>
                     <Link
-                        href="/dashboard/landlord/properties/add"
+                        href="/dashboard/developer/portfolio/create"
                         className="flex items-center gap-2 px-6 py-3 bg-brand-green text-white rounded-2xl font-bold hover:bg-green-700 transition-all shadow-lg shadow-green-100"
                     >
                         <HiOutlinePlusCircle size={20} />
@@ -112,7 +112,7 @@ export default function ProjectsPage() {
                         <button
                             key={status}
                             onClick={() => setFilter(status)}
-                            className={`px-6 py-2.5 text-sm font-black rounded-xl transition-all uppercase tracking-wider whitespace-nowrap ${filter === status
+                            className={`px-6 py-2.5 text-sm font-semibold rounded-xl transition-all uppercase tracking-wider whitespace-nowrap ${filter === status
                                 ? 'bg-brand-green text-white shadow-sm'
                                 : 'text-gray-500 hover:text-gray-700'
                                 }`}
@@ -126,23 +126,23 @@ export default function ProjectsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div className="bg-white p-6 rounded-2xl border border-gray-100">
                         <p className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Total Projects</p>
-                        <p className="text-3xl font-black text-gray-900 italic">{PROJECTS.length}</p>
+                        <p className="text-3xl font-semibold text-gray-900">{PROJECTS.length}</p>
                     </div>
                     <div className="bg-white p-6 rounded-2xl border border-gray-100">
                         <p className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Active Projects</p>
-                        <p className="text-3xl font-black text-brand-green italic">
+                        <p className="text-3xl font-semibold text-brand-green">
                             {PROJECTS.filter(p => p.status === 'in-progress').length}
                         </p>
                     </div>
                     <div className="bg-white p-6 rounded-2xl border border-gray-100">
                         <p className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Total Investors</p>
-                        <p className="text-3xl font-black text-gray-900 italic">
+                        <p className="text-3xl font-semibold text-gray-900">
                             {PROJECTS.reduce((sum, p) => sum + p.investors, 0)}
                         </p>
                     </div>
                     <div className="bg-white p-6 rounded-2xl border border-gray-100">
                         <p className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Funds Secured</p>
-                        <p className="text-3xl font-black text-gray-900 italic">
+                        <p className="text-3xl font-semibold text-gray-900">
                             ₦{(PROJECTS.reduce((sum, p) => sum + p.securedInvestment, 0) / 1000000).toFixed(0)}M
                         </p>
                     </div>
@@ -154,10 +154,10 @@ export default function ProjectsPage() {
                         <div className="size-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-6">
                             <HiOutlineLightBulb className="size-10 text-gray-400" />
                         </div>
-                        <h3 className="text-xl font-black text-gray-900 mb-2">No Projects Found</h3>
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">No Projects Found</h3>
                         <p className="text-gray-500 mb-6">Start by adding your first development project</p>
                         <Link
-                            href="/dashboard/landlord/properties/add"
+                            href="/dashboard/developer/portfolio/create"
                             className="inline-flex items-center gap-2 px-6 py-3 bg-brand-green text-white rounded-2xl font-bold hover:bg-green-700 transition-all"
                         >
                             <HiOutlinePlusCircle size={20} />
@@ -199,7 +199,7 @@ export default function ProjectsPage() {
                                     {/* Content */}
                                     <div className="p-6">
                                         <div className="mb-4">
-                                            <h3 className="text-xl font-black text-gray-900 mb-2 group-hover:text-brand-green transition-colors">
+                                            <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-brand-green transition-colors">
                                                 {project.title}
                                             </h3>
                                             <p className="text-sm text-gray-600 line-clamp-2 mb-3">{project.description}</p>
@@ -214,7 +214,7 @@ export default function ProjectsPage() {
                                         <div className="space-y-3 mb-6">
                                             <div className="flex items-center justify-between text-sm">
                                                 <span className="text-gray-500">Project Value</span>
-                                                <span className="font-black text-gray-900 italic">
+                                                <span className="font-semibold text-gray-900">
                                                     ₦{(project.totalValue / 1000000).toFixed(0)}M
                                                 </span>
                                             </div>

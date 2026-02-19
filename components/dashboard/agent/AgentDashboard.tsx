@@ -41,7 +41,7 @@ const StatCard = ({ label, value, trend, icon: Icon, color }: StatCardProps) => 
         </div>
         <div className="mt-4">
             <h3 className="text-gray-500 text-xs font-semibold uppercase tracking-wider">{label}</h3>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+            <p className="text-2xl font-semibold text-gray-900 mt-1">{value}</p>
         </div>
     </div>
 );
@@ -107,14 +107,14 @@ export default function AgentDashboard() {
                                 <HiOutlineRocketLaunch size={40} />
                             </div>
 
-                            <h2 className="text-2xl font-black text-gray-900 mb-2">Coming Soon!</h2>
+                            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Coming Soon!</h2>
                             <p className="text-gray-500 font-medium leading-relaxed mb-8">
                                 We're building advanced marketing tools to help you reach more potential clients. This feature will be available in the next update!
                             </p>
 
                             <button
                                 onClick={() => setIsComingSoonOpen(false)}
-                                className="w-full py-4 bg-brand-green text-white rounded-2xl font-black shadow-xl shadow-green-900/20 hover:bg-green-700 transition-all active:scale-95"
+                                className="w-full py-4 bg-brand-green text-white rounded-2xl font-semibold shadow-xl shadow-green-900/20 hover:bg-green-700 transition-all active:scale-95"
                             >
                                 Got it, Thanks!
                             </button>
@@ -126,10 +126,10 @@ export default function AgentDashboard() {
             {/* Top Bar - Responsive Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Agent Portfolio</h1>
+                    <h1 className="text-2xl font-semibold text-gray-900">Agent Portfolio</h1>
                     <p className="text-sm text-gray-500">Managing your active listings and client pipeline.</p>
                 </div>
-                <button onClick={handleAddProperty} className="bg-brand-green text-white px-6 py-2.5 rounded-xl font-medium text-sm shadow-lg shadow-green-900/20 hover:bg-green-700 transition-all w-full md:w-auto">
+                <button onClick={handleAddProperty} className="bg-brand-green text-white px-6 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-green-900/20 hover:bg-green-700 transition-all w-full md:w-auto">
                     + New Listing
                 </button>
             </div>
@@ -147,7 +147,7 @@ export default function AgentDashboard() {
                 <div className="lg:col-span-2 space-y-6">
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                         <div className="p-6 border-b border-gray-50 flex justify-between items-center">
-                            <h2 className="font-bold text-gray-900">High-Performance Listings</h2>
+                            <h2 className="font-semibold text-gray-900">High-Performance Listings</h2>
                             <button
                                 onClick={() => router.push('/dashboard/agent/properties')}
                                 className="text-brand-green text-sm font-semibold hover:underline"
@@ -157,7 +157,7 @@ export default function AgentDashboard() {
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
-                                <thead className="bg-gray-50/50 text-gray-400 uppercase text-[10px] font-bold tracking-widest">
+                                <thead className="bg-gray-50/50 text-gray-400 uppercase text-[10px] font-semibold tracking-widest">
                                     <tr>
                                         <th className="px-6 py-4">Property</th>
                                         <th className="px-6 py-4">Status</th>
@@ -177,13 +177,13 @@ export default function AgentDashboard() {
                                                 <div className="text-xs text-gray-500">{item.loc}</div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${item.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                                                <span className={`px-2 py-1 rounded-md text-[10px] font-semibold uppercase ${item.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
                                                     }`}>
                                                     {item.status}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-sm text-gray-600 font-medium">{item.views}</td>
-                                            <td className="px-6 py-4 text-sm font-bold text-gray-900">{item.price}</td>
+                                            <td className="px-6 py-4 text-sm font-semibold text-gray-900">{item.price}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -193,7 +193,7 @@ export default function AgentDashboard() {
 
                     {/* Upcoming Viewings */}
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                        <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                             <MdSchedule className="text-brand-green" /> Scheduled Inspections
                         </h2>
                         <div className="space-y-4">
@@ -208,11 +208,11 @@ export default function AgentDashboard() {
                                 >
                                     <div className="flex gap-4 items-center">
                                         <div className="text-center bg-white p-2 rounded-lg border border-gray-100 min-w-[60px] group-hover:border-brand-green/30 transition-colors">
-                                            <div className="text-xs text-gray-400 font-bold uppercase">{visit.month}</div>
-                                            <div className="text-lg font-bold text-gray-900">{visit.day}</div>
+                                            <div className="text-xs text-gray-400 font-semibold uppercase">{visit.month}</div>
+                                            <div className="text-lg font-semibold text-gray-900">{visit.day}</div>
                                         </div>
                                         <div>
-                                            <div className="font-bold text-sm text-gray-900">{visit.name} - Inspection</div>
+                                            <div className="font-semibold text-sm text-gray-900">{visit.name} - Inspection</div>
                                             <div className="text-xs text-gray-500">{visit.prop} • {visit.time}</div>
                                         </div>
                                     </div>
@@ -235,13 +235,13 @@ export default function AgentDashboard() {
                 <div className="space-y-6">
                     <div className="bg-brand-green text-white p-6 rounded-3xl shadow-xl relative overflow-hidden group">
                         <div className="relative z-10">
-                            <h3 className="font-bold text-lg">Marketing Boost</h3>
+                            <h3 className="font-semibold text-lg">Marketing Boost</h3>
                             <p className="text-white/80 text-xs mt-2 leading-relaxed">
                                 Your listings are currently reaching 40% more people this week.
                             </p>
                             <button
                                 onClick={() => setIsComingSoonOpen(true)}
-                                className="mt-4 bg-white text-brand-green px-4 py-2 rounded-xl text-xs font-bold hover:bg-opacity-90 transition-all active:scale-95 shadow-lg shadow-black/10"
+                                className="mt-4 bg-white text-brand-green px-4 py-2 rounded-xl text-xs font-semibold hover:bg-opacity-90 transition-all active:scale-95 shadow-lg shadow-black/10"
                             >
                                 Run Campaign
                             </button>
@@ -251,16 +251,16 @@ export default function AgentDashboard() {
                     </div>
 
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                        <h2 className="font-bold text-gray-900 mb-4">Recent Leads</h2>
+                        <h2 className="font-semibold text-gray-900 mb-4">Recent Leads</h2>
                         <div className="space-y-5">
                             {leads.map((lead, idx) => (
                                 <div key={idx} className="flex items-center justify-between relative">
                                     <div className="flex items-center gap-3">
-                                        <div className="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs text-gray-600">
+                                        <div className="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center font-semibold text-xs text-gray-600">
                                             {lead.name?.[0] || '?'}
                                         </div>
                                         <div>
-                                            <div className="text-sm font-bold text-gray-900">{lead.name}</div>
+                                            <div className="text-sm font-semibold text-gray-900">{lead.name}</div>
                                             <div className="text-[10px] text-gray-400 font-medium">{lead.type} • {lead.time}</div>
                                         </div>
                                     </div>
@@ -281,21 +281,21 @@ export default function AgentDashboard() {
                                                 <div className="absolute right-0 top-8 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-20 animate-in fade-in zoom-in-95 duration-200">
                                                     <button
                                                         onClick={() => handleAction('profile', lead.name)}
-                                                        className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                                                        className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
                                                     >
                                                         <HiOutlineEye size={16} className="text-gray-400" />
                                                         View Profile
                                                     </button>
                                                     <button
                                                         onClick={() => handleAction('message', lead.name)}
-                                                        className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                                                        className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
                                                     >
                                                         <HiOutlineChatBubbleLeftRight size={16} className="text-gray-400" />
                                                         Send Message
                                                     </button>
                                                     <button
                                                         onClick={() => handleAction('schedule', lead.name)}
-                                                        className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                                                        className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
                                                     >
                                                         <HiOutlineCalendarDays size={16} className="text-gray-400" />
                                                         Schedule Viewing
@@ -303,7 +303,7 @@ export default function AgentDashboard() {
                                                     <div className="h-px bg-gray-100 my-1 mx-2" />
                                                     <button
                                                         onClick={() => handleArchiveLead(lead.id, lead.name)}
-                                                        className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors"
+                                                        className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
                                                     >
                                                         <HiOutlineArchiveBox size={16} className="text-red-400" />
                                                         Archive Lead
@@ -317,7 +317,7 @@ export default function AgentDashboard() {
                         </div>
                         <button
                             onClick={() => router.push('/dashboard/agent/leads')}
-                            className="w-full mt-6 py-3 border-2 border-dashed border-gray-100 rounded-xl text-gray-400 text-xs font-bold hover:bg-gray-50 hover:text-brand-green hover:border-brand-green/30 transition-all active:scale-[0.98]"
+                            className="w-full mt-6 py-3 border-2 border-dashed border-gray-100 rounded-xl text-gray-400 text-xs font-semibold hover:bg-gray-50 hover:text-brand-green hover:border-brand-green/30 transition-all active:scale-[0.98]"
                         >
                             Manage Pipeline
                         </button>

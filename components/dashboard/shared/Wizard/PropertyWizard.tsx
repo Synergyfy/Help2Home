@@ -184,8 +184,8 @@ export default function PropertyWizard({
       await handleSubmit(onSubmit as any, (errors) => {
         console.error('Property Submission Errors:', errors);
         const firstError = Object.values(errors)[0];
-        const errorMessage = typeof firstError?.message === 'string' 
-          ? firstError.message 
+        const errorMessage = typeof firstError?.message === 'string'
+          ? firstError.message
           : 'Please check all required fields and try again.';
         toast.error(errorMessage);
       })();
@@ -201,8 +201,8 @@ export default function PropertyWizard({
 
   const onSubmit: SubmitHandler<PropertySchema> = (data) => {
     // Determine final status based on role
-    const finalStatus = roleKey === 'caretaker' ? 'draft' : 'available'; 
-    
+    const finalStatus = roleKey === 'caretaker' ? 'draft' : 'available';
+
     const submissionData = {
       ...data,
       status: finalStatus
@@ -243,7 +243,7 @@ export default function PropertyWizard({
     <FormProvider {...methods}>
       <div className="pb-20 max-w-7xl mx-auto px-4">
         <div className="mb-8">
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">
+          <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">
             {isEditing ? 'Edit Property' : 'Add New Property'}
           </h1>
           <p className="text-gray-500 mt-1 font-medium">Follow the steps to list your property on Help2Home marketplace.</p>

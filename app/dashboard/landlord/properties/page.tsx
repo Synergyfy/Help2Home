@@ -13,7 +13,7 @@ export default function LandlordPropertiesPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-gray-900 tracking-tight">My Properties</h1>
+                    <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">My Properties</h1>
                     <p className="text-gray-500 mt-1">Manage your property portfolio and track performance.</p>
                 </div>
                 <Link
@@ -31,28 +31,28 @@ export default function LandlordPropertiesPage() {
                     <div className="size-12 rounded-2xl bg-brand-green/10 flex items-center justify-center text-brand-green mb-4">
                         <HiOutlineHome size={24} />
                     </div>
-                    <div className="text-2xl font-black text-gray-900">{properties.length}</div>
+                    <div className="text-2xl font-semibold text-gray-900">{properties.length}</div>
                     <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Properties</div>
                 </div>
                 <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
                     <div className="size-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 mb-4">
                         <HiOutlineHome size={24} />
                     </div>
-                    <div className="text-2xl font-black text-gray-900">{properties.filter(p => p.status === 'available').length}</div>
+                    <div className="text-2xl font-semibold text-gray-900">{properties.filter(p => p.status === 'available').length}</div>
                     <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Available</div>
                 </div>
                 <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
                     <div className="size-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-500 mb-4">
                         <HiOutlineHome size={24} />
                     </div>
-                    <div className="text-2xl font-black text-gray-900">{properties.filter(p => p.status === 'let-agreed').length}</div>
+                    <div className="text-2xl font-semibold text-gray-900">{properties.filter(p => p.status === 'let-agreed').length}</div>
                     <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Occupied</div>
                 </div>
                 <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
                     <div className="size-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-4">
                         <HiOutlineEye size={24} />
                     </div>
-                    <div className="text-2xl font-black text-gray-900">{properties.reduce((acc, p) => acc + (p.views || 0), 0)}</div>
+                    <div className="text-2xl font-semibold text-gray-900">{properties.reduce((acc, p) => acc + (p.views || 0), 0)}</div>
                     <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Views</div>
                 </div>
             </div>
@@ -94,7 +94,7 @@ export default function LandlordPropertiesPage() {
 
                         {/* Content */}
                         <div className="p-6">
-                            <h3 className="font-black text-gray-900 text-lg mb-2 group-hover:text-brand-green transition-colors">
+                            <h3 className="font-semibold text-gray-900 text-lg mb-2 group-hover:text-brand-green transition-colors">
                                 {property.title}
                             </h3>
                             <div className="flex items-center gap-1 text-gray-500 text-sm mb-4">
@@ -105,11 +105,11 @@ export default function LandlordPropertiesPage() {
                             <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                                 <div>
                                     <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Rent</p>
-                                    <p className="text-lg font-black text-gray-900 italic">₦{property.price?.toLocaleString()}</p>
+                                    <p className="text-lg font-semibold text-gray-900">₦{property.price?.toLocaleString()}</p>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Views</p>
-                                    <p className="text-lg font-black text-gray-900">{property.views || 0}</p>
+                                    <p className="text-lg font-semibold text-gray-900">{property.views || 0}</p>
                                 </div>
                             </div>
                         </div>

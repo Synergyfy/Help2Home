@@ -27,7 +27,7 @@ export default function MyListingsPage() {
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Inventory Management</h1>
+                    <h1 className="text-2xl font-semibold text-gray-900">Inventory Management</h1>
                     <p className="text-sm text-gray-500">Track and manage your listed properties.</p>
                 </div>
                 <div className="flex gap-3 w-full md:w-auto">
@@ -36,7 +36,7 @@ export default function MyListingsPage() {
                         <input type="text" placeholder="Search listings..." className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-transparent transition-all" />
                     </div>
                     <button className="p-2.5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-600 transition-all"><MdFilterList size={20} /></button>
-                    <button 
+                    <button
                         onClick={handleAddListing}
                         className="flex items-center gap-2 bg-brand-green text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-green-900/20 hover:bg-green-700 transition-all active:scale-95"
                     >
@@ -52,23 +52,22 @@ export default function MyListingsPage() {
                         <div className="relative h-56">
                             <img src={prop.image} alt={prop.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                             <div className="absolute top-4 left-4">
-                                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.1em] border backdrop-blur-md ${
-                                    prop.status === 'Active' 
-                                    ? 'bg-green-500/90 text-white border-green-400' 
-                                    : 'bg-gray-500/90 text-white border-gray-400'
-                                }`}>
+                                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.1em] border backdrop-blur-md ${prop.status === 'Active'
+                                        ? 'bg-green-500/90 text-white border-green-400'
+                                        : 'bg-gray-500/90 text-white border-gray-400'
+                                    }`}>
                                     {prop.status}
                                 </span>
                             </div>
                         </div>
                         <div className="p-6">
-                            <h3 className="font-black text-gray-900 truncate text-lg group-hover:text-brand-green transition-colors">{prop.title}</h3>
+                            <h3 className="font-semibold text-gray-900 truncate text-lg group-hover:text-brand-green transition-colors">{prop.title}</h3>
                             <div className="flex items-center gap-1.5 text-gray-500 text-xs font-medium mt-2">
                                 <MdLocationOn size={16} className="text-brand-green" /> {prop.loc}
                             </div>
                             <div className="mt-6 flex justify-between items-center pt-5 border-t border-gray-50">
-                                <span className="text-xl font-black text-gray-900 italic">{prop.price}</span>
-                                <button 
+                                <span className="text-xl font-semibold text-gray-900">{prop.price}</span>
+                                <button
                                     onClick={() => handleManage(prop.id, prop.title)}
                                     className="text-[10px] font-black text-gray-400 hover:text-brand-green uppercase tracking-[0.2em] transition-colors"
                                 >
@@ -85,9 +84,9 @@ export default function MyListingsPage() {
                     <div className="size-20 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-6 text-gray-300">
                         <HiOutlineHome size={40} />
                     </div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-2">No active listings</h2>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-2">No active listings</h2>
                     <p className="text-gray-500 mb-8 max-w-xs mx-auto">Start growing your inventory by adding your first property listing.</p>
-                    <button 
+                    <button
                         onClick={handleAddListing}
                         className="bg-brand-green text-white px-8 py-3 rounded-2xl font-black shadow-lg shadow-green-900/20 hover:bg-green-700 transition-all"
                     >
