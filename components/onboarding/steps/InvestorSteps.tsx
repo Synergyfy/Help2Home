@@ -21,7 +21,6 @@ const riskLevels = [
   { label: "Aggressive", tooltip: "Higher risk tolerance for potentially significant capital appreciation." },
   { label: "Very Aggressive", tooltip: "Maximum risk for maximum potential returns and rapid growth." }
 ];
-const returnExpectations = ["8-12% annually", "12-18% annually", "18-25% annually", "25%+ annually"];
 const timelines = ["Short-term (1-2 years)", "Medium-term (3-5 years)", "Long-term (5-10 years)", "Very long-term (10+ years)"];
 
 interface InvestorStepProps {
@@ -37,7 +36,6 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
     investmentBudget: investorData.investmentBudget || "",
     investmentType: investorData.investmentType || [],
     riskTolerance: investorData.riskTolerance || "",
-    expectedReturns: investorData.expectedReturns || "",
     investmentTimeline: investorData.investmentTimeline || "",
   });
 
@@ -229,27 +227,6 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
       <div className="space-y-8 flex-1">
         <div>
           <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
-            <FiTrendingUp className="text-brand-green" /> Expected annual returns
-          </label>
-          <div className="grid grid-cols-2 gap-3">
-            {returnExpectations.map((expectation) => (
-              <button
-                key={expectation}
-                type="button"
-                onClick={() => setFormData(prev => ({ ...prev, expectedReturns: expectation }))}
-                className={`p-4 rounded-xl border-2 text-sm font-bold transition-all ${formData.expectedReturns === expectation
-                  ? "border-brand-green bg-brand-green/5 text-brand-green"
-                  : "border-gray-100 hover:border-gray-300 text-gray-500"
-                  }`}
-              >
-                {expectation}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
             <FiClock className="text-brand-green" /> Investment timeline
           </label>
           <div className="grid grid-cols-1 gap-3">
@@ -276,7 +253,7 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
         </button>
         <button
           onClick={handleComplete}
-          disabled={!formData.expectedReturns || !formData.investmentTimeline}
+          disabled={!formData.investmentTimeline}
           className="flex-1 py-4 px-6 bg-brand-green text-white font-bold rounded-xl hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95"
         >
           Complete Investor Setup <FiCheck size={18} />

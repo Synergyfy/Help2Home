@@ -104,6 +104,7 @@ export const MOCK_PROFILE: ProfileData = {
 export const MOCK_DOCUMENTS_LANDLORD: VerificationDocument[] = [
     { id: 'd1', type: 'ID', label: 'Government Issued ID', filename: 'passport_scan.jpg', status: 'approved', uploadedAt: 'Oct 10, 2023' },
     { id: 'd2', type: 'Ownership', label: 'Proof of Property Ownership', filename: 'title_deed_15b.pdf', status: 'approved', uploadedAt: 'Oct 12, 2023' },
+    { id: 'd3', type: 'Other', label: 'Liveness Selfie', status: 'approved', uploadedAt: 'Oct 14, 2023' },
     { id: 'd4', type: 'Other', label: 'Utility Bill / Proof of Address', status: 'missing' },
 ];
 
@@ -111,28 +112,34 @@ export const MOCK_DOCUMENTS_DEVELOPER: VerificationDocument[] = [
     { id: 'dev1', type: 'License', label: 'CAC Registration Certificate', status: 'pending', uploadedAt: 'Jan 15, 2024' },
     { id: 'dev2', type: 'Other', label: 'Company Profile & Track Record', status: 'approved', uploadedAt: 'Jan 10, 2024' },
     { id: 'dev3', type: 'ID', label: 'Director Government ID', status: 'approved', uploadedAt: 'Jan 12, 2024' },
+    { id: 'dev4', type: 'Other', label: 'Liveness Selfie', status: 'missing' },
 ];
 
 export const MOCK_DOCUMENTS_INVESTOR: VerificationDocument[] = [
     { id: 'inv1', type: 'ID', label: 'KYC Verification (ID)', status: 'approved', uploadedAt: 'Dec 05, 2023' },
     { id: 'inv2', type: 'Other', label: 'Proof of Funds / Bank Statement', status: 'pending', uploadedAt: 'Jan 18, 2024' },
-    { id: 'inv3', type: 'Other', label: 'Accreditation Status (Optional)', status: 'missing' },
+    { id: 'inv3', type: 'Other', label: 'Liveness Selfie', status: 'missing' },
+    { id: 'inv4', type: 'Other', label: 'Accreditation Status (Optional)', status: 'missing' },
 ];
 
 export const MOCK_DOCUMENTS_AGENT: VerificationDocument[] = [
     { id: 'ag1', type: 'ID', label: 'Government Issued ID', status: 'approved', uploadedAt: 'Nov 20, 2023' },
     { id: 'ag2', type: 'License', label: 'Agency License / Certification', status: 'missing' },
-    { id: 'ag3', type: 'Other', label: 'Company Authorization Letter', status: 'approved', uploadedAt: 'Nov 22, 2023' },
+    { id: 'ag3', type: 'Other', label: 'Liveness Selfie', status: 'missing' },
+    { id: 'ag4', type: 'Other', label: 'Company Authorization Letter', status: 'approved', uploadedAt: 'Nov 22, 2023' },
 ];
 
 export const MOCK_DOCUMENTS_TENANT: VerificationDocument[] = [
+    { id: 'ten1', type: 'ID', label: 'Government Issued ID', status: 'approved', uploadedAt: 'Dec 01, 2023' },
+    { id: 'ten2', type: 'Other', label: 'Liveness Selfie', status: 'approved', uploadedAt: 'Dec 02, 2023' },
     { id: 'ten3', type: 'Other', label: 'Proof of Address', status: 'missing' },
 ];
 
 export const MOCK_DOCUMENTS_CARETAKER: VerificationDocument[] = [
     { id: 'ct1', type: 'ID', label: 'Government Issued ID', filename: 'caretaker_id.jpg', status: 'approved', uploadedAt: 'Dec 15, 2023' },
     { id: 'ct2', type: 'License', label: 'Caretaker / Management Certification', status: 'missing' },
-    { id: 'ct3', type: 'Other', label: 'Police Clearance Certificate', status: 'pending', uploadedAt: 'Jan 20, 2024' },
+    { id: 'ct3', type: 'Other', label: 'Liveness Selfie', status: 'missing' },
+    { id: 'ct4', type: 'Other', label: 'Police Clearance Certificate', status: 'pending', uploadedAt: 'Jan 20, 2024' },
 ];
 
 export const MOCK_DOCUMENTS = MOCK_DOCUMENTS_LANDLORD;

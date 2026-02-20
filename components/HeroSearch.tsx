@@ -64,9 +64,9 @@ export default function HeroSearch() {
     }, []);
 
     return (
-        <section className="relative overflow-hidden py-8 md:py-12 lg:py-20">
+        <section className="relative overflow-visible py-8 md:py-12 lg:py-20">
             {/* Background Image */}
-            <div className="absolute inset-0 -z-10">
+            <div className="absolute inset-0 -z-10 overflow-hidden">
                 <Image
                     src={HeroImg}
                     alt="Beautiful house exterior"

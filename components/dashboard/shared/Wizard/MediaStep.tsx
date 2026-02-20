@@ -153,14 +153,14 @@ export default function MediaStep({ role, navigation }: MediaStepProps = {}) {
                         <HiOutlinePhoto size={32} />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-black text-gray-900 leading-tight">Property Photography</h2>
+                        <h2 className="text-2xl font-black text-gray-900 leading-tight">Property Photography *</h2>
                         <p className="text-sm text-gray-500">
                             High-quality images increase engagement by up to 80%.
                         </p>
                     </div>
                 </div>
 
-                <div className="group relative border-2 border-dashed border-gray-200 rounded-3xl p-12 text-center hover:bg-gray-50 hover:border-brand-green/50 transition-all cursor-pointer overflow-hidden">
+                <div className={`group relative border-2 border-dashed ${errors.images ? 'border-red-500 ring-red-500' : 'border-gray-200'} rounded-3xl p-12 text-center hover:bg-gray-50 hover:border-brand-green/50 transition-all cursor-pointer overflow-hidden`}>
                     <input
                         type="file"
                         multiple

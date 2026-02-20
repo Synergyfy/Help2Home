@@ -44,10 +44,10 @@ function BankPortalContent() {
             <header className="bg-[#003366] text-white p-4 shadow-md">
                 <div className="max-w-4xl mx-auto flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-orange-500 rounded-sm flex items-center justify-center font-bold text-white">
+                        <div className="w-8 h-8 bg-orange-500 rounded-sm flex items-center justify-center font-semibold text-white">
                             A
                         </div>
-                        <span className="text-xl font-bold tracking-tight">Access Bank</span>
+                        <span className="text-xl font-semibold tracking-tight">Access Bank</span>
                     </div>
                     <div className="text-sm opacity-80">Secure Portal</div>
                 </div>
@@ -57,7 +57,7 @@ function BankPortalContent() {
                 <div className="bg-white rounded-lg shadow-xl max-w-md w-full overflow-hidden">
                     {step === 'login' && (
                         <div className="p-8 animate-fade-in">
-                            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Welcome Back</h2>
+                            <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Welcome Back</h2>
                             <form onSubmit={handleLogin} className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">User ID</label>
@@ -83,7 +83,7 @@ function BankPortalContent() {
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full bg-[#003366] text-white py-3 rounded-md font-bold hover:bg-[#002244] transition-colors disabled:opacity-50 flex justify-center"
+                                    className="w-full bg-[#003366] text-white py-3 rounded-md font-semibold hover:bg-[#002244] transition-colors disabled:opacity-50 flex justify-center"
                                 >
                                     {isLoading ? (
                                         <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -103,20 +103,20 @@ function BankPortalContent() {
 
                     {step === 'approval' && (
                         <div className="p-8 animate-fade-in">
-                            <h2 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Authorize Direct Debit</h2>
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Authorize Direct Debit</h2>
 
                             <div className="bg-blue-50 p-4 rounded-md mb-6">
                                 <div className="flex justify-between mb-2">
                                     <span className="text-gray-600">Merchant:</span>
-                                    <span className="font-bold text-gray-900">Help2Home Ltd</span>
+                                    <span className="font-semibold text-gray-900">Help2Home Ltd</span>
                                 </div>
                                 <div className="flex justify-between mb-2">
                                     <span className="text-gray-600">Amount:</span>
-                                    <span className="font-bold text-gray-900">₦291,666.00</span>
+                                    <span className="font-semibold text-gray-900">₦291,666.00</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-gray-600">Frequency:</span>
-                                    <span className="font-bold text-gray-900">Monthly</span>
+                                    <span className="font-semibold text-gray-900">Monthly</span>
                                 </div>
                             </div>
 
@@ -134,7 +134,7 @@ function BankPortalContent() {
                                 <button
                                     onClick={handleApprove}
                                     disabled={isLoading}
-                                    className="flex-1 bg-orange-500 text-white py-3 rounded-md font-bold hover:bg-orange-600 transition-colors disabled:opacity-50 flex justify-center"
+                                    className="flex-1 bg-orange-500 text-white py-3 rounded-md font-semibold hover:bg-orange-600 transition-colors disabled:opacity-50 flex justify-center"
                                 >
                                     {isLoading ? (
                                         <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -156,13 +156,13 @@ function BankPortalContent() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                                 </svg>
                             </div>
-                            <h2 className="text-2xl font-bold text-gray-900 mb-2">Authorization Successful</h2>
+                            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Authorization Successful</h2>
                             <p className="text-gray-600 mb-6">
                                 You have successfully set up your payment plan. You can now close this window and return to Help2Home.
                             </p>
                             <button
                                 onClick={() => window.close()}
-                                className="w-full bg-[#003366] text-white py-3 rounded-md font-bold hover:bg-[#002244] transition-colors"
+                                className="w-full bg-[#003366] text-white py-3 rounded-md font-semibold hover:bg-[#002244] transition-colors"
                             >
                                 Close Window
                             </button>

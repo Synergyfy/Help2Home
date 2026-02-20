@@ -150,7 +150,8 @@ export function ApplicationsFeed({ applications }: ApplicationsFeedProps) {
             case 'Submitted': return 'bg-blue-100 text-blue-800';
             case 'Under Review': return 'bg-yellow-100 text-yellow-800';
             case 'Bank Approval': return 'bg-purple-100 text-purple-800';
-            case 'Funded': return 'bg-green-100 text-green-800';
+            case 'Funded': return 'bg-indigo-100 text-indigo-800';
+            case 'Handover': return 'bg-blue-600 text-white';
             case 'Active': return 'bg-[#00853E] text-white';
             case 'Completed': return 'bg-gray-100 text-gray-800';
             default: return 'bg-gray-100 text-gray-800';
@@ -206,6 +207,92 @@ export function ApplicationsFeed({ applications }: ApplicationsFeedProps) {
                         </div>
                     </div>
                 ))}
+            </div>
+        </div>
+    );
+}
+
+// --- Marketplace Funding Tracker ---
+interface FundingItem {
+    id: string;
+    propertyTitle: string;
+    targetAmount: number;
+    raisedAmount: number;
+    investorCount: number;
+    status: 'Funding' | 'Completed' | 'Closing';
+}
+
+interface MarketplaceFundingTrackerProps {
+    items: FundingItem[];
+}
+
+export function MarketplaceFundingTracker({ items }: MarketplaceFundingTrackerProps) {
+    if (items.length === 0) return null;
+
+    return (
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <div className="flex items-center justify-between mb-6">
+                <div>
+                    <h3 className="text-lg font-bold text-gray-900">Marketplace Funding</h3>
+                    <p className="text-xs text-gray-500 mt-1">Track how investors are backing your application.</p>
+                </div>
+                <div className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
+                    Live Status
+                </div>
+            </div>
+
+            <div className="space-y-6">
+                {items.map((item) => {
+                    const percentage = Math.round((item.raisedAmount / item.targetAmount) * 100);
+                    return (
+                        <div key={item.id} className="space-y-3">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h4 className="font-bold text-gray-900 text-sm">{item.propertyTitle}</h4>
+                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
+                                        {item.investorCount} Investors backing you
+                                    </p>
+                                </div>
+                                <span className={`text-[10px] font-black px-2 py-0.5 rounded-md uppercase tracking-tight ${
+                                    item.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                                }`}>
+                                    {item.status}
+                                </span>
+                            </div>
+
+                            <div className="relative pt-1">
+                                <div className="flex mb-2 items-center justify-between">
+                                    <div className="text-right w-full">
+                                        <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">
+                                            {percentage}% Funded
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="overflow-hidden h-2.5 mb-1 text-xs flex rounded-full bg-gray-100 p-0.5">
+                                    <div 
+                                        style={{ width: `${percentage}%` }} 
+                                        className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-600 rounded-full transition-all duration-1000 ease-out"
+                                    />
+                                </div>
+                                <div className="flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase tracking-tight">
+                                    <span>Raised: ₦{(item.raisedAmount / 1000000).toFixed(1)}M</span>
+                                    <span>Goal: ₦{(item.targetAmount / 1000000).toFixed(1)}M</span>
+                                </div>
+                            </div>
+                            
+                            {item.status === 'Completed' && (
+                                <div className="p-3 bg-green-50 rounded-xl border border-green-100 flex items-center gap-3">
+                                    <div className="size-8 rounded-full bg-white flex items-center justify-center text-green-600 shadow-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <p className="text-xs text-green-800 font-medium">Funding complete! We are processing your move-in documents.</p>
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

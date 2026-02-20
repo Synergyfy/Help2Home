@@ -163,6 +163,70 @@ export default function FilterModal({ isOpen, onClose }: { isOpen: boolean; onCl
 
                 <hr className="border-gray-100" />
 
+                {/* AVAILABILITY */}
+                <section className="space-y-4">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400">Availability</h3>
+                  <div className="space-y-3">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="availability"
+                        checked={filters.availability === 'any' || !filters.availability}
+                        onChange={() => setFilters({ availability: 'any', availableFrom: undefined })}
+                        className="w-4 h-4 accent-brand-green"
+                      />
+                      <span className="text-sm text-gray-700">Anytime</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="availability"
+                        checked={filters.availability === 'now'}
+                        onChange={() => setFilters({ availability: 'now', availableFrom: undefined })}
+                        className="w-4 h-4 accent-brand-green"
+                      />
+                      <span className="text-sm text-gray-700">Available Now</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="availability"
+                        checked={filters.availability === 'soon'}
+                        onChange={() => {
+                          const d = new Date();
+                          d.setDate(d.getDate() + 14);
+                          setFilters({ availability: 'soon', availableFrom: d.toISOString().split('T')[0] });
+                        }}
+                        className="w-4 h-4 accent-brand-green"
+                      />
+                      <span className="text-sm text-gray-700">Available Within 2 Weeks</span>
+                    </label>
+
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="availability"
+                          checked={filters.availability === 'specific'}
+                          onChange={() => setFilters({ availability: 'specific', availableFrom: filters.availableFrom || new Date().toISOString().split('T')[0] })}
+                          className="w-4 h-4 accent-brand-green"
+                        />
+                        <span className="text-sm text-gray-700">Available From (Specific Date)</span>
+                      </label>
+                      {filters.availability === 'specific' && (
+                        <input
+                          type="date"
+                          value={filters.availableFrom || ''}
+                          onChange={(e) => setFilters({ availability: 'specific', availableFrom: e.target.value })}
+                          className="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-lg text-sm ml-7 focus:ring-1 focus:ring-brand-green outline-none"
+                        />
+                      )}
+                    </div>
+                  </div>
+                </section>
+
+                <hr className="border-gray-100" />
+
                 {/* ADDED TO SITE */}
                 <section className="space-y-4">
                   <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400">Added to Site</h3>

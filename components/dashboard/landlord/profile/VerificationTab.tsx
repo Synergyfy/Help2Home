@@ -6,6 +6,7 @@ import { useUserStore, Role } from '@/store/userStore';
 import { useUpdateProfile } from '@/hooks/useProfile';
 import { IoCheckmarkCircle, IoInformationCircleOutline } from 'react-icons/io5';
 import { toast } from 'react-toastify';
+import LivenessCapture from '@/components/dashboard/profile/LivenessCapture';
 
 export default function VerificationTab({ role: activeRole = 'tenant' }: { role?: Role }) {
     const { roleData, updateRoleProfileData } = useUserStore();
@@ -17,6 +18,10 @@ export default function VerificationTab({ role: activeRole = 'tenant' }: { role?
     const [uploadedFile, setUploadedFile] = useState<File | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
+
+    // Liveness state
+    const [livenessStatus, setLivenessStatus] = useState<'pending' | 'verified' | 'failed' | 'in_review'>('pending');
+    const [capturedSelfie, setCapturedSelfie] = useState<string | null>(null);
 
     // Dedicated BVN state
     const [bvn, setBvn] = useState((roleSpecificData as any)?.bvn || '');
@@ -51,6 +56,17 @@ export default function VerificationTab({ role: activeRole = 'tenant' }: { role?
             setBvnSaveSuccess(true);
             setTimeout(() => setBvnSaveSuccess(false), 3000);
         }, 1000);
+    };
+
+    const handleSelfieCapture = (image: string) => {
+        setCapturedSelfie(image);
+        setLivenessStatus('in_review');
+        
+        // Simulate background KYC check
+        setTimeout(() => {
+            setLivenessStatus('verified');
+            toast.success("Identity biometrics verified against records.");
+        }, 3000);
     };
 
     const handleSaveIdentification = () => {
@@ -138,8 +154,16 @@ export default function VerificationTab({ role: activeRole = 'tenant' }: { role?
                 </div>
             </div>
 
-            {/* Identity Verification (Tenant, Landlord, Agent & Caretaker) */}
-            {(activeRole === 'tenant' || activeRole === 'landlord' || activeRole === 'agent' || activeRole === 'caretaker') && (
+            {/* Liveness Section */}
+            {(activeRole === 'tenant' || activeRole === 'landlord' || activeRole === 'agent' || activeRole === 'caretaker' || activeRole === 'investor' || activeRole === 'developer') && (
+                <LivenessCapture 
+                    status={livenessStatus}
+                    onCapture={handleSelfieCapture}
+                />
+            )}
+
+            {/* Identity Verification (All relevant roles) */}
+            {(activeRole === 'tenant' || activeRole === 'landlord' || activeRole === 'agent' || activeRole === 'caretaker' || activeRole === 'investor' || activeRole === 'developer') && (
                 <div className="space-y-6">
                     {/* BVN Section */}
                     <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">

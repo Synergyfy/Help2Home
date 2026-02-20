@@ -7,6 +7,8 @@ import InstallmentPlanCard from '@/components/dashboard/apply/InstallmentPlanCar
 import FinancingInputs from '@/components/dashboard/apply/FinancingInputs';
 import ApplicationTenantInfo from '@/components/dashboard/apply/ApplicationTenantInfo';
 import ApplicationDocuments from '@/components/dashboard/apply/ApplicationDocuments';
+import MarketplaceConsent from '@/components/dashboard/apply/MarketplaceConsent';
+import LivenessCapture from '@/components/dashboard/profile/LivenessCapture';
 import VerificationModal from '@/components/dashboard/apply/VerificationModal';
 import { PropertyDetails, InstallmentPlan, ApplicationData, ApplicationDocument } from '@/components/dashboard/apply/types';
 
@@ -54,7 +56,9 @@ export default function Apply() {
         financing: {
             downPaymentPercent: 30,
             repaymentDuration: 10,
-            acceptedTerms: false
+            acceptedTerms: false,
+            hasMarketplaceConsent: true,
+            hasDirectDebitAuth: false
         },
         tenantInfo: {
             firstName: profile.firstName || userName?.split(' ')[0] || '',
@@ -90,6 +94,7 @@ export default function Apply() {
 
     const [showSuccess, setShowSuccess] = useState(false);
     const [errors, setErrors] = useState<string[]>([]);
+    const [livenessStatus, setLivenessStatus] = useState<'pending' | 'verified' | 'failed' | 'in_review'>('pending');
 
     // --- Effects ---
     useEffect(() => {
@@ -151,9 +156,23 @@ export default function Apply() {
         }));
     };
 
+    const handleSelfieCapture = (image: string) => {
+        setLivenessStatus('in_review');
+        // Simulate background KYC check
+        setTimeout(() => {
+            setLivenessStatus('verified');
+        }, 2000);
+    };
+
     const validate = () => {
         const newErrors: string[] = [];
         if (!applicationData.financing.acceptedTerms) newErrors.push("You must accept the terms and conditions.");
+        if (!applicationData.financing.hasDirectDebitAuth) newErrors.push("Direct Debit Authorization is required for rent financing.");
+        if (!applicationData.financing.hasMarketplaceConsent) newErrors.push("Marketplace consent is required so investors can fund your application.");
+        
+        if (livenessStatus !== 'verified') {
+            newErrors.push("Liveness / Selfie verification is required to prevent identity fraud.");
+        }
 
         // Basic Info Validation
         if (!applicationData.tenantInfo.firstName || !applicationData.tenantInfo.lastName) newErrors.push("Basic personal details are missing from your profile.");
@@ -356,6 +375,19 @@ export default function Apply() {
                             data={applicationData}
                             onChange={handleTenantInfoChange}
                         />
+
+                        <MarketplaceConsent
+                            hasMarketplaceConsent={applicationData.financing.hasMarketplaceConsent || false}
+                            hasDirectDebitAuth={applicationData.financing.hasDirectDebitAuth || false}
+                            onConsentChange={handleFinancingChange}
+                        />
+
+                        <div className="mb-8">
+                            <LivenessCapture 
+                                status={livenessStatus}
+                                onCapture={handleSelfieCapture}
+                            />
+                        </div>
 
                         <ApplicationDocuments
                             documents={applicationData.documents}

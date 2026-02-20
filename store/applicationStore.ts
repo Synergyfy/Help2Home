@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-export type ApplicationStatus = 'Pending' | 'Under Review' | 'Approved' | 'Rejected' | 'Draft';
+export type ApplicationStatus = 'Pending' | 'Under Review' | 'Approved' | 'Funded' | 'Handover' | 'Active' | 'Rejected' | 'Draft';
 
 export interface Application {
   id: string;
@@ -74,6 +74,23 @@ export const useApplicationStore = create<ApplicationState>()(
           progress: 20,
           financing: { downPaymentPercent: 25, repaymentDuration: 8 },
           details: { employmentStatus: 'Self-Employed', employerName: 'Eze Logistics', monthlySalary: '850,000' }
+        },
+        {
+          id: 'A-000128',
+          propertyId: 'prop_rent_001',
+          propertyTitle: 'The Glass House - 5 Bed Detached',
+          propertyAddress: 'Surulere, Lagos',
+          propertyImage: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&q=80&w=400',
+          landlordId: 'landlord_1',
+          tenantId: 'tenant_1',
+          tenantName: 'Mercy Okoli',
+          tenantEmail: 'mercyokoli@gmail.com',
+          tenantPhone: '08128860774',
+          status: 'Funded',
+          submittedAt: '2026-02-12T10:00:00Z',
+          progress: 90,
+          financing: { downPaymentPercent: 30, repaymentDuration: 24 },
+          details: { employmentStatus: 'Employed', employerName: 'Tech Solutions Ltd', monthlySalary: '350,000' }
         },
         {
           id: 'A-000126',

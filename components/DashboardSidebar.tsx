@@ -62,6 +62,7 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
         { label: 'Listings', href: '/dashboard/admin/listing', icon: GoChecklist },
         { label: 'Audit Logs', href: '/dashboard/admin/audit', icon: MdHistory },
         { label: 'Support Tickets', href: '/dashboard/admin/support', icon: MdSupportAgent },
+        { label: 'Education Hub', href: '/dashboard/admin/education', icon: MdSchool },
         { label: 'Settings', href: '/dashboard/admin/settings', icon: MdSettings },
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
     ],
@@ -94,9 +95,11 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
     investor: [
         { label: 'Overview', href: '/dashboard/investor', icon: MdDashboard },
         { label: 'Marketplace', href: '/dashboard/investor/invest', icon: MdStorefront },
+        { label: 'Rental Financing', href: '/dashboard/investor/opportunities', icon: MdTrendingUp },
         { label: 'My Portfolio', href: '/dashboard/investor/investments', icon: MdPieChart },
         { label: 'Partner Applications', href: '/dashboard/investor/applications', icon: MdGroup },
         { label: 'Financial Reports', href: '/dashboard/investor/reports', icon: MdDescription },
+        { label: 'Education Hub', href: '/dashboard/investor/education', icon: MdSchool },
         { label: 'Settings', href: '/dashboard/investor/settings', icon: MdSettings },
     ],
     caretaker: [
@@ -105,6 +108,7 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
         { label: 'Properties', href: '/dashboard/caretaker/properties', icon: MdHomeWork },
         { label: 'My Tasks', href: '/dashboard/caretaker/tasks', icon: MdAssignment },
         { label: 'Partner Network', href: '/dashboard/caretaker/team', icon: MdGroup },
+        { label: 'Education Hub', href: '/dashboard/caretaker/education', icon: MdSchool },
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
     ],
     agent: [
@@ -114,24 +118,29 @@ const NAV_CONFIG: Record<string, NavItem[]> = {
         { label: 'Leads & Clients', href: '/dashboard/agent/leads', icon: MdGroup },
         { label: 'Viewings/Schedule', href: '/dashboard/agent/schedule', icon: MdAssignment },
         { label: 'Transactions', href: '/dashboard/agent/transactions', icon: MdPayment },
+        { label: 'Maintenance', href: '/dashboard/agent/maintenance', icon: HiOutlineWrenchScrewdriver }, // Added Maintenance link
         { label: 'Marketing Tools', href: '/dashboard/agent/marketing', icon: MdTrendingUp },
         { label: 'Documents', href: '/dashboard/agent/documents', icon: MdFolder },
         { label: 'Partner Network', href: '/dashboard/agent/team', icon: MdGroup },
         { label: 'Chat', href: '/dashboard/agent/support/inbox', icon: HiOutlineChatBubbleLeftRight },
+        { label: 'Education Hub', href: '/dashboard/agent/education', icon: MdSchool },
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
         { label: 'Settings', href: '/dashboard/agent/settings', icon: MdSettings },
     ],
     superAdmin: [
         { label: 'Admin Dashboard', href: '/dashboard/admin', icon: RxDashboard },
         { label: 'Systems Health', href: '/dashboard/admin/health', icon: MdSecurity },
+        { label: 'Education Hub', href: '/dashboard/superAdmin/education', icon: MdSchool },
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
     ],
     developer: [
         { label: 'Dashboard', href: '/dashboard/developer', icon: RxDashboard },
         { label: 'My Profile', href: '/dashboard/developer/profile', icon: MdPerson },
-        { label: 'Projects', href: '/dashboard/developer/projects', icon: MdHomeWork },
+        { label: 'My Projects', href: '/dashboard/developer/projects', icon: MdHomeWork },
         { label: 'Portfolio', href: '/dashboard/developer/portfolio', icon: MdPieChart },
         { label: 'Investments', href: '/dashboard/developer/investments', icon: MdTrendingUp },
+        { label: 'Maintenance', href: '/dashboard/developer/maintenance', icon: HiOutlineWrenchScrewdriver },
+        { label: 'Education Hub', href: '/dashboard/developer/education', icon: MdSchool },
         { label: 'Marketplace', href: '/marketplace', icon: MdStorefront },
         { label: 'Settings', href: '/dashboard/developer/settings', icon: MdSettings },
     ]
@@ -173,7 +182,7 @@ const NavLink = ({ item, pathname, depth = 0, onClose }: { item: NavItem, pathna
                             className={`
                                 flex-1 flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200
                                 ${isActive
-                                    ? 'bg-white text-brand-green font-bold shadow-lg shadow-black/10'
+                                    ? 'bg-white text-brand-green font-semibold shadow-lg shadow-black/10'
                                     : 'text-white/80 hover:bg-white/10 hover:text-white'}
                                 ${depth > 0 ? 'ml-4 py-2 text-[12px]' : 'text-[13px]'}
                             `}
@@ -274,7 +283,7 @@ export default function DashboardSidebar({ isOpen = false, onClose }: { isOpen?:
                         width={40}
                         height={40}
                         className="brightness-0 invert"
-                        textClassName="text-lg font-black text-white"
+                        textClassName="text-lg font-semibold text-white"
                     />
                 </Link>
                 <button onClick={onClose} className="md:hidden p-2 hover:bg-white/10 rounded-lg">

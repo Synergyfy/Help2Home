@@ -13,7 +13,9 @@ import {
     HiOutlineMapPin,
     HiOutlineHome,
     HiOutlineCheckBadge,
-    HiOutlineShieldCheck
+    HiOutlineShieldCheck,
+    HiOutlineCalendar,
+    HiOutlineSparkles
 } from 'react-icons/hi2';
 import {
     MdOutlineBusinessCenter,
@@ -42,7 +44,7 @@ interface BasicsStepProps {
 }
 
 export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
-    const { register, setValue, control, formState: { errors } } = useFormContext<PropertySchema>();
+    const { register, setValue, control, formState: { errors }, getValues } = useFormContext<PropertySchema>();
     const { activeRole, setActiveRole } = useUserStore();
     const { draftData, roleOnboardingCompleted } = useOnboardingStore();
 
@@ -55,6 +57,29 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
 
     const selectedListingType = useWatch({ control, name: 'listingType' });
     const selectedCategory = useWatch({ control, name: 'propertyCategory' });
+    const availabilityStatus = useWatch({ control, name: 'terms.availabilityStatus' });
+
+    const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+
+    const generateAiDescription = async () => {
+        const title = getValues('title');
+        const type = getValues('propertyType');
+        const category = getValues('propertyCategory');
+
+        if (!title || title.length < 5) {
+            // Primitive alert since we don't have toast imported here yet, usually handled higher up
+            alert("Please enter a valid property title first.");
+            return;
+        }
+
+        setIsGeneratingAi(true);
+        // Simulate AI delay
+        setTimeout(() => {
+            const desc = `Experience luxury living in this stunning ${type || 'property'} located in a prime area. This ${category || 'exclusive'} residence, titled "${title}", offers a perfect blend of comfort and style. Ideal for those seeking a premium lifestyle with easy access to local amenities. Don't miss this opportunity to secure your dream space.`;
+            setValue('description.long', desc, { shouldDirty: true, shouldValidate: true });
+            setIsGeneratingAi(false);
+        }, 1500);
+    };
 
     const inputClasses = "w-full h-12 px-4 rounded-xl border border-gray-200 bg-white text-[#111811] focus:border-brand-green focus:ring-1 focus:ring-[brand-green] outline-none transition-all placeholder:text-gray-400 shadow-sm";
     const labelClasses = "block text-sm font-bold text-[#111811] mb-2";
@@ -115,12 +140,14 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
                             <div className="space-y-6 animate-in slide-in-from-left duration-300">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label className={labelClasses}>{activeRole === 'developer' ? 'Company Name' : 'Agency Name'}</label>
-                                        <input {...register('agencyName')} className={inputClasses} placeholder={activeRole === 'developer' ? "e.g. Zenith Developments" : "e.g. Prime Realty Ltd"} />
+                                        <label className={labelClasses}>{activeRole === 'developer' ? 'Company Name *' : 'Agency Name *'}</label>
+                                        <input {...register('agencyName')} className={`${inputClasses} ${errors.agencyName ? 'border-red-500 ring-red-500' : ''}`} placeholder={activeRole === 'developer' ? "e.g. Zenith Developments" : "e.g. Prime Realty Ltd"} />
+                                        {errors.agencyName && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.agencyName.message}</p>}
                                     </div>
                                     <div>
-                                        <label className={labelClasses}>{activeRole === 'developer' ? 'Registration Number' : 'Agent License No.'}</label>
-                                        <input {...register('agentLicense')} className={inputClasses} placeholder="Optional for verification" />
+                                        <label className={labelClasses}>{activeRole === 'developer' ? 'Registration Number (Optional)' : 'Agent License No. (Optional)'}</label>
+                                        <input {...register('agentLicense')} className={`${inputClasses} ${errors.agentLicense ? 'border-red-500 ring-red-500' : ''}`} placeholder="Optional for verification" />
+                                        {errors.agentLicense && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.agentLicense.message}</p>}
                                     </div>
                                 </div>
 
@@ -148,8 +175,22 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
 
                                         {hasLandlord && (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                                                                                                 <input {...register('landlord.firstName')} className={inputClasses} placeholder="Landlord First Name" />
-                                                                                                 <input {...register('landlord.lastName')} className={inputClasses} placeholder="Landlord Last Name" />                                                <input {...register('landlord.email')} className={inputClasses} placeholder="Landlord Email" />
+                                                <div>
+                                                    <input {...register('landlord.firstName')} className={`${inputClasses} ${errors.landlord?.firstName ? 'border-red-500 ring-red-500' : ''}`} placeholder="Landlord First Name (Optional)" />
+                                                    {errors.landlord?.firstName && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.firstName.message}</p>}
+                                                </div>
+                                                <div>
+                                                    <input {...register('landlord.lastName')} className={`${inputClasses} ${errors.landlord?.lastName ? 'border-red-500 ring-red-500' : ''}`} placeholder="Landlord Last Name (Optional)" />
+                                                    {errors.landlord?.lastName && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.lastName.message}</p>}
+                                                </div>
+                                                <div>
+                                                    <input {...register('landlord.email')} className={`${inputClasses} ${errors.landlord?.email ? 'border-red-500 ring-red-500' : ''}`} placeholder="Landlord Email (Optional)" />
+                                                    {errors.landlord?.email && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.email.message}</p>}
+                                                </div>
+                                                <div>
+                                                    <input {...register('landlord.phone')} className={`${inputClasses} ${errors.landlord?.phone ? 'border-red-500 ring-red-500' : ''}`} placeholder="Landlord Phone (Optional)" />
+                                                    {errors.landlord?.phone && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.phone.message}</p>}
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -179,10 +220,22 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
 
                                     {hasCaretaker && (
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                                            <input {...register('caretaker.firstName')} className={inputClasses} placeholder="Caretaker First Name" />
-                                            <input {...register('caretaker.lastName')} className={inputClasses} placeholder="Caretaker Last Name" />
-                                            <input {...register('caretaker.email')} className={inputClasses} placeholder="Caretaker Email" />
-                                            <input {...register('caretaker.phone')} className={inputClasses} placeholder="Caretaker Phone" />
+                                            <div>
+                                                <input {...register('caretaker.firstName')} className={`${inputClasses} ${errors.caretaker?.firstName ? 'border-red-500 ring-red-500' : ''}`} placeholder="Caretaker First Name (Optional)" />
+                                                {errors.caretaker?.firstName && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.caretaker.firstName.message}</p>}
+                                            </div>
+                                            <div>
+                                                <input {...register('caretaker.lastName')} className={`${inputClasses} ${errors.caretaker?.lastName ? 'border-red-500 ring-red-500' : ''}`} placeholder="Caretaker Last Name (Optional)" />
+                                                {errors.caretaker?.lastName && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.caretaker.lastName.message}</p>}
+                                            </div>
+                                            <div>
+                                                <input {...register('caretaker.email')} className={`${inputClasses} ${errors.caretaker?.email ? 'border-red-500 ring-red-500' : ''}`} placeholder="Caretaker Email (Optional)" />
+                                                {errors.caretaker?.email && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.caretaker.email.message}</p>}
+                                            </div>
+                                            <div>
+                                                <input {...register('caretaker.phone')} className={`${inputClasses} ${errors.caretaker?.phone ? 'border-red-500 ring-red-500' : ''}`} placeholder="Caretaker Phone (Optional)" />
+                                                {errors.caretaker?.phone && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.caretaker.phone.message}</p>}
+                                            </div>
                                         </div>
                                     )}
                                 </div>
@@ -209,23 +262,24 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
                                         <div>
-                                            <label className={labelClasses}>Landlord First Name</label>
-                                            <input {...register('landlord.firstName')} className={inputClasses} placeholder="e.g. John" />
+                                            <label className={labelClasses}>Landlord First Name *</label>
+                                            <input {...register('landlord.firstName')} className={`${inputClasses} ${errors.landlord?.firstName ? 'border-red-500 ring-red-500' : ''}`} placeholder="e.g. John" />
                                             {errors.landlord?.firstName && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.firstName.message}</p>}
                                         </div>
                                         <div>
-                                            <label className={labelClasses}>Landlord Last Name</label>
-                                            <input {...register('landlord.lastName')} className={inputClasses} placeholder="e.g. Doe" />
+                                            <label className={labelClasses}>Landlord Last Name *</label>
+                                            <input {...register('landlord.lastName')} className={`${inputClasses} ${errors.landlord?.lastName ? 'border-red-500 ring-red-500' : ''}`} placeholder="e.g. Doe" />
                                             {errors.landlord?.lastName && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.lastName.message}</p>}
                                         </div>
                                         <div>
-                                            <label className={labelClasses}>Landlord Email</label>
-                                            <input {...register('landlord.email')} className={inputClasses} placeholder="landlord@example.com" />
+                                            <label className={labelClasses}>Landlord Email *</label>
+                                            <input {...register('landlord.email')} className={`${inputClasses} ${errors.landlord?.email ? 'border-red-500 ring-red-500' : ''}`} placeholder="landlord@example.com" />
                                             {errors.landlord?.email && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.email.message}</p>}
                                         </div>
                                         <div>
-                                            <label className={labelClasses}>Landlord Phone</label>
-                                            <input {...register('landlord.phone')} className={inputClasses} placeholder="+234 ..." />
+                                            <label className={labelClasses}>Landlord Phone (Optional)</label>
+                                            <input {...register('landlord.phone')} className={`${inputClasses} ${errors.landlord?.phone ? 'border-red-500 ring-red-500' : ''}`} placeholder="+234 ..." />
+                                            {errors.landlord?.phone && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.landlord.phone.message}</p>}
                                         </div>
                                     </div>
                                 </div>
@@ -262,16 +316,33 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
 
                                     {hasCaretaker && (
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                                            <input {...register('caretaker.firstName')} className={inputClasses} placeholder="Caretaker First Name" />
-                                            <input {...register('caretaker.lastName')} className={inputClasses} placeholder="Caretaker Last Name" />
-                                            <input {...register('caretaker.email')} className={inputClasses} placeholder="Caretaker Email" />
-                                            <input {...register('caretaker.phone')} className={inputClasses} placeholder="Caretaker Phone" />
+                                            <div>
+                                                <label className={labelClasses}>Caretaker First Name (Optional)</label>
+                                                <input {...register('caretaker.firstName')} className={`${inputClasses} ${errors.caretaker?.firstName ? 'border-red-500 ring-red-500' : ''}`} placeholder="Caretaker First Name" />
+                                                {errors.caretaker?.firstName && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.caretaker.firstName.message}</p>}
+                                            </div>
+                                            <div>
+                                                <label className={labelClasses}>Caretaker Last Name (Optional)</label>
+                                                <input {...register('caretaker.lastName')} className={`${inputClasses} ${errors.caretaker?.lastName ? 'border-red-500 ring-red-500' : ''}`} placeholder="Caretaker Last Name" />
+                                                {errors.caretaker?.lastName && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.caretaker.lastName.message}</p>}
+                                            </div>
+                                            <div>
+                                                <label className={labelClasses}>Caretaker Email (Optional)</label>
+                                                <input {...register('caretaker.email')} className={`${inputClasses} ${errors.caretaker?.email ? 'border-red-500 ring-red-500' : ''}`} placeholder="Caretaker Email" />
+                                                {errors.caretaker?.email && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.caretaker.email.message}</p>}
+                                            </div>
+                                            <div>
+                                                <label className={labelClasses}>Caretaker Phone (Optional)</label>
+                                                <input {...register('caretaker.phone')} className={`${inputClasses} ${errors.caretaker?.phone ? 'border-red-500 ring-red-500' : ''}`} placeholder="Caretaker Phone" />
+                                                {errors.caretaker?.phone && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.caretaker.phone.message}</p>}
+                                            </div>
                                         </div>
                                     )}
                                 </div>
                             </div>
                         )}
                     </section>
+
 
                     {/* PROPERTY DETAILS */}
                     <section className={cardClasses}>
@@ -287,37 +358,117 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
                             <div>
-                                <label className={labelClasses}>Property Title</label>
-                                <input {...register('title')} className={inputClasses} placeholder="e.g. Luxury 4 Bedroom Semi-Detached Duplex" />
+                                <label className={labelClasses}>Property Title *</label>
+                                <input {...register('title')} className={`${inputClasses} ${errors.title ? 'border-red-500 ring-red-500' : ''}`} placeholder="e.g. Luxury 4 Bedroom Semi-Detached Duplex" />
+                                {errors.title && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.title.message}</p>}
                             </div>
                             <div>
-                                <label className={labelClasses}>Community / Contact Link</label>
-                                <input {...register('communityLink')} className={inputClasses} placeholder="e.g. WhatsApp group, personal link" />
+                                <label className={labelClasses}>Community / Contact Link (Optional)</label>
+                                <input {...register('communityLink')} className={`${inputClasses} ${errors.communityLink ? 'border-red-500 ring-red-500' : ''}`} placeholder="e.g. WhatsApp group, personal link" />
                                 {errors.communityLink && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.communityLink.message}</p>}
                             </div>
                         </div>
 
                         {/* Description Section - Especially for Developers */}
-                        <div className="mb-10 animate-in fade-in slide-in-from-top-2 duration-500">
-                            <div className="grid grid-cols-1 gap-6">
-                                <div>
-                                    <label className={labelClasses}>{activeRole === 'developer' ? 'Project Tagline (Short)' : 'Short Description (Catchy headline)'}</label>
-                                    <input
-                                        {...register('description.short')}
-                                        className={inputClasses}
-                                        placeholder={activeRole === 'developer' ? "e.g. Modern Living Reimagined in Lekki" : "e.g. Cozy 2-bed apartment in city center"}
-                                    />
+                        {/* AVAILABILITY CALENDAR FEATURE */}
+                        <div className="mb-10 p-5 bg-white rounded-2xl border border-gray-100 shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="size-10 rounded-xl bg-brand-green/10 flex items-center justify-center text-brand-green">
+                                    <HiOutlineCalendar size={24} />
                                 </div>
                                 <div>
-                                    <label className={labelClasses}>{activeRole === 'developer' ? 'Project Full Explanation' : 'Full Property Description'}</label>
+                                    <h3 className="text-lg font-bold text-[#111811]">Availability & Occupancy</h3>
+                                    <p className="text-sm text-gray-500">When will this property be ready for occupants?</p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    {['Now', 'Soon', 'Specific Date'].map((status) => (
+                                        <label key={status} className="relative cursor-pointer group">
+                                            <input
+                                                {...register('terms.availabilityStatus')}
+                                                type="radio"
+                                                value={status}
+                                                className="peer sr-only"
+                                            />
+                                            <div className="flex items-center justify-center p-4 rounded-xl border border-gray-200 bg-white transition-all peer-checked:border-brand-green peer-checked:bg-green-50 peer-checked:font-bold hover:bg-gray-50 peer-checked:text-brand-green">
+                                                <span className="text-sm">
+                                                    {status === 'Now' ? 'Available Now' :
+                                                        status === 'Soon' ? 'Available Soon' : 'Specific Date'}
+                                                </span>
+                                            </div>
+                                        </label>
+                                    ))}
+                                </div>
+
+                                {availabilityStatus === 'Specific Date' && (
+                                    <div className="animate-in fade-in slide-in-from-top-2">
+                                        <label className={labelClasses}>Select Move-in Date *</label>
+                                        <input
+                                            type="date"
+                                            min={new Date().toISOString().split('T')[0]}
+                                            {...register('terms.availableFrom')}
+                                            className={inputClasses}
+                                        />
+                                    </div>
+                                )}
+
+                                {availabilityStatus === 'Soon' && (
+                                    <div className="animate-in fade-in slide-in-from-top-2">
+                                        <label className={labelClasses}>Expected Availability *</label>
+                                        <input
+                                            {...register('terms.availableFrom')}
+                                            placeholder="e.g. In 2 weeks, In 1 month"
+                                            className={inputClasses}
+                                        />
+                                        <p className="text-[10px] text-gray-400 mt-1">Specify estimating timeframe for interested tenants.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Description Section with AI */}
+                        <div className="mb-10 animate-in fade-in slide-in-from-top-2 duration-500">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-bold text-[#111811]">Description</h3>
+                                <button
+                                    type="button"
+                                    onClick={generateAiDescription}
+                                    disabled={isGeneratingAi}
+                                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-green/10 text-brand-green text-xs font-bold hover:bg-brand-green hover:text-white transition-colors disabled:opacity-50"
+                                >
+                                    {isGeneratingAi ? (
+                                        <div className="size-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                                    ) : (
+                                        <HiOutlineSparkles size={14} />
+                                    )}
+                                    {isGeneratingAi ? 'Generating...' : 'Auto-Generate with AI'}
+                                </button>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-6">
+                                <div>
+                                    <label className={labelClasses}>{activeRole === 'developer' ? 'Project Tagline (Short) (Optional)' : 'Short Description (Catchy headline) (Optional)'}</label>
+                                    <input
+                                        {...register('description.short')}
+                                        className={`${inputClasses} ${errors.description?.short ? 'border-red-500 ring-red-500' : ''}`}
+                                        placeholder={activeRole === 'developer' ? "e.g. Modern Living Reimagined in Lekki" : "e.g. Cozy 2-bed apartment in city center"}
+                                    />
+                                    {errors.description?.short && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.description.short.message}</p>}
+                                </div>
+                                <div>
+                                    <label className={labelClasses}>{activeRole === 'developer' ? 'Project Full Explanation (Optional)' : 'Full Property Description (Optional)'}</label>
                                     <textarea
                                         {...register('description.long')}
-                                        className="w-full p-4 rounded-xl border border-gray-200 bg-white text-[#111811] focus:border-brand-green focus:ring-1 focus:ring-[brand-green] outline-none transition-all placeholder:text-gray-400 shadow-sm min-h-[120px]"
+                                        className={`w-full p-4 rounded-xl border ${errors.description?.long ? 'border-red-500 ring-red-500' : 'border-gray-200'} bg-white text-[#111811] focus:border-brand-green focus:ring-1 focus:ring-[brand-green] outline-none transition-all placeholder:text-gray-400 shadow-sm min-h-[120px]`}
                                         placeholder={activeRole === 'developer' ? "Describe the vision, amenities, and lifestyle..." : "Describe the key features, neighborhood, etc..."}
                                     />
+                                    {errors.description?.long && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.description.long.message}</p>}
                                 </div>
                             </div>
                         </div>
+
 
                         {/* MARKETPLACE FEATURES / BUYING SCHEMES */}
                         <div className="mb-10 p-5 bg-gray-50 rounded-2xl border border-gray-100">
@@ -350,8 +501,8 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
 
                         {/* Listing Type First - Logic: Property Types depend on this */}
                         <div className="mb-10">
-                            <label className={labelClasses}>Listing Type</label>
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <label className={labelClasses}>Listing Type *</label>
+                            <div className={`grid grid-cols-2 sm:grid-cols-4 gap-3 ${errors.listingType ? 'border-red-500 ring-1 ring-red-500 rounded-lg p-2' : ''}`}>
                                 {[
                                     { id: 'Rent', label: 'For Rent', icon: HiOutlineHome },
                                     { id: 'Sale', label: 'For Sale', icon: MdOutlineBusinessCenter },
@@ -377,19 +528,20 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
                                     </label>
                                 ))}
                             </div>
+                            {errors.listingType && <p className="text-[10px] text-red-500 mt-2 font-bold">{errors.listingType.message}</p>}
                         </div>
 
                         {/* Property Category */}
                         <div className="mb-10">
-                            <label className={labelClasses}>Property Category</label>
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <label className={labelClasses}>Property Category *</label>
+                            <div className={`grid grid-cols-2 sm:grid-cols-4 gap-3 ${errors.propertyCategory ? 'border-red-500 ring-1 ring-red-500 rounded-lg p-2' : ''}`}>
                                 {PROPERTY_CATEGORIES.map((cat) => (
                                     <label key={cat.id} className="relative cursor-pointer group">
-                                        <input 
-                                            {...register('propertyCategory')} 
-                                            type="radio" 
-                                            value={cat.label} 
-                                            className="peer sr-only" 
+                                        <input
+                                            {...register('propertyCategory')}
+                                            type="radio"
+                                            value={cat.label}
+                                            className="peer sr-only"
                                             onChange={(e) => {
                                                 setValue('propertyCategory', e.target.value as any);
                                                 setValue('propertyType', ''); // Reset type when category changes
@@ -402,12 +554,13 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
                                     </label>
                                 ))}
                             </div>
+                            {errors.propertyCategory && <p className="text-[10px] text-red-500 mt-2 font-bold">{errors.propertyCategory.message}</p>}
                         </div>
 
                         {/* Property Type - CATEGORY DRIVEN */}
                         {selectedCategory && (
-                            <div className="animate-in fade-in slide-in-from-top-4 duration-500 mb-10">
-                                <label className={labelClasses}>Property Type</label>
+                            <div className={`animate-in fade-in slide-in-from-top-4 duration-500 mb-10 ${errors.propertyType ? 'border-red-500 ring-1 ring-red-500 rounded-lg p-2' : ''}`}>
+                                <label className={labelClasses}>Property Type *</label>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                                     {(PROPERTY_CATEGORIES.find(c => c.label === selectedCategory)?.types || []).map((type) => (
                                         <label key={type} className="relative cursor-pointer group">
@@ -419,8 +572,10 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
                                         </label>
                                     ))}
                                 </div>
+                                {errors.propertyType && <p className="text-[10px] text-red-500 mt-2 font-bold">{errors.propertyType.message}</p>}
                             </div>
                         )}
+
 
                         {/* IN-PAGE NAVIGATION BUTTONS */}
                         {navigation && (
@@ -429,11 +584,10 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
                                     type="button"
                                     onClick={navigation.onBack}
                                     disabled={navigation.isFirstStep}
-                                    className={`px-8 py-4 rounded-2xl font-black text-sm transition-all active:scale-95 ${
-                                        navigation.isFirstStep 
-                                        ? 'opacity-0 pointer-events-none' 
+                                    className={`px-8 py-4 rounded-2xl font-black text-sm transition-all active:scale-95 ${navigation.isFirstStep
+                                        ? 'opacity-0 pointer-events-none'
                                         : 'text-gray-400 hover:text-gray-900 bg-gray-50 hover:bg-gray-100'
-                                    }`}
+                                        }`}
                                 >
                                     Back
                                 </button>
@@ -454,8 +608,9 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
                     </section>
                 </div>
 
-                <div className="space-y-6">
-                    <div className="bg-[#00421F] text-white p-6 sm:p-8 rounded-2xl shadow-lg relative overflow-hidden">
+                {/* Sidebar Column */}
+                <div className="lg:col-span-1 space-y-6 animate-in slide-in-from-right duration-500 delay-150">
+                    <div className="bg-[#00421F] text-white p-6 sm:p-8 rounded-2xl shadow-lg relative overflow-hidden sticky top-8">
                         {/* Decorative background circle */}
                         <div className="absolute -top-10 -right-10 size-32 bg-brand-green opacity-20 rounded-full"></div>
 
@@ -474,9 +629,9 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
                                 </p>
                             </li>
                         </ul>
-                    </div>
-                </div>
-            </div>
+                    </div >
+                </div >
+            </div >
         </>
     );
 }

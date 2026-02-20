@@ -25,10 +25,10 @@ export default function MyInvestmentsPage() {
         <div className="p-4 md:p-8 max-w-7xl mx-auto">
             <div className="mb-8 flex justify-between items-end">
                 <div>
-                    <h1 className="text-2xl font-bold text-[#111811] mb-2">My Portfolio</h1>
+                    <h1 className="text-2xl font-semibold text-[#111811] mb-2">My Portfolio</h1>
                     <p className="text-gray-500">Track the performance of your active ventures.</p>
                 </div>
-                <Link href="/dashboard/investor/invest" className="text-sm font-bold text-brand-green hover:underline">
+                <Link href="/dashboard/investor/invest" className="text-sm font-semibold text-brand-green hover:underline">
                     + Invest New Capital
                 </Link>
             </div>
@@ -43,13 +43,13 @@ export default function MyInvestmentsPage() {
                                         <MdPieChart size={32} />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-bold text-gray-900">{inv.projectTitle}</h3>
+                                        <h3 className="text-lg font-semibold text-gray-900">{inv.projectTitle}</h3>
                                         <p className="text-sm text-gray-500">Managed by {inv.developer}</p>
                                         <div className="flex gap-2 mt-2">
-                                            <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full capitalize">
+                                            <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full capitalize">
                                                 {inv.status}
                                             </span>
-                                            <span className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full">
+                                            <span className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-semibold rounded-full">
                                                 {inv.roi}% Target ROI
                                             </span>
                                         </div>
@@ -58,20 +58,20 @@ export default function MyInvestmentsPage() {
 
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
                                     <div>
-                                        <p className="text-[10px] uppercase font-bold text-gray-400">Invested</p>
-                                        <p className="text-lg font-bold text-gray-900">₦{(inv.investedAmount / 1000000).toFixed(2)}M</p>
+                                        <p className="text-[10px] uppercase font-semibold text-gray-400">Invested</p>
+                                        <p className="text-lg font-semibold text-gray-900">₦{(inv.investedAmount / 1000000).toFixed(2)}M</p>
                                     </div>
                                     <div>
-                                        <p className="text-[10px] uppercase font-bold text-gray-400">Current Value</p>
-                                        <p className="text-lg font-bold text-brand-green">₦{(inv.currentValue / 1000000).toFixed(2)}M</p>
+                                        <p className="text-[10px] uppercase font-semibold text-gray-400">Current Value</p>
+                                        <p className="text-lg font-semibold text-brand-green">₦{(inv.currentValue / 1000000).toFixed(2)}M</p>
                                     </div>
                                     <div>
-                                        <p className="text-[10px] uppercase font-bold text-gray-400">Maturity</p>
-                                        <p className="text-sm font-bold text-gray-700">{inv.maturityDate}</p>
+                                        <p className="text-[10px] uppercase font-semibold text-gray-400">Maturity</p>
+                                        <p className="text-sm font-semibold text-gray-700">{inv.maturityDate}</p>
                                     </div>
                                     <div>
-                                        <p className="text-[10px] uppercase font-bold text-gray-400">Next Payout</p>
-                                        <p className="text-sm font-bold text-gray-700">{inv.nextPayout}</p>
+                                        <p className="text-[10px] uppercase font-semibold text-gray-400">Next Payout</p>
+                                        <p className="text-sm font-semibold text-gray-700">{inv.nextPayout}</p>
                                     </div>
                                 </div>
                             </div>
@@ -79,7 +79,7 @@ export default function MyInvestmentsPage() {
                             <div className="pt-4 border-t border-gray-50 flex justify-end">
                                 <Link
                                     href={`/dashboard/investor/investments/${inv.id}`}
-                                    className="flex items-center gap-2 px-6 py-2 bg-[#111811] text-white text-sm font-bold rounded-xl hover:bg-black transition-colors"
+                                    className="flex items-center gap-2 px-6 py-2 bg-[#111811] text-white text-sm font-semibold rounded-xl hover:bg-black transition-colors"
                                 >
                                     View Schedule & Details <MdArrowForward />
                                 </Link>
@@ -89,9 +89,9 @@ export default function MyInvestmentsPage() {
                 ) : (
                     <div className="text-center py-20 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
                         <MdAccessTime size={48} className="mx-auto text-gray-300 mb-4" />
-                        <h3 className="text-lg font-bold text-gray-900">No Active Investments</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">No Active Investments</h3>
                         <p className="text-gray-500 mb-6">Start building your portfolio today.</p>
-                        <Link href="/dashboard/investor/invest" className="px-6 py-3 bg-brand-green text-white font-bold rounded-xl hover:bg-green-700 transition-colors">
+                        <Link href="/dashboard/investor/invest" className="px-6 py-3 bg-brand-green text-white font-semibold rounded-xl hover:bg-green-700 transition-colors">
                             Explore Marketplace
                         </Link>
                     </div>

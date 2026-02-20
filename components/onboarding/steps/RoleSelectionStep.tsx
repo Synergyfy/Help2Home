@@ -15,20 +15,24 @@ const roles: { id: UserRole; name: string; description: string; icon: React.Reac
 ];
 
 const RoleSelectionStep = () => {
-  const { getCurrentUser, toggleRole, nextStep, prevStep, goToStep, setActiveRole } = useOnboardingStore();
+  const { getCurrentUser, toggleRole, nextStep, prevStep, goToStep, setActiveRole, signupPath } = useOnboardingStore();
   const user = getCurrentUser();
   const selectedRoles = user?.roles || [];
 
   const isMultiSelectMode = selectedRoles.some(r => MULTI_SELECT_ROLES.includes(r));
   const isTenantOnly = selectedRoles.length === 1 && selectedRoles[0] === 'tenant';
+  const isInvestorOnly = selectedRoles.length === 1 && selectedRoles[0] === 'investor';
 
   // Auto-skip logic for Tenant-only selection from signup
   useEffect(() => {
     if (isTenantOnly) {
       setActiveRole('tenant');
       goToStep(5);
+    } else if (isInvestorOnly) {
+      setActiveRole('investor');
+      goToStep(6); // Go to Investor Setup (Step 6)
     }
-  }, [isTenantOnly, setActiveRole, goToStep]);
+  }, [isTenantOnly, isInvestorOnly, setActiveRole, goToStep]);
 
   const handleContinue = () => {
     if (selectedRoles.length === 0) return;
@@ -67,6 +71,11 @@ const RoleSelectionStep = () => {
       <div className="flex-1 overflow-y-auto space-y-3 no-scrollbar pb-4">
         {roles
           .filter(role => {
+            // If user came from 'propertyManagement' signup path, hide 'tenant' and 'investor'
+            if (signupPath === 'propertyManagement' && (role.id === 'tenant' || role.id === 'investor')) {
+              return false;
+            }
+
             // If user already has 'tenant' from signup, only show tenant
             if (isTenantOnly) return role.id === 'tenant';
             // If in multi-select mode, hide individual roles (tenant and investor)

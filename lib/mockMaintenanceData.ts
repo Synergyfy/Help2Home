@@ -13,6 +13,8 @@ export interface MaintenanceRequest {
     createdAt: string;
     estimatedCost?: number;
     images?: string[];
+    rejectionReason?: string;
+    assignedArtisanId?: string; // New field to store the ID of the assigned artisan
 }
 
 export const MOCK_MAINTENANCE_REQUESTS: MaintenanceRequest[] = [

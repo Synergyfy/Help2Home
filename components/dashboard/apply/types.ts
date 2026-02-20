@@ -25,6 +25,8 @@ export interface ApplicationData {
         downPaymentPercent: number;
         repaymentDuration: number;
         acceptedTerms: boolean;
+        hasMarketplaceConsent?: boolean;
+        hasDirectDebitAuth?: boolean;
     };
     tenantInfo: {
         firstName: string;

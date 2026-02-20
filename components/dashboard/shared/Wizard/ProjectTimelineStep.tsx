@@ -34,40 +34,43 @@ export default function ProjectTimelineStep({ navigation }: ProjectTimelineStepP
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">Project Status</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">Project Status (Optional)</label>
                     <select
                         {...register("projectTimeline.status")}
-                        className="w-full p-4 rounded-xl border-2 border-gray-100 focus:border-brand-green outline-none bg-white font-medium"
+                        className={`w-full p-4 rounded-xl border-2 ${errors.projectTimeline?.status ? 'border-red-500 ring-red-500' : 'border-gray-100'} focus:border-brand-green outline-none bg-white font-medium`}
                     >
                         <option value="planning">Planning Phase</option>
                         <option value="in-progress">In Progress</option>
                         <option value="completed">Completed</option>
                         <option value="halted">Halted / On Hold</option>
                     </select>
+                    {errors.projectTimeline?.status && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.projectTimeline.status.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Start Date</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Start Date (Optional)</label>
                         <div className="relative">
                             <input
                                 type="date"
                                 {...register("projectTimeline.startDate")}
-                                className="w-full p-4 pl-10 rounded-xl border-2 border-gray-100 focus:border-brand-green outline-none font-medium"
+                                className={`w-full p-4 pl-10 rounded-xl border-2 ${errors.projectTimeline?.startDate ? 'border-red-500 ring-red-500' : 'border-gray-100'} focus:border-brand-green outline-none font-medium`}
                             />
                             <MdCalendarToday className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                         </div>
+                        {errors.projectTimeline?.startDate && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.projectTimeline.startDate.message}</p>}
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Completion (Est.)</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Completion (Est.) (Optional)</label>
                         <div className="relative">
                             <input
                                 type="date"
                                 {...register("projectTimeline.completionDate")}
-                                className="w-full p-4 pl-10 rounded-xl border-2 border-gray-100 focus:border-brand-green outline-none font-medium"
+                                className={`w-full p-4 pl-10 rounded-xl border-2 ${errors.projectTimeline?.completionDate ? 'border-red-500 ring-red-500' : 'border-gray-100'} focus:border-brand-green outline-none font-medium`}
                             />
                             <MdCalendarToday className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                         </div>
+                        {errors.projectTimeline?.completionDate && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.projectTimeline.completionDate.message}</p>}
                     </div>
                 </div>
             </div>

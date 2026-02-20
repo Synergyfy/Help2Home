@@ -12,6 +12,8 @@ export interface Signer {
     status: 'Pending' | 'Viewed' | 'Signed' | 'Declined';
     signedAt?: string;
     declinedReason?: string;
+    signatureMethod?: 'typed' | 'uploaded';
+    signatureContent?: string; // Stores typed name or a placeholder for uploaded image
 }
 
 export interface ContractFields {

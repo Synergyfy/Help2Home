@@ -1,33 +1,72 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { MdPhone } from 'react-icons/md';
 import {
     HiOutlineChatBubbleLeftRight,
-    HiOutlineUser
+    HiOutlineUserCircle
 } from 'react-icons/hi2';
 import { useRouter } from 'next/navigation';
+import LeadProfileModal, { Lead } from './LeadProfileModal';
 
-const leads = [
-    { id: 'lead_1', name: 'Olawale Johnson', interest: 'Investor', budget: '₦200M+', status: 'Hot', joined: '2 hrs ago' },
-    { id: 'lead_2', name: 'Chidi Okafor', interest: 'Buyer', budget: '₦50M - ₦80M', status: 'Warm', joined: 'Yesterday' },
+const leadsData: Lead[] = [
+    { 
+        id: 'lead_1', 
+        name: 'Olawale Johnson', 
+        interest: 'Investor', 
+        budget: '₦200M+', 
+        status: 'Hot', 
+        joined: '2 hrs ago',
+        email: 'olawale.j@example.com',
+        phone: '+234 803 123 4567',
+        location: 'Victoria Island, Lagos',
+        occupation: 'Senior Portfolio Manager',
+        verified: true,
+        notes: 'Interested in luxury apartments in Ikoyi and V.I. Prefers high ROI projects.'
+    },
+    { 
+        id: 'lead_2', 
+        name: 'Chidi Okafor', 
+        interest: 'Buyer', 
+        budget: '₦50M - ₦80M', 
+        status: 'Warm', 
+        joined: 'Yesterday',
+        email: 'chidi.okafor@gmail.com',
+        phone: '+234 812 987 6543',
+        location: 'Lekki Phase 1, Lagos',
+        occupation: 'Software Architect',
+        verified: false,
+        notes: 'Looking for a 3-bedroom duplex for personal use. Schools nearby are a priority.'
+    },
 ];
 
 const Leads = () => {
     const router = useRouter();
+    const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-    const handleChat = (lead: any) => {
+    const handleChat = (lead: Lead) => {
         router.push(`/dashboard/agent/support/inbox?leadId=${lead.id}`);
+    };
+
+    const handleViewProfile = (lead: Lead) => {
+        setSelectedLead(lead);
+        setIsProfileModalOpen(true);
     };
 
     return (
         <div className="space-y-10 pb-12">
             <section>
-                <h1 className="text-2xl font-semibold text-gray-900 tracking-tight mb-6">Leads Pipeline</h1>
+                <div className="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Leads Pipeline</h1>
+                        <p className="text-sm text-gray-500">Track and engage with prospective clients.</p>
+                    </div>
+                </div>
 
                 <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
                     <div className="divide-y divide-gray-50">
-                        {leads.map((lead) => (
+                        {leadsData.map((lead) => (
                             <div key={lead.id} className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:bg-gray-50/50 transition-all group">
                                 <div className="flex items-center gap-4">
                                     <div className="size-14 rounded-2xl bg-brand-green/10 flex items-center justify-center font-semibold text-brand-green text-lg">
@@ -51,14 +90,25 @@ const Leads = () => {
                                     </div>
                                     <div className="flex gap-2">
                                         <button
+                                            onClick={() => handleViewProfile(lead)}
+                                            className="px-4 py-2.5 bg-gray-50 text-gray-600 rounded-xl hover:bg-gray-100 hover:text-brand-green transition-all flex items-center gap-2 text-xs font-bold"
+                                        >
+                                            <HiOutlineUserCircle size={18} />
+                                            View Profile
+                                        </button>
+                                        <button
                                             onClick={() => handleChat(lead)}
-                                            className="p-3 bg-blue-50 text-blue-600 rounded-2xl hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                                            className="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm"
                                             title="Chat with lead"
                                         >
-                                            <HiOutlineChatBubbleLeftRight size={20} strokeWidth={2} />
+                                            <HiOutlineChatBubbleLeftRight size={18} strokeWidth={2} />
                                         </button>
-                                        <button className="p-3 bg-brand-green/10 text-brand-green rounded-2xl hover:bg-brand-green hover:text-white transition-all shadow-sm">
-                                            <MdPhone size={20} />
+                                        <button 
+                                            onClick={() => window.location.href = `tel:${lead.phone}`}
+                                            className="p-2.5 bg-brand-green/10 text-brand-green rounded-xl hover:bg-brand-green hover:text-white transition-all shadow-sm"
+                                            title="Call lead"
+                                        >
+                                            <MdPhone size={18} />
                                         </button>
                                     </div>
                                 </div>
@@ -67,6 +117,12 @@ const Leads = () => {
                     </div>
                 </div>
             </section>
+
+            <LeadProfileModal 
+                isOpen={isProfileModalOpen}
+                onClose={() => setIsProfileModalOpen(false)}
+                lead={selectedLead}
+            />
         </div>
     );
 };

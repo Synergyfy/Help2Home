@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Contract, Signer } from '@/lib/mockContractData';
 import { format } from 'date-fns';
 import {
@@ -76,7 +77,9 @@ export default function ContractDetail({ contract, onSendForSignature, onDownloa
                             <div className="space-y-10 text-sm">
                                 {contract.content ? (
                                     <div className="whitespace-pre-wrap font-serif text-gray-800 leading-relaxed text-sm">
-                                        {contract.content}
+                                        <ReactMarkdown>
+                                            {contract.content}
+                                        </ReactMarkdown>
                                     </div>
                                 ) : (
                                     <>
@@ -133,7 +136,18 @@ export default function ContractDetail({ contract, onSendForSignature, onDownloa
                                                         <div className="h-20 border-b border-gray-300 relative flex items-center justify-center">
                                                             {signer.status === 'Signed' ? (
                                                                 <div className="text-center animate-in fade-in zoom-in duration-700">
-                                                                    <p className="font-serif italic text-blue-600 text-xl font-bold select-none">{signer.name}</p>
+                                                                    {signer.signatureMethod === 'uploaded' ? (
+                                                                        <>
+                                                                            {/* Placeholder for uploaded signature image */}
+                                                                            <div className="w-24 h-12 bg-gray-200 rounded-lg flex items-center justify-center mx-auto mb-1">
+                                                                                <img src="/file.svg" alt="Signature Uploaded" className="w-8 h-8" />
+                                                                            </div>
+                                                                            <p className="text-[10px] text-gray-500 uppercase font-sans">Signature Uploaded</p>
+                                                                            {signer.signatureContent && <p className="text-[10px] text-gray-400 mt-1">({signer.signatureContent})</p>}
+                                                                        </>
+                                                                    ) : (
+                                                                        <p className="font-serif italic text-blue-600 text-xl font-bold select-none">{signer.signatureContent || signer.name}</p>
+                                                                    )}
                                                                     <div className="absolute top-0 right-0">
                                                                         <HiOutlineCheckCircle className="text-green-500 bg-white rounded-full" size={24} />
                                                                     </div>

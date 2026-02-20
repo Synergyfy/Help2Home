@@ -9,13 +9,15 @@ import Chatbot from '@/components/Chatbot';
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const isDashboard = pathname?.startsWith('/dashboard');
+    const isBankPortal = pathname?.startsWith('/bank-portal');
+    const hideLayout = isDashboard || isBankPortal;
 
     return (
         <>
-            {!isDashboard && <Header />}
+            {!hideLayout && <Header />}
             {children}
-            {!isDashboard && <CookieConsent />}
-            {!isDashboard && <Footer />}
+            {!hideLayout && <CookieConsent />}
+            {!hideLayout && <Footer />}
             <Chatbot />
         </>
     );

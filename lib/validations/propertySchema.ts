@@ -5,7 +5,7 @@ export const propertySchema = z.object({
   posterRole: z.enum(['landlord', 'agent', 'caretaker', 'developer']),
   agencyName: z.string().optional(),
   agentLicense: z.string().optional(),
-  
+
   // Basic Info
   title: z.string().min(5, 'Title is too short (min 5 chars)'),
   propertyCategory: z.enum(['Residential', 'Commercial', 'Land', 'Industrial'], {
@@ -15,14 +15,14 @@ export const propertySchema = z.object({
   listingType: z.enum(['Rent', 'Sale', 'Service-Apartment', 'Rent-to-Own'], {
     errorMap: () => ({ message: 'Please select a listing type' })
   }),
-  
+
   // Location
   address: z.object({
     street: z.string().min(5, 'Street address is required (min 5 chars)'),
     city: z.string().min(2, 'City is required'),
     state: z.string().min(2, 'State is required'),
   }),
-  
+
   // Pricing Dynamics (Conditional based on listingType)
   price: z.object({
     amount: z.coerce.number().min(1, 'Price is required'),
@@ -30,7 +30,7 @@ export const propertySchema = z.object({
     period: z.enum(['year', 'month', 'day', 'week']).optional(), // Added for Rent/Short-Let
     serviceCharge: z.coerce.number().optional(),
   }),
-  
+
   // Service Apt / Short Let Specifics
   shortLetDetails: z.object({
     dailyRate: z.coerce.number().optional(),
@@ -75,7 +75,7 @@ export const propertySchema = z.object({
     isPrimary: z.boolean(),
     file: z.any().optional(),
   })).min(1, 'At least one image is required'),
-  
+
   video: z.object({
     id: z.string(),
     url: z.string(),
@@ -105,6 +105,7 @@ export const propertySchema = z.object({
   }).optional(),
 
   terms: z.object({
+    availabilityStatus: z.enum(['Now', 'Soon', 'Specific Date']).default('Now'),
     availableFrom: z.string().optional(),
     minTenancy: z.string().optional(),
   }).optional(),
@@ -115,9 +116,9 @@ export const propertySchema = z.object({
     completionDate: z.string().optional(),
     status: z.enum(['planning', 'in-progress', 'completed', 'halted']),
     milestones: z.array(z.object({
-       title: z.string(),
-       date: z.string(),
-       completed: z.boolean()
+      title: z.string(),
+      date: z.string(),
+      completed: z.boolean()
     })).optional()
   }).optional(),
 
@@ -188,7 +189,7 @@ export const propertySchema = z.object({
 
   // Short-Let: Period might be relevant or handled via shortLetDetails
   // If we decided price.amount is daily rate, maybe period isn't needed or defaults to 'day'
-  
+
   // Sale: Period forbidden (conceptually), but optional so maybe just ignore.
 });
 

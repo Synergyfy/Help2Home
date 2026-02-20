@@ -50,75 +50,81 @@ export default function InvestmentTermsStep({ navigation }: InvestmentTermsStepP
                 <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Minimum Investment</label>
+                            <label className="block text-sm font-bold text-gray-700 mb-2">Minimum Investment (Optional)</label>
                             <div className="relative">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">₦</span>
                                 <input
                                     type="number"
                                     {...register("investmentTerms.minInvestment")}
                                     placeholder="0.00"
-                                    className="w-full p-4 pl-10 rounded-xl border-2 border-gray-100 focus:border-brand-green outline-none font-medium"
+                                    className={`w-full p-4 pl-10 rounded-xl border-2 ${errors.investmentTerms?.minInvestment ? 'border-red-500 ring-red-500' : 'border-gray-100'} focus:border-brand-green outline-none font-medium`}
                                 />
                             </div>
+                            {errors.investmentTerms?.minInvestment && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.investmentTerms.minInvestment.message}</p>}
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Maximum Investment (Cap)</label>
+                            <label className="block text-sm font-bold text-gray-700 mb-2">Maximum Investment (Cap) (Optional)</label>
                             <div className="relative">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">₦</span>
                                 <input
                                     type="number"
                                     {...register("investmentTerms.maxInvestment")}
                                     placeholder="0.00"
-                                    className="w-full p-4 pl-10 rounded-xl border-2 border-gray-100 focus:border-brand-green outline-none font-medium"
+                                    className={`w-full p-4 pl-10 rounded-xl border-2 ${errors.investmentTerms?.maxInvestment ? 'border-red-500 ring-red-500' : 'border-gray-100'} focus:border-brand-green outline-none font-medium`}
                                 />
                             </div>
+                            {errors.investmentTerms?.maxInvestment && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.investmentTerms.maxInvestment.message}</p>}
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Expected ROI (%)</label>
+                            <label className="block text-sm font-bold text-gray-700 mb-2">Expected ROI (%) (Optional)</label>
                             <div className="relative">
                                 <input
                                     type="number"
                                     {...register("investmentTerms.roi")}
                                     placeholder="e.g. 15"
-                                    className="w-full p-4 pr-12 rounded-xl border-2 border-gray-100 focus:border-brand-green outline-none font-medium"
+                                    className={`w-full p-4 pr-12 rounded-xl border-2 ${errors.investmentTerms?.roi ? 'border-red-500 ring-red-500' : 'border-gray-100'} focus:border-brand-green outline-none font-medium`}
                                 />
                                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">%</span>
                             </div>
+                            {errors.investmentTerms?.roi && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.investmentTerms.roi.message}</p>}
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Payout Frequency</label>
+                            <label className="block text-sm font-bold text-gray-700 mb-2">Payout Frequency (Optional)</label>
                             <select
                                 {...register("investmentTerms.roiFrequency")}
-                                className="w-full p-4 rounded-xl border-2 border-gray-100 focus:border-brand-green outline-none bg-white font-medium"
+                                className={`w-full p-4 rounded-xl border-2 ${errors.investmentTerms?.roiFrequency ? 'border-red-500 ring-red-500' : 'border-gray-100'} focus:border-brand-green outline-none bg-white font-medium`}
                             >
                                 <option value="annually">Annually</option>
                                 <option value="quarterly">Quarterly</option>
                                 <option value="monthly">Monthly</option>
                                 <option value="end-of-term">End of Term (Maturity)</option>
                             </select>
+                            {errors.investmentTerms?.roiFrequency && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.investmentTerms.roiFrequency.message}</p>}
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Investment Duration (Months)</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Investment Duration (Months) (Optional)</label>
                         <input
                             type="number"
                             {...register("investmentTerms.duration")}
                             placeholder="e.g. 12 or 24"
-                            className="w-full p-4 rounded-xl border-2 border-gray-100 focus:border-brand-green outline-none font-medium"
+                            className={`w-full p-4 rounded-xl border-2 ${errors.investmentTerms?.duration ? 'border-red-500 ring-red-500' : 'border-gray-100'} focus:border-brand-green outline-none font-medium`}
                         />
+                        {errors.investmentTerms?.duration && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.investmentTerms.duration.message}</p>}
                     </div>
 
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Repayment Plan Description</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Repayment Plan Description (Optional)</label>
                         <textarea
                             {...register("investmentTerms.repaymentSchedule")}
                             placeholder="Explain how investors will be paid back (e.g. from rental income, sales proceeds, etc.)"
-                            className="w-full p-4 rounded-xl border-2 border-gray-100 focus:border-brand-green outline-none font-medium h-32 resize-none"
+                            className={`w-full p-4 rounded-xl border-2 ${errors.investmentTerms?.repaymentSchedule ? 'border-red-500 ring-red-500' : 'border-gray-100'} focus:border-brand-green outline-none font-medium h-32 resize-none`}
                         />
+                        {errors.investmentTerms?.repaymentSchedule && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.investmentTerms.repaymentSchedule.message}</p>}
                     </div>
 
                     <div className="bg-yellow-50 p-4 rounded-xl flex gap-3 items-start text-yellow-800 text-sm">

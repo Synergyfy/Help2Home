@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 
 export type PropertyType = 'rent' | 'buy' | 'service-apartment' | 'rent-to-own' | 'invest';
 
-export type PropertyCategory = 
+export type PropertyCategory =
   | 'residential-properties-to-rent'
   | 'student-properties-to-rent'
   | 'corporate-properties-to-rent'
@@ -26,7 +26,7 @@ export type InclusionMode = 'include' | 'exclude' | 'show-only';
 export type AddedTimeframe = 'anytime' | '24h' | '3d' | '7d' | '14d' | '30d';
 export type OwnershipType = 'all' | 'freehold' | 'leasehold' | 'share-of-freehold';
 export type SortOption = 'featured' | 'price-low' | 'price-high' | 'newest';
-export type Status = 'all'| 'available' | 'sold';
+export type Status = 'all' | 'available' | 'sold';
 
 interface MinMax {
   min: number | null;
@@ -35,7 +35,7 @@ interface MinMax {
 
 interface MarketplaceFilters {
   propertyType: PropertyType;
-  categories: PropertyCategory[]; 
+  categories: PropertyCategory[];
   location: string;
   radius: number;
   bedrooms: MinMax;
@@ -43,12 +43,12 @@ interface MarketplaceFilters {
   priceRange: { min: number; max: number };
   category: string;
   status: Status;
-  
+
   newBuild: InclusionMode;
   sharedOwnership: InclusionMode;
   retirementHomes: InclusionMode;
   auction: InclusionMode;
-  offPlan: InclusionMode; 
+  offPlan: InclusionMode;
 
   garden: boolean;
   parking: boolean;
@@ -56,7 +56,7 @@ interface MarketplaceFilters {
   chainFree: boolean;
   reducedPrice: boolean;
   underOffer: boolean;
-  
+
   serviced: boolean;
   electricity: boolean;
   waterSupply: boolean;
@@ -65,17 +65,21 @@ interface MarketplaceFilters {
   pool: boolean;
 
   furnished: boolean;
-  features: string[]; 
+  features: string[];
   ownership: OwnershipType;
   dateAdded: AddedTimeframe;
   keywords: string;
-  
+
   floorLevel?: number;
   totalArea?: number;
   isVerified: boolean;
-  
+
   sortBy: SortOption;
   searchQuery: string;
+
+  // Availability
+  availability: 'any' | 'now' | 'soon' | 'specific';
+  availableFrom?: string; // ISO Date
 
   [key: string]: any;
 }
@@ -85,10 +89,10 @@ interface MarketplaceState {
   currentPage: number;
   showFilterModal: boolean;
   resultsCount: number;
-  
+
   setFilters: (filters: Partial<MarketplaceFilters>) => void;
-  setPropertyType: (type: PropertyType) => void; 
-  setLocation: (location: string) => void; 
+  setPropertyType: (type: PropertyType) => void;
+  setLocation: (location: string) => void;
   setCategory: (newCategory: string) => void; // Defined here
   setSortBy: (sort: SortOption) => void;
   toggleCategory: (category: PropertyCategory) => void;
@@ -116,7 +120,7 @@ const defaultFilters: MarketplaceFilters = {
   sharedOwnership: 'include',
   retirementHomes: 'include',
   auction: 'include',
-  offPlan: 'include', 
+  offPlan: 'include',
   garden: false,
   parking: false,
   balcony: false,
@@ -124,35 +128,37 @@ const defaultFilters: MarketplaceFilters = {
   reducedPrice: false,
   underOffer: false,
   serviced: false,
-  electricity: false, 
-  waterSupply: false, 
+  electricity: false,
+  waterSupply: false,
   security: false,
   gym: false,
   pool: false,
   furnished: false,
   isVerified: false,
   features: [],
-  ownership: 'all', 
+  ownership: 'all',
   dateAdded: 'anytime',
   keywords: '',
   sortBy: 'featured',
   searchQuery: '',
+  availability: 'any',
+  availableFrom: undefined
 };
 
 export const useMarketplaceStore = create<MarketplaceState>()(
   persist(
-    (set, get) => ({ 
+    (set, get) => ({
       filters: defaultFilters,
       currentPage: 1,
       showFilterModal: false,
       resultsCount: 0,
 
       setResultsCount: (count) => set({ resultsCount: count }),
-      
-      setFilters: (newFilters) => 
-        set((state) => ({ 
-          filters: { ...state.filters, ...newFilters }, 
-          currentPage: 1 
+
+      setFilters: (newFilters) =>
+        set((state) => ({
+          filters: { ...state.filters, ...newFilters },
+          currentPage: 1
         })),
 
       setPropertyType: (type) =>
@@ -200,7 +206,7 @@ export const useMarketplaceStore = create<MarketplaceState>()(
       resetAdvancedFilters: () => set((state) => ({
         filters: {
           ...state.filters,
-          categories: [], 
+          categories: [],
           keywords: '',
           newBuild: 'include',
           sharedOwnership: 'include',

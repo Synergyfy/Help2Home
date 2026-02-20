@@ -1,0 +1,5 @@
+export const FEATURE_FLAGS = {
+    RENTAL_BACKED_INVESTMENTS: true,
+    SECONDARY_MARKET: false,
+    AUTO_COMPOUNDING: false,
+};

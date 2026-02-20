@@ -46,7 +46,6 @@ export interface InvestorData {
   investmentBudget: string;
   investmentType: string[];
   riskTolerance: string;
-  expectedReturns: string;
   investmentTimeline: string;
 }
 
@@ -72,6 +71,7 @@ interface OnboardingStore {
   currentPhone: string;
   firstName: string;
   lastName: string;
+  signupPath: 'propertyManagement' | 'tenant' | 'investor' | 'developer' | null;
 
   
   setStep: (step: number) => void;
@@ -89,6 +89,7 @@ interface OnboardingStore {
   completeRoleOnboarding: (role: Role) => void;
   resetOnboarding: () => void;
   getTotalSteps: () => number;
+  setSignupPath: (path: 'propertyManagement' | 'tenant' | 'investor' | 'developer' | null) => void;
   
  
   getCurrentUser: () => ({
@@ -118,6 +119,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
         admin: false,
         superAdmin: false,
       },
+      signupPath: null,
 
       getCurrentUser: () => {
         const state = get();
@@ -160,6 +162,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
         return { selectedRoles: state.selectedRoles.includes(role) ? [] : [role] };
       }),
       setActiveRole: (activeRole) => set({ activeRole }),
+      setSignupPath: (signupPath) => set({ signupPath }),
 
       updateRoleData: (role, data) => set((state) => ({
         draftData: { ...state.draftData, [role]: { ...state.draftData[role], ...data } }
@@ -178,7 +181,8 @@ export const useOnboardingStore = create<OnboardingStore>()(
         onboardingCompleted: false,
         roleOnboardingCompleted: {
           tenant: false, landlord: false, caretaker: false, agent: false, investor: false, developer: false, admin: false, superAdmin: false
-        }
+        },
+        signupPath: null,
       }),
     }),
     { name: 'help2home-onboarding-wizard' }

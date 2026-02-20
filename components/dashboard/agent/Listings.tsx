@@ -2,13 +2,13 @@
 
 import React from 'react';
 import { MdSearch, MdFilterList, MdLocationOn } from 'react-icons/md';
-import { HiOutlinePlus, HiOutlineHome } from 'react-icons/hi2';
+import { HiOutlinePlus, HiOutlineHome, HiOutlineEye } from 'react-icons/hi2';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 const properties = [
-    { id: 1, title: 'Luxury 4-Bed Penthouse', loc: 'Ikoyi, Lagos', price: '₦450M', status: 'Active', image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=400' },
-    { id: 2, title: 'Modern Studio Apartment', loc: 'Lekki Phase 1', price: '₦85M', status: 'Sold', image: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=400' },
+    { id: 1, title: 'Luxury 4-Bed Penthouse', loc: 'Ikoyi, Lagos', price: '₦450M', status: 'Active', views: 1240, image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=400' },
+    { id: 2, title: 'Modern Studio Apartment', loc: 'Lekki Phase 1', price: '₦85M', status: 'Sold', views: 856, image: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=400' },
 ];
 
 export default function MyListingsPage() {
@@ -46,6 +46,38 @@ export default function MyListingsPage() {
                 </div>
             </div>
 
+            {/* Stats Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
+                    <div className="size-12 rounded-2xl bg-brand-green/10 flex items-center justify-center text-brand-green mb-4">
+                        <HiOutlineHome size={24} />
+                    </div>
+                    <div className="text-2xl font-semibold text-gray-900">{properties.length}</div>
+                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Inventory</div>
+                </div>
+                <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
+                    <div className="size-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 mb-4">
+                        <HiOutlineHome size={24} />
+                    </div>
+                    <div className="text-2xl font-semibold text-gray-900">{properties.filter(p => p.status === 'Active').length}</div>
+                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Active Listings</div>
+                </div>
+                <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
+                    <div className="size-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-500 mb-4">
+                        <HiOutlineHome size={24} />
+                    </div>
+                    <div className="text-2xl font-semibold text-gray-900">{properties.filter(p => p.status === 'Sold').length}</div>
+                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Sold/Let</div>
+                </div>
+                <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
+                    <div className="size-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-4">
+                        <HiOutlineEye size={24} />
+                    </div>
+                    <div className="text-2xl font-semibold text-gray-900">{properties.reduce((acc, p) => acc + (p.views || 0), 0).toLocaleString()}</div>
+                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Views</div>
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {properties.map((prop) => (
                     <div key={prop.id} className="bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
@@ -65,13 +97,24 @@ export default function MyListingsPage() {
                             <div className="flex items-center gap-1.5 text-gray-500 text-xs font-medium mt-2">
                                 <MdLocationOn size={16} className="text-brand-green" /> {prop.loc}
                             </div>
-                            <div className="mt-6 flex justify-between items-center pt-5 border-t border-gray-50">
-                                <span className="text-xl font-semibold text-gray-900">{prop.price}</span>
+                            
+                            <div className="flex items-center justify-between pt-5 mt-6 border-t border-gray-50">
+                                <div>
+                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Price</p>
+                                    <p className="text-lg font-semibold text-gray-900">{prop.price}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Views</p>
+                                    <p className="text-lg font-semibold text-gray-900">{prop.views.toLocaleString()}</p>
+                                </div>
+                            </div>
+
+                            <div className="mt-4 pt-4 border-t border-gray-50 flex justify-end">
                                 <button
                                     onClick={() => handleManage(prop.id, prop.title)}
                                     className="text-[10px] font-black text-gray-400 hover:text-brand-green uppercase tracking-[0.2em] transition-colors"
                                 >
-                                    Manage
+                                    Manage Details
                                 </button>
                             </div>
                         </div>

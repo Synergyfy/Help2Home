@@ -13,7 +13,7 @@ export default function SignUp() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect');
-  const { setRoles, goToStep } = useOnboardingStore();
+  const { setRoles, goToStep, setSignupPath } = useOnboardingStore();
 
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [activeMessage, setActiveMessage] = useState("");
@@ -85,7 +85,10 @@ export default function SignUp() {
           {/* Tenant Card */}
           <FadeIn direction="up">
             <button
-              onClick={() => triggerCreativeRedirect(['tenant'])}
+              onClick={() => {
+                setSignupPath('tenant');
+                triggerCreativeRedirect(['tenant']);
+              }}
               className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
             >
               <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
@@ -101,7 +104,10 @@ export default function SignUp() {
           {/* Landlord/Management Card */}
           <FadeIn direction="up">
             <button
-              onClick={() => triggerCreativeRedirect(['landlord', 'agent', 'caretaker'])} // Now selects all management roles
+              onClick={() => {
+                setSignupPath('propertyManagement');
+                triggerCreativeRedirect([]);
+              }}
               className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
             >
               <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
@@ -117,7 +123,10 @@ export default function SignUp() {
           {/* Investor Card */}
           <FadeIn direction="up">
             <button
-              onClick={() => triggerCreativeRedirect(['investor'])}
+              onClick={() => {
+                setSignupPath('investor');
+                triggerCreativeRedirect(['investor']);
+              }}
               className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
             >
               <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
@@ -133,7 +142,10 @@ export default function SignUp() {
           {/* Developer Card */}
           <FadeIn direction="up">
             <button
-              onClick={() => triggerCreativeRedirect(['developer'])}
+              onClick={() => {
+                setSignupPath('developer');
+                triggerCreativeRedirect(['developer']);
+              }}
               className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
             >
               <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">

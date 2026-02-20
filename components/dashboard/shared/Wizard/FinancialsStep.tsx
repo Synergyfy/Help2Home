@@ -10,8 +10,11 @@ import {
     HiOutlineShieldCheck,
     HiOutlineReceiptPercent,
     HiOutlineClock,
-    HiOutlineInformationCircle
+    HiOutlineInformationCircle,
+    HiOutlineExclamationTriangle
 } from 'react-icons/hi2';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import { Tooltip } from 'react-tooltip';
 
 interface FinancialsStepProps {
@@ -33,7 +36,18 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
     const price = useWatch({ name: 'price' });
     const installments = useWatch({ name: 'installments' });
     const listingType = useWatch({ name: 'listingType' });
+    const availabilityDuration = useWatch({ name: 'availabilityDuration' });
     const amenities = useWatch({ name: 'amenities' }) || [];
+
+    // Local state for UI interactions
+    const [showInstallmentModal, setShowInstallmentModal] = useState(false);
+    const [policyAgreed, setPolicyAgreed] = useState(false);
+    const [tempPolicyAgreed, setTempPolicyAgreed] = useState(false);
+    const [periodWarning, setPeriodWarning] = useState(false);
+    const [depositError, setDepositError] = useState<string | null>(null);
+
+    // Constants
+    const ADMIN_MONTHLY_INTEREST = 2; // 2% per month
 
     // Calculate dynamic values for the summary
     const propertyPrice = price?.amount || 0;
@@ -52,20 +66,106 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
 
     const remainingBalance = totalPropertyCost - upfrontDeposit;
 
-    const handleTenureToggle = (month: number) => {
-        const currentTenures = installments?.tenures || [];
-        const newTenures = currentTenures.includes(month)
-            ? currentTenures.filter((m: number) => m !== month)
-            : [...currentTenures, month];
-        setValue('installments.tenures', newTenures);
+    // Updated calculations with Interest
+    const interestRate = ADMIN_MONTHLY_INTEREST; // Fixed by Admin
+    const selectedTenure = (installments?.tenures && installments.tenures[0]) || 1;
+
+    // Calculate Monthly Repayment with Interest
+    // Formula: (Principal + (Principal * Rate * Months)) / Months
+    // OR: (Principal / Months) + (Principal * Rate)
+    const principal = remainingBalance;
+    const totalInterest = principal * (interestRate / 100) * selectedTenure;
+    const totalRepayable = principal + totalInterest;
+    const monthlyRepayment = selectedTenure > 0 ? totalRepayable / selectedTenure : 0;
+
+    // Effects
+    useEffect(() => {
+        // Enforce Interest Rate safely
+        if (installments?.enabled && installments?.interestRate !== ADMIN_MONTHLY_INTEREST) {
+            setValue('installments.interestRate', ADMIN_MONTHLY_INTEREST);
+        }
+    }, [installments?.enabled, installments?.interestRate, setValue]);
+
+    const handleTenureChange = (val: number) => {
+        setValue('installments.tenures', [val]);
     };
 
     const handleDepositValueChange = (val: string) => {
         const numVal = Number(val.replace(/,/g, ''));
-        if (!isNaN(numVal)) {
-            setValue('installments.depositValue', numVal);
+        if (isNaN(numVal)) return;
+
+        // Validation 90%
+        if (depositType === 'percentage') {
+            if (numVal > 90) {
+                setValue('installments.depositValue', 90);
+                setDepositError("Maximum down payment is 90%");
+                setTimeout(() => setDepositError(null), 3000);
+                return; // Cap at 90
+            }
+        } else {
+            const maxFixed = propertyPrice * 0.9;
+            if (numVal > maxFixed) {
+                setValue('installments.depositValue', maxFixed);
+                setDepositError(`Maximum down payment is ₦${formatNumber(maxFixed)} (90%)`);
+                setTimeout(() => setDepositError(null), 3000);
+                return;
+            }
+        }
+        setDepositError(null);
+        setValue('installments.depositValue', numVal);
+    };
+
+    const handlePeriodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setPeriodWarning(true);
+        setTimeout(() => setPeriodWarning(false), 5000); // clear after 5s
+        register('price.period').onChange(e);
+    };
+
+    const switchDepositType = (newType: 'fixed' | 'percentage') => {
+        if (newType === depositType) return;
+
+        // Auto-convert
+        let newValue = 0;
+        if (newType === 'fixed') {
+            // % to Fixed
+            newValue = propertyPrice * (depositValue / 100);
+        } else {
+            // Fixed to %
+            newValue = propertyPrice > 0 ? (depositValue / propertyPrice) * 100 : 0;
+        }
+
+        setValue('installments.depositType', newType);
+        setValue('installments.depositValue', Number(newValue.toFixed(2)));
+    };
+
+    const toggleInstallments = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const isChecked = e.target.checked;
+        if (isChecked) {
+            if (!policyAgreed) {
+                setShowInstallmentModal(true);
+            } else {
+                setValue('installments.enabled', true);
+                if (!installments?.tenures?.length) setValue('installments.tenures', [1]);
+                setValue('installments.interestRate', ADMIN_MONTHLY_INTEREST);
+            }
+        } else {
+            setValue('installments.enabled', false);
         }
     };
+
+    const confirmPolicy = () => {
+        setPolicyAgreed(true);
+        setValue('installments.enabled', true);
+        if (!installments?.tenures?.length) setValue('installments.tenures', [1]);
+        setValue('installments.interestRate', ADMIN_MONTHLY_INTEREST);
+        setShowInstallmentModal(false);
+    };
+
+    // Calculate Slider Range
+    // 6-month prop -> 1-4 months
+    // 1-year (12) -> 1-10 months
+    // 2-year (24) -> 1-20 months
+    const maxSliderValue = availabilityDuration === 6 ? 4 : availabilityDuration === 24 ? 20 : 10;
 
     const sectionClasses = "bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8";
     const labelClasses = "block text-xs font-black uppercase tracking-widest text-gray-400 mb-2";
@@ -88,7 +188,7 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="group">
                             <label className={labelClasses}>
-                                {listingType === 'Sale' ? 'Purchase Price (₦)' : listingType === 'Service-Apartment' ? 'Daily Rate (₦)' : 'Rent Amount (₦)'}
+                                {listingType === 'Sale' ? 'Purchase Price (₦) *' : listingType === 'Service-Apartment' ? 'Daily Rate (₦) *' : 'Rent Amount (₦) *'}
                             </label>
                             <div className="relative">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-gray-900">₦</span>
@@ -102,22 +202,32 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
                                         }
                                     }}
                                     value={price?.amount ? formatNumber(price.amount) : ''}
-                                    className={`w-full h-16 pl-12 pr-4 rounded-2xl border-2 ${errors.price?.amount ? 'border-red-500' : 'border-gray-100 group-hover:border-brand-green/30'} bg-gray-50 text-gray-900 focus:border-brand-green focus:bg-white focus:ring-4 focus:ring-brand-green/5 outline-none transition-all font-black text-2xl`}
+                                    className={`w-full h-16 pl-12 pr-4 rounded-2xl border-2 ${errors.price?.amount ? 'border-red-500 ring-red-500' : 'border-gray-100 group-hover:border-brand-green/30'} bg-gray-50 text-gray-900 focus:border-brand-green focus:bg-white focus:ring-4 focus:ring-brand-green/5 outline-none transition-all font-black text-2xl`}
                                 />
                             </div>
                             {errors.price?.amount && <p className="text-xs text-red-500 mt-2 font-medium">{errors.price.amount.message}</p>}
                         </div>
 
                         <div>
-                            <label className={labelClasses}>Billing Cycle</label>
+                            <div className="flex justify-between items-center mb-2">
+                                <label className={labelClasses + " mb-0"}>Billing Cycle *</label>
+                                {periodWarning && (
+                                    <span className="text-[10px] font-bold text-orange-600 animate-pulse flex items-center gap-1">
+                                        <HiOutlineExclamationTriangle /> Update Amount!
+                                    </span>
+                                )}
+                            </div>
                             <select
                                 {...register('price.period')}
-                                className="w-full h-16 px-6 rounded-2xl border-2 border-gray-100 bg-gray-50 text-gray-900 focus:border-brand-green focus:bg-white outline-none font-bold text-lg transition-all"
+                                onChange={handlePeriodChange}
+                                className={`w-full h-16 px-6 rounded-2xl border-2 ${errors.price?.period ? 'border-red-500 ring-red-500' : periodWarning ? 'border-orange-300 ring-1 ring-orange-200' : 'border-gray-100'} bg-gray-50 text-gray-900 focus:border-brand-green focus:bg-white outline-none font-bold text-lg transition-all`}
                             >
+                                <option value="">Select Period</option>
                                 <option value="year">Per Annum</option>
                                 <option value="month">Per Month</option>
                                 {listingType === 'Service-Apartment' && <option value="day">Daily</option>}
                             </select>
+                            {errors.price?.period && <p className="text-xs text-red-500 mt-2 font-medium">{errors.price.period.message}</p>}
                         </div>
                     </div>
                 </section>
@@ -130,12 +240,12 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
                                 <HiOutlineClock size={24} />
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-gray-900">Property Availability</h3>
+                                <h3 className="text-lg font-bold text-gray-900">Property Availability (Optional)</h3>
                                 <p className="text-sm text-gray-500">How long is this property available for?</p>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className={`grid grid-cols-3 gap-4 ${errors.availabilityDuration ? 'border-red-500 ring-1 ring-red-500 rounded-lg p-2' : ''}`}>
                             {[6, 12, 24].map((months) => (
                                 <label key={months} className="relative cursor-pointer group">
                                     <input
@@ -152,6 +262,7 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
                                 </label>
                             ))}
                         </div>
+                        {errors.availabilityDuration && <p className="text-[10px] text-red-500 mt-2 font-medium">{errors.availabilityDuration.message}</p>}
                     </section>
                 )}
 
@@ -180,14 +291,15 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
                                     <HiOutlineCalculator size={28} />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900">Installment Strategy</h3>
+                                    <h3 className="text-xl font-bold text-gray-900">Installment Strategy (Optional)</h3>
                                     <p className="text-sm text-gray-500">Flexible payment options for tenants.</p>
                                 </div>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer scale-110">
                                 <input
                                     type="checkbox"
-                                    {...register('installments.enabled')}
+                                    checked={installments?.enabled || false}
+                                    onChange={toggleInstallments}
                                     className="sr-only peer"
                                 />
                                 <div className="w-12 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-green shadow-inner"></div>
@@ -199,20 +311,25 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <div className="p-6 rounded-3xl border-2 border-brand-green/10 bg-brand-green/5">
                                         <div className="flex items-center justify-between mb-4">
-                                            <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest">
-                                                Downpayment / Deposit
+                                            <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest flex items-center gap-1">
+                                                Downpayment / Deposit (Optional)
+                                                <HiOutlineInformationCircle
+                                                    data-tooltip-id="deposit-tooltip"
+                                                    data-tooltip-content="Initial amount paid upfront. Reduces monthly repayments."
+                                                    className="text-gray-400 cursor-help"
+                                                />
                                             </label>
                                             <div className="flex bg-white rounded-lg p-1 border border-gray-100 shadow-sm">
                                                 <button
                                                     type="button"
-                                                    onClick={() => setValue('installments.depositType', 'percentage')}
+                                                    onClick={() => switchDepositType('percentage')}
                                                     className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${depositType === 'percentage' ? 'bg-brand-green text-white' : 'text-gray-400 hover:text-gray-600'}`}
                                                 >
                                                     Percent
                                                 </button>
                                                 <button
                                                     type="button"
-                                                    onClick={() => setValue('installments.depositType', 'fixed')}
+                                                    onClick={() => switchDepositType('fixed')}
                                                     className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${depositType === 'fixed' ? 'bg-brand-green text-white' : 'text-gray-400 hover:text-gray-600'}`}
                                                 >
                                                     Fixed
@@ -226,11 +343,15 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
                                                 type="text"
                                                 value={depositValue ? formatNumber(depositValue) : ''}
                                                 onChange={(e) => handleDepositValueChange(e.target.value)}
-                                                className="w-full h-14 px-4 rounded-xl border-2 border-white bg-white text-2xl font-black text-brand-green focus:border-brand-green outline-none shadow-sm"
+                                                className={`w-full h-14 px-4 rounded-xl border-2 ${errors.installments?.depositValue ? 'border-red-500 ring-red-500' : 'border-white'} bg-white text-2xl font-black text-brand-green focus:border-brand-green outline-none shadow-sm`}
                                                 placeholder="0"
                                             />
                                             {depositType === 'percentage' && <span className="text-xl font-bold text-brand-green">%</span>}
                                         </div>
+                                        {errors.installments?.depositValue && <p className="text-xs text-red-500 mt-2 font-medium">{errors.installments.depositValue.message}</p>}
+                                        {depositError && <p className="text-xs text-red-500 mt-2 font-bold animate-pulse">{depositError}</p>}
+                                        {/* Validation Hints */}
+                                        <p className="text-[10px] text-gray-400 mt-2 text-right">Max: {depositType === 'percentage' ? '90%' : `₦${formatNumber(propertyPrice * 0.9)}`}</p>
 
                                         {/* Real-time conversion container */}
                                         <div className="mt-4 p-3 bg-white/50 rounded-xl border border-dashed border-brand-green/20">
@@ -254,45 +375,76 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
 
                                     <div>
                                         <div className="flex items-center gap-2 mb-3">
-                                            <label className={labelClasses + " mb-0"}>Repayment Strategy</label>
-                                            <HiOutlineInformationCircle
-                                                data-tooltip-id="tenure-tooltip"
-                                                data-tooltip-content="Select the available payment durations for this property."
-                                                className="text-gray-400 cursor-help"
-                                            />
-                                        </div>
-                                        <div className="grid grid-cols-3 gap-2">
-                                            {(listingType === 'Sale' ? [3, 6, 9, 10] : [3, 6, 9, 10]).map(months => (
-                                                <button
-                                                    key={months}
-                                                    type="button"
-                                                    onClick={() => handleTenureToggle(months)}
-                                                    className={`flex flex-col items-center justify-center p-2 rounded-xl border-2 transition-all ${installments.tenures?.includes(months) ? 'border-brand-green bg-green-50 text-brand-green' : 'border-gray-100 bg-gray-50 text-gray-400 hover:border-gray-200'}`}
-                                                >
-                                                    <span className="text-xs font-black">{months}M</span>
-                                                    <span className="text-[8px] uppercase font-bold tracking-tighter">{months} Mos</span>
-                                                </button>
-                                            ))}
-                                        </div>
-
-                                        <div className="mt-8 space-y-4 pt-8 border-t border-gray-100">
-                                            <div className="flex items-center justify-between">
-                                                <label className={labelClasses + " mb-0"}>Annual Interest Rate (%)</label>
+                                            <label className={labelClasses + " mb-0 flex items-center gap-1"}>
+                                                Repayment Duration
                                                 <HiOutlineInformationCircle
-                                                    data-tooltip-id="interest-tooltip"
-                                                    data-tooltip-content="Set the interest rate for this direct installment plan. Leave at 0 for ethical financing."
+                                                    data-tooltip-id="duration-tooltip"
+                                                    data-tooltip-content="Time to repay the remaining balance in monthly installments."
                                                     className="text-gray-400 cursor-help"
                                                 />
+                                            </label>
+                                        </div>
+
+                                        {/* SLIDER COMPONENT */}
+                                        <div className="bg-white p-6 rounded-2xl border border-gray-100 mb-2">
+                                            <div className="flex justify-between items-end mb-6">
+                                                <span className="text-xs font-bold text-gray-400">Duration</span>
+                                                <div className="text-right">
+                                                    <span className="text-3xl font-black text-brand-green">{selectedTenure}</span>
+                                                    <span className="text-xs font-bold text-gray-500 ml-1">Months</span>
+                                                </div>
                                             </div>
-                                            <div className="relative group/interest">
-                                                <input
-                                                    type="number"
-                                                    {...register('installments.interestRate')}
-                                                    className="w-full h-14 pl-12 pr-4 rounded-xl border-2 border-gray-100 bg-gray-50 text-xl font-black text-gray-900 focus:border-brand-green focus:bg-white outline-none transition-all group-hover/interest:border-brand-green/30"
-                                                    placeholder="0"
-                                                />
-                                                <HiOutlineReceiptPercent className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-green size-6" />
-                                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">%</span>
+                                            <input
+                                                type="range"
+                                                min="1"
+                                                max={maxSliderValue}
+                                                step="1"
+                                                value={selectedTenure}
+                                                onChange={(e) => handleTenureChange(Number(e.target.value))}
+                                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-green"
+                                            />
+                                            <div className="flex justify-between mt-2 text-[10px] font-bold text-gray-300 uppercase">
+                                                <span>1 Month</span>
+                                                <span>{maxSliderValue} Months</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-3">
+                                            {/* Remaining Balance Breakdown */}
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex flex-col">
+                                                    <span className="text-xs font-bold text-gray-500">Remaining Principal</span>
+                                                    <span className="text-[10px] text-gray-400">Before interest</span>
+                                                </div>
+                                                <span className="text-sm font-bold text-gray-900">₦{formatNumber(principal)}</span>
+                                            </div>
+
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex flex-col">
+                                                    <span className="text-xs font-bold text-gray-500 flex items-center gap-1">
+                                                        Total Interest
+                                                        <HiOutlineInformationCircle
+                                                            data-tooltip-id="interest-tooltip"
+                                                            data-tooltip-content={`Calculated at ${ADMIN_MONTHLY_INTEREST}% per month for ${selectedTenure} months`}
+                                                            className="text-gray-300"
+                                                        />
+                                                    </span>
+                                                    <span className="text-[10px] text-gray-400">{ADMIN_MONTHLY_INTEREST}% x {selectedTenure} mos</span>
+                                                </div>
+                                                <span className="text-sm font-bold text-orange-600">+ ₦{formatNumber(totalInterest)}</span>
+                                            </div>
+
+                                            <div className="pt-3 border-t border-gray-200 dashed flex justify-between items-center">
+                                                <span className="text-xs font-black uppercase text-gray-400 tracking-wider">Net Balance</span>
+                                                <span className="text-base font-black text-gray-900">₦{formatNumber(totalRepayable)}</span>
+                                            </div>
+
+                                            <div className="pt-3 border-t-2 border-brand-green/10 flex justify-between items-center bg-brand-green/5 -mx-4 -mb-4 p-4 rounded-b-2xl">
+                                                <div>
+                                                    <span className="block text-[10px] font-bold text-brand-green uppercase tracking-wide">Monthly Payment</span>
+                                                    <span className="text-[10px] text-brand-green/60 font-medium">Principal + Interest</span>
+                                                </div>
+                                                <span className="text-xl font-black text-brand-green">₦{formatNumber(monthlyRepayment)}<span className="text-xs text-brand-green/60 font-medium">/mo</span></span>
                                             </div>
                                         </div>
 
@@ -310,6 +462,61 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
                     </section>
                 )}
 
+                {/* INSTALLMENT POLICY MODAL */}
+                {showInstallmentModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                        <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl scale-100 animate-in zoom-in-95 duration-200">
+                            <div className="size-16 bg-brand-green/10 text-brand-green rounded-full flex items-center justify-center mb-6 mx-auto">
+                                <HiOutlineShieldCheck size={32} />
+                            </div>
+                            <h3 className="text-xl font-bold text-center text-gray-900 mb-2">Installment Policy Agreement</h3>
+                            <p className="text-sm text-center text-gray-500 mb-6 leading-relaxed">
+                                By enabling installments, you agree to receive payments directly from tenants over time.
+                                Financing partners involve strict adherence to our policies.
+                            </p>
+
+                            <div className="bg-yellow-50 p-4 rounded-xl border border-yellow-100 mb-6">
+                                <p className="text-xs font-bold text-yellow-800 flex items-start gap-2">
+                                    <HiOutlineExclamationTriangle className="shrink-0 mt-0.5" />
+                                    Interest will be added to the total payable amount automatically based on the monthly rate.
+                                </p>
+                            </div>
+
+                            <label className="flex items-start gap-3 p-4 border border-gray-100 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors mb-6">
+                                <input
+                                    type="checkbox"
+                                    checked={tempPolicyAgreed}
+                                    onChange={(e) => setTempPolicyAgreed(e.target.checked)}
+                                    className="mt-1 w-4 h-4 rounded border-gray-300 text-brand-green focus:ring-brand-green"
+                                />
+                                <span className="text-xs text-gray-600 leading-relaxed">
+                                    I understand the policies. Read full <Link href="#" className="text-brand-green underline font-bold">Installment Policy for Landlord</Link>
+                                </span>
+                            </label>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    onClick={() => setShowInstallmentModal(false)}
+                                    className="py-3.5 rounded-xl font-bold text-sm text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={confirmPolicy}
+                                    disabled={!tempPolicyAgreed}
+                                    className="py-3.5 rounded-xl font-bold text-sm text-white bg-brand-green hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-green/20"
+                                >
+                                    Enable Installments
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                <Tooltip id="deposit-tooltip" className="z-50 !bg-gray-900 !text-white !text-xs !rounded-lg !px-3 !py-2 !opacity-100" />
+                <Tooltip id="duration-tooltip" className="z-50 !bg-gray-900 !text-white !text-xs !rounded-lg !px-3 !py-2 !opacity-100" />
+                <Tooltip id="interest-tooltip" className="z-50 !bg-gray-900 !text-white !text-xs !rounded-lg !px-3 !py-2 !opacity-100" />
+
                 {/* IN-PAGE NAVIGATION BUTTONS */}
                 {navigation && (
                     <div className="flex items-center justify-between pt-8 border-t border-gray-100">
@@ -317,11 +524,10 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
                             type="button"
                             onClick={navigation.onBack}
                             disabled={navigation.isFirstStep}
-                            className={`px-8 py-4 rounded-2xl font-black text-sm transition-all active:scale-95 ${
-                                navigation.isFirstStep 
-                                ? 'opacity-0 pointer-events-none' 
+                            className={`px-8 py-4 rounded-2xl font-black text-sm transition-all active:scale-95 ${navigation.isFirstStep
+                                ? 'opacity-0 pointer-events-none'
                                 : 'text-gray-400 hover:text-gray-900 bg-gray-50 hover:bg-gray-100'
-                            }`}
+                                }`}
                         >
                             Back
                         </button>
@@ -401,15 +607,12 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
                                                 className="text-gray-300 size-3 cursor-help"
                                             />
                                         </div>
-                                        {installments.tenures.slice(0, 3).map((months: number) => (
-                                            <div key={months} className="flex justify-between items-center mb-1">
-                                                <span className="text-[10px] font-medium text-gray-500">{months} Months plan</span>
-                                                <span className="text-[10px] font-black text-gray-900">₦{formatNumber(Math.ceil(remainingBalance / months))}/mo</span>
+                                        <div className="pt-2 border-t border-brand-green/10">
+                                            <div className="flex justify-between items-center mb-1">
+                                                <span className="text-[10px] font-medium text-gray-500">{selectedTenure} Months plan</span>
+                                                <span className="text-[10px] font-black text-gray-900">₦{formatNumber(monthlyRepayment)}/mo</span>
                                             </div>
-                                        ))}
-                                        {installments.tenures.length > 3 && (
-                                            <p className="text-[8px] text-gray-400">+ {installments.tenures.length - 3} more strategies</p>
-                                        )}
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -434,16 +637,21 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
                             <div className="size-8 rounded-full bg-white flex items-center justify-center text-brand-green shadow-sm shrink-0 mt-1">
                                 <HiOutlineBanknotes size={14} />
                             </div>
-                            <p className="text-[10px] text-gray-500 font-medium leading-relaxed">
-                                This total represents the amount the tenant/buyer must pay to finalize the agreement.
-                                Itemized extras are included in this calculation.
-                            </p>
+                            <div className="space-y-1">
+                                <p className="text-[10px] text-gray-500 font-medium leading-relaxed">
+                                    Total Repayable (inc. Interest): <strong>₦{formatNumber(totalRepayable)}</strong>
+                                </p>
+                                <p className="text-[10px] text-gray-400 font-normal">
+                                    Monthly: ₦{formatNumber(monthlyRepayment)}/mo for {selectedTenure} months
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <Tooltip id="tenure-tooltip" />
-            <Tooltip id="sub-payment-tooltip" />
+
+            <Tooltip id="sub-payment-tooltip" className="z-50 !bg-gray-900 !text-white !text-xs !rounded-lg !px-3 !py-2 !opacity-100" />
         </div>
     );
 }
+

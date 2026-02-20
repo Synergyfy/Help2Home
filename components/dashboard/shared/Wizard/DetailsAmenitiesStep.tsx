@@ -42,7 +42,7 @@ interface DetailsAmenitiesStepProps {
 }
 
 export default function DetailsAmenitiesStep({ role, navigation }: DetailsAmenitiesStepProps = {}) {
-    const { register, setValue, watch } = useFormContext<PropertySchema>();
+    const { register, setValue, watch, formState: { errors } } = useFormContext<PropertySchema>();
     const amenities = useWatch({ name: 'amenities' }) || [];
     const [customName, setCustomName] = React.useState('');
     const [customPrice, setCustomPrice] = React.useState<number>(0);
@@ -104,33 +104,71 @@ export default function DetailsAmenitiesStep({ role, navigation }: DetailsAmenit
                     <div className="p-4 rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-md transition-all group">
                         <div className="flex items-center gap-2 mb-3">
                             <HiOutlineMoon className="text-gray-400 group-hover:text-brand-green transition-colors" />
-                            <label className={labelClasses}>Bedrooms</label>
+                            <label className={labelClasses}>Bedrooms (Optional)</label>
                         </div>
-                        <input type="number" min="0" {...register('specs.bedrooms', { valueAsNumber: true })} className={inputClasses} placeholder="0" />
+                        <input
+                            type="number"
+                            min="0"
+                            {...register('specs.bedrooms', { valueAsNumber: true })}
+                            className={`${inputClasses} ${errors.specs?.bedrooms ? 'border-red-500 ring-red-500' : ''}`}
+                            placeholder="0"
+                        />
+                        {errors.specs?.bedrooms && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.specs.bedrooms.message}</p>}
                     </div>
                     <div className="p-4 rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-md transition-all group">
                         <div className="flex items-center gap-2 mb-3">
                             <MdOutlineBathtub className="text-gray-400 group-hover:text-brand-green transition-colors" />
-                            <label className={labelClasses}>Bathrooms</label>
+                            <label className={labelClasses}>Bathrooms (Optional)</label>
                         </div>
-                        <input type="number" min="0" step="0.5" {...register('specs.bathrooms', { valueAsNumber: true })} className={inputClasses} placeholder="0" />
+                        <input
+                            type="number"
+                            min="0"
+                            step="0.5"
+                            {...register('specs.bathrooms', { valueAsNumber: true })}
+                            className={`${inputClasses} ${errors.specs?.bathrooms ? 'border-red-500 ring-red-500' : ''}`}
+                            placeholder="0"
+                        />
+                        {errors.specs?.bathrooms && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.specs.bathrooms.message}</p>}
                     </div>
                     <div className="p-4 rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-md transition-all group">
                         <div className="flex items-center gap-2 mb-3">
                             <HiOutlineSquare2Stack className="text-gray-400 group-hover:text-brand-green transition-colors" />
-                            <label className={labelClasses}>Area Size</label>
+                            <label className={labelClasses}>Area Size (Optional)</label>
                         </div>
                         <div className="flex">
-                            <input type="number" min="0" {...register('specs.area', { valueAsNumber: true })} className="w-full h-12 pl-4 pr-1 rounded-l-xl border-y border-l border-gray-200 bg-gray-50 text-gray-900 focus:border-brand-green outline-none font-bold" placeholder="0" />
-                            <select {...register('specs.areaUnit')} className="h-12 border border-gray-200 rounded-r-xl px-2 bg-gray-100 text-[10px] font-black uppercase text-gray-500 focus:outline-none"><option value="sqm">sqm</option><option value="sqft">sqft</option></select>
+                            <input
+                                type="number"
+                                min="0"
+                                {...register('specs.area', { valueAsNumber: true })}
+                                className={`w-full h-12 pl-4 pr-1 rounded-l-xl border-y border-l ${errors.specs?.area ? 'border-red-500 ring-red-500' : 'border-gray-200'} bg-gray-50 text-gray-900 focus:border-brand-green outline-none font-bold`}
+                                placeholder="0"
+                            />
+                            <select
+                                {...register('specs.areaUnit')}
+                                className={`h-12 border ${errors.specs?.areaUnit ? 'border-red-500 ring-red-500' : 'border-gray-200'} rounded-r-xl px-2 bg-gray-100 text-[10px] font-black uppercase text-gray-500 focus:outline-none`}
+                            >
+                                <option value="sqm">sqm</option>
+                                <option value="sqft">sqft</option>
+                            </select>
                         </div>
+                        {errors.specs?.area && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.specs.area.message}</p>}
+                        {errors.specs?.areaUnit && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.specs.areaUnit.message}</p>}
                     </div>
                     <div className="p-4 rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-md transition-all group">
                         <div className="flex items-center gap-2 mb-3">
                             <MdOutlineChair className="text-gray-400 group-hover:text-brand-green transition-colors" />
-                            <label className={labelClasses}>Furnishing</label>
+                            <label className={labelClasses}>Furnishing (Optional)</label>
                         </div>
-                        <select {...register('specs.furnishing')} className={inputClasses}><option value="">Select...</option><option value="Furnished">Furnished</option><option value="Partly Furnished">Partly Furnished</option><option value="Unfurnished">Unfurnished</option></select>
+                        <select
+                            {...register('specs.furnishing')}
+                            className={`${inputClasses} ${errors.specs?.furnishing ? 'border-red-500 ring-red-500' : ''}`}
+                        >
+                            <option value="">Select...</option>
+                            <option value="Furnished">Furnished</option>
+                            <option value="Partly Furnished">Partly Furnished</option>
+                            <option value="Unfurnished">Unfurnished</option>
+                        </select>
+                        {errors.specs?.furnishing && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.specs.furnishing.message}</p>}
                     </div>
                 </div>
             </section>
@@ -243,7 +281,7 @@ export default function DetailsAmenitiesStep({ role, navigation }: DetailsAmenit
                     <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
-                                <label className={labelClasses}>Charge Name</label>
+                                <label className={labelClasses}>Charge Name (Optional)</label>
                                 <input
                                     type="text"
                                     value={customName}
@@ -253,7 +291,7 @@ export default function DetailsAmenitiesStep({ role, navigation }: DetailsAmenit
                                 />
                             </div>
                             <div>
-                                <label className={labelClasses}>Amount (₦)</label>
+                                <label className={labelClasses}>Amount (₦) (Optional)</label>
                                 <div className="relative">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gray-400">₦</span>
                                     <input

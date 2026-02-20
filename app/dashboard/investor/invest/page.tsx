@@ -98,7 +98,7 @@ export default function InvestmentMarketplace() {
             />
 
             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-[#111811] mb-2">Investment Marketplace</h1>
+                <h1 className="text-2xl font-semibold text-[#111811] mb-2">Investment Marketplace</h1>
                 <p className="text-gray-500">Discover high-yield real estate opportunities from vetted developers.</p>
             </div>
 
@@ -112,7 +112,7 @@ export default function InvestmentMarketplace() {
                         className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:border-brand-green outline-none"
                     />
                 </div>
-                <button className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-700 hover:bg-gray-50">
+                <button className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-xl font-semibold text-gray-700 hover:bg-gray-50">
                     <MdFilterList /> Filter
                 </button>
             </div>
@@ -123,7 +123,7 @@ export default function InvestmentMarketplace() {
                     <div key={item.id} className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
                         {/* Image Placeholder */}
                         <div className="h-48 bg-gray-200 relative">
-                            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-gray-900 shadow-sm">
+                            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold text-gray-900 shadow-sm">
                                 {item.investmentTerms.riskLevel === 'low' ? '🛡️ Low Risk' : item.investmentTerms.riskLevel === 'medium' ? '⚖️ Balanced' : '🚀 High Growth'}
                             </div>
                         </div>
@@ -131,7 +131,7 @@ export default function InvestmentMarketplace() {
                         <div className="p-6">
                             <div className="flex justify-between items-start mb-4">
                                 <div>
-                                    <h3 className="font-bold text-lg text-gray-900 line-clamp-1">{item.title}</h3>
+                                    <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">{item.title}</h3>
                                     <p className="text-sm text-gray-500 flex items-center gap-1">
                                         <MdLocationOn size={14} /> {item.location}
                                     </p>
@@ -140,12 +140,12 @@ export default function InvestmentMarketplace() {
 
                             <div className="grid grid-cols-2 gap-4 mb-6">
                                 <div className="p-3 bg-green-50 rounded-xl">
-                                    <p className="text-[10px] font-bold text-gray-500 uppercase">Target ROI</p>
-                                    <p className="text-lg font-bold text-brand-green">{item.investmentTerms.roi}%</p>
+                                    <p className="text-[10px] font-semibold text-gray-500 uppercase">Target ROI</p>
+                                    <p className="text-lg font-semibold text-brand-green">{item.investmentTerms.roi}%</p>
                                 </div>
                                 <div className="p-3 bg-blue-50 rounded-xl">
-                                    <p className="text-[10px] font-bold text-gray-500 uppercase">Min Entry</p>
-                                    <p className="text-lg font-bold text-blue-600">₦{(item.investmentTerms.minInvestment / 1000000).toFixed(1)}M</p>
+                                    <p className="text-[10px] font-semibold text-gray-500 uppercase">Min Entry</p>
+                                    <p className="text-lg font-semibold text-blue-600">₦{(item.investmentTerms.minInvestment / 1000000).toFixed(1)}M</p>
                                 </div>
                             </div>
 
@@ -155,13 +155,13 @@ export default function InvestmentMarketplace() {
                                         setSelectedDeveloper(item.developer);
                                         setShowPartnerModal(true);
                                     }}
-                                    className="text-xs font-bold text-gray-500 flex items-center gap-1 hover:text-brand-green transition-colors"
+                                    className="text-xs font-semibold text-gray-500 flex items-center gap-1 hover:text-brand-green transition-colors"
                                 >
                                     <MdVerified className="text-brand-green" /> {item.developer}
                                 </button>
                                 <button
                                     onClick={() => setSelectedProperty(item)}
-                                    className="px-6 py-2 bg-[#111811] text-white text-sm font-bold rounded-lg hover:bg-black transition-colors"
+                                    className="px-6 py-2 bg-[#111811] text-white text-sm font-semibold rounded-lg hover:bg-black transition-colors"
                                 >
                                     View Deal
                                 </button>

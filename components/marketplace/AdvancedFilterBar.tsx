@@ -118,7 +118,7 @@ export default function AdvancedFilterBar() {
           {isOpen && (
             <motion.div
               initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}
-              className={`absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-70 p-4 ${width}`}
+              className={`absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-[100000] p-4 ${width}`}
             >
               {children}
             </motion.div>
@@ -186,7 +186,7 @@ export default function AdvancedFilterBar() {
 
               <AnimatePresence>
                 {showLocationSuggestions && locationInput.length > 0 && (
-                  <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-80 overflow-hidden max-h-64 overflow-y-auto">
+                  <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-[100000] overflow-hidden max-h-64 overflow-y-auto">
                     {isLoading ? <div className="p-4 text-center text-sm text-gray-500">Searching...</div> :
                       locations?.map((loc: any) => (
                         <button key={loc.id} onClick={() => handleLocationSelect(loc.name)} className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 flex items-center gap-3 border-b border-gray-50 last:border-none">

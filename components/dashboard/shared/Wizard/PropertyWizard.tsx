@@ -70,23 +70,42 @@ export default function PropertyWizard({
 
   const ALL_STEPS_MAP: Record<
     string,
-    { label: string; component: React.ReactElement }
-  > = {
-    basics: { label: 'Basics', component: <BasicsStep role={roleKey} /> },
-    location: { label: 'Location', component: <LocationStep /> },
-    financials: { label: 'Financials', component: <FinancialsStep role={roleKey} /> },
-    details: { label: 'Details', component: <DetailsAmenitiesStep role={roleKey} /> },
-    media: { label: 'Media', component: <MediaStep role={roleKey} /> },
-    'project-timeline': { label: 'Timeline', component: <ProjectTimelineStep /> },
-    'investment-terms': { label: 'Investment', component: <InvestmentTermsStep /> },
-    preview: { label: 'Preview', component: <TermsPreviewStep role={roleKey} /> }
+    { label: string; Component: React.ComponentType<any>; props?: any }
+  > = React.useMemo(() => ({
+    basics: { label: 'Basics', Component: BasicsStep, props: { role: roleKey } },
+    location: { label: 'Location', Component: LocationStep },
+    financials: { label: 'Financials', Component: FinancialsStep, props: { role: roleKey } },
+    details: { label: 'Details', Component: DetailsAmenitiesStep, props: { role: roleKey } },
+    media: { label: 'Media', Component: MediaStep, props: { role: roleKey } },
+    'project-timeline': { label: 'Timeline', Component: ProjectTimelineStep },
+    'investment-terms': { label: 'Investment', Component: InvestmentTermsStep },
+    preview: { label: 'Preview', Component: TermsPreviewStep, props: { role: roleKey } }
+  }), [roleKey]);
+
+  const activeSteps = React.useMemo(() =>
+    availableStepsKeys
+      .filter(key => ALL_STEPS_MAP[key])
+      .map(key => ({ key, ...ALL_STEPS_MAP[key] })),
+    [availableStepsKeys, ALL_STEPS_MAP]);
+
+  const stepsForIndicator = React.useMemo(() =>
+    [...activeSteps.map(s => s.label), 'Complete'],
+    [activeSteps]);
+
+  const renderStep = () => {
+    const step = activeSteps[currentStep];
+    if (!step) return null;
+
+    const { Component, props } = step;
+
+    return (
+      <Component
+        {...props}
+        navigation={navigation}
+        {...(step.key === 'preview' ? { onEditStep: setCurrentStep } : {})}
+      />
+    );
   };
-
-  const activeSteps = availableStepsKeys
-    .filter(key => ALL_STEPS_MAP[key])
-    .map(key => ({ key, ...ALL_STEPS_MAP[key] }));
-
-  const stepsForIndicator = [...activeSteps.map(s => s.label), 'Complete'];
 
   const methods = useForm<PropertySchema>({
     resolver: zodResolver(propertySchema),
@@ -256,15 +275,7 @@ export default function PropertyWizard({
             <SuccessStep />
           ) : (
             <form onSubmit={(e) => e.preventDefault()}>
-              {activeSteps[currentStep]?.key === 'preview'
-                ? React.cloneElement(
-                  activeSteps[currentStep].component as React.ReactElement<any>,
-                  { onEditStep: setCurrentStep, navigation }
-                )
-                : React.cloneElement(
-                  activeSteps[currentStep].component as React.ReactElement<any>,
-                  { navigation }
-                )}
+              {renderStep()}
             </form>
           )}
         </div>

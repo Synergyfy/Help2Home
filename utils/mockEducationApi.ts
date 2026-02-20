@@ -12,8 +12,12 @@ let mockContent: EducationContent[] = [
         author: { name: 'Sarah Johnson', role: 'Housing Expert' },
         publishDate: 'Nov 15, 2025',
         format: 'article',
-        thumbnailUrl: '', // Using placeholder
+        thumbnailUrl: 'https://images.unsplash.com/photo-1560448204-61dc36dc98c8?auto=format&fit=crop&q=80&w=400',
         isSaved: false,
+        targetAudience: ['tenant'],
+        status: 'published',
+        views: 1240,
+        likes: 45,
         content: `
             <p>Moving into your first apartment is an exciting milestone, but it comes with a lot of responsibilities. Here are five essential tips to help you navigate the process smoothly.</p>
             <h3>1. Understand Your Lease</h3>
@@ -39,8 +43,12 @@ let mockContent: EducationContent[] = [
         author: { name: 'Michael Chen', role: 'Financial Advisor' },
         publishDate: 'Nov 10, 2025',
         format: 'video',
-        thumbnailUrl: '',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=400',
         isSaved: true,
+        targetAudience: ['tenant', 'investor'],
+        status: 'published',
+        views: 2100,
+        likes: 89,
         content: '<p>Video transcript placeholder...</p>',
         relatedContentIds: ['1']
     },
@@ -54,8 +62,12 @@ let mockContent: EducationContent[] = [
         author: { name: 'Sarah Johnson', role: 'Housing Expert' },
         publishDate: 'Oct 28, 2025',
         format: 'article',
-        thumbnailUrl: '',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&q=80&w=400',
         isSaved: false,
+        targetAudience: ['tenant'],
+        status: 'published',
+        views: 850,
+        likes: 32,
         content: '<p>Content placeholder...</p>',
         relatedContentIds: ['1']
     },
@@ -69,8 +81,12 @@ let mockContent: EducationContent[] = [
         author: { name: 'Barr. Adeyemi', role: 'Legal Consultant' },
         publishDate: 'Oct 15, 2025',
         format: 'article',
-        thumbnailUrl: '',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80&w=400',
         isSaved: false,
+        targetAudience: ['tenant'],
+        status: 'published',
+        views: 1560,
+        likes: 67,
         content: '<p>Content placeholder...</p>',
         relatedContentIds: ['1']
     },
@@ -84,8 +100,12 @@ let mockContent: EducationContent[] = [
         author: { name: 'Michael Chen', role: 'Financial Advisor' },
         publishDate: 'Sep 30, 2025',
         format: 'article',
-        thumbnailUrl: '',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1554224154-26032ffc0d07?auto=format&fit=crop&q=80&w=400',
         isSaved: false,
+        targetAudience: ['all'],
+        status: 'published',
+        views: 920,
+        likes: 41,
         content: '<p>Content placeholder...</p>',
         relatedContentIds: ['3']
     },
@@ -99,8 +119,12 @@ let mockContent: EducationContent[] = [
         author: { name: 'Michael Chen', role: 'Financial Advisor' },
         publishDate: 'Jan 12, 2026',
         format: 'article',
-        thumbnailUrl: '',
+        thumbnailUrl: 'https://images.unsplash.com/photo-1454165833767-027ff33027ef?auto=format&fit=crop&q=80&w=400',
         isSaved: false,
+        targetAudience: ['tenant'],
+        status: 'published',
+        views: 3400,
+        likes: 124,
         content: `
             <p>Financial literacy is the foundation of a stable and stress-free life as a renter. By understanding how to manage your money, you can not only pay your rent on time but also build a future where you own your own home.</p>
             <h3>1. Budgeting Basics</h3>

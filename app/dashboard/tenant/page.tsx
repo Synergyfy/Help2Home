@@ -2,24 +2,45 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import FadeIn from '@/components/FadeIn';
 import { useUserStore } from '@/store/userStore';
 import { useApplications } from '@/hooks/useApplications';
+import { 
+    HiOutlineKey, 
+    HiOutlineShieldCheck, 
+    HiOutlineArrowRight 
+} from 'react-icons/hi2';
 import {
     SummaryCard,
     RepaymentProgress,
     ApplicationsFeed,
     QuickLinksGrid,
-    EducationPreview
+    EducationPreview,
+    MarketplaceFundingTracker
 } from '@/components/dashboard/DashboardWidgets';
 
 export default function TenantDashboard() {
+    const router = useRouter();
     const { applications, isLoading: appsLoading } = useApplications();
+
+    // Mock Funding Data for the new tracker
+    const marketplaceFunding = [
+        {
+            id: 'fund_1',
+            propertyTitle: 'The Glass House - 5 Bed Detached',
+            targetAmount: 15000000,
+            raisedAmount: 9750000,
+            investorCount: 12,
+            status: 'Funding' as const
+        }
+    ];
 
     // Derived stats from real data
     const stats = {
         ongoingApplications: applications.filter(a => a.status === 'Pending' || a.status === 'Under Review').length,
-        approvedHomes: applications.filter(a => a.status === 'Approved').length,
+        approvedHomes: applications.filter(a => a.status === 'Approved' || a.status === 'Funded').length,
+        fundedApplications: applications.filter(a => a.status === 'Funded'),
         nextRepayment: {
             amount: 45200,
             dueDate: 'Mar 3, 2026',
@@ -95,6 +116,34 @@ export default function TenantDashboard() {
                         Welcome back, {useUserStore.getState().profile.firstName || 'User'} — Dashboard
                     </h1>
                 </div>
+
+                {/* Handover Verification Alert */}
+                {stats.fundedApplications.length > 0 && (
+                    <div className="mb-8 p-6 bg-linear-to-r from-blue-600 to-indigo-700 rounded-3xl text-white shadow-xl shadow-blue-200 animate-in fade-in slide-in-from-top-4 duration-700 relative overflow-hidden group">
+                        <HiOutlineKey className="absolute right-[-20px] bottom-[-20px] size-40 text-white/10 -rotate-12 group-hover:rotate-0 transition-transform duration-1000" />
+                        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                            <div className="flex items-start gap-4">
+                                <div className="size-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/30 shadow-inner">
+                                    <HiOutlineShieldCheck size={32} />
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-bold">Property Handover Required</h2>
+                                    <p className="text-blue-100 text-sm mt-1 max-w-xl">
+                                        Good news! Investors have fully funded your application for <span className="font-bold text-white">"{stats.fundedApplications[0].propertyTitle}"</span>. 
+                                        Please confirm you have received the keys to release funds to the landlord.
+                                    </p>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={() => router.push(`/dashboard/tenant/applications/${stats.fundedApplications[0].id}`)}
+                                className="px-8 py-4 bg-white text-blue-600 font-bold rounded-2xl text-sm hover:bg-blue-50 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95 whitespace-nowrap"
+                            >
+                                Confirm Handover
+                                <HiOutlineArrowRight size={18} />
+                            </button>
+                        </div>
+                    </div>
+                )}
 
                 {/* Hero Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -191,6 +240,9 @@ export default function TenantDashboard() {
 
                     {/* Sidebar Column */}
                     <div className="space-y-8">
+                        {/* Marketplace Funding Tracker */}
+                        <MarketplaceFundingTracker items={marketplaceFunding} />
+
                         {/* Quick Links */}
                         <QuickLinksGrid />
 

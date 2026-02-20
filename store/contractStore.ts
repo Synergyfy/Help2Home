@@ -1,12 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Contract, MOCK_CONTRACTS } from '@/lib/mockContractData';
+import { Contract, Signer, MOCK_CONTRACTS } from '@/lib/mockContractData';
 
 interface ContractState {
     contracts: Contract[];
     addContract: (contract: Contract) => void;
     updateContract: (id: string, updates: Partial<Contract>) => void;
     deleteContract: (id: string) => void;
+    updateSignerStatus: (contractId: string, signerId: string, newStatus: Signer['status'], signedAt?: string, signatureMethod?: Signer['signatureMethod'], signatureContent?: Signer['signatureContent']) => void;
 }
 
 export const useContractStore = create<ContractState>()(
@@ -24,6 +25,28 @@ export const useContractStore = create<ContractState>()(
             deleteContract: (id) =>
                 set((state) => ({
                     contracts: state.contracts.filter((c) => c.id !== id),
+                })),
+            updateSignerStatus: (contractId, signerId, newStatus, signedAt, signatureMethod, signatureContent) =>
+                set((state) => ({
+                    contracts: state.contracts.map((contract) =>
+                        contract.id === contractId
+                            ? {
+                                ...contract,
+                                signers: contract.signers.map((signer) =>
+                                    signer.id === signerId
+                                        ? {
+                                            ...signer,
+                                            status: newStatus,
+                                            signedAt: signedAt || signer.signedAt,
+                                            signatureMethod: signatureMethod || signer.signatureMethod,
+                                            signatureContent: signatureContent || signer.signatureContent,
+                                        }
+                                        : signer
+                                ),
+                                updatedAt: new Date().toISOString(),
+                            }
+                            : contract
+                    ),
                 })),
         }),
         {

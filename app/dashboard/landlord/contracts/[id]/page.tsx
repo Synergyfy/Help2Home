@@ -7,6 +7,7 @@ import { Signer } from '@/lib/mockContractData';
 import { useContractStore } from '@/store/contractStore';
 import ContractDetail from '@/components/dashboard/landlord/contracts/ContractDetail';
 import SignatureRequestModal from '@/components/dashboard/landlord/contracts/SignatureRequestModal';
+import SigningLinksModal from '@/components/dashboard/landlord/contracts/SigningLinksModal'; // Import new modal
 
 export default function ContractDetailPage() {
     const params = useParams();
@@ -16,6 +17,8 @@ export default function ContractDetailPage() {
     const contract = contracts.find(c => c.id === contractId);
 
     const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
+    const [isSigningLinksModalOpen, setIsSigningLinksModalOpen] = useState(false); // New state for success modal
+    const [mockSigningLinks, setMockSigningLinks] = useState<{ name: string; url: string }[]>([]);
 
     if (!contract) {
         return (
@@ -31,8 +34,13 @@ export default function ContractDetailPage() {
 
     const handleSendForSignature = (data: { signers: Signer[]; message: string; deadline?: string }) => {
         console.log('Sending for signature:', data);
-        // In a real app, this would call an API
-        alert(`Signature request sent to ${data.signers.length} recipients.`);
+
+        const generatedLinks = data.signers.map(signer => ({
+            name: signer.name,
+            url: `${window.location.origin}/sign-contract/${contractId}/${signer.id}`
+        }));
+                setMockSigningLinks(generatedLinks);
+                setIsSigningLinksModalOpen(true); // Open the new success modal
     };
 
     const handleDownload = () => {
@@ -63,7 +71,7 @@ export default function ContractDetailPage() {
                     </div>
                 </div>
             </div>
-
+            
             <ContractDetail
                 contract={contract}
                 onSendForSignature={() => setIsSignatureModalOpen(true)}
@@ -75,6 +83,12 @@ export default function ContractDetailPage() {
                 onClose={() => setIsSignatureModalOpen(false)}
                 onSend={handleSendForSignature}
                 signers={contract.signers}
+            />
+
+            <SigningLinksModal // Render the new modal
+                isOpen={isSigningLinksModalOpen}
+                onClose={() => setIsSigningLinksModalOpen(false)}
+                mockSigningLinks={mockSigningLinks}
             />
         </div>
     );

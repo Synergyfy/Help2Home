@@ -24,7 +24,7 @@ interface LocationStepProps {
 }
 
 export default function LocationStep({ navigation }: LocationStepProps) {
-    const { register, setValue, control } = useFormContext<PropertySchema>();
+    const { register, setValue, control, formState: { errors } } = useFormContext<PropertySchema>();
 
     const street = useWatch({ control, name: 'address.street' });
     const city = useWatch({ control, name: 'address.city' });
@@ -43,13 +43,18 @@ export default function LocationStep({ navigation }: LocationStepProps) {
 
         const timer = setTimeout(async () => {
             try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}&limit=1`);
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}&limit=1`, {
+                    headers: {
+                        'User-Agent': 'Help2Home-App/1.0'
+                    }
+                });
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                 const data = await res.json();
                 if (data && data[0]) {
                     setCoords([parseFloat(data[0].lat), parseFloat(data[0].lon)]);
                 }
             } catch (error) {
-                console.error("Geocoding failed", error);
+                console.warn("Geocoding failed - check network or Nominatim status", error);
             }
         }, 1200);
         return () => clearTimeout(timer);
@@ -70,28 +75,31 @@ export default function LocationStep({ navigation }: LocationStepProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
                     <div className="md:col-span-2">
-                        <label className={labelClasses}>Street Address</label>
+                        <label className={labelClasses}>Street Address *</label>
                         <input
                             {...register('address.street')}
-                            className={inputClasses}
+                            className={`${inputClasses} ${errors.address?.street ? 'border-red-500 ring-red-500' : ''}`}
                             placeholder="e.g., 123 Real Estate Ave, Phase 1"
                         />
+                        {errors.address?.street && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.address.street.message}</p>}
                     </div>
                     <div>
-                        <label className={labelClasses}>City</label>
+                        <label className={labelClasses}>City *</label>
                         <input
                             {...register('address.city')}
-                            className={inputClasses}
+                            className={`${inputClasses} ${errors.address?.city ? 'border-red-500 ring-red-500' : ''}`}
                             placeholder="e.g., Lekki"
                         />
+                        {errors.address?.city && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.address.city.message}</p>}
                     </div>
                     <div>
-                        <label className={labelClasses}>State</label>
+                        <label className={labelClasses}>State *</label>
                         <input
                             {...register('address.state')}
-                            className={inputClasses}
+                            className={`${inputClasses} ${errors.address?.state ? 'border-red-500 ring-red-500' : ''}`}
                             placeholder="e.g., Lagos"
                         />
+                        {errors.address?.state && <p className="text-[10px] text-red-500 mt-1 font-bold">{errors.address.state.message}</p>}
                     </div>
                 </div>
 

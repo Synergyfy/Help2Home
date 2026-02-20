@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FiEye, FiEyeOff, FiLock, FiMail, FiArrowRight, FiUser, FiUsers, FiTrendingUp } from 'react-icons/fi';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { FiShield } from 'react-icons/fi';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,14 +25,15 @@ const DEMO_ACCOUNTS = [
     { label: 'Caretaker', email: 'caretaker@example.com', icon: FiUser },
     { label: 'Tenant', email: 'tenant@example.com', icon: FiUser },
     { label: 'Investor', email: 'investor@example.com', icon: FiTrendingUp },
-    { label: 'Developer', email: 'developer@example.com', icon: FiUsers }, // Using FiUsers as placeholder or import MdOutlineVilla
+    { label: 'Developer', email: 'developer@example.com', icon: FiUsers },
     { label: 'Multi-Role', email: 'multi@example.com', icon: FiUsers },
-    { label: 'New User', email: 'newuser@example.com', icon: FiUser },
+    { label: 'Bank SSO', email: 'sso@bank.com', icon: FiArrowRight, isSSO: true },
 ];
 
 export default function SignInPage() {
     const [showPassword, setShowPassword] = useState(false);
     const searchParams = useSearchParams();
+    const router = useRouter();
     const redirect = searchParams.get('redirect');
     const { signIn, isLoading } = useAuth();
 
@@ -40,7 +41,11 @@ export default function SignInPage() {
         resolver: zodResolver(signInSchema),
     });
 
-    const handleQuickLogin = (email: string) => {
+    const handleQuickLogin = (email: string, isSSO?: boolean) => {
+        if (isSSO) {
+            window.location.href = '/bank-portal/sso/launch?sso_token=mock_handshake_token';
+            return;
+        }
         const demoPassword = 'password123';
         setValue('email', email, { shouldValidate: true });
         setValue('password', demoPassword, { shouldValidate: true });
@@ -119,16 +124,20 @@ export default function SignInPage() {
                             Quick Login (Demo)
                         </p>
                         <div className="grid grid-cols-3 gap-2">
-                            {DEMO_ACCOUNTS.map((account) => (
+                            {DEMO_ACCOUNTS.map((account: any) => (
                                 <button
                                     key={account.email}
                                     type="button"
                                     disabled={isLoading}
-                                    onClick={() => handleQuickLogin(account.email)}
-                                    className="flex flex-col items-center justify-center p-3 rounded-xl bg-gray-50 border border-gray-100 hover:border-brand-green hover:bg-white transition-all group disabled:opacity-50"
+                                    onClick={() => handleQuickLogin(account.email, account.isSSO)}
+                                    className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all group disabled:opacity-50 ${
+                                        account.isSSO 
+                                        ? 'bg-[#003366] border-[#003366] hover:bg-[#002244]' 
+                                        : 'bg-gray-50 border-gray-100 hover:border-brand-green hover:bg-white'
+                                    }`}
                                 >
-                                    <account.icon className="text-gray-400 group-hover:text-brand-green mb-1" size={16} />
-                                    <span className="text-[9px] font-bold text-gray-600 uppercase text-center truncate w-full">
+                                    <account.icon className={`mb-1 ${account.isSSO ? 'text-white' : 'text-gray-400 group-hover:text-brand-green'}`} size={16} />
+                                    <span className={`text-[9px] font-bold uppercase text-center truncate w-full ${account.isSSO ? 'text-white' : 'text-gray-600'}`}>
                                         {account.label}
                                     </span>
                                 </button>

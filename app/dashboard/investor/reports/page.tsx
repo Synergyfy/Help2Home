@@ -25,10 +25,10 @@ export default function ReportsPage() {
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
-                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Reports & Analytics</h1>
+                        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Reports & Analytics</h1>
                         <p className="text-gray-500 mt-1">Institutional-grade insights into your capital performance.</p>
                     </div>
-                    <button className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-brand-green text-brand-green font-black rounded-2xl text-sm italic hover:bg-brand-green hover:text-white transition-all">
+                    <button className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-brand-green text-brand-green font-semibold rounded-2xl text-sm  hover:bg-brand-green hover:text-white transition-all">
                         <HiOutlineDocumentArrowDown size={20} />
                         Export Full Statement
                     </button>
@@ -41,9 +41,9 @@ export default function ReportsPage() {
                             <HiOutlineBanknotes size={28} />
                         </div>
                         <div>
-                            <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-1">Total Lifetime Payouts</p>
-                            <h4 className="text-3xl font-black text-gray-900 italic">₦2,840,000</h4>
-                            <p className="text-xs text-brand-green mt-2 font-bold">+12% vs last year</p>
+                            <p className="text-gray-400 text-[10px] font-semibold uppercase tracking-widest mb-1">Total Lifetime Payouts</p>
+                            <h4 className="text-3xl font-semibold text-gray-900 ">₦2,840,000</h4>
+                            <p className="text-xs text-brand-green mt-2 font-semibold">+12% vs last year</p>
                         </div>
                     </div>
                     <div className="bg-white p-8 rounded-4xl border border-gray-100 shadow-sm flex flex-col justify-between group hover:border-blue-500/30 transition-all duration-500">
@@ -51,9 +51,9 @@ export default function ReportsPage() {
                             <HiOutlineArrowTrendingUp size={28} />
                         </div>
                         <div>
-                            <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-1">Unrealized Capital Gain</p>
-                            <h4 className="text-3xl font-black text-gray-900 italic">₦1,150,000</h4>
-                            <p className="text-xs text-blue-600 mt-2 font-bold">Estimated Market Value</p>
+                            <p className="text-gray-400 text-[10px] font-semibold uppercase tracking-widest mb-1">Unrealized Capital Gain</p>
+                            <h4 className="text-3xl font-semibold text-gray-900 ">₦1,150,000</h4>
+                            <p className="text-xs text-blue-600 mt-2 font-semibold">Estimated Market Value</p>
                         </div>
                     </div>
                     <div className="bg-white p-8 rounded-4xl border border-gray-100 shadow-sm flex flex-col justify-between group hover:border-orange-500/30 transition-all duration-500">
@@ -61,9 +61,9 @@ export default function ReportsPage() {
                             <HiOutlineChartPie size={28} />
                         </div>
                         <div>
-                            <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-1">Effective APR</p>
-                            <h4 className="text-3xl font-black text-gray-900 italic">14.2%</h4>
-                            <p className="text-xs text-orange-600 mt-2 font-bold">Consolidated Weighted Avg</p>
+                            <p className="text-gray-400 text-[10px] font-semibold uppercase tracking-widest mb-1">Effective APR</p>
+                            <h4 className="text-3xl font-semibold text-gray-900 ">14.2%</h4>
+                            <p className="text-xs text-orange-600 mt-2 font-semibold">Consolidated Weighted Avg</p>
                         </div>
                     </div>
                 </div>
@@ -74,7 +74,7 @@ export default function ReportsPage() {
                         <HiOutlineArrowTrendingUp size={200} />
                     </div>
                     <div className="relative z-10">
-                        <h3 className="text-xl font-black text-gray-900 tracking-tight mb-2">Monthly Distribution History</h3>
+                        <h3 className="text-xl font-semibold text-gray-900 tracking-tight mb-2">Monthly Distribution History</h3>
                         <p className="text-sm text-gray-400 mb-10">Consolidated yield across all active ventures.</p>
 
                         <div className="h-64 flex items-end justify-between gap-4">
@@ -84,11 +84,11 @@ export default function ReportsPage() {
                                         className="w-full bg-brand-green/20 rounded-t-xl hover:bg-brand-green transition-all duration-300 cursor-pointer"
                                         style={{ height: `${h}%` }}
                                     >
-                                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[9px] font-black px-2 py-1 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap">
+                                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[9px] font-semibold px-2 py-1 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap">
                                             ₦{(h * 5).toFixed(0)}k
                                         </div>
                                     </div>
-                                    <p className="mt-2 text-[9px] font-black text-gray-300 text-center uppercase">{'JFMAMJJASOND'[i]}</p>
+                                    <p className="mt-2 text-[9px] font-semibold text-gray-300 text-center uppercase">{'JFMAMJJASOND'[i]}</p>
                                 </div>
                             ))}
                         </div>
@@ -99,7 +99,7 @@ export default function ReportsPage() {
                 <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
                     <div className="p-8 border-b border-gray-50 flex items-center gap-4 bg-gray-50/30">
                         <HiOutlineDocumentText className="text-brand-green" size={24} />
-                        <h3 className="text-xl font-black text-gray-900 tracking-tight">Statements & Documents</h3>
+                        <h3 className="text-xl font-semibold text-gray-900 tracking-tight">Statements & Documents</h3>
                     </div>
                     <div className="divide-y divide-gray-50">
                         {REPORTS_LIST.map((report) => (
@@ -109,15 +109,15 @@ export default function ReportsPage() {
                                         <HiOutlineDocumentText size={28} />
                                     </div>
                                     <div>
-                                        <h4 className="font-black text-gray-900 mb-0.5 group-hover:text-brand-green transition-colors">{report.name}</h4>
+                                        <h4 className="font-semibold text-gray-900 mb-0.5 group-hover:text-brand-green transition-colors">{report.name}</h4>
                                         <p className="text-xs text-gray-400 font-medium">Issued on {report.date} • {report.size}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <button className="px-5 py-2.5 bg-gray-50 text-gray-600 text-xs font-black uppercase tracking-widest rounded-xl hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-100">
+                                    <button className="px-5 py-2.5 bg-gray-50 text-gray-600 text-xs font-semibold uppercase tracking-widest rounded-xl hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-100">
                                         Preview
                                     </button>
-                                    <button className="px-5 py-2.5 bg-brand-green/10 text-brand-green text-xs font-black uppercase tracking-widest rounded-xl hover:bg-brand-green hover:text-white transition-all flex items-center gap-2">
+                                    <button className="px-5 py-2.5 bg-brand-green/10 text-brand-green text-xs font-semibold uppercase tracking-widest rounded-xl hover:bg-brand-green hover:text-white transition-all flex items-center gap-2">
                                         Download {report.type}
                                     </button>
                                 </div>
@@ -125,7 +125,7 @@ export default function ReportsPage() {
                         ))}
                     </div>
                     <div className="p-8 bg-gray-50/50 text-center">
-                        <button className="text-gray-400 text-xs font-black uppercase tracking-widest hover:text-brand-green transition-colors flex items-center gap-2 mx-auto">
+                        <button className="text-gray-400 text-xs font-semibold uppercase tracking-widest hover:text-brand-green transition-colors flex items-center gap-2 mx-auto">
                             Load Archives
                             <HiOutlineChevronRight />
                         </button>

@@ -72,7 +72,7 @@ export default function PropertyCard({ property, index, showTotalUpfront = true,
                     </div>
 
                     {/* Like Button */}
-                    <button 
+                    <button
                         onClick={(e) => {
                             e.preventDefault();
                             toggleWishlist(property.id.toString());
@@ -132,9 +132,9 @@ export default function PropertyCard({ property, index, showTotalUpfront = true,
                             <div className="flex justify-between items-baseline">
                                 <div className="flex flex-col">
                                     <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">
-                                        {property.propertyType === 'invest' 
-                                            ? 'Property Value' 
-                                            : property.propertyType === 'service-apartment' 
+                                        {property.propertyType === 'invest'
+                                            ? 'Property Value'
+                                            : property.propertyType === 'service-apartment'
                                                 ? `Price per ${property.billingCycle || 'day'}`
                                                 : property.propertyType === 'buy' || property.propertyType === 'rent-to-own'
                                                     ? 'Property Price'

@@ -9,6 +9,7 @@ import PaymentHistory from '@/components/dashboard/payments/PaymentHistory';
 import ReminderSettings from '@/components/dashboard/payments/ReminderSettings';
 import PaymentCalendar from '@/components/dashboard/payments/PaymentCalendar';
 import PaymentProgressBar from '@/components/dashboard/payments/PaymentProgressBar';
+import EquityWaterfall from '@/components/dashboard/payments/EquityWaterfall';
 import { DownPaymentDetails, Installment, PaymentHistoryItem, ReminderSettings as ReminderSettingsType } from '@/components/dashboard/payments/types';
 import { getPaymentData, initiatePayment, updateReminderSettings } from '@/utils/mockPaymentApi';
 
@@ -121,6 +122,13 @@ export default function PaymentsPage() {
                     <PaymentCalendar 
                         schedule={schedule}
                         downPayment={downPayment}
+                    />
+
+                    <EquityWaterfall 
+                        totalValue={35000000}
+                        paidAmount={10500000}
+                        equityPercentage={30}
+                        monthlyInstallment={schedule[0]?.totalDue || 150000}
                     />
 
                     <RepaymentSchedule

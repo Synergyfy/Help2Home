@@ -14,17 +14,27 @@ import {
     HiOutlineCalendarDays,
     HiOutlineMapPin,
     HiOutlineUser,
-    HiOutlineBanknotes
+    HiOutlineBanknotes,
+    HiOutlineUserGroup // New import for assigned artisan icon
 } from 'react-icons/hi2';
 import { MOCK_MAINTENANCE_REQUESTS, MaintenanceRequest, MaintenanceStatus } from '@/lib/mockMaintenanceData';
 import { toast } from 'react-toastify';
 import { formatCurrency } from '@/utils/helpers';
+import RejectionReasonModal from '@/components/dashboard/landlord/maintenance/RejectionReasonModal';
+import FindArtisanModal from '@/components/dashboard/landlord/maintenance/FindArtisanModal'; // Import new modal
+import { MOCK_ARTISANS } from '@/lib/mockArtisanData'; // Import artisan data
 
 export default function MaintenancePageContent() {
     const [requests, setRequests] = useState<MaintenanceRequest[]>(MOCK_MAINTENANCE_REQUESTS);
     const [filter, setFilter] = useState<'All' | MaintenanceStatus>('All');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null);
+    const [isRejectionModalOpen, setIsRejectionModalOpen] = useState(false); // State for rejection modal
+    const [currentRequestToReject, setCurrentRequestToReject] = useState<MaintenanceRequest | null>(null);
+    const [isRejecting, setIsRejecting] = useState(false);
+    const [isFindArtisanModalOpen, setIsFindArtisanModalOpen] = useState(false); // State for Find Artisan modal
+    const [currentRequestForArtisan, setCurrentRequestForArtisan] = useState<MaintenanceRequest | null>(null); // Request to assign artisan to
+    const [isHiringArtisan, setIsHiringArtisan] = useState(false);
 
     const filteredRequests = requests.filter(req => {
         const matchesFilter = filter === 'All' || req.status === filter;
@@ -34,12 +44,47 @@ export default function MaintenancePageContent() {
         return matchesFilter && matchesSearch;
     });
 
-    const handleUpdateStatus = (id: string, newStatus: MaintenanceStatus) => {
+    const handleUpdateStatus = (id: string, newStatus: MaintenanceStatus, reason?: string, assignedArtisanId?: string) => {
         setRequests(prev => prev.map(req =>
-            req.id === id ? { ...req, status: newStatus } : req
+            req.id === id ? { ...req, status: newStatus, rejectionReason: reason, assignedArtisanId: assignedArtisanId } : req
         ));
         toast.success(`Request ${newStatus.toLowerCase()} successfully`);
         setSelectedRequest(null);
+        setIsRejectionModalOpen(false);
+        setCurrentRequestToReject(null);
+        setIsFindArtisanModalOpen(false); // Close Find Artisan modal
+        setCurrentRequestForArtisan(null); // Clear request for artisan
+    };
+
+    const handleRejectClick = (request: MaintenanceRequest) => {
+        setCurrentRequestToReject(request);
+        setIsRejectionModalOpen(true);
+    };
+
+    const handleConfirmReject = async (reason: string) => {
+        if (currentRequestToReject) {
+            setIsRejecting(true);
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            handleUpdateStatus(currentRequestToReject.id, 'Rejected', reason);
+            setIsRejecting(false);
+        }
+    };
+
+    const handleFindArtisanClick = (request: MaintenanceRequest) => {
+        setCurrentRequestForArtisan(request);
+        setIsFindArtisanModalOpen(true);
+    };
+
+    const handleHireArtisan = async (artisanId: string) => {
+        if (currentRequestForArtisan) {
+            setIsHiringArtisan(true);
+            // Simulate API call for hiring
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Assuming 'Approved' or 'In Progress' when an artisan is hired
+            handleUpdateStatus(currentRequestForArtisan.id, 'In Progress', undefined, artisanId);
+            setIsHiringArtisan(false);
+        }
     };
 
     const getStatusColor = (status: MaintenanceStatus) => {
@@ -61,6 +106,11 @@ export default function MaintenancePageContent() {
             case 'Low': return 'bg-blue-500 text-white';
             default: return 'bg-gray-500 text-white';
         }
+    };
+
+    const getArtisanName = (artisanId: string | undefined) => {
+        const artisan = MOCK_ARTISANS.find(a => a.id === artisanId);
+        return artisan ? artisan.name : 'Unassigned';
     };
 
     return (
@@ -159,6 +209,12 @@ export default function MaintenancePageContent() {
                                                 <HiOutlineCalendarDays size={16} />
                                                 <span>{new Date(req.createdAt).toLocaleDateString()}</span>
                                             </div>
+                                            {req.assignedArtisanId && (
+                                                <div className="flex items-center gap-1.5">
+                                                    <HiOutlineUserGroup size={16} />
+                                                    <span>Assigned to: {getArtisanName(req.assignedArtisanId)}</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -213,6 +269,17 @@ export default function MaintenancePageContent() {
                                     </span>
                                 </div>
                                 <h2 className="text-3xl font-black text-white leading-tight">{selectedRequest.title}</h2>
+                                {selectedRequest.status === 'Rejected' && selectedRequest.rejectionReason && (
+                                    <p className="text-sm text-white/80 mt-2">
+                                        Reason for rejection: <span className="font-medium">{selectedRequest.rejectionReason}</span>
+                                    </p>
+                                )}
+                                {selectedRequest.assignedArtisanId && (
+                                    <p className="text-sm text-white/80 mt-2 flex items-center gap-2">
+                                        <HiOutlineUserGroup size={18} />
+                                        Assigned to: <span className="font-medium">{getArtisanName(selectedRequest.assignedArtisanId)}</span>
+                                    </p>
+                                )}
                             </div>
 
                             <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
@@ -267,11 +334,18 @@ export default function MaintenancePageContent() {
                                 {selectedRequest.status === 'Pending' ? (
                                     <>
                                         <button
-                                            onClick={() => handleUpdateStatus(selectedRequest.id, 'Rejected')}
+                                            onClick={() => handleRejectClick(selectedRequest)}
                                             className="flex-1 py-4 px-6 border-2 border-red-100 text-red-600 font-black rounded-2xl hover:bg-red-50 transition-all flex items-center justify-center gap-2"
                                         >
                                             <HiOutlineXCircle size={20} />
                                             Reject
+                                        </button>
+                                        <button
+                                            onClick={() => handleFindArtisanClick(selectedRequest)} // New Find Artisan button
+                                            className="flex-1 py-4 px-6 border-2 border-blue-100 text-blue-600 font-black rounded-2xl hover:bg-blue-50 transition-all flex items-center justify-center gap-2"
+                                        >
+                                            <HiOutlineUserGroup size={20} />
+                                            Find Artisan
                                         </button>
                                         <button
                                             onClick={() => handleUpdateStatus(selectedRequest.id, 'Approved')}
@@ -281,6 +355,14 @@ export default function MaintenancePageContent() {
                                             Approve Repair
                                         </button>
                                     </>
+                                ) : selectedRequest.status === 'In Progress' && !selectedRequest.assignedArtisanId ? (
+                                    <button
+                                        onClick={() => handleFindArtisanClick(selectedRequest)} // Allow assigning if In Progress but no artisan
+                                        className="w-full py-4 px-6 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2"
+                                    >
+                                        <HiOutlineUserGroup size={20} />
+                                        Assign Artisan
+                                    </button>
                                 ) : (
                                     <button
                                         onClick={() => setSelectedRequest(null)}
@@ -294,6 +376,33 @@ export default function MaintenancePageContent() {
                     </div>
                 )}
             </AnimatePresence>
+
+            {/* Rejection Reason Modal */}
+            {currentRequestToReject && (
+                <RejectionReasonModal
+                    isOpen={isRejectionModalOpen}
+                    onClose={() => {
+                        setIsRejectionModalOpen(false);
+                        setCurrentRequestToReject(null);
+                    }}
+                    onConfirm={handleConfirmReject}
+                    isLoading={isRejecting}
+                />
+            )}
+
+            {/* Find Artisan Modal */}
+            {currentRequestForArtisan && (
+                <FindArtisanModal
+                    isOpen={isFindArtisanModalOpen}
+                    onClose={() => {
+                        setIsFindArtisanModalOpen(false);
+                        setCurrentRequestForArtisan(null);
+                    }}
+                    onHireArtisan={handleHireArtisan}
+                    isLoading={isHiringArtisan}
+                    currentMaintenanceRequestSpecialization={currentRequestForArtisan?.title.includes('Faucet') ? 'Plumbing' : undefined} // Example specialization based on title
+                />
+            )}
         </div>
     );
 }

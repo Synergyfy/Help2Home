@@ -163,9 +163,9 @@ export default function MarketPlaceMain() {
     };
 
     return (
-        <section className="relative min-h-[75vh] flex items-center justify-center py-16 px-4 overflow-hidden">
+        <section className="relative min-h-[75vh] flex items-center justify-center py-16 px-4 overflow-visible">
             {/* Background */}
-            <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 z-0 overflow-hidden">
                 <AnimatePresence mode="wait">
                     <motion.img
                         key={heroAsset.image}
@@ -197,8 +197,8 @@ export default function MarketPlaceMain() {
                 </div>
 
                 {/* Tabs */}
-                <div className="bg-white shadow-2xl rounded-3xl overflow-hidden">
-                    <div className="flex border-b border-gray-400 bg-gray-50 overflow-x-auto no-scrollbar">
+                <div className="bg-white shadow-2xl rounded-3xl overflow-visible">
+                    <div className="flex border-b border-gray-400 bg-gray-50 overflow-x-auto no-scrollbar rounded-t-3xl overflow-hidden">
                         {(['rent', 'buy', 'invest'] as PropertyType[]).map(tab => {
                             const isActive = activeTab === tab;
                             const colors: Record<PropertyType, string> = {
@@ -277,7 +277,7 @@ export default function MarketPlaceMain() {
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: 10 }}
-                                        className="absolute top-full mt-3 left-0 right-0 bg-white rounded-2xl shadow-2xl z-50 overflow-hidden"
+                                        className="absolute top-full mt-3 left-0 right-0 bg-white rounded-2xl shadow-2xl z-[100000] overflow-hidden"
                                     >
                                         {!searchQuery && (
                                             <div className="p-3">
