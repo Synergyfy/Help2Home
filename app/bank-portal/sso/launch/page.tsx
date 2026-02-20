@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-export default function BankSSOLaunch() {
+function BankSSOLaunchContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [status, setStatus] = useState<'handshake' | 'prefilled' | 'error'>('handshake');
@@ -114,5 +114,20 @@ export default function BankSSOLaunch() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function BankSSOLaunch() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8 text-center">
+                <div className="w-64 h-2 bg-gray-100 rounded-full overflow-hidden mb-6">
+                    <div className="h-full bg-[#003366] w-1/2 animate-[shimmer_2s_infinite]"></div>
+                </div>
+                <h1 className="text-xl font-semibold text-gray-900 mb-2 tracking-tight">Initializing Portal...</h1>
+            </div>
+        }>
+            <BankSSOLaunchContent />
+        </Suspense>
     );
 }
