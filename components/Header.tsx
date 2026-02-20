@@ -9,6 +9,7 @@ export default function Header() {
     const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [activeDropdown, setActiveDropdown] = useState<'rent' | 'buy' | null>(null);
 
     useEffect(() => {
         const checkAuth = () => {
@@ -18,11 +19,24 @@ export default function Header() {
 
         checkAuth();
         window.addEventListener('auth-change', checkAuth);
-        return () => window.removeEventListener('auth-change', checkAuth);
-    }, []);
+
+        // Click outside listener to close dropdowns
+        const handleClickOutside = (event: MouseEvent) => {
+            if (activeDropdown && !(event.target as Element).closest('.nav-dropdown-container')) {
+                setActiveDropdown(null);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            window.removeEventListener('auth-change', checkAuth);
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [activeDropdown]);
 
     const handleCategoryClick = (type: 'rent' | 'buy' | 'service-apartment' | 'rent-to-own' | 'invest', category?: string) => {
         setIsMenuOpen(false);
+        setActiveDropdown(null);
 
         // Build query string
         let queryString = `type=${type}`;
@@ -39,6 +53,10 @@ export default function Header() {
         }
     };
 
+    const toggleDropdown = (name: 'rent' | 'buy') => {
+        setActiveDropdown(prev => prev === name ? null : name);
+    };
+
     return (
         <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100">
             <div className="container mx-auto flex items-center justify-between px-6 md:px-12 py-4">
@@ -50,12 +68,15 @@ export default function Header() {
                 {/* Desktop Nav */}
                 <nav className="hidden lg:flex items-center gap-8 text-sm font-medium text-gray-600">
                     {/* Rent Dropdown */}
-                    <div className="relative group">
-                        <button className="flex items-center gap-1 hover:text-brand-green transition-colors py-4">
+                    <div className="relative nav-dropdown-container">
+                        <button 
+                            onClick={() => toggleDropdown('rent')}
+                            className={`flex items-center gap-1 transition-colors py-4 ${activeDropdown === 'rent' ? 'text-brand-green' : 'hover:text-brand-green'}`}
+                        >
                             Rent
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-180 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-200 ${activeDropdown === 'rent' ? 'rotate-180' : ''}`}><path d="m6 9 6 6 6-6" /></svg>
                         </button>
-                        <div className="absolute top-full left-0 w-60 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
+                        <div className={`absolute top-full left-0 w-60 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden transition-all duration-200 transform ${activeDropdown === 'rent' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
                             <button
                                 onClick={() => handleCategoryClick('rent', 'residential-properties-to-rent')}
                                 className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"
@@ -90,12 +111,15 @@ export default function Header() {
                     </div>
 
                     {/* Buy Dropdown */}
-                    <div className="relative group">
-                        <button className="flex items-center gap-1 hover:text-brand-green transition-colors py-4">
+                    <div className="relative nav-dropdown-container">
+                        <button 
+                            onClick={() => toggleDropdown('buy')}
+                            className={`flex items-center gap-1 transition-colors py-4 ${activeDropdown === 'buy' ? 'text-brand-green' : 'hover:text-brand-green'}`}
+                        >
                             Buy
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-180 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-200 ${activeDropdown === 'buy' ? 'rotate-180' : ''}`}><path d="m6 9 6 6 6-6" /></svg>
                         </button>
-                        <div className="absolute top-full left-0 w-60 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
+                        <div className={`absolute top-full left-0 w-60 bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden transition-all duration-200 transform ${activeDropdown === 'buy' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
                             <button
                                 onClick={() => handleCategoryClick('buy', 'residential-properties-for-sale')}
                                 className="block w-full text-left text-gray-600 hover:text-brand-green hover:bg-green-50 py-3 px-4 transition-colors"

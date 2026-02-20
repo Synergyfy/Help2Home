@@ -283,7 +283,7 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
                 </section>
 
                 {/* Installment Configuration */}
-                {(listingType === 'Rent' || listingType === 'Rent-to-Own') && (
+                {(listingType === 'Rent' || listingType === 'Rent-to-Own') && propertyPrice > 0 && (
                     <section className={sectionClasses}>
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex items-center gap-4">

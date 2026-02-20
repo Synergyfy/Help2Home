@@ -9,6 +9,13 @@ function BankSSOLaunchContent() {
     const router = useRouter();
     const [status, setStatus] = useState<'handshake' | 'prefilled' | 'error'>('handshake');
     
+    const type = searchParams.get('type') || 'rent';
+    const amountParam = searchParams.get('amount');
+    const propertyId = searchParams.get('propertyId');
+    
+    const amount = amountParam ? parseInt(amountParam).toLocaleString() : '3,500,000';
+    const loanType = type === 'mortgage' ? 'Mortgage Loan' : 'Rent Financing';
+
     // Simulating the SSO handshake and token validation
     useEffect(() => {
         const token = searchParams.get('sso_token');
@@ -25,7 +32,7 @@ function BankSSOLaunchContent() {
     }, [searchParams]);
 
     const handleStart = () => {
-        router.push('/bank-portal/applications/APP-1001'); // Mock redirect to the app they just "created" via SSO
+        router.push(`/bank-portal/verification?type=${type}&amount=${amountParam}&propertyId=${propertyId}`); // Redirect to the tenant verification journey
     };
 
     if (status === 'error') {
@@ -87,11 +94,11 @@ function BankSSOLaunchContent() {
                             </div>
                             <div>
                                 <p className="text-xs text-gray-500 font-medium mb-1">Application Type</p>
-                                <p className="font-semibold text-gray-900">Rent-to-Own Financing</p>
+                                <p className="font-semibold text-gray-900">{loanType}</p>
                             </div>
                             <div>
                                 <p className="text-xs text-gray-500 font-medium mb-1">Requested Amount</p>
-                                <p className="font-semibold text-gray-900">₦3,500,000</p>
+                                <p className="font-semibold text-gray-900">₦{amount}</p>
                             </div>
                             <div>
                                 <p className="text-xs text-gray-500 font-medium mb-1">Property</p>

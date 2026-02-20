@@ -21,7 +21,7 @@ const riskLevels = [
   { label: "Aggressive", tooltip: "Higher risk tolerance for potentially significant capital appreciation." },
   { label: "Very Aggressive", tooltip: "Maximum risk for maximum potential returns and rapid growth." }
 ];
-const timelines = ["Short-term (1-2 years)", "Medium-term (3-5 years)", "Long-term (5-10 years)", "Very long-term (10+ years)"];
+const timelines = ["Very Short-term (Less than 1 year)", "Short-term (1-2 years)", "Medium-term (3-5 years)", "Long-term (5-10 years)", "Very long-term (10+ years)"];
 
 interface InvestorStepProps {
   stepNumber: 1 | 2 | 3;
@@ -142,8 +142,11 @@ const InvestorStep = ({ stepNumber }: InvestorStepProps) => {
 
         <div className="space-y-8 flex-1">
           <div>
-            <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center gap-2">
-              <FiTrendingUp className="text-brand-green" /> Investment types
+            <label className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center justify-between gap-2">
+              <span className="flex items-center gap-2">
+                <FiTrendingUp className="text-brand-green" /> Investment types
+              </span>
+              <span className="text-[10px] text-gray-400 font-black normal-case">Select all that apply</span>
             </label>
             <div className="grid grid-cols-2 gap-3">
               {investmentTypes.map((type) => (

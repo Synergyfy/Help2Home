@@ -105,7 +105,7 @@ export const propertySchema = z.object({
   }).optional(),
 
   terms: z.object({
-    availabilityStatus: z.enum(['Now', 'Soon', 'Specific Date']).default('Now'),
+    availabilityStatus: z.enum(['Now', 'Specific Date']).default('Now'),
     availableFrom: z.string().optional(),
     minTenancy: z.string().optional(),
   }).optional(),

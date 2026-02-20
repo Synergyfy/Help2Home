@@ -30,9 +30,11 @@ export default function BankSidebar() {
     const pathname = usePathname();
     const router = useRouter();
 
+    const isTenantMode = pathname.includes('/verification') || pathname.includes('/sso/launch');
+
     const handleLogout = () => {
         toast.success('Signed out successfully');
-        router.push('/bank-portal/signin');
+        router.push(isTenantMode ? '/' : '/bank-portal/signin');
     };
 
     return (
@@ -53,31 +55,47 @@ export default function BankSidebar() {
                 {navItems.map((item) => {
                     const isActive = pathname.startsWith(item.href);
                     return (
-                        <Link 
-                            key={item.name} 
-                            href={item.href}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${
-                                isActive 
-                                ? 'bg-white/10 text-white shadow-sm' 
-                                : 'text-blue-100 hover:bg-white/5 hover:text-white'
-                            }`}
-                        >
-                            <item.icon size={20} />
-                            <span>{item.name}</span>
-                        </Link>
+                        <div key={item.name} className="relative group">
+                            {isTenantMode && !isActive && (
+                                <div className="absolute inset-0 z-10 cursor-not-allowed" title="Navigation disabled during verification" />
+                            )}
+                            <Link 
+                                href={isTenantMode ? '#' : item.href}
+                                onClick={(e) => isTenantMode && e.preventDefault()}
+                                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${
+                                    isActive 
+                                    ? 'bg-white/10 text-white shadow-sm' 
+                                    : isTenantMode 
+                                        ? 'text-blue-100/30 grayscale pointer-events-none'
+                                        : 'text-blue-100 hover:bg-white/5 hover:text-white'
+                                }`}
+                            >
+                                <item.icon size={20} />
+                                <span>{item.name}</span>
+                            </Link>
+                        </div>
                     );
                 })}
+                
+                {isTenantMode && (
+                    <div className="mt-8 px-4 py-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl">
+                        <p className="text-[10px] font-black uppercase text-orange-400 tracking-widest mb-2">Restricted Access</p>
+                        <p className="text-[11px] text-orange-100 leading-relaxed font-medium">
+                            Internal navigation is disabled during the verification process.
+                        </p>
+                    </div>
+                )}
             </nav>
 
             <div className="p-6 border-t border-white/10">
                 <div className="bg-white/5 rounded-xl p-4">
                     <p className="text-[10px] font-semibold text-orange-200 uppercase tracking-widest mb-1">Signed in as</p>
-                    <p className="text-sm font-semibold">John Bank Manager</p>
+                    <p className="text-sm font-semibold">{isTenantMode ? 'Guest Tenant' : 'John Bank Manager'}</p>
                     <button 
                         onClick={handleLogout}
                         className="text-[10px] text-red-400 font-semibold hover:text-red-300 transition-colors mt-2 uppercase tracking-widest"
                     >
-                        Sign Out
+                        {isTenantMode ? 'Exit Portal' : 'Sign Out'}
                     </button>
                 </div>
             </div>

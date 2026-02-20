@@ -20,6 +20,14 @@ const RENTAL_OPPORTUNITIES = [
         propertyLocation: 'Surulere, Lagos',
         expectedROI: 12.5,
         repaymentDuration: 24,
+        amountRequired: 25000000,
+    },
+    {
+        id: 'rent_002',
+        propertyLocation: 'Ikeja Gra, Lagos',
+        expectedROI: 14.0,
+        repaymentDuration: 36,
+        amountRequired: 40000000,
     }
 ];
 
@@ -28,7 +36,7 @@ export default function InvestRentalPage() {
     const router = useRouter();
     const opportunity = RENTAL_OPPORTUNITIES.find(o => o.id === id) || RENTAL_OPPORTUNITIES[0];
 
-    const [amount, setAmount] = useState<number>(0);
+    const amount = opportunity.amountRequired;
     const [agreed, setAgreed] = useState(false);
     const [isConfirming, setIsConfirming] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -99,19 +107,14 @@ export default function InvestRentalPage() {
 
                 <div className="bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-sm space-y-10">
                     
-                    {/* 1. Enter Amount */}
-                    <div className="space-y-4">
-                        <label className="text-sm font-semibold text-gray-400 uppercase tracking-widest block">Investment Amount (NGN)</label>
-                        <div className="relative">
-                            <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-semibold text-gray-400">₦</span>
-                            <input 
-                                type="number" 
-                                value={amount || ''} 
-                                onChange={(e) => setAmount(Number(e.target.value))}
-                                className="w-full pl-12 pr-6 py-6 bg-gray-50 border border-gray-100 rounded-[2rem] text-3xl font-semibold text-gray-900 focus:bg-white focus:border-blue-600 outline-none transition-all"
-                                placeholder="0.00"
-                            />
-                        </div>
+                    {/* 1. Investment Amount */}
+                    <div className="p-8 bg-blue-600 rounded-[2rem] text-white shadow-xl shadow-blue-600/20 relative overflow-hidden group">
+                        <HiOutlineCurrencyDollar className="absolute right-[-10px] bottom-[-10px] size-32 text-white/10 rotate-12 group-hover:rotate-0 transition-transform duration-700" />
+                        <p className="text-white/60 text-xs font-semibold uppercase tracking-widest mb-2">Total Financing Required</p>
+                        <h3 className="text-5xl font-semibold tracking-tighter">₦{amount.toLocaleString()}</h3>
+                        <p className="text-white/80 text-sm mt-4 font-medium max-w-sm">
+                            As a single-investor opportunity, you will fund the full rental amount for this verified tenant.
+                        </p>
                     </div>
 
                     {/* 2. Projections */}

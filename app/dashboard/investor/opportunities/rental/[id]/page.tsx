@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import FadeIn from '@/components/FadeIn';
 import {
     HiOutlineArrowLeft,
+    HiOutlineArrowTrendingUp,
     HiOutlineMapPin,
     HiOutlineBriefcase,
     HiOutlineScale,
@@ -118,6 +119,25 @@ export default function RentalOpportunityDetailPage() {
                         >
                             Invest in this Tenant
                         </Link>
+                    </div>
+                </div>
+
+                {/* Quick Stats Banner */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-blue-600 p-6 rounded-3xl text-white shadow-xl shadow-blue-600/20 relative overflow-hidden group">
+                        <HiOutlineArrowTrendingUp className="absolute right-[-10px] bottom-[-10px] size-32 text-white/10 rotate-12 group-hover:rotate-0 transition-transform duration-700" />
+                        <p className="text-white/60 text-[10px] font-semibold uppercase tracking-widest mb-1">Expected Rental Yield</p>
+                        <h3 className="text-3xl font-semibold ">{opportunity.expectedROI}% <span className="text-sm font-medium not- opacity-80">Annually</span></h3>
+                    </div>
+                    <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group">
+                        <HiOutlineShieldCheck className="absolute right-[-10px] bottom-[-10px] size-32 text-gray-50 rotate-12 group-hover:rotate-0 transition-transform duration-700" />
+                        <p className="text-gray-400 text-[10px] font-semibold uppercase tracking-widest mb-1">Repayment Success Projection</p>
+                        <h3 className="text-3xl font-semibold text-gray-900 ">{opportunity.repaymentSuccessProjection}% <span className="text-sm font-medium not- text-gray-400 uppercase tracking-tighter">Verified</span></h3>
+                    </div>
+                    <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group">
+                        <HiOutlineClock className="absolute right-[-10px] bottom-[-10px] size-32 text-gray-50 rotate-12 group-hover:rotate-0 transition-transform duration-700" />
+                        <p className="text-gray-400 text-[10px] font-semibold uppercase tracking-widest mb-1">Monthly Distributions</p>
+                        <h3 className="text-3xl font-semibold text-gray-900 ">Active <span className="text-sm font-medium not- text-gray-400 uppercase tracking-tighter">Payouts</span></h3>
                     </div>
                 </div>
 

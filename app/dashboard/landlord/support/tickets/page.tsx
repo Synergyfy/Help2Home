@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import TicketList from '@/components/dashboard/landlord/support/TicketList';
@@ -8,7 +8,7 @@ import TicketDetail from '@/components/dashboard/landlord/support/TicketDetail';
 import CreateTicketModal from '@/components/dashboard/landlord/support/CreateTicketModal';
 import { MOCK_TICKETS, Ticket } from '@/lib/mockSupportData';
 
-export default function TicketsPage() {
+function TicketsContent() {
     const searchParams = useSearchParams();
     const action = searchParams.get('action');
     
@@ -87,5 +87,13 @@ export default function TicketsPage() {
                 onCreate={handleCreateTicket}
             />
         </div>
+    );
+}
+
+export default function TicketsPage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center h-full">Loading Tickets...</div>}>
+            <TicketsContent />
+        </Suspense>
     );
 }

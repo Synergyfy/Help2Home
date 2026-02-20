@@ -383,8 +383,8 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
                             </div>
 
                             <div className="space-y-6">
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                    {['Now', 'Soon', 'Specific Date'].map((status) => (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {['Now', 'Specific Date'].map((status) => (
                                         <label key={status} className="relative cursor-pointer group">
                                             <input
                                                 {...register('terms.availabilityStatus')}
@@ -394,8 +394,7 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
                                             />
                                             <div className="flex items-center justify-center p-4 rounded-xl border border-gray-200 bg-white transition-all peer-checked:border-brand-green peer-checked:bg-green-50 peer-checked:font-bold hover:bg-gray-50 peer-checked:text-brand-green">
                                                 <span className="text-sm">
-                                                    {status === 'Now' ? 'Available Now' :
-                                                        status === 'Soon' ? 'Available Soon' : 'Specific Date'}
+                                                    {status === 'Now' ? 'Available Now' : 'Specific Date'}
                                                 </span>
                                             </div>
                                         </label>
@@ -411,18 +410,6 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
                                             {...register('terms.availableFrom')}
                                             className={inputClasses}
                                         />
-                                    </div>
-                                )}
-
-                                {availabilityStatus === 'Soon' && (
-                                    <div className="animate-in fade-in slide-in-from-top-2">
-                                        <label className={labelClasses}>Expected Availability *</label>
-                                        <input
-                                            {...register('terms.availableFrom')}
-                                            placeholder="e.g. In 2 weeks, In 1 month"
-                                            className={inputClasses}
-                                        />
-                                        <p className="text-[10px] text-gray-400 mt-1">Specify estimating timeframe for interested tenants.</p>
                                     </div>
                                 )}
                             </div>

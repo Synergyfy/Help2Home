@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ConversationList from '@/components/dashboard/landlord/support/ConversationList';
 import ChatPane from '@/components/dashboard/landlord/support/ChatPane';
 import { MOCK_CONVERSATIONS, MOCK_MESSAGES, Message } from '@/lib/mockSupportData';
 
-export default function InboxPage() {
+function InboxContent() {
     const searchParams = useSearchParams();
     const tenantId = searchParams.get('tenantId');
 
@@ -96,5 +96,13 @@ export default function InboxPage() {
                 onSendMessage={handleSendMessage}
             />
         </div>
+    );
+}
+
+export default function InboxPage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center h-full">Loading Inbox...</div>}>
+            <InboxContent />
+        </Suspense>
     );
 }

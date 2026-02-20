@@ -235,25 +235,6 @@ export default function OpportunitiesPage() {
                     </div>
                 )}
 
-                {activeTab === 'RENTAL' && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-blue-600 p-6 rounded-3xl text-white shadow-xl shadow-blue-600/20 relative overflow-hidden group">
-                            <HiOutlineArrowTrendingUp className="absolute right-[-10px] bottom-[-10px] size-32 text-white/10 rotate-12 group-hover:rotate-0 transition-transform duration-700" />
-                            <p className="text-white/60 text-[10px] font-semibold uppercase tracking-widest mb-1">Avg. Rental Yield</p>
-                            <h3 className="text-3xl font-semibold ">12.5% <span className="text-sm font-medium not- opacity-80">Annually</span></h3>
-                        </div>
-                        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group">
-                            <HiOutlineShieldCheck className="absolute right-[-10px] bottom-[-10px] size-32 text-gray-50 rotate-12 group-hover:rotate-0 transition-transform duration-700" />
-                            <p className="text-gray-400 text-[10px] font-semibold uppercase tracking-widest mb-1">Tenant Success Rate</p>
-                            <h3 className="text-3xl font-semibold text-gray-900 ">94% <span className="text-sm font-medium not- text-gray-400 uppercase tracking-tighter">Verified</span></h3>
-                        </div>
-                        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group">
-                            <HiOutlineClock className="absolute right-[-10px] bottom-[-10px] size-32 text-gray-50 rotate-12 group-hover:rotate-0 transition-transform duration-700" />
-                            <p className="text-gray-400 text-[10px] font-semibold uppercase tracking-widest mb-1">Monthly Distributions</p>
-                            <h3 className="text-3xl font-semibold text-gray-900 ">Active <span className="text-sm font-medium not- text-gray-400 uppercase tracking-tighter">Payouts</span></h3>
-                        </div>
-                    </div>
-                )}
 
                 {/* Category Filters */}
                 <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
@@ -365,38 +346,26 @@ export default function OpportunitiesPage() {
                                 <div className="p-8">
                                     <div className="mb-6">
                                         <p className="text-blue-600 text-[10px] font-semibold uppercase tracking-[0.2em] mb-1">Rental-Backed Investment</p>
-                                        <h3 className="text-xl font-semibold text-gray-900 leading-tight">{item.propertyLocation}</h3>
-                                        <div className="flex items-center gap-2 mt-2">
-                                            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Property Value:</span>
-                                            <span className="text-[10px] font-semibold text-gray-900 ">₦{(item.totalPropertyValue / 1000000).toFixed(1)}M</span>
-                                        </div>
+                                        <h3 className="text-xl font-semibold text-gray-900 leading-tight">Tenant in {item.propertyLocation}</h3>
+                                        <p className="text-xs font-medium text-gray-500 mt-1">{item.tenantProfile.employmentStatus}</p>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4 mb-8">
                                         <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100">
-                                            <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Monthly Rent</p>
+                                            <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Monthly Repayment</p>
                                             <p className="text-sm font-semibold text-gray-900 ">₦{item.monthlyInstallment.toLocaleString()}</p>
+                                        </div>
+                                        <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                                            <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Repayment Tenure</p>
+                                            <p className="text-sm font-semibold text-gray-900 ">{item.repaymentDuration} Months</p>
                                         </div>
                                         <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100">
                                             <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Success Projection</p>
                                             <p className="text-sm font-semibold text-brand-green ">{item.repaymentSuccessProjection}%</p>
                                         </div>
-                                    </div>
-
-                                    {/* Funding Progress */}
-                                    <div className="space-y-3 mb-8">
-                                        <div className="flex justify-between items-end">
-                                            <div className="space-y-0.5">
-                                                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Funding Goal</p>
-                                                <p className="text-lg font-semibold text-blue-600 ">₦{(item.amountRequired / 1000000).toFixed(1)}M</p>
-                                            </div>
-                                            <span className="text-xs font-semibold text-gray-400 mb-1">{((item.amountRaised / item.amountRequired) * 100).toFixed(0)}%</span>
-                                        </div>
-                                        <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden shadow-inner p-0.5">
-                                            <div
-                                                className="bg-blue-600 h-full rounded-full transition-all duration-1000 ease-out"
-                                                style={{ width: `${(item.amountRaised / item.amountRequired) * 100}%` }}
-                                            />
+                                        <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                                            <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Financing Required</p>
+                                            <p className="text-sm font-semibold text-blue-600 ">₦{(item.amountRequired / 1000000).toFixed(1)}M</p>
                                         </div>
                                     </div>
 

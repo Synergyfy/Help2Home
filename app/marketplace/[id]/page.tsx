@@ -10,6 +10,7 @@ import BookingModal from '@/components/BookingModal';
 import ConfirmationModal from '@/components/ConfirmationModal';
 import ChatDrawer from '@/components/marketplace/ChatDrawer';
 import ListerProfileModal from '@/components/marketplace/ListerProfileModal';
+import FinancingPartnerModal from '@/components/marketplace/FinancingPartnerModal';
 import InvestmentDetailsModal from '@/components/dashboard/investor/InvestmentDetailsModal';
 import { mockProperties } from '@/utils/properties';
 import { FaShower, FaHome } from "react-icons/fa";
@@ -48,6 +49,7 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false);
+    const [isFinancingModalOpen, setIsFinancingModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(0);
 
     if (!property) {
@@ -317,9 +319,15 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                                     </button>
 
                                     {(property.propertyType === 'rent' || property.propertyType === 'service-apartment' || property.propertyType === 'rent-to-own') && (
-                                        <Link href={`/dashboard/tenant/apply?propertyId=${property.id}`} className="block w-full text-center bg-brand-green text-white font-bold py-4 rounded-xl hover:bg-green-600 transition-colors shadow-lg">
+                                        <button onClick={() => setIsFinancingModalOpen(true)} className="w-full bg-brand-green text-white font-bold py-4 rounded-xl hover:bg-green-600 transition-colors shadow-lg">
                                             Apply for Rent
-                                        </Link>
+                                        </button>
+                                    )}
+
+                                    {property.propertyType === 'buy' && (
+                                        <button onClick={() => setIsFinancingModalOpen(true)} className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition-colors shadow-lg">
+                                            Apply for Mortgage
+                                        </button>
                                     )}
 
                                     {(property as any).investmentTerms?.enabled && (
@@ -561,6 +569,16 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                 isOpen={isInvestmentModalOpen}
                 onClose={() => setIsInvestmentModalOpen(false)}
                 property={property}
+            />
+            <FinancingPartnerModal
+                isOpen={isFinancingModalOpen}
+                onClose={() => setIsFinancingModalOpen(false)}
+                property={{
+                    id: property.id,
+                    title: property.title,
+                    price: propertyPrice,
+                    type: property.propertyType
+                }}
             />
         </div >
     );
