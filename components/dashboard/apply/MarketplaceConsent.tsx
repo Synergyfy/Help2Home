@@ -26,13 +26,13 @@ export default function MarketplaceConsent({
                     <HiOutlineChartBar size={28} />
                 </div>
                 <div>
-                    <h3 className="text-xl font-bold text-gray-900">Marketplace & Repayment</h3>
+                    <h3 className="text-xl font-bold text-gray-900">Investor Portal & Repayment</h3>
                     <p className="text-sm text-gray-500">Enable investor backing and automated repayments.</p>
                 </div>
             </div>
 
             <div className="space-y-6">
-                {/* Marketplace Consent */}
+                {/* Investor Portal Consent */}
                 <div className="p-5 rounded-2xl bg-gray-50 border border-gray-100 hover:border-blue-200 transition-all">
                     <div className="flex items-start gap-4">
                         <div className="pt-1">
@@ -46,7 +46,7 @@ export default function MarketplaceConsent({
                         </div>
                         <div className="flex-1">
                             <label htmlFor="marketplaceConsent" className="block font-bold text-gray-900 cursor-pointer">
-                                List my application on the Help2Home Marketplace
+                                List my application on the Help2Home Investor Portal
                             </label>
                             <p className="text-xs text-gray-500 mt-1 leading-relaxed">
                                 By enabling this, your application (anonymized) will be shown to verified investors who can fund your rent. 
