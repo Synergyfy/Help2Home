@@ -1,0 +1,91 @@
+export const PROPERTY_CATEGORIES = [
+  {
+    id: 'residential',
+    label: 'Residential',
+    description: 'Homes for living',
+    types: ['Apartment', 'House', 'Duplex', 'Studio', 'Bungalow', 'Villa']
+  },
+  {
+    id: 'commercial',
+    label: 'Commercial',
+    description: 'Business spaces',
+    types: ['Office Space', 'Shop', 'Warehouse', 'Co-working', 'Showroom']
+  },
+  {
+    id: 'land',
+    label: 'Land',
+    description: 'Undeveloped plots',
+    types: ['Residential Land', 'Commercial Land', 'Mixed Use', 'Farmland']
+  },
+  {
+    id: 'industrial',
+    label: 'Industrial',
+    description: 'Factories and plants',
+    types: ['Factory', 'Industrial Complex']
+  }
+];
+
+export const STEP_CONFIG: Record<string, string[]> = {
+  landlord: ['basics', 'location', 'financials', 'details', 'media', 'preview'],
+  agent: ['basics', 'location', 'financials', 'details', 'media', 'preview'],
+  caretaker: ['basics', 'location', 'financials', 'details', 'media', 'preview'],
+  developer: ['basics', 'location', 'project-timeline', 'investment-terms', 'media', 'preview']
+};
+
+export const ROLE_ACTIONS: Record<string, { submitLabel: string; successMessage: string }> = {
+  landlord: {
+    submitLabel: 'Publish Listing',
+    successMessage: 'Your property has been published successfully!'
+  },
+  agent: {
+    submitLabel: 'Publish Listing',
+    successMessage: 'Listing published successfully!'
+  },
+  caretaker: {
+    submitLabel: 'Submit for Verification',
+    successMessage: 'Property listed successfully!'
+  },
+  developer: {
+      submitLabel: 'Publish Project',
+      successMessage: 'Project published successfully!',
+  }
+};
+
+export const PROPERTY_TYPES_BY_LISTING: Record<string, string[]> = {
+  'Rent': [
+    'Apartment',
+    'House',
+    'Duplex',
+    'Bungalow',
+    'Detached',
+    'Semi-detached',
+    'Terraced',
+    'Flats',
+    'Studio / Self-Contain',
+    'Commercial Space',
+    'Industrial / Warehouse',
+    'Farms / Land'
+  ],
+  'Sale': [
+    'House for Sale',
+    'Detached House',
+    'Semi-detached House',
+    'Terrace House',
+    'Apartment / Flat',
+    'Bungalow',
+    'Duplex',
+    'Commercial Property',
+    'Industrial Complex',
+    'Land / Plots'
+  ],
+  'Service-Apartment': [
+    'Studio Apartment',
+    'Luxury Suite',
+    'Family Service Apartment',
+    'Corporate Executive Suite'
+  ],
+  'Rent-to-Own': [
+    'Residential Rent-to-Own',
+    'Commercial Rent-to-Own'
+  ]
+};
