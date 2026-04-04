@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import InvitePartnerModal from '@/components/shared/InvitePartnerModal';
-import { MOCK_PARTNERS, Partner } from '@/lib/mockPartnerData';
+import { Partner } from '@/lib/api/team';
 import { toast } from 'react-toastify';
+import { useLandlordTeam } from '@/hooks/useLandlordTeam';
 import {
     HiOutlineUserGroup,
     HiOutlinePlus,
@@ -12,18 +13,25 @@ import {
     HiOutlinePhone,
     HiOutlineCheckCircle,
     HiOutlineClock,
-    HiOutlineChatBubbleLeftRight
+    HiOutlineChatBubbleLeftRight,
+    HiOutlineTrash
 } from 'react-icons/hi2';
 
 export default function TeamPage() {
     const router = useRouter();
-    const [partners] = useState<Partner[]>(MOCK_PARTNERS);
+    const { partners, isLoading, isError, removeMember } = useLandlordTeam();
     const [filter, setFilter] = useState<'All' | 'Agent' | 'Caretaker'>('All');
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
     const handleMessagePartner = (partner: Partner) => {
         toast.info(`Opening conversation with ${partner.name}...`);
         router.push(`/dashboard/landlord/support/inbox?tenantId=${partner.email}`);
+    };
+
+    const handleRemovePartner = (id: string, name: string) => {
+        if (confirm(`Are you sure you want to remove ${name} from your partner network?`)) {
+            removeMember(id);
+        }
     };
 
     const filteredPartners = filter === 'All'
@@ -140,7 +148,13 @@ export default function TeamPage() {
                                             <div className="text-xs text-gray-400 mt-1">Joined {new Date(partner.joinedDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</div>
                                         </div>
 
-                                        <div className="flex gap-2">
+                                            <button 
+                                                onClick={() => handleRemovePartner(partner.id, partner.name)}
+                                                className="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors shadow-sm active:scale-95"
+                                                title={`Remove ${partner.name}`}
+                                            >
+                                                <HiOutlineTrash size={18} />
+                                            </button>
                                             <button 
                                                 onClick={() => handleMessagePartner(partner)}
                                                 className="p-2.5 bg-brand-green text-white rounded-xl hover:bg-green-700 transition-colors shadow-sm active:scale-95"
@@ -154,13 +168,15 @@ export default function TeamPage() {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         ))
                     ) : (
                         <div className="p-12 text-center">
                             <HiOutlineUserGroup className="size-16 text-gray-300 mx-auto mb-4" />
                             <p className="text-gray-500 font-medium">No {filter.toLowerCase()} partners found.</p>
-                            <button className="mt-4 text-sm font-semibold text-brand-green hover:underline">
+                            <button 
+                                onClick={() => setIsInviteModalOpen(true)}
+                                className="mt-4 text-sm font-semibold text-brand-green hover:underline"
+                            >
                                 Invite your first {filter.toLowerCase()} partner
                             </button>
                         </div>

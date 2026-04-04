@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import NotificationList from '@/components/dashboard/notifications/NotificationList';
 import NotificationFilters from '@/components/dashboard/notifications/NotificationFilters';
 import { Notification, NotificationType } from '@/components/dashboard/notifications/types';
-import { getNotifications, markAsRead, markAllAsRead, clearNotification, clearAllNotifications } from '@/utils/mockNotificationsApi';
+import { getNotifications, markNotificationAsRead as markAsRead, markAllNotificationsAsRead as markAllAsRead, clearNotification, clearAllNotifications } from '@/lib/api/notifications';
 
 export default function NotificationsPage() {
     const [notifications, setNotifications] = useState<Notification[]>([]);

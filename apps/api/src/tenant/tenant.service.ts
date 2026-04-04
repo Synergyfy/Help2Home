@@ -3,12 +3,24 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tenant } from './entities/tenant.entity';
 import { CreateTenantDto, UpdateTenantDto } from './dto/tenant.dto';
+import { MaintenanceService } from '../dashboard/agent/maintenance/maintenance.service';
+import { InspectionService } from '../dashboard/agent/schedule/inspection.service';
+import { TransactionService } from '../dashboard/agent/transactions/transactions.service';
+import { ApplicationService } from '../application/application.service';
+import { AdminSupportService } from '../dashboard/admin/support/support.service';
+import { AdminEducationService } from '../dashboard/admin/education/education.service';
 
 @Injectable()
 export class TenantService {
   constructor(
     @InjectRepository(Tenant)
     private tenantRepository: Repository<Tenant>,
+    private maintenanceService: MaintenanceService,
+    private inspectionService: InspectionService,
+    private transactionService: TransactionService,
+    private applicationService: ApplicationService,
+    private supportService: AdminSupportService,
+    private educationService: AdminEducationService,
   ) {}
 
   async findAll() {
@@ -65,5 +77,59 @@ export class TenantService {
     return this.tenantRepository.count({
       where: { landlordId, status: 'Active' },
     });
+  }
+
+  async findByUserId(userId: string) {
+    return this.tenantRepository.findOne({
+      where: { userId },
+      relations: ['property', 'landlord'],
+    });
+  }
+
+  async getDashboardStats(userId: string) {
+    const tenant = await this.findByUserId(userId);
+    if (!tenant) throw new NotFoundException('Tenant record not found for this user');
+
+    // 1. Maintenance
+    const maintenanceRequests = await this.maintenanceService.findAllByProperty(tenant.propertyId);
+    const pendingMaintenance = maintenanceRequests.filter(r => r.status === 'Pending').length;
+
+    // 2. Inspections
+    const inspections = await this.inspectionService.findAllByProperty(tenant.propertyId);
+    const upcomingInspections = inspections.filter(i => i.status === 'Scheduled').length;
+
+    // 3. Applications
+    const applications = await this.applicationService.findByTenant(userId);
+    const ongoingApplications = applications.filter(a => ['Pending', 'Under Review'].includes(a.status)).length;
+    const approvedHomes = applications.filter(a => ['Approved', 'Funded'].includes(a.status)).length;
+
+    // 4. Support (Unread Messages)
+    // We filter tickets assigned to this user that are not closed
+    const tickets = await this.supportService.findAll(); // Should eventually filter by userId if supported
+    const unreadMessages = tickets.filter(t => t.status !== 'Closed').length;
+
+    // 5. Education
+    const educationItems = await this.educationService.findAll();
+    const latestEducation = educationItems[0] || null;
+
+    // 6. Simplified Repayments (since installment engine is generic for now)
+    const nextRepayment = {
+      amount: tenant.property?.monthlyPrice || 0,
+      dueDate: tenant.leaseEnd || 'Flexible',
+    };
+
+    return {
+      property: tenant.property || { title: tenant.propertyName },
+      leaseEnd: tenant.leaseEnd,
+      paymentStatus: tenant.paymentStatus,
+      pendingMaintenance,
+      upcomingInspections,
+      ongoingApplications,
+      approvedHomes,
+      unreadMessages,
+      latestEducation,
+      nextRepayment,
+      repaymentProgress: 0, // Logic deferred until installment module
+    };
   }
 }

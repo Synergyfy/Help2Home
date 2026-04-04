@@ -8,7 +8,7 @@ import NotificationPreferences from '@/components/dashboard/settings/Notificatio
 import PaymentsSection from '@/components/dashboard/settings/PaymentsSection';
 import SessionsSection from '@/components/dashboard/settings/SessionsSection';
 import { UserProfile, SecuritySettings, NotificationPreference, BankAccount, PaymentMethod, Session, NotificationType } from '@/components/dashboard/settings/types';
-import { getSettingsData, updateProfile, updatePassword, toggleTwoFactor, updateNotificationPreference, unlinkBankAccount, removePaymentMethod, terminateSession } from '@/utils/mockSettingsApi';
+import { getSettingsData, updateProfile, updatePassword, toggleTwoFactor, updateNotificationPreference, unlinkBankAccount, removePaymentMethod, terminateSession } from '@/lib/api/settings';
 
 export default function SettingsPage() {
     const [activeTab, setActiveTab] = useState<SettingsTab>('account');

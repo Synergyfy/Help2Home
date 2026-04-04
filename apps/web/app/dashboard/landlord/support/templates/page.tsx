@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import TemplateManager from '@/components/dashboard/landlord/support/TemplateManager';
-import { MOCK_TEMPLATES, Template } from '@/lib/mockSupportData';
+import { MOCK_TEMPLATES, Template } from '@/lib/api/support-types';
 
 export default function TemplatesPage() {
     const [templates, setTemplates] = useState<Template[]>(MOCK_TEMPLATES);

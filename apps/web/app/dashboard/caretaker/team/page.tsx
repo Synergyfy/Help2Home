@@ -22,50 +22,32 @@ interface Partner {
     joinedDate: string;
 }
 
-const MOCK_PARTNERS: Partner[] = [
-    {
-        id: '1',
-        name: 'Funke Adeyemi',
-        role: 'Landlord',
-        email: 'funke@example.com',
-        phone: '+234 801 234 5678',
-        properties: 4,
-        status: 'Active',
-        joinedDate: '2025-10-20'
-    },
-    {
-        id: '2',
-        name: 'Tunde Bakare',
-        role: 'Agent',
-        email: 'tunde@example.com',
-        phone: '+234 802 345 6789',
-        properties: 2,
-        status: 'Active',
-        joinedDate: '2025-11-15'
-    },
-    {
-        id: '3',
-        name: 'Amina Hassan',
-        role: 'Landlord',
-        email: 'amina@example.com',
-        phone: '+234 803 456 7890',
-        properties: 1,
-        status: 'Pending',
-        joinedDate: '2026-01-05'
-    }
-];
+import { useCaretakerPartners } from '@/hooks/useCaretakerDashboard';
 
 export default function TeamPage() {
-    const [partners] = useState<Partner[]>(MOCK_PARTNERS);
+    const { data: partners, isLoading } = useCaretakerPartners();
     const [filter, setFilter] = useState<'All' | 'Landlord' | 'Agent'>('All');
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
-    const filteredPartners = filter === 'All'
-        ? partners
-        : partners.filter(p => p.role === filter);
+    if (isLoading) {
+        return (
+            <div className="space-y-8 animate-pulse">
+                <div className="h-10 bg-gray-200 rounded-xl w-1/4"></div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {[...Array(3)].map((_, i) => <div key={i} className="h-32 bg-gray-200 rounded-4xl"></div>)}
+                </div>
+                <div className="h-96 bg-gray-200 rounded-[2.5rem] mt-8"></div>
+            </div>
+        );
+    }
 
-    const activePartners = partners.filter(p => p.status === 'Active').length;
-    const pendingInvites = partners.filter(p => p.status === 'Pending').length;
+    const filteredPartners = filter === 'All'
+        ? (partners || [])
+        : (partners || []).filter((p: any) => p.role === filter);
+
+    const activePartners = (partners || []).filter((p: any) => p.status === 'Active').length;
+    const pendingInvites = (partners || []).filter((p: any) => p.status === 'Pending').length;
+    const sharedProperties = (partners || []).reduce((acc: number, p: any) => acc + p.properties, 0);
 
     return (
         <div className="space-y-8 pb-12">
@@ -104,7 +86,7 @@ export default function TeamPage() {
                     <div className="size-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-4">
                         <HiOutlineCheckCircle size={24} />
                     </div>
-                    <div className="text-2xl font-semibold text-gray-900">{partners.reduce((acc, p) => acc + p.properties, 0)}</div>
+                    <div className="text-2xl font-semibold text-gray-900">{sharedProperties}</div>
                     <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Shared Properties</div>
                 </div>
             </div>

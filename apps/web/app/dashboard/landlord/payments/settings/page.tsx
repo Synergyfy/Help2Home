@@ -1,23 +1,39 @@
-'use client';
-
 import React, { useState } from 'react';
 import Link from 'next/link';
 import BankDetailsModal from '@/components/dashboard/landlord/payments/BankDetailsModal';
-import { MOCK_PAYOUT_SETTINGS, PayoutSettings } from '@/lib/mockPaymentData';
+import { PayoutSettings, BankAccount } from '@/lib/api/payments';
+
+const INITIAL_SETTINGS: PayoutSettings = {
+    frequency: 'Weekly',
+    bankAccounts: [
+        {
+            id: '1',
+            bankName: 'GT Bank',
+            accountName: 'John Doe Properties',
+            accountNumber: '0123456789',
+            bvnLast4: '4321',
+            isPrimary: true
+        }
+    ],
+    autoPayout: true,
+    notifications: {
+        email: true,
+        sms: true
+    }
+};
 
 export default function PayoutSettingsPage() {
-    const [settings, setSettings] = useState<PayoutSettings>(MOCK_PAYOUT_SETTINGS);
+    const [settings, setSettings] = useState<PayoutSettings>(INITIAL_SETTINGS);
     const [isBankModalOpen, setIsBankModalOpen] = useState(false);
     const [isSecurityPromptOpen, setIsSecurityPromptOpen] = useState(false);
     const [pendingAction, setPendingAction] = useState<string | null>(null);
 
-    const handleFrequencyChange = (freq: 'Instant' | 'Weekly' | 'Monthly') => {
+    const handleFrequencyChange = (freq: PayoutSettings['frequency']) => {
         setPendingAction(`Change payout frequency to ${freq}`);
         setIsSecurityPromptOpen(true);
     };
 
     const handleSecurityConfirm = () => {
-        // Simulate security check success
         if (pendingAction?.includes('frequency')) {
             const newFreq = pendingAction.split('to ')[1] as PayoutSettings['frequency'];
             setSettings({ ...settings, frequency: newFreq });

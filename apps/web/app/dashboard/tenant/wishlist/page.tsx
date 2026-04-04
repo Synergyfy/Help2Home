@@ -1,19 +1,32 @@
 'use client';
 
-import React from 'react';
-import { useUserStore } from '@/store/userStore';
-import { mockProperties } from '@/utils/properties';
+import React, { useState, useEffect } from 'react';
+import { getWishlist } from '@/lib/api/wishlist';
 import PropertyCard from '@/components/shared/PropertyCard';
 import Link from 'next/link';
 import { IoHeartDislikeOutline } from 'react-icons/io5';
 
 export default function WishlistPage() {
-    const { wishlist } = useUserStore();
+    const [wishlistProperties, setWishlistProperties] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Filter properties that are in the wishlist
-    const wishlistProperties = mockProperties.filter(p => 
-        wishlist.includes(p.id.toString())
-    );
+    useEffect(() => {
+        const loadWishlist = async () => {
+            try {
+                const data = await getWishlist();
+                setWishlistProperties(data || []);
+            } catch (error) {
+                console.error('Failed to load wishlist:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        loadWishlist();
+    }, []);
+
+    if (isLoading) {
+        return <div className="min-h-screen flex items-center justify-center font-bold text-brand-green">Loading wishlist...</div>;
+    }
 
     return (
         <div className="p-4 md:p-8 font-sans min-h-screen bg-gray-50">

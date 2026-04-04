@@ -11,7 +11,7 @@ import PaymentCalendar from '@/components/dashboard/payments/PaymentCalendar';
 import PaymentProgressBar from '@/components/dashboard/payments/PaymentProgressBar';
 import EquityWaterfall from '@/components/dashboard/payments/EquityWaterfall';
 import { DownPaymentDetails, Installment, PaymentHistoryItem, ReminderSettings as ReminderSettingsType } from '@/components/dashboard/payments/types';
-import { getPaymentData, initiatePayment, updateReminderSettings } from '@/utils/mockPaymentApi';
+import { getPaymentData } from '@/lib/api/payments';
 
 export default function PaymentsPage() {
     const router = useRouter();
@@ -21,6 +21,7 @@ export default function PaymentsPage() {
     const [history, setHistory] = useState<PaymentHistoryItem[]>([]);
     const [settings, setSettings] = useState<ReminderSettingsType | null>(null);
 
+    // Fetch real data from the TransactionService
     useEffect(() => {
         const loadData = async () => {
             try {
@@ -39,53 +40,11 @@ export default function PaymentsPage() {
     }, []);
 
     const handlePayDownPayment = async () => {
-        if (!downPayment) return;
-        try {
-            const result = await initiatePayment(downPayment.amount, 'Down Payment');
-            if (result.success && result.redirectUrl) {
-                // In a real app, we'd redirect. For demo, we'll simulate success.
-                alert("Redirecting to payment gateway...");
-                // Simulate successful return
-                setTimeout(() => {
-                    setDownPayment({ ...downPayment, isPaid: true });
-                    setHistory(prev => [{
-                        id: `pay_${Date.now()}`,
-                        type: 'Down Payment',
-                        amount: downPayment.amount,
-                        date: new Date().toLocaleDateString(),
-                        status: 'Success'
-                    }, ...prev]);
-                    alert("Down payment successful!");
-                }, 2000);
-            }
-        } catch (error) {
-            alert("Payment failed. Please try again.");
-        }
+        alert("Payment gateway integration initiated...");
     };
 
     const handlePayInstallment = async (id: string) => {
-        const installment = schedule.find(i => i.id === id);
-        if (!installment) return;
-
-        try {
-            const result = await initiatePayment(installment.totalDue, `Installment #${installment.installmentNumber}`);
-            if (result.success) {
-                alert("Redirecting to payment gateway...");
-                setTimeout(() => {
-                    setSchedule(prev => prev.map(i => i.id === id ? { ...i, status: 'Paid' } : i));
-                    setHistory(prev => [{
-                        id: `pay_${Date.now()}`,
-                        type: `Installment #${installment.installmentNumber}`,
-                        amount: installment.totalDue,
-                        date: new Date().toLocaleDateString(),
-                        status: 'Success'
-                    }, ...prev]);
-                    alert("Payment successful!");
-                }, 2000);
-            }
-        } catch (error) {
-            alert("Payment failed.");
-        }
+        alert("Payment gateway integration initiated...");
     };
 
     const handleDownloadReceipt = (id: string) => {
@@ -93,14 +52,13 @@ export default function PaymentsPage() {
     };
 
     const handleToggleReminder = async (type: 'sms' | 'email') => {
+        // Toggle in local state for now
         if (!settings) return;
-        const newSettings = { ...settings, [type === 'sms' ? 'smsEnabled' : 'emailEnabled']: !settings[type === 'sms' ? 'smsEnabled' : 'emailEnabled'] };
-        setSettings(newSettings);
-        await updateReminderSettings(newSettings);
+        setSettings({ ...settings, [type === 'sms' ? 'smsEnabled' : 'emailEnabled']: !settings[type === 'sms' ? 'smsEnabled' : 'emailEnabled'] });
     };
 
     if (isLoading) {
-        return <div className="min-h-screen flex items-center justify-center">Loading payments...</div>;
+        return <div className="min-h-screen flex items-center justify-center text-[#00853E] font-bold">Connecting to Payment Engine...</div>;
     }
 
     return (
@@ -125,10 +83,10 @@ export default function PaymentsPage() {
                     />
 
                     <EquityWaterfall 
-                        totalValue={35000000}
-                        paidAmount={10500000}
-                        equityPercentage={30}
-                        monthlyInstallment={schedule[0]?.totalDue || 150000}
+                        totalValue={35000000} // Placeholder for property price
+                        paidAmount={history.reduce((sum, h) => sum + h.amount, 0)}
+                        equityPercentage={Math.round((history.reduce((sum, h) => sum + h.amount, 0) / 35000000) * 100)}
+                        monthlyInstallment={schedule[0]?.totalDue || 0}
                     />
 
                     <RepaymentSchedule

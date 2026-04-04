@@ -31,8 +31,15 @@ export class Tenant extends BaseEntity {
   @JoinColumn({ name: 'landlordId' })
   landlord: User;
 
-  @Column()
+  @Column({ nullable: true })
   landlordId: string;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'userId' })
+  user: User;
+
+  @Column({ nullable: true })
+  userId: string;
 
   @Column({ default: 'Active' })
   status: string; // 'Active', 'Past', 'Evicted'

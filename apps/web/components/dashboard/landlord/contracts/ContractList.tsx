@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Contract, ContractStatus } from '@/lib/mockContractData';
-import { useContractStore } from '@/store/contractStore';
+import { useLandlordContracts } from '@/hooks/useLandlordContracts';
 import { format } from 'date-fns';
 
 interface ContractListProps {
@@ -11,7 +11,7 @@ interface ContractListProps {
 }
 
 export default function ContractList({ onSelect }: ContractListProps) {
-    const { contracts } = useContractStore();
+    const { contracts, isLoading, isError } = useLandlordContracts();
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<ContractStatus | 'All'>('All');
 
@@ -36,6 +36,9 @@ export default function ContractList({ onSelect }: ContractListProps) {
             default: return 'bg-gray-100 text-gray-700';
         }
     };
+
+    if (isLoading) return <div className="p-12 text-center text-gray-500 font-bold animate-pulse">Loading contracts...</div>;
+    if (isError) return <div className="p-12 text-center text-red-500 font-bold">Failed to load contracts.</div>;
 
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">

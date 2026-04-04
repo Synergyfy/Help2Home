@@ -9,7 +9,7 @@ export default function RepaymentScheduleSummary({ schedule }: RepaymentSchedule
     if (!schedule) return null;
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6 relative overflow-hidden group">
             <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-bold text-gray-900">Repayment Schedule</h3>
                 <button className="text-sm font-medium text-[#6D28D9] hover:underline">
@@ -26,14 +26,22 @@ export default function RepaymentScheduleSummary({ schedule }: RepaymentSchedule
 
                 <div className="text-right">
                     <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${schedule.status === 'Paid' ? 'bg-green-100 text-green-700' :
-                            schedule.status === 'Overdue' ? 'bg-red-100 text-red-700' :
-                                'bg-blue-100 text-blue-700'
+                        schedule.status === 'Overdue' ? 'bg-red-100 text-red-700' :
+                            'bg-blue-100 text-blue-700'
                         }`}>
                         {schedule.status}
                     </span>
                     <button className="block mt-3 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
                         Pay Now
                     </button>
+                </div>
+            </div>
+
+            {/* Coming Soon Overlay */}
+            <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] flex items-center justify-center z-10">
+                <div className="bg-white border border-purple-100 shadow-xl px-6 py-3 rounded-2xl flex flex-col items-center gap-1 transform transition-transform group-hover:scale-105">
+                    <span className="text-xs font-black uppercase tracking-widest text-[#6D28D9] opacity-60">Feature</span>
+                    <span className="text-lg font-black text-gray-900">Coming Soon</span>
                 </div>
             </div>
         </div>

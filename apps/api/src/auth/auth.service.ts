@@ -96,20 +96,14 @@ export class AuthService {
   async getTokens(userId: string, email: string) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
-        {
-          sub: userId,
-          email,
-        },
+        { sub: userId, email },
         {
           secret: this.configService.get<string>('JWT_SECRET'),
           expiresIn: '15m',
         },
       ),
       this.jwtService.signAsync(
-        {
-          sub: userId,
-          email,
-        },
+        { sub: userId, email },
         {
           secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
           expiresIn: '7d',
@@ -117,9 +111,26 @@ export class AuthService {
       ),
     ]);
 
-    return {
-      accessToken,
-      refreshToken,
-    };
+    return { accessToken, refreshToken };
+  }
+
+  async changePassword(userId: string, current: string, newPass: string) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: ['id', 'password'],
+    });
+
+    if (!user || !(await bcrypt.compare(current, user.password))) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPass, 10);
+    await this.userRepository.update(userId, { password: hashedPassword });
+    return { message: 'Password changed successfully' };
+  }
+
+  async toggleMfa(userId: string, enabled: boolean) {
+    await this.userRepository.update(userId, { twoFactorEnabled: enabled });
+    return { twoFactorEnabled: enabled };
   }
 }

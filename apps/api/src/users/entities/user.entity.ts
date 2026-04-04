@@ -41,4 +41,7 @@ export class User extends BaseEntity {
 
     @Column({ default: false })
     phoneNumberVerified: boolean;
+
+    @Column({ default: false })
+    twoFactorEnabled: boolean;
 }

@@ -19,35 +19,38 @@ import {
     EducationPreview,
     MarketplaceFundingTracker
 } from '@/components/dashboard/DashboardWidgets';
+import { useTenantDashboard } from '@/hooks/useTenantDashboard';
 
 export default function TenantDashboard() {
     const router = useRouter();
     const { applications, isLoading: appsLoading } = useApplications();
+    const { 
+        stats: backendStats, 
+        fundingProperties, 
+        isLoading: dashboardLoading 
+    } = useTenantDashboard();
 
-    // Mock Funding Data for the new tracker
-    const marketplaceFunding = [
-        {
-            id: 'fund_1',
-            propertyTitle: 'The Glass House - 5 Bed Detached',
-            targetAmount: 15000000,
-            raisedAmount: 9750000,
-            investorCount: 12,
-            status: 'Funding' as const
-        }
-    ];
-
-    // Derived stats from real data
+    // Derived stats combining applications hook and dashboard stats endpoint
     const stats = {
-        ongoingApplications: applications.filter(a => a.status === 'Pending' || a.status === 'Under Review').length,
-        approvedHomes: applications.filter(a => a.status === 'Approved' || a.status === 'Funded').length,
+        ongoingApplications: backendStats?.ongoingApplications ?? applications.filter(a => a.status === 'Pending' || a.status === 'Under Review').length,
+        approvedHomes: backendStats?.approvedHomes ?? applications.filter(a => a.status === 'Approved' || a.status === 'Funded').length,
         fundedApplications: applications.filter(a => a.status === 'Funded'),
-        nextRepayment: {
-            amount: 45200,
-            dueDate: 'Mar 3, 2026',
+        nextRepayment: backendStats?.nextRepayment ?? {
+            amount: 0,
+            dueDate: 'N/A',
         },
-        unreadMessages: 3,
-        repaymentProgress: 40,
+        unreadMessages: backendStats?.unreadMessages ?? 0,
+        repaymentProgress: backendStats?.repaymentProgress ?? 0,
     };
+
+    const marketplaceFunding = fundingProperties.map((p: any) => ({
+        id: p.id,
+        propertyTitle: p.title,
+        targetAmount: p.targetAmount || p.price,
+        raisedAmount: p.raisedAmount || 0,
+        investorCount: p.investorCount || 0,
+        status: 'Funding' as const
+    }));
 
     const recentApplications = applications.slice(0, 5).map(app => ({
         id: app.id,
@@ -60,26 +63,16 @@ export default function TenantDashboard() {
                     app.status === 'Rejected' ? 'Unfortunately, your application was not successful.' : 'Draft saved.',
         updatedAt: app.submittedAt ? new Date(app.submittedAt).toLocaleDateString() : 'Draft'
     }));
-    const [educationArticle, setEducationArticle] = useState<any>(null);
 
-    useEffect(() => {
-        // Simulate API fetch for other data
-        const fetchData = async () => {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+    const educationArticle = backendStats?.latestEducation ? {
+        id: backendStats.latestEducation.id,
+        title: backendStats.latestEducation.title,
+        category: backendStats.latestEducation.category || 'Real Estate',
+        readTime: backendStats.latestEducation.readTime || '5 min read',
+        image: backendStats.latestEducation.image || '/images/education-1.jpg',
+    } : null;
 
-            setEducationArticle({
-                id: '6',
-                title: 'Financial Literacy for Renters',
-                category: 'Financial Literacy',
-                readTime: '7 min read',
-                image: '/images/education-1.jpg',
-            });
-        };
-
-        fetchData();
-    }, []);
-
-    if (appsLoading && applications.length === 0) {
+    if ((appsLoading || dashboardLoading) && applications.length === 0) {
         return (
             <div className="space-y-8 pb-12 animate-pulse">
                 {/* Header Skeleton */}

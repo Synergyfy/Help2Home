@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Conversation } from '@/lib/mockSupportData';
+import { Conversation } from '@/lib/api/support-types';
 import { formatDistanceToNow } from 'date-fns';
 
 interface ConversationListProps {

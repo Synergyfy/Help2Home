@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { MOCK_CONVERSATIONS, MOCK_TICKETS } from '@/lib/mockSupportData';
+import { MOCK_CONVERSATIONS, MOCK_TICKETS } from '@/lib/api/support-types';
 
 export default function SupportHubPage() {
     const unreadMessages = MOCK_CONVERSATIONS.reduce((acc, conv) => acc + conv.unreadCount, 0);

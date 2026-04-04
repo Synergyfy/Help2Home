@@ -17,23 +17,23 @@ import {
     HiOutlineBanknotes,
     HiOutlineUserGroup // New import for assigned artisan icon
 } from 'react-icons/hi2';
-import { MOCK_MAINTENANCE_REQUESTS, MaintenanceRequest, MaintenanceStatus } from '@/lib/mockMaintenanceData';
+import { MaintenanceRequest, MaintenanceStatus } from '@/lib/mockMaintenanceData';
 import { toast } from 'react-toastify';
 import { formatCurrency } from '@/utils/helpers';
+import { useLandlordMaintenance } from '@/hooks/useLandlordMaintenance';
 import RejectionReasonModal from '@/components/dashboard/landlord/maintenance/RejectionReasonModal';
-import FindArtisanModal from '@/components/dashboard/landlord/maintenance/FindArtisanModal'; // Import new modal
-import { MOCK_ARTISANS } from '@/lib/mockArtisanData'; // Import artisan data
+import FindArtisanModal from '@/components/dashboard/landlord/maintenance/FindArtisanModal'; 
+import { MOCK_ARTISANS } from '@/lib/mockArtisanData'; 
 
 export default function MaintenancePageContent() {
-    const [requests, setRequests] = useState<MaintenanceRequest[]>(MOCK_MAINTENANCE_REQUESTS);
+    const { requests, isLoading, isError, updateStatus: updateStatusMutation, isUpdating } = useLandlordMaintenance();
     const [filter, setFilter] = useState<'All' | MaintenanceStatus>('All');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null);
-    const [isRejectionModalOpen, setIsRejectionModalOpen] = useState(false); // State for rejection modal
+    const [isRejectionModalOpen, setIsRejectionModalOpen] = useState(false); 
     const [currentRequestToReject, setCurrentRequestToReject] = useState<MaintenanceRequest | null>(null);
-    const [isRejecting, setIsRejecting] = useState(false);
-    const [isFindArtisanModalOpen, setIsFindArtisanModalOpen] = useState(false); // State for Find Artisan modal
-    const [currentRequestForArtisan, setCurrentRequestForArtisan] = useState<MaintenanceRequest | null>(null); // Request to assign artisan to
+    const [isFindArtisanModalOpen, setIsFindArtisanModalOpen] = useState(false); 
+    const [currentRequestForArtisan, setCurrentRequestForArtisan] = useState<MaintenanceRequest | null>(null); 
     const [isHiringArtisan, setIsHiringArtisan] = useState(false);
 
     const filteredRequests = requests.filter(req => {
@@ -45,15 +45,17 @@ export default function MaintenancePageContent() {
     });
 
     const handleUpdateStatus = (id: string, newStatus: MaintenanceStatus, reason?: string, assignedArtisanId?: string) => {
-        setRequests(prev => prev.map(req =>
-            req.id === id ? { ...req, status: newStatus, rejectionReason: reason, assignedArtisanId: assignedArtisanId } : req
-        ));
-        toast.success(`Request ${newStatus.toLowerCase()} successfully`);
+        updateStatusMutation({ 
+            id, 
+            status: newStatus, 
+            reason, 
+            artisanId: assignedArtisanId 
+        });
         setSelectedRequest(null);
         setIsRejectionModalOpen(false);
         setCurrentRequestToReject(null);
-        setIsFindArtisanModalOpen(false); // Close Find Artisan modal
-        setCurrentRequestForArtisan(null); // Clear request for artisan
+        setIsFindArtisanModalOpen(false);
+        setCurrentRequestForArtisan(null);
     };
 
     const handleRejectClick = (request: MaintenanceRequest) => {
@@ -63,11 +65,7 @@ export default function MaintenancePageContent() {
 
     const handleConfirmReject = async (reason: string) => {
         if (currentRequestToReject) {
-            setIsRejecting(true);
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
             handleUpdateStatus(currentRequestToReject.id, 'Rejected', reason);
-            setIsRejecting(false);
         }
     };
 
@@ -78,12 +76,7 @@ export default function MaintenancePageContent() {
 
     const handleHireArtisan = async (artisanId: string) => {
         if (currentRequestForArtisan) {
-            setIsHiringArtisan(true);
-            // Simulate API call for hiring
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            // Assuming 'Approved' or 'In Progress' when an artisan is hired
             handleUpdateStatus(currentRequestForArtisan.id, 'In Progress', undefined, artisanId);
-            setIsHiringArtisan(false);
         }
     };
 
@@ -112,6 +105,9 @@ export default function MaintenancePageContent() {
         const artisan = MOCK_ARTISANS.find(a => a.id === artisanId);
         return artisan ? artisan.name : 'Unassigned';
     };
+
+    if (isLoading) return <div className="p-12 text-center text-gray-500 font-bold animate-pulse">Loading maintenance requests...</div>;
+    if (isError) return <div className="p-12 text-center text-red-500 font-bold">Failed to load maintenance requests.</div>;
 
     return (
         <div className="space-y-8">
@@ -386,7 +382,7 @@ export default function MaintenancePageContent() {
                         setCurrentRequestToReject(null);
                     }}
                     onConfirm={handleConfirmReject}
-                    isLoading={isRejecting}
+                    isLoading={isUpdating}
                 />
             )}
 
@@ -399,7 +395,7 @@ export default function MaintenancePageContent() {
                         setCurrentRequestForArtisan(null);
                     }}
                     onHireArtisan={handleHireArtisan}
-                    isLoading={isHiringArtisan}
+                    isLoading={isUpdating}
                     currentMaintenanceRequestSpecialization={currentRequestForArtisan?.title.includes('Faucet') ? 'Plumbing' : undefined} // Example specialization based on title
                 />
             )}

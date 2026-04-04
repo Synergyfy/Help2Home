@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import ContentDetail from '@/components/dashboard/education/ContentDetail';
 import { EducationContent } from '@/components/dashboard/education/types';
-import { getContentDetail, getContentList, toggleSaveContent } from '@/utils/mockEducationApi';
+import { getContentDetail, getContentList, toggleSaveContent } from '@/lib/api/education';
 
 export default function ContentDetailPage() {
     const params = useParams();

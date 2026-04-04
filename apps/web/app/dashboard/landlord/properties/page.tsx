@@ -1,12 +1,23 @@
 'use client';
 
-import { getMockProperties, Property } from '@/utils/properties';
+import { Property } from '@/utils/properties';
+import { useLandlordProperties } from '@/hooks/useLandlordQueries';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { HiOutlinePlus, HiOutlineHome, HiOutlineEye, HiOutlineMapPin } from 'react-icons/hi2';
 
 export default function LandlordPropertiesPage() {
-    const properties = getMockProperties();
+    const { data, isLoading, isError } = useLandlordProperties();
+    const properties = data || [];
+
+    if (isLoading) {
+        return <div className="p-12 text-center text-gray-500 font-bold animate-pulse">Loading properties...</div>;
+    }
+
+    if (isError) {
+        return <div className="p-12 text-center text-red-500 font-bold">Failed to load properties.</div>;
+    }
 
     return (
         <div className="space-y-8 pb-12">

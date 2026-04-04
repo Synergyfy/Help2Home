@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Ticket } from '@/lib/mockSupportData';
+import { Ticket } from '@/lib/api/support-types';
 import { formatDistanceToNow } from 'date-fns';
 
 interface TicketListProps {

@@ -1,43 +1,47 @@
+import axios from 'axios';
+import { useUserStore } from '@/store/userStore';
 import { Application, ApplicationStatus } from '@/store/applicationStore';
 
-// Mock delay to simulate network latency
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
+const getAuthHeader = () => {
+    const token = useUserStore.getState().token;
+    return { Authorization: `Bearer ${token}` };
+};
 
 export const fetchApplications = async (role: 'tenant' | 'landlord', id: string): Promise<Application[]> => {
-  await delay(1000);
-  
-  // In a real app, this would be an API call
-  // For now, we rely on the store to hold the "source of truth" but fetch via this function
-  // In a real scenario, this would hit /api/applications?role=...&id=...
-  const stored = localStorage.getItem('help2home-applications');
-  if (stored) {
-    const parsed = JSON.parse(stored);
-    const allApps = parsed.state.applications as Application[];
-    
-    let filtered = [];
-    if (role === 'tenant') {
-      filtered = allApps.filter(app => app.tenantId === id);
-    } else {
-      filtered = allApps.filter(app => app.landlordId === id && app.status !== 'Draft');
-    }
-
-    // Demo Fallback: If no apps for this user, show all apps (except drafts)
-    if (filtered.length === 0) {
-      return allApps.filter(app => app.status !== 'Draft');
-    }
-
-    return filtered;
+  try {
+    const { data } = await axios.get(`${API_URL}/landlord-dashboard/applications`, {
+      headers: getAuthHeader(),
+      params: { role }
+    });
+    return data;
+  } catch (error) {
+    console.error('Error fetching applications:', error);
+    return [];
   }
-  
-  return [];
 };
 
 export const updateApplicationStatusApi = async (id: string, status: ApplicationStatus): Promise<boolean> => {
-  await delay(800);
-  return true;
+  try {
+    await axios.patch(`${API_URL}/landlord-dashboard/applications/${id}/status`, { status }, {
+      headers: getAuthHeader()
+    });
+    return true;
+  } catch (error) {
+    console.error('Error updating application status:', error);
+    return false;
+  }
 };
 
 export const submitApplicationApi = async (application: Application): Promise<Application> => {
-  await delay(1500);
-  return application;
+  try {
+    const { data } = await axios.post(`${API_URL}/application`, application, {
+      headers: getAuthHeader()
+    });
+    return data;
+  } catch (error) {
+    console.error('Error submitting application:', error);
+    throw error;
+  }
 };

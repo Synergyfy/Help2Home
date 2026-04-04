@@ -11,7 +11,7 @@ import {
     HiOutlineDocumentText,
     HiOutlineCheckCircle
 } from 'react-icons/hi2';
-import { TicketPriority, TicketStatus } from '@/lib/mockSupportData';
+import { TicketPriority, TicketStatus } from '@/lib/api/support-types';
 import { toast } from 'react-toastify';
 
 interface CreateTicketModalProps {

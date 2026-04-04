@@ -2,18 +2,126 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Property } from './entities/property.entity';
+import { Wishlist } from './entities/wishlist.entity';
 
 @Injectable()
 export class PropertyService {
   constructor(
     @InjectRepository(Property)
-    private propertyRepository: Repository<Property>,
+    private readonly propertyRepository: Repository<Property>,
+    @InjectRepository(Wishlist)
+    private readonly wishlistRepository: Repository<Wishlist>,
   ) {}
 
-  async findAll() {
+  async getWishlist(userId: string) {
+    const list = await this.wishlistRepository.find({
+      where: { userId },
+      relations: ['property'],
+    });
+    return list.map(l => l.property);
+  }
+
+  async toggleWishlist(userId: string, propertyId: string) {
+    const existing = await this.wishlistRepository.findOne({
+      where: { userId, propertyId },
+    });
+
+    if (existing) {
+      await this.wishlistRepository.remove(existing);
+      return false;
+    }
+
+    const item = this.wishlistRepository.create({ userId, propertyId });
+    await this.wishlistRepository.save(item);
+    return true;
+  }
+
+  async findAll(filters: any = {}) {
+    const query = this.propertyRepository.createQueryBuilder('property');
+
+    if (filters.propertyType && filters.propertyType !== 'all') {
+      query.andWhere('property.propertyType = :propertyType', { propertyType: filters.propertyType });
+    }
+
+    if (filters.category && filters.category !== 'all') {
+      query.andWhere('property.category = :category', { category: filters.category });
+    }
+
+    if (filters.location) {
+      query.andWhere(
+        '(LOWER(property.location) LIKE :location OR LOWER(property.city) LIKE :location OR LOWER(property.address) LIKE :location)',
+        { location: `%${filters.location.toLowerCase()}%` },
+      );
+    }
+
+    if (filters.priceMin) {
+      query.andWhere('property.price >= :priceMin', { priceMin: filters.priceMin });
+    }
+
+    if (filters.priceMax) {
+      query.andWhere('property.price <= :priceMax', { priceMax: filters.priceMax });
+    }
+
+    if (filters.bedrooms) {
+      query.andWhere('property.bedrooms >= :bedrooms', { bedrooms: filters.bedrooms });
+    }
+
+    if (filters.bathrooms) {
+      query.andWhere('property.bathrooms >= :bathrooms', { bathrooms: filters.bathrooms });
+    }
+
+    if (filters.ownerId) {
+      query.andWhere('property.ownerId = :ownerId', { ownerId: filters.ownerId });
+    }
+
+    // Amenities (Boolean filters)
+    const booleanFilters = ['furnished', 'parking', 'garden', 'pool', 'gym', 'balcony', 'serviced', 'electricity', 'waterSupply', 'security', 'featured', 'verified'];
+    booleanFilters.forEach(field => {
+      if (filters[field] === true || filters[field] === 'true') {
+        query.andWhere(`property.${field} = :${field}`, { [field]: true });
+      }
+    });
+
+    // Sorting
+    if (filters.sortBy === 'price-low') {
+      query.orderBy('property.price', 'ASC');
+    } else if (filters.sortBy === 'price-high') {
+      query.orderBy('property.price', 'DESC');
+    } else if (filters.sortBy === 'newest') {
+      query.orderBy('property.createdAt', 'DESC');
+    } else {
+      query.orderBy('property.featured', 'DESC').addOrderBy('property.createdAt', 'DESC');
+    }
+
+    const [properties, total] = await query.getManyAndCount();
+    return { properties, total };
+  }
+
+  async findFeatured(limit: number = 6) {
     return this.propertyRepository.find({
+      where: { featured: true },
+      take: limit,
       order: { createdAt: 'DESC' },
     });
+  }
+
+  async getLocations() {
+    const results = await this.propertyRepository
+      .createQueryBuilder('property')
+      .select('DISTINCT property.city', 'city')
+      .addSelect('property.location', 'location')
+      .addSelect('COUNT(property.id)', 'count')
+      .groupBy('property.city')
+      .addGroupBy('property.location')
+      .getRawMany();
+
+    return results.map((r, i) => ({
+      id: `loc-${i}`,
+      name: r.location,
+      city: r.city,
+      type: 'area',
+      propertyCount: parseInt(r.count),
+    }));
   }
 
   async findByOwner(ownerId: string) {
@@ -88,5 +196,71 @@ export class PropertyService {
     return this.propertyRepository.count({
       where: { ownerId },
     });
+  }
+
+  async getPriceStats(location: string) {
+    const query = this.propertyRepository.createQueryBuilder('property');
+    
+    if (location && location !== 'All') {
+      query.andWhere(
+        '(LOWER(property.location) LIKE :location OR LOWER(property.city) LIKE :location OR LOWER(property.address) LIKE :location)',
+        { location: `%${location.toLowerCase()}%` },
+      );
+    }
+
+    // 1. Average Price
+    const avgResult = await query.select('AVG(property.price)', 'avg').getRawOne();
+    const averagePrice = parseFloat(avgResult.avg) || 0;
+
+    // 2. Trend (comparing properties from last 3 months vs previous 3 months)
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+    
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    const recentAvgResult = await this.propertyRepository.createQueryBuilder('property')
+      .where('property.createdAt >= :threeMonthsAgo', { threeMonthsAgo })
+      .andWhere(location && location !== 'All' ? '(LOWER(property.location) LIKE :location OR LOWER(property.city) LIKE :location)' : '1=1', { location: `%${location?.toLowerCase()}%` })
+      .select('AVG(property.price)', 'avg')
+      .getRawOne();
+
+    const olderAvgResult = await this.propertyRepository.createQueryBuilder('property')
+      .where('property.createdAt < :threeMonthsAgo AND property.createdAt >= :sixMonthsAgo', { threeMonthsAgo, sixMonthsAgo })
+      .andWhere(location && location !== 'All' ? '(LOWER(property.location) LIKE :location OR LOWER(property.city) LIKE :location)' : '1=1', { location: `%${location?.toLowerCase()}%` })
+      .select('AVG(property.price)', 'avg')
+      .getRawOne();
+
+    const recentAvg = parseFloat(recentAvgResult.avg) || averagePrice;
+    const olderAvg = parseFloat(olderAvgResult.avg) || averagePrice;
+    
+    const diff = recentAvg - olderAvg;
+    const change = olderAvg !== 0 ? (diff / olderAvg) * 100 : 0;
+    const trend = diff >= 0 ? 'up' : 'down';
+
+    // 3. History (Last 6 months)
+    const history: number[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const start = new Date();
+      start.setMonth(start.getMonth() - i);
+      start.setDate(1);
+      const end = new Date(start);
+      end.setMonth(end.getMonth() + 1);
+
+      const monthAvg = await this.propertyRepository.createQueryBuilder('property')
+        .where('property.createdAt >= :start AND property.createdAt < :end', { start, end })
+        .andWhere(location && location !== 'All' ? '(LOWER(property.location) LIKE :location OR LOWER(property.city) LIKE :location)' : '1=1', { location: `%${location?.toLowerCase()}%` })
+        .select('AVG(property.price)', 'avg')
+        .getRawOne();
+      
+      history.push(parseFloat(monthAvg.avg) || averagePrice);
+    }
+
+    return {
+      averagePrice,
+      trend,
+      change: Math.abs(parseFloat(change.toFixed(1))),
+      history
+    };
   }
 }

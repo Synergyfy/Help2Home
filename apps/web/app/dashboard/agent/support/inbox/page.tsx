@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ConversationList from '@/components/dashboard/agent/support/ConversationList';
 import ChatPane from '@/components/dashboard/agent/support/ChatPane';
-import { MOCK_CONVERSATIONS, MOCK_MESSAGES, Message } from '@/lib/mockSupportData';
+import { MOCK_CONVERSATIONS, MOCK_MESSAGES, Message } from '@/lib/api/support-types';
 
 function InboxContent() {
     const searchParams = useSearchParams();

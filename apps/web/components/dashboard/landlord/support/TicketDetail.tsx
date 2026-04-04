@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Ticket, MOCK_TEMPLATES, Template } from '@/lib/mockSupportData';
+import { Ticket, MOCK_TEMPLATES, Template } from '@/lib/api/support-types';
 import { formatDistanceToNow, format } from 'date-fns';
 import ResolveTicketModal from './ResolveTicketModal';
 import { HiOutlineCheckCircle, HiOutlineXMark } from 'react-icons/hi2';
