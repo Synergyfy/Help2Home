@@ -22,7 +22,7 @@ export interface MaintenanceRequest {
     rejectionReason?: string;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 export const landlordMaintenanceApi = {
     getRequests: async (): Promise<MaintenanceRequest[]> => {

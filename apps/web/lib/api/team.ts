@@ -10,7 +10,7 @@ export interface Partner {
     avatar?: string;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 export const landlordTeamApi = {
     getTeam: async (): Promise<Partner[]> => {

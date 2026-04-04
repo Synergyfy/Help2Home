@@ -1,32 +1,48 @@
 'use client';
 
 import React, { useState } from 'react';
-import { User, MOCK_USERS } from '@/lib/mockSecurityData';
+import { useAdminUsers, useAdminUserActions } from '@/hooks/useAdminUsers';
 import { formatDistanceToNow } from 'date-fns';
+import { toast } from 'react-toastify';
 
 interface UserListProps {
-    onEditUser: (user: User) => void;
+    onEditUser: (user: any) => void;
 }
 
 export default function UserList({ onEditUser }: UserListProps) {
-    const [users, setUsers] = useState<User[]>(MOCK_USERS);
     const [searchTerm, setSearchTerm] = useState('');
+    const { users, isLoading, isError } = useAdminUsers(searchTerm);
+    const { activate, deactivate, isProcessing } = useAdminUserActions();
 
-    const filteredUsers = users.filter(user =>
-        user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.roleName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const handleStatusToggle = (userId: string) => {
-        setUsers(prev => prev.map(u => {
-            if (u.id === userId) {
-                return { ...u, status: u.status === 'Active' ? 'Disabled' : 'Active' };
-            }
-            return u;
-        }));
+    const handleStatusToggle = (user: any) => {
+        if (user.isActive) {
+            deactivate(user.id, {
+                onSuccess: () => toast.success(`User ${user.firstName} deactivated`),
+                onError: () => toast.error('Failed to deactivate user')
+            });
+        } else {
+            activate(user.id, {
+                onSuccess: () => toast.success(`User ${user.firstName} activated`),
+                onError: () => toast.error('Failed to activate user')
+            });
+        }
     };
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px] bg-white rounded-xl border border-gray-100">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00853E]"></div>
+            </div>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div className="p-10 text-center bg-red-50 text-red-600 rounded-xl border border-red-100">
+                Failed to load users. Please try again later.
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -53,17 +69,23 @@ export default function UserList({ onEditUser }: UserListProps) {
                             <th className="px-6 py-4">User</th>
                             <th className="px-6 py-4">Role</th>
                             <th className="px-6 py-4">Status</th>
-                            <th className="px-6 py-4">Last Login</th>
+                            <th className="px-6 py-4">Joined</th>
                             <th className="px-6 py-4">MFA</th>
                             <th className="px-6 py-4 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                        {filteredUsers.map((user) => (
+                        {users.length === 0 ? (
+                            <tr>
+                                <td colSpan={6} className="px-6 py-10 text-center text-gray-400 italic">
+                                    No users found matching your search.
+                                </td>
+                            </tr>
+                        ) : users.map((user) => (
                             <tr key={user.id} className="hover:bg-gray-50 transition-colors">
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold">
+                                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold uppercase">
                                             {user.firstName?.[0] || ''}{user.lastName?.[0] || ''}
                                         </div>
                                         <div>
@@ -73,25 +95,28 @@ export default function UserList({ onEditUser }: UserListProps) {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${user.roleName === 'Admin' ? 'bg-purple-50 text-purple-700 border-purple-100' :
-                                            user.roleName === 'Support' ? 'bg-blue-50 text-blue-700 border-blue-100' :
-                                                'bg-gray-50 text-gray-700 border-gray-100'
+                                    {(user.roles || []).map((role: string) => (
+                                        <span key={role} className={`mr-1 px-3 py-1 rounded-full text-xs font-medium border ${
+                                            role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-100' :
+                                            role === 'support' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                                            'bg-gray-50 text-gray-700 border-gray-100'
                                         }`}>
-                                        {user.roleName}
-                                    </span>
+                                            {role}
+                                        </span>
+                                    ))}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${user.status === 'Active' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${user.isActive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
                                         }`}>
-                                        <span className={`w-1.5 h-1.5 rounded-full ${user.status === 'Active' ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                                        {user.status}
+                                        <span className={`w-1.5 h-1.5 rounded-full ${user.isActive ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                                        {user.isActive ? 'Active' : 'Disabled'}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 text-sm text-gray-500">
-                                    {formatDistanceToNow(new Date(user.lastLogin), { addSuffix: true })}
+                                    {formatDistanceToNow(new Date(user.createdAt), { addSuffix: true })}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {user.mfaEnabled ? (
+                                    {user.twoFactorEnabled ? (
                                         <span className="text-green-600 text-xs font-medium flex items-center gap-1">
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -114,14 +139,15 @@ export default function UserList({ onEditUser }: UserListProps) {
                                             </svg>
                                         </button>
                                         <button
-                                            onClick={() => handleStatusToggle(user.id)}
-                                            className={`p-2 rounded-lg transition-colors ${user.status === 'Active'
+                                            onClick={() => handleStatusToggle(user)}
+                                            disabled={isProcessing}
+                                            className={`p-2 rounded-lg transition-colors ${user.isActive
                                                     ? 'text-gray-400 hover:text-red-600 hover:bg-red-50'
                                                     : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
-                                                }`}
-                                            title={user.status === 'Active' ? 'Disable User' : 'Activate User'}
+                                                } ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                            title={user.isActive ? 'Disable User' : 'Activate User'}
                                         >
-                                            {user.status === 'Active' ? (
+                                            {user.isActive ? (
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                                                 </svg>
@@ -141,3 +167,4 @@ export default function UserList({ onEditUser }: UserListProps) {
         </div>
     );
 }
+

@@ -31,8 +31,8 @@ const ProfileStep = () => {
 
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
-  const [phone, setPhone] = useState(user?.phone || "");
-  const [email, setEmail] = useState(user?.email || "");
+  const [phone, setPhone] = useState(user?.currentPhone || user?.phone || "");
+  const [email, setEmail] = useState(user?.currentEmail || user?.email || "");
   const [errors, setErrors] = useState<{ firstName?: string; lastName?: string; phone?: string; email?: string }>({});
 
   // Auto-detect names from email if email signup
@@ -60,11 +60,13 @@ const ProfileStep = () => {
       newErrors.lastName = "Please enter your last name";
     }
 
-    if (isEmailSignup && !phone.trim()) {
+    // Only require phone if it's missing AND we are in email signup mode
+    if (isEmailSignup && !user?.currentPhone && !phone.trim()) {
       newErrors.phone = "Please enter your phone number";
     }
 
-    if (isPhoneSignup && !email.trim()) {
+    // Only require email if it's missing AND we are in phone signup mode
+    if (isPhoneSignup && !user?.currentEmail && !email.trim()) {
       newErrors.email = "Please enter your email address";
     }
 

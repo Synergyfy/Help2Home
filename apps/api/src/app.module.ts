@@ -13,6 +13,10 @@ import { User } from './users/entities/user.entity';
 import { Property } from './property/entities/property.entity';
 import { Tenant } from './tenant/entities/tenant.entity';
 import { Application } from './application/entities/application.entity';
+import { ApplicationDocument } from './application/entities/application-document.entity';
+import { ApplicationContract } from './application/entities/application-contract.entity';
+import { ApplicationActivityLog } from './application/entities/application-activity-log.entity';
+import { TenantNotification } from './users/entities/notification.entity';
 import { AdminModule } from './dashboard/admin/admin.module';
 import { AgentModule } from './dashboard/agent/agent.module';
 import { CaretakerModule } from './dashboard/caretaker/caretaker.module';
@@ -50,7 +54,9 @@ import { PayoutTransaction } from './payment/entities/payout-transaction.entity'
           User, Property, Tenant, Application, Profile, SupportTicket, 
           AuditLog, Education, PlatformSettings, AgentSettings,
           Conversation, ChatMessage, Contract,
-          PaymentTransaction, PayoutTransaction
+          PaymentTransaction, PayoutTransaction,
+          ApplicationDocument, ApplicationContract, ApplicationActivityLog,
+          TenantNotification
         ],
         synchronize: configService.get<boolean>('DB_SYNCHRONIZE'),
         ssl: configService.get<string>('DB_SSL') === 'true',

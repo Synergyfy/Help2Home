@@ -1,12 +1,12 @@
 import { Controller, Get, UseGuards, Query, Req } from '@nestjs/common';
 import { CaretakerService } from './caretaker.service';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../auth/guards/roles.guard';
-import { Roles } from '../../auth/decorators/roles.decorator';
+import { AccessTokenGuard } from '../../auth/guards/accessToken.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../common/enums/role.enum';
 
 @Controller('dashboard/caretaker')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(AccessTokenGuard, RolesGuard)
 @Roles(Role.CARETAKER)
 export class CaretakerController {
   constructor(private readonly caretakerService: CaretakerService) {}

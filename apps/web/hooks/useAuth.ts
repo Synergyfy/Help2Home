@@ -18,7 +18,8 @@ export const useAuth = () => {
     completeRoleOnboarding, 
     setOnboardingCompleted, 
     goToStep,
-    setCurrentEmail
+    setCurrentEmail,
+    setCurrentPhone
   } = useOnboardingStore();
 
   const handleAuthSuccess = (data: AuthResponse) => {
@@ -41,6 +42,7 @@ export const useAuth = () => {
 
     // 2. Sync Onboarding Store
     setCurrentEmail(data.user.email);
+    if (data.user.phone) setCurrentPhone(data.user.phone);
     setRoles(data.user.roles);
     
     if (data.onboarding) {
@@ -55,18 +57,35 @@ export const useAuth = () => {
 
     // 3. Smart Navigation
     const primaryRole = data.user.roles[0];
+    const isVerified = data.user.verified;
+    
     if (redirect) {
       router.push(redirect);
       return;
     }
 
-    const isGloballyDone = data.onboarding?.onboardingCompleted;
+    // Determine if onboarding is truly needed
+    // If backend doesn't provide onboarding status (common in current build), 
+    // we infer it from roles and verification status.
+    const isGloballyDone = data.onboarding?.onboardingCompleted ?? (isVerified && !!primaryRole);
+
     if (isGloballyDone) {
       router.push(`/dashboard/${primaryRole}`);
-    } else {
-      // New users usually go to step 0 of onboarding
-      goToStep(0); 
+    } else if (!isVerified) {
+      // If not verified, we must go to verification step (Step 1)
+      // We skip Step 0 because we already have their email/contact info from login
+      goToStep(1); 
       router.push('/onboarding');
+    } else {
+      // Verified but onboarding flag missing or false
+      if (primaryRole) {
+        // If they already have a role assigned, they've likely done the basic parts
+        router.push(`/dashboard/${primaryRole}`);
+      } else {
+        // Fallback for brand new users without roles
+        goToStep(0); 
+        router.push('/onboarding');
+      }
     }
     
     toast.success('Welcome to Help2Home!');

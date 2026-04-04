@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { landlordContractsApi } from '../lib/api/contracts';
-import { Contract } from '../lib/mockContractData';
+import { landlordContractsApi, Contract } from '../lib/api/contracts';
 import { toast } from 'react-toastify';
 
 export const useLandlordContracts = () => {

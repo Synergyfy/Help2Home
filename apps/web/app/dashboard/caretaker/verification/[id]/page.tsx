@@ -3,14 +3,15 @@
 import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { MOCK_CHECKLISTS, ChecklistItem } from '@/lib/mockCaretakerData';
+import { ChecklistItem, VerificationChecklist as IVerificationChecklist } from '@/types/caretaker';
 import VerificationChecklist from '@/components/dashboard/caretaker/VerificationChecklist';
+import { useCaretakerChecklists } from '@/hooks/useCaretakerDashboard';
 
 export default function VerificationPage() {
     const params = useParams();
     const router = useRouter();
     const checklistId = params.id as string;
-    const checklist = MOCK_CHECKLISTS.find(c => c.id === checklistId);
+    const { data: checklist, isLoading } = useCaretakerChecklists(checklistId);
 
     if (!checklist) {
         return (

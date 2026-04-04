@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { VerificationChecklist as IVerificationChecklist, ChecklistItem } from '@/lib/mockCaretakerData';
+import { ChecklistItem, VerificationChecklist as IVerificationChecklist } from '@/types/caretaker';
 import PhotoUploader from './PhotoUploader';
 
 interface VerificationChecklistProps {

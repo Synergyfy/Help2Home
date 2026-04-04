@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { HiSearch, HiChevronDown, HiStar, HiLocationMarker, HiArrowRight, HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import { MdVerified } from 'react-icons/md';
 import FadeIn from '@/components/FadeIn';
-import { getAllDevelopers, searchDevelopers, filterDevelopersByLocation, filterDevelopersByRating } from '@/utils/properties';
+import { getAllDevelopers } from '@/utils/properties';
 import { HiOutlineLocationMarker, HiOutlineSearch, HiOutlineAdjustments, HiOutlineScale, HiOutlineStar } from 'react-icons/hi';
 
 export default function FindDevelopersPage() {

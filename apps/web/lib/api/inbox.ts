@@ -34,7 +34,7 @@ export interface Conversation {
     status: 'Open' | 'Closed' | 'Archived';
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 export const landlordInboxApi = {
     getConversations: async (): Promise<Conversation[]> => {

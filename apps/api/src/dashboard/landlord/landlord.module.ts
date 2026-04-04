@@ -15,6 +15,7 @@ import { Contract } from '../../contract/entities/contract.entity';
 import { PaymentTransaction } from '../../payment/entities/payment-transaction.entity';
 import { PayoutTransaction } from '../../payment/entities/payout-transaction.entity';
 import { ContractTemplate } from '../../contract/entities/contract-template.entity';
+import { TenantNotification } from '../../users/entities/notification.entity';
 
 // Controllers
 import { LandlordMaintenanceController } from './maintenance/maintenance.controller';

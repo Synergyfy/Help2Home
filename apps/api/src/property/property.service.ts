@@ -131,6 +131,27 @@ export class PropertyService {
     });
   }
 
+  async findPending() {
+    return this.propertyRepository.find({
+      where: { status: 'pending' },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async approve(id: string) {
+    const property = await this.findById(id);
+    property.status = 'available';
+    property.verified = true;
+    return this.propertyRepository.save(property);
+  }
+
+  async reject(id: string) {
+    const property = await this.findById(id);
+    property.status = 'rejected';
+    property.verified = false;
+    return this.propertyRepository.save(property);
+  }
+
   async findById(id: string) {
     const property = await this.propertyRepository.findOne({
       where: { id },

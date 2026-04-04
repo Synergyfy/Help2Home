@@ -14,7 +14,7 @@ function InboxContent() {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [prevParams, setPrevParams] = useState({ leadId, partnerId });
     const [conversations, setConversations] = useState(MOCK_CONVERSATIONS);
-    const [messages, setMessages] = useState<Record<string, Message[]>>(MOCK_MESSAGES);
+    const [messages, setMessages] = useState<Record<string, Message[]>>({});
 
     if (leadId !== prevParams.leadId || partnerId !== prevParams.partnerId || (!selectedId && conversations.length > 0)) {
         setPrevParams({ leadId, partnerId });
@@ -59,10 +59,8 @@ function InboxContent() {
             conversationId: selectedId,
             senderId: 'user_1',
             senderName: 'You',
-            role: 'agent',
-            text: text,
-            type: 'text',
-            createdAt: new Date().toISOString(),
+            content: text,
+            timestamp: new Date().toISOString(),
             isRead: true
         };
 
@@ -75,7 +73,7 @@ function InboxContent() {
             c.id === selectedId ? {
                 ...c,
                 lastMessage: newMessage,
-                updatedAt: newMessage.createdAt
+                updatedAt: newMessage.timestamp
             } : c
         ));
     };

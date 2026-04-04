@@ -1,8 +1,6 @@
-'use client';
-
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Contract, Signer } from '@/lib/mockContractData';
+import { Contract, Signer } from '@/lib/api/contracts';
 import { format } from 'date-fns';
 import {
     HiOutlineDocumentText,

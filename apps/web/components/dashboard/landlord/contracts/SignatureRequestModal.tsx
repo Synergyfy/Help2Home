@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Signer } from '@/lib/mockContractData';
+import { Signer } from '@/lib/api/contracts';
+
 
 interface SignatureRequestModalProps {
     isOpen: boolean;

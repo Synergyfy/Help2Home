@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Patch, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AccessTokenGuard } from '../../../auth/guards/accessToken.guard';
 import { RolesGuard } from '../../../common/guards/roles.guard';
@@ -19,5 +19,23 @@ export class AdminListingController {
   @ApiOperation({ summary: 'Admin creates a new property listing directly' })
   create(@GetCurrentUser('sub') userId: string, @Body() data: any) {
     return this.propertyService.create(userId, { ...data, posterRole: 'admin' });
+  }
+
+  @Get('pending')
+  @ApiOperation({ summary: 'Get all properties awaiting moderation' })
+  getPending() {
+    return this.propertyService.findPending();
+  }
+
+  @Patch(':id/approve')
+  @ApiOperation({ summary: 'Approve a property submission' })
+  approve(@Param('id') id: string) {
+    return this.propertyService.approve(id);
+  }
+
+  @Patch(':id/reject')
+  @ApiOperation({ summary: 'Reject a property submission' })
+  reject(@Param('id') id: string) {
+    return this.propertyService.reject(id);
   }
 }

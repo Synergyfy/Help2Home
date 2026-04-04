@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { SummaryTileData } from '@/lib/mockLandlordData';
+import { SummaryTileData } from '@/types/dashboard';
 
 export default function SummaryTiles({ tiles }: { tiles: SummaryTileData[] }) {
     return (

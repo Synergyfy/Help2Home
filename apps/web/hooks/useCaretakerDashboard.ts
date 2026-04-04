@@ -83,3 +83,19 @@ export const useCaretakerPartners = () => {
         enabled: hasHydrated && !!token,
     });
 };
+
+export const useCaretakerChecklists = (id?: string) => {
+    const { token, hasHydrated } = useUserStore();
+
+    return useQuery({
+        queryKey: ['caretaker-checklists', id],
+        queryFn: async () => {
+            const url = id ? `${API_URL}/dashboard/caretaker/checklists/${id}` : `${API_URL}/dashboard/caretaker/checklists`;
+            const { data } = await axios.get(url, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            return data;
+        },
+        enabled: hasHydrated && !!token,
+    });
+};

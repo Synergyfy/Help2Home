@@ -63,3 +63,11 @@ export const sendMessage = async (ticketId: string, content: string) => {
     });
     return data;
 };
+
+export const landlordSupportApi = {
+    getTickets,
+    getFAQs,
+    createTicket,
+    getTicketMessages,
+    sendMessage
+};

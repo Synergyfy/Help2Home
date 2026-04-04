@@ -1,8 +1,6 @@
-'use client';
-
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Contract, ContractStatus } from '@/lib/mockContractData';
+import { Contract, ContractStatus } from '@/lib/api/contracts';
 import { useLandlordContracts } from '@/hooks/useLandlordContracts';
 import { format } from 'date-fns';
 

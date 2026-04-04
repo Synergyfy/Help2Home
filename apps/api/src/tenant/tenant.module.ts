@@ -7,6 +7,7 @@ import { TenantDashboardController } from './tenant-dashboard.controller';
 import { AgentModule } from '../dashboard/agent/agent.module';
 import { AdminModule } from '../dashboard/admin/admin.module';
 import { ApplicationModule } from '../application/application.module';
+import { PropertyModule } from '../property/property.module';
 
 import { UsersModule } from '../users/users.module';
 
@@ -16,6 +17,7 @@ import { UsersModule } from '../users/users.module';
     AgentModule,
     AdminModule,
     ApplicationModule,
+    PropertyModule,
     UsersModule,
   ],
   controllers: [TenantController, TenantDashboardController],

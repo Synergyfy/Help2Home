@@ -1349,29 +1349,6 @@ export function getDeveloperById(id: string): Developer | undefined {
   return mockDevelopers.find(dev => dev.id === id);
 }
 
-export function getVerifiedDevelopers(): Developer[] {
-  return mockDevelopers.filter(dev => dev.verified);
-}
-
-export function searchDevelopers(query: string): Developer[] {
-  const lowerQuery = query.toLowerCase();
-  return mockDevelopers.filter(dev => 
-    dev.name.toLowerCase().includes(lowerQuery) ||
-    dev.description.toLowerCase().includes(lowerQuery) ||
-    dev.location.toLowerCase().includes(lowerQuery)
-  );
-}
-
-export function filterDevelopersByLocation(location: string): Developer[] {
-  return mockDevelopers.filter(dev => 
-    dev.location.toLowerCase().includes(location.toLowerCase())
-  );
-}
-
-export function filterDevelopersByRating(minRating: number): Developer[] {
-  return mockDevelopers.filter(dev => dev.rating >= minRating);
-}
-
 export const getMockProperties = () => {
   loadFromStorage();
   return mockProperties;
