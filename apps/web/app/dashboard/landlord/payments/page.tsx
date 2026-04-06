@@ -54,7 +54,7 @@ export default function PaymentsPage() {
                 </div>
             </div>
 
-            <PaymentsSummaryCards />
+            <PaymentsSummaryCards payments={payments} />
 
             <PaymentsFilterBar
                 statusFilter={statusFilter}

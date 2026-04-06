@@ -82,10 +82,13 @@ export async function fetchPropertyById(id: string | number): Promise<Property |
   }
 }
 
-export async function fetchFeaturedProperties(limit: number = 6): Promise<Property[]> {
+export async function fetchFeaturedProperties(
+  limit: number = 6, 
+  propertyType?: string
+): Promise<Property[]> {
   try {
     const { data } = await axios.get(`${API_URL}/properties/featured`, {
-      params: { limit }
+      params: { limit, type: propertyType }
     });
     return data;
   } catch (error) {

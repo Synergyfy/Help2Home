@@ -1,13 +1,5 @@
-import axios from 'axios';
-import { useUserStore } from '@/store/userStore';
+import apiClient from './apiClient';
 import type { Property } from "@/utils/properties";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-
-const getAuthHeader = () => {
-    const token = useUserStore.getState().token;
-    return { Authorization: `Bearer ${token}` };
-};
 
 export async function createProperty(
   newPropertyData: any,
@@ -26,9 +18,26 @@ export async function createProperty(
   }
 
   try {
-    const { data } = await axios.post(`${API_URL}/landlord-dashboard/properties`, newPropertyData, {
-      headers: getAuthHeader()
-    });
+    // Flatten nested frontend payload into strictly expected backend DTO shape
+    const payload = {
+      title: newPropertyData.title || 'Untitled Property',
+      description: typeof newPropertyData.description === 'object' ? newPropertyData.description.short || newPropertyData.description.long || 'No description' : newPropertyData.description || '',
+      propertyType: newPropertyData.listingType?.toLowerCase() || 'rent', // DTO expects: 'rent', 'buy', 'service-apartment'
+      category: newPropertyData.propertyType || newPropertyData.propertyCategory || 'Apartment',
+      address: typeof newPropertyData.address === 'object' ? newPropertyData.address.street || 'Unknown Address' : newPropertyData.address || 'Unknown Address',
+      location: typeof newPropertyData.address === 'object' ? newPropertyData.address.city || 'Unknown' : 'Unknown',
+      city: typeof newPropertyData.address === 'object' ? newPropertyData.address.city || 'Unknown' : 'Unknown',
+      state: typeof newPropertyData.address === 'object' ? newPropertyData.address.state || 'Unknown' : 'Unknown',
+      bedrooms: Number(newPropertyData.specs?.bedrooms) || 0,
+      bathrooms: Number(newPropertyData.specs?.bathrooms) || 0,
+      floorSize: Number(newPropertyData.specs?.area) || 0,
+      price: Number(newPropertyData.price?.amount) || 0,
+      currency: newPropertyData.price?.currency || 'NGN',
+      posterRole: newPropertyData.posterRole || 'landlord',
+      images: Array.isArray(newPropertyData.images) ? newPropertyData.images.map((img: any) => typeof img === 'string' ? img : img.url || '').filter(Boolean) : []
+    };
+
+    const { data } = await apiClient.post(`/landlord-dashboard/properties`, payload);
     return data;
   } catch (error) {
     console.error('Error creating property:', error);
@@ -38,9 +47,7 @@ export async function createProperty(
 
 export async function fetchLandlordProperties(): Promise<Property[]> {
   try {
-    const { data } = await axios.get(`${API_URL}/landlord-dashboard/properties`, {
-      headers: getAuthHeader()
-    });
+    const { data } = await apiClient.get(`/landlord-dashboard/properties`);
     return data;
   } catch (error) {
     console.error('Error fetching landlord properties:', error);

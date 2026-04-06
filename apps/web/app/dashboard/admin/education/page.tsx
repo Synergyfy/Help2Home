@@ -14,41 +14,21 @@ import {
 import { EducationContent } from '@/components/dashboard/education/types';
 import EducationManagementList from '@/components/dashboard/admin/education/EducationManagementList';
 import EducationPostForm from '@/components/dashboard/admin/education/EducationPostForm';
-import { getContentList } from '@/utils/mockEducationApi';
+import { useAdminEducation, useCreateEducation, useUpdateEducation, useDeleteEducation } from '@/hooks/useAdminEducation';
 import { toast } from 'react-toastify';
 
 export default function AdminEducationHubPage() {
-    const [posts, setPosts] = useState<EducationContent[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const { data: posts = [], isLoading, refetch } = useAdminEducation();
+    const createMutation = useCreateEducation();
+    const updateMutation = useUpdateEducation();
+    const deleteMutation = useDeleteEducation();
+
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingPost, setEditingPost] = useState<EducationContent | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
 
-    useEffect(() => {
-        loadPosts();
-    }, []);
-
-    const loadPosts = async () => {
-        setIsLoading(true);
-        try {
-            // Using existing mock API - we'll cast it to include our new fields for now
-            const data = await getContentList('All', '');
-            
-            // Enriching mock data with our new fields if they don't exist
-            const enrichedData = data.map((p: any) => ({
-                ...p,
-                targetAudience: p.targetAudience || ['all'],
-                status: p.status || 'published',
-                views: p.views || Math.floor(Math.random() * 5000),
-                likes: p.likes || Math.floor(Math.random() * 200)
-            }));
-            
-            setPosts(enrichedData);
-        } catch (error) {
-            toast.error("Failed to fetch educational posts");
-        } finally {
-            setIsLoading(false);
-        }
+    const loadPosts = () => {
+        refetch();
     };
 
     const handleCreate = () => {
@@ -63,32 +43,19 @@ export default function AdminEducationHubPage() {
 
     const handleDelete = (id: string) => {
         if (window.confirm("Are you sure you want to delete this post?")) {
-            setPosts(prev => prev.filter(p => p.id !== id));
-            toast.success("Post deleted successfully");
+            deleteMutation.mutate(id);
         }
     };
 
     const handleSave = (formData: any) => {
         if (editingPost) {
-            setPosts(prev => prev.map(p => p.id === editingPost.id ? { ...p, ...formData } : p));
-            toast.success("Post updated successfully");
+            updateMutation.mutate({ id: editingPost.id, data: formData }, {
+              onSuccess: () => setIsFormOpen(false)
+            });
         } else {
-            const newPost: EducationContent = {
-                ...formData,
-                id: `ED-${Math.floor(Math.random() * 100000)}`,
-                slug: formData.title.toLowerCase().replace(/ /g, '-'),
-                publishDate: new Date().toISOString(),
-                isSaved: false,
-                author: {
-                    name: 'Admin Team',
-                    role: 'Platform Administrator',
-                    avatarUrl: '/assets/H2H_Logo_One.png'
-                },
-                views: 0,
-                likes: 0
-            };
-            setPosts(prev => [newPost, ...prev]);
-            toast.success("New educational post published");
+            createMutation.mutate(formData, {
+              onSuccess: () => setIsFormOpen(false)
+            });
         }
     };
 

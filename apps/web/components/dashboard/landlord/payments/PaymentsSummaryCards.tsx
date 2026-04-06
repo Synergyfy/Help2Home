@@ -2,8 +2,38 @@
 
 import React from 'react';
 import { formatNumber } from '@/utils/helpers';
+import { PaymentTransaction } from '@/lib/api/payments';
 
-export default function PaymentsSummaryCards() {
+interface PaymentsSummaryCardsProps {
+    payments: PaymentTransaction[];
+}
+
+export default function PaymentsSummaryCards({ payments }: PaymentsSummaryCardsProps) {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+    const revenueThisMonth = payments
+        .filter(p => (p.status === 'Completed' || p.status === 'Cleared') && new Date(p.date) >= startOfMonth)
+        .reduce((sum, p) => sum + Number(p.amount), 0);
+
+    const revenueLastMonth = payments
+        .filter(p => (p.status === 'Completed' || p.status === 'Cleared') && new Date(p.date) >= startOfLastMonth && new Date(p.date) < startOfMonth)
+        .reduce((sum, p) => sum + Number(p.amount), 0);
+        
+    let trend = 0;
+    if (revenueLastMonth > 0) {
+        trend = Math.round(((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100);
+    } else if (revenueThisMonth > 0) {
+        trend = 100;
+    }
+
+    const pendingPayments = payments.filter(p => p.status === 'Pending');
+    const pendingTotal = pendingPayments.reduce((sum, p) => sum + Number(p.amount), 0);
+
+    const failedPayments = payments.filter(p => p.status === 'Failed');
+    const failedTotal = failedPayments.reduce((sum, p) => sum + Number(p.amount), 0);
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Total Revenue */}
@@ -15,12 +45,18 @@ export default function PaymentsSummaryCards() {
                 </div>
                 <div className="relative z-10">
                     <p className="text-sm font-medium text-gray-500 mb-1">Total Revenue (This Month)</p>
-                    <h3 className="text-3xl font-bold text-gray-900">₦{formatNumber(1250000)}</h3>
-                    <div className="flex items-center gap-1 mt-2 text-sm text-green-600 font-medium">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                        </svg>
-                        <span>+12% vs last month</span>
+                    <h3 className="text-3xl font-bold text-gray-900">₦{formatNumber(revenueThisMonth)}</h3>
+                    <div className={`flex items-center gap-1 mt-2 text-sm font-medium ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {trend >= 0 ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                        ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" />
+                            </svg>
+                        )}
+                        <span>{trend >= 0 ? '+' : ''}{trend}% vs last month</span>
                     </div>
                 </div>
             </div>
@@ -34,9 +70,9 @@ export default function PaymentsSummaryCards() {
                 </div>
                 <div className="relative z-10">
                     <p className="text-sm font-medium text-gray-500 mb-1">Pending Payments</p>
-                    <h3 className="text-3xl font-bold text-gray-900">₦{formatNumber(800000)}</h3>
+                    <h3 className="text-3xl font-bold text-gray-900">₦{formatNumber(pendingTotal)}</h3>
                     <div className="flex items-center gap-1 mt-2 text-sm text-yellow-600 font-medium">
-                        <span>2 transactions pending</span>
+                        <span>{pendingPayments.length} transaction{pendingPayments.length !== 1 ? 's' : ''} pending</span>
                     </div>
                 </div>
             </div>
@@ -50,12 +86,13 @@ export default function PaymentsSummaryCards() {
                 </div>
                 <div className="relative z-10">
                     <p className="text-sm font-medium text-gray-500 mb-1">Failed / Overdue</p>
-                    <h3 className="text-3xl font-bold text-gray-900">₦{formatNumber(45000)}</h3>
+                    <h3 className="text-3xl font-bold text-gray-900">₦{formatNumber(failedTotal)}</h3>
                     <div className="flex items-center gap-1 mt-2 text-sm text-red-600 font-medium">
-                        <span>1 transaction failed</span>
+                        <span>{failedPayments.length} transaction{failedPayments.length !== 1 ? 's' : ''} failed</span>
                     </div>
                 </div>
             </div>
         </div>
     );
 }
+

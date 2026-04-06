@@ -1,12 +1,4 @@
-import axios from 'axios';
-import { useUserStore } from '@/store/userStore';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-
-const getAuthHeader = () => {
-    const token = useUserStore.getState().token;
-    return { Authorization: `Bearer ${token}` };
-};
+import apiClient from './apiClient';
 
 export interface DashboardData {
   summary: any[];
@@ -14,6 +6,7 @@ export interface DashboardData {
   tasks: any[];
   payments: any[];
   verification: any[];
+  performance?: any;
 }
 
 export const fetchDashboardData = async (
@@ -40,14 +33,11 @@ export const fetchDashboardData = async (
         break;
       default:
         // Default to tenant dashboard (or separate logic if needed)
-        const { data } = await axios.get(`${API_URL}/dashboard/tenant/stats`, {
-          headers: getAuthHeader()
-        });
+        const { data } = await apiClient.get(`/dashboard/tenant/stats`);
         return data;
     }
 
-    const { data } = await axios.get(`${API_URL}/${basePath}/stats`, {
-      headers: getAuthHeader(),
+    const { data } = await apiClient.get(`/${basePath}/stats`, {
       params: {
         range: filters.range,
         propertyId: filters.property !== 'all' ? filters.property : undefined

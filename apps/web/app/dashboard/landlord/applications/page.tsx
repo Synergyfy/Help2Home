@@ -7,7 +7,7 @@ import { ApplicationStatus } from '@/store/applicationStore';
 import { FiCheck, FiX, FiEye, FiClock, FiFileText, FiUserPlus, FiDollarSign } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTenants } from '@/hooks/useTenants';
-import { Tenant } from '@/lib/mockLandlordData';
+import { Tenant } from '@/types/dashboard';
 import AddTenantModal, { AddTenantInitialData } from '@/components/dashboard/landlord/tenants/AddTenantModal';
 import { Application } from '@/store/applicationStore';
 
@@ -375,3 +375,4 @@ export default function LandlordApplicationsPage() {
         </div>
     );
 }
+

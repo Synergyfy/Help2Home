@@ -23,18 +23,24 @@ import { useTenantDashboard } from '@/hooks/useTenantDashboard';
 
 export default function TenantDashboard() {
     const router = useRouter();
-    const { applications, isLoading: appsLoading } = useApplications();
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
+    
+    const applicationsQuery = useApplications();
     const { 
         stats: backendStats, 
         fundingProperties, 
         isLoading: dashboardLoading 
     } = useTenantDashboard();
 
+    const applications = applicationsQuery.applications || [];
+    const appsLoading = applicationsQuery.isLoading;
+
     // Derived stats combining applications hook and dashboard stats endpoint
     const stats = {
-        ongoingApplications: backendStats?.ongoingApplications ?? applications.filter(a => a.status === 'Pending' || a.status === 'Under Review').length,
-        approvedHomes: backendStats?.approvedHomes ?? applications.filter(a => a.status === 'Approved' || a.status === 'Funded').length,
-        fundedApplications: applications.filter(a => a.status === 'Funded'),
+        ongoingApplications: backendStats?.ongoingApplications ?? applications.filter((a: any) => a.status === 'Pending' || a.status === 'Under Review').length,
+        approvedHomes: backendStats?.approvedHomes ?? applications.filter((a: any) => a.status === 'Approved' || a.status === 'Funded').length,
+        fundedApplications: applications.filter((a: any) => a.status === 'Funded'),
         nextRepayment: backendStats?.nextRepayment ?? {
             amount: 0,
             dueDate: 'N/A',
@@ -43,16 +49,16 @@ export default function TenantDashboard() {
         repaymentProgress: backendStats?.repaymentProgress ?? 0,
     };
 
-    const marketplaceFunding = fundingProperties.map((p: any) => ({
+    const marketplaceFunding = Array.isArray(fundingProperties) ? fundingProperties.map((p: any) => ({
         id: p.id,
         propertyTitle: p.title,
         targetAmount: p.targetAmount || p.price,
         raisedAmount: p.raisedAmount || 0,
         investorCount: p.investorCount || 0,
         status: 'Funding' as const
-    }));
+    })) : [];
 
-    const recentApplications = applications.slice(0, 5).map(app => ({
+    const recentApplications = applications.slice(0, 5).map((app: any) => ({
         id: app.id,
         propertyTitle: app.propertyTitle,
         propertyImage: app.propertyImage,
@@ -106,7 +112,7 @@ export default function TenantDashboard() {
                 <div className="mb-8">
                     <nav className="text-sm text-gray-500 mb-1">Home / Dashboard</nav>
                     <h1 className="text-2xl font-bold text-gray-900">
-                        Welcome back, {useUserStore.getState().profile.firstName || 'User'} — Dashboard
+                        Welcome back, {mounted ? (useUserStore.getState().profile.firstName || 'User') : 'User'} — Dashboard
                     </h1>
                 </div>
 

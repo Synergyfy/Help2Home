@@ -25,8 +25,9 @@ export const getTickets = async () => {
 };
 
 export const getFAQs = async () => {
-    // FAQs might be public or specific to tenant
-    const { data } = await axios.get(`${API_URL}/dashboard/admin/support/faqs`); // Need to ensure this exists
+    const { data } = await axios.get(`${API_URL}/dashboard/tenant/support/faqs`, {
+        headers: getAuthHeader()
+    });
     return data;
 };
 

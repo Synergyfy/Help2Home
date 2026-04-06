@@ -1,8 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import apiClient from '@/lib/api/apiClient';
 import { toast } from 'react-toastify';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export interface PendingProperty {
     id: string;
@@ -18,9 +16,7 @@ export const useAdminModeration = () => {
     const queryClient = useQueryClient();
 
     const fetchPending = async (): Promise<PendingProperty[]> => {
-        const { data } = await axios.get(`${API_URL}/dashboard/admin/listing/pending`, {
-            headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-        });
+        const { data } = await apiClient.get(`/dashboard/admin/listing/pending`);
         return data;
     };
 
@@ -31,9 +27,7 @@ export const useAdminModeration = () => {
 
     const approveMutation = useMutation({
         mutationFn: async (id: string) => {
-            const { data } = await axios.patch(`${API_URL}/dashboard/admin/listing/${id}/approve`, {}, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-            });
+            const { data } = await apiClient.patch(`/dashboard/admin/listing/${id}/approve`);
             return data;
         },
         onSuccess: () => {
@@ -45,9 +39,7 @@ export const useAdminModeration = () => {
 
     const rejectMutation = useMutation({
         mutationFn: async (id: string) => {
-            const { data } = await axios.patch(`${API_URL}/dashboard/admin/listing/${id}/reject`, {}, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-            });
+            const { data } = await apiClient.patch(`/dashboard/admin/listing/${id}/reject`);
             return data;
         },
         onSuccess: () => {
@@ -55,6 +47,18 @@ export const useAdminModeration = () => {
             toast.success('Property rejected');
         },
         onError: () => toast.error('Failed to reject property'),
+    });
+
+    const requestInfoMutation = useMutation({
+        mutationFn: async (id: string) => {
+            const { data } = await apiClient.patch(`/dashboard/admin/listing/${id}/request-info`);
+            return data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['admin-moderation'] });
+            toast.success('Request for more info sent');
+        },
+        onError: () => toast.error('Failed to request info'),
     });
 
     return {
@@ -65,5 +69,18 @@ export const useAdminModeration = () => {
         isApproving: approveMutation.isPending,
         reject: rejectMutation.mutate,
         isRejecting: rejectMutation.isPending,
+        requestInfo: requestInfoMutation.mutate,
+        isRequestingInfo: requestInfoMutation.isPending,
     };
+};
+
+export const useAdminModerationItem = (id: string) => {
+    return useQuery({
+        queryKey: ['admin-moderation', id],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/dashboard/admin/listing/${id}`);
+            return data;
+        },
+        enabled: !!id,
+    });
 };

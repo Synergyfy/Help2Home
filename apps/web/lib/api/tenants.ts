@@ -1,35 +1,7 @@
 import axios from 'axios';
 import { useUserStore } from '@/store/userStore';
-export interface Lease {
-    id: string;
-    propertyId: string;
-    startDate: string;
-    endDate: string;
-    rentAmount: number;
-    paymentFrequency: 'Monthly' | 'Quarterly' | 'Annually';
-    depositAmount: number;
-    status: 'Active' | 'Pending' | 'Expired';
-    documentUrl?: string; // Link to signed tenancy agreement
-}
-
-export interface Tenant {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    profileImage?: string;
-    status: 'Active' | 'Delinquent' | 'Pending' | 'Past';
-    currentProperty?: {
-        id: string;
-        title: string;
-        address: string;
-    };
-    lease?: Lease;
-    onTimePaymentRate: number; // Percentage (0-100)
-    outstandingBalance: number;
-    joinedDate: string;
-}
+import { Tenant, Lease } from '@/types/dashboard';
+export type { Tenant, Lease };
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 

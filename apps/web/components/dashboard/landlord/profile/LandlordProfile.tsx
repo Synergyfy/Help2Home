@@ -7,7 +7,6 @@ import BasicInfoTab from './BasicInfoTab';
 import VerificationTab from './VerificationTab';
 import BankPayoutsTab from './BankPayoutsTab';
 import PrivacySecurityTab from './PrivacySecurityTab';
-import { MOCK_PROFILE, MOCK_DOCUMENTS, MOCK_BANK_ACCOUNTS } from '@/lib/mockLandlordData';
 import { useProfile } from '@/hooks/useProfile';
 import {
     IoPersonOutline,
@@ -45,7 +44,34 @@ export default function LandlordProfile() {
         );
     }
 
-    const profileData = data?.data || MOCK_PROFILE;
+    if (!data?.data) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+                <h2 className="text-xl font-bold text-gray-900 mb-2">Profile Not Found</h2>
+                <p className="text-gray-500 mb-6">We could not load your profile data.</p>
+                <button 
+                  onClick={() => window.location.reload()}
+                  className="px-4 py-2 bg-brand-green text-white rounded-lg hover:bg-brand-green/90"
+                >
+                  Retry
+                </button>
+            </div>
+        );
+    }
+
+    // The backend wraps the response in `{ data: { ... } }`, and axios wraps THAT in `{ data: ... }`
+    // So data.data is `{ data: { ... } }`. We need to extract the inner object.
+    const rawData = data.data?.data || data.data || {};
+    
+    // Map backend generic data to UI expected formats
+    const profileData = {
+        ...rawData,
+        displayName: `${rawData.firstName || ''} ${rawData.lastName || ''}`.trim() || 'Landlord',
+        verificationStatus: rawData.verified ? 'verified' : 'pending',
+        verificationDate: rawData.verified ? new Date().toLocaleDateString() : '',
+        role: 'landlord',
+        avatarUrl: rawData.avatar,
+    };
 
     return (
         <div className="min-h-screen bg-gray-50/50 pb-12">
@@ -83,7 +109,7 @@ export default function LandlordProfile() {
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                         {activeTab === 'info' && <BasicInfoTab profile={profileData} />}
                         {activeTab === 'verification' && <VerificationTab role="landlord" />}
-                        {activeTab === 'bank' && <BankPayoutsTab accounts={MOCK_BANK_ACCOUNTS} />}
+                        {activeTab === 'bank' && <BankPayoutsTab accounts={profileData.bankAccounts || []} />}
                         {activeTab === 'security' && <PrivacySecurityTab />}
                     </div>
                 </div>

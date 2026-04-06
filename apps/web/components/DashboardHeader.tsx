@@ -39,6 +39,10 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
     const handleLogout = () => {
         resetUser();
         useOnboardingStore.getState().resetOnboarding();
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('help2home_access_token');
+            localStorage.removeItem('help2home_refresh_token');
+        }
         setIsProfileOpen(false);
         toast.success('Logged out successfully');
         router.replace('/signin');

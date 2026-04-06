@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { Tenant } from '@/lib/api/tenants';
+import { Tenant } from '@/types/dashboard';
 
 interface TenantState {
   tenants: Tenant[];

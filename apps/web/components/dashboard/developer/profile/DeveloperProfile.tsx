@@ -5,7 +5,7 @@ import ProfileSummaryCard from '../../landlord/profile/ProfileSummaryCard';
 import BusinessInfoTab from './BusinessInfoTab';
 import VerificationTab from '../../landlord/profile/VerificationTab';
 import PrivacySecurityTab from '../../landlord/profile/PrivacySecurityTab';
-import { MOCK_PROFILE, MOCK_DOCUMENTS } from '@/lib/mockLandlordData';
+import { ProfileData } from '@/types/dashboard';
 import { useProfile } from '@/hooks/useProfile';
 
 export default function DeveloperProfile() {
@@ -26,7 +26,7 @@ export default function DeveloperProfile() {
         );
     }
 
-    const profileData = data?.data || MOCK_PROFILE;
+    const profileData = data?.data || {} as ProfileData;
 
     return (
         <div className="min-h-screen bg-gray-50/50 pb-12">
@@ -70,3 +70,4 @@ export default function DeveloperProfile() {
         </div>
     );
 }
+

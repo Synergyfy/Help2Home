@@ -3,10 +3,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocations } from '@/hooks/useMarketplaceQueries';
+import { useLocations, useFeaturedProperties } from '@/hooks/useMarketplaceQueries';
 import { useMarketplaceStore } from '@/store/marketplaceStore';
 import { useDebounce } from '@/hooks/useDebounce';
 import { HiMapPin, HiMagnifyingGlass, HiXMark, HiFire } from "react-icons/hi2";
+import PropertyCard from '@/components/shared/PropertyCard';
 
 type PropertyType = 'rent' | 'buy' | 'service-apartment' | 'rent-to-own' | 'invest';
 
@@ -115,6 +116,9 @@ export default function MarketPlaceMain() {
     const debouncedQuery = useDebounce(searchQuery, 300);
     const { data: locations, isLoading: locationsLoading } = useLocations(debouncedQuery);
 
+    // Fetch featured properties for the landing page
+    const { data: featuredProperties, isLoading: featuredLoading } = useFeaturedProperties(activeTab, 6);
+
     /* ---------------------------------------------
        URL → STATE SYNC
     --------------------------------------------- */
@@ -163,6 +167,7 @@ export default function MarketPlaceMain() {
     };
 
     return (
+        <>
         <section className="relative min-h-[75vh] flex items-center justify-center py-16 px-4 overflow-visible">
             {/* Background */}
             <div className="absolute inset-0 z-0 overflow-hidden">
@@ -335,5 +340,39 @@ export default function MarketPlaceMain() {
                 </div>
             </div>
         </section>
+
+        {/* Featured Properties Section */}
+        <section className="bg-gray-50 py-20 px-4 mt-8">
+            <div className="max-w-7xl mx-auto">
+                <div className="flex justify-between items-end mb-10">
+                    <div>
+                        <h2 className="text-3xl font-bold text-gray-900 mb-2">Featured {activeTab.replace('-', ' ')} listings</h2>
+                        <p className="text-gray-500">Discover handpicked properties available to {activeTab}.</p>
+                    </div>
+                </div>
+
+                {featuredLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[...Array(3)].map((_, i) => (
+                            <div key={i} className="h-96 bg-gray-200 animate-pulse rounded-2xl" />
+                        ))}
+                    </div>
+                ) : featuredProperties && featuredProperties.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {featuredProperties.map((property: any, i: number) => (
+                            <PropertyCard key={property.id || i} property={property} index={i} />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
+                        <p className="text-gray-500 font-medium">No featured properties found in this category right now.</p>
+                        <button onClick={() => router.push(`/marketplace/search?type=${activeTab}`)} className="mt-4 text-brand-green font-bold hover:underline">
+                            View all properties →
+                        </button>
+                    </div>
+                )}
+            </div>
+        </section>
+        </>
     );
 }

@@ -1,3 +1,5 @@
+import apiClient from './apiClient';
+
 export type MaintenanceStatus = 'Pending' | 'In Progress' | 'Resolved' | 'Cancelled' | 'Rejected';
 
 export interface MaintenanceRequest {
@@ -22,15 +24,10 @@ export interface MaintenanceRequest {
     rejectionReason?: string;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-
 export const landlordMaintenanceApi = {
     getRequests: async (): Promise<MaintenanceRequest[]> => {
-        const response = await fetch(`${API_URL}/dashboard/landlord/maintenance`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-        });
-        if (!response.ok) throw new Error('Failed to fetch maintenance requests');
-        return response.json();
+        const { data } = await apiClient.get(`/dashboard/landlord/maintenance`);
+        return data;
     },
 
     updateStatus: async (
@@ -40,23 +37,14 @@ export const landlordMaintenanceApi = {
         artisanId?: string,
         cost?: number
     ): Promise<MaintenanceRequest> => {
-        const response = await fetch(`${API_URL}/dashboard/landlord/maintenance/${id}/status`, {
-            method: 'PUT',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-            },
-            body: JSON.stringify({ status, reason, artisanId, cost })
-        });
-        if (!response.ok) throw new Error('Failed to update status');
-        return response.json();
+        const { data } = await apiClient.put(`/dashboard/landlord/maintenance/${id}/status`, 
+            { status, reason, artisanId, cost }
+        );
+        return data;
     },
 
     getRequestDetails: async (id: string): Promise<MaintenanceRequest> => {
-        const response = await fetch(`${API_URL}/dashboard/landlord/maintenance/${id}`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-        });
-        if (!response.ok) throw new Error('Failed to fetch request details');
-        return response.json();
+        const { data } = await apiClient.get(`/dashboard/landlord/maintenance/${id}`);
+        return data;
     }
 };

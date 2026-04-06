@@ -5,7 +5,7 @@ import { useProfile } from '@/hooks/useProfile';
 import CaretakerInfoTab from './CaretakerInfoTab';
 import VerificationTab from '@/components/dashboard/landlord/profile/VerificationTab';
 import PrivacySecurityTab from '@/components/dashboard/landlord/profile/PrivacySecurityTab';
-import { MOCK_DOCUMENTS } from '@/lib/mockLandlordData'; // Reusing for now
+// Mock data removed as per cleanup request.
 import ProfileSummaryCard from '@/components/dashboard/landlord/profile/ProfileSummaryCard';
 import {
     IoPersonOutline,
@@ -76,3 +76,4 @@ export default function CaretakerProfile() {
         </div>
     );
 }
+

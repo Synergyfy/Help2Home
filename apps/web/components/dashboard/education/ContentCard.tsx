@@ -67,9 +67,11 @@ export default function ContentCard({ content, onToggleSave }: ContentCardProps)
                             <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                     </div>
-                    <span className="text-xs font-medium text-gray-700">{content.author.name}</span>
+                    <span className="text-xs font-medium text-gray-700">
+                        {typeof content.author === 'object' ? content.author.name : (content.author || 'Help2Home Team')}
+                    </span>
                     <span className="text-gray-300 mx-1">•</span>
-                    <span className="text-xs text-gray-500">{content.publishDate}</span>
+                    <span className="text-xs text-gray-500">{new Date(content.publishDate || (content as any).createdAt).toLocaleDateString()}</span>
                 </div>
             </div>
         </div>

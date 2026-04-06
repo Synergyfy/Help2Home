@@ -7,8 +7,8 @@ import {
   addTenantApi, 
   updateTenantApi, 
   deleteTenantApi,
-  Tenant
 } from '@/lib/api/tenants';
+import { Tenant } from '@/types/dashboard';
 import { toast } from 'react-toastify';
 
 export const useTenants = () => {

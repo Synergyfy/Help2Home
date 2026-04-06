@@ -86,12 +86,13 @@ export default function EducationPostForm({ onClose, initialData, onSave }: Educ
         }
 
         setIsSubmitting(true);
-        // Simulate API call
-        setTimeout(() => {
-            onSave(formData);
+        try {
+            await onSave(formData);
+        } catch (error) {
+            console.error('Failed to save education post:', error);
+        } finally {
             setIsSubmitting(false);
-            onClose();
-        }, 1000);
+        }
     };
 
     return (

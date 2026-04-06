@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { ProfileData } from '@/lib/mockLandlordData';
+import { ProfileData } from '@/types/dashboard';
 import { useUserStore } from '@/store/userStore';
 
 export default function ProfileSummaryCard({ profile: initialProfile }: { profile: ProfileData }) {
@@ -87,3 +87,4 @@ export default function ProfileSummaryCard({ profile: initialProfile }: { profil
         </div>
     );
 }
+

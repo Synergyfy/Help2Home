@@ -1,6 +1,6 @@
 'use client';
 
-import { VerificationDocument } from '@/lib/mockLandlordData';
+import { VerificationDocument } from '@/types/dashboard';
 
 export default function VerificationTab({ documents }: { documents: VerificationDocument[] }) {
     const completedCount = documents.filter(d => d.status === 'approved').length;
@@ -99,3 +99,4 @@ export default function VerificationTab({ documents }: { documents: Verification
         </div>
     );
 }
+

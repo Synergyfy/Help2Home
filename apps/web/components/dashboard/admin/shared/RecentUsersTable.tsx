@@ -5,21 +5,36 @@ import Link from 'next/link';
 import { HiOutlineFilter, HiOutlineDotsVertical } from 'react-icons/hi';
 import { useRouter } from 'next/navigation'; // Import useRouter
 
-const RECENT_USERS = [
-  { id: '1', name: 'Jane Doe', initials: 'JD', role: 'Landlord', status: 'Active', joined: 'Oct 24, 2023', color: 'bg-brand-green/20 text-brand-green' },
-  { id: '2', name: 'Michael Ross', initials: 'MR', role: 'Tenant', status: 'Pending', joined: 'Oct 23, 2023', color: 'bg-purple-100 text-purple-700' },
-  { id: '3', name: 'Alice Lee', initials: 'AL', role: 'Agent', status: 'Active', joined: 'Oct 22, 2023', color: 'bg-blue-100 text-blue-700' },
-  { id: '4', name: 'Bob Johnson', initials: 'BJ', role: 'Investor', status: 'Active', joined: 'Nov 01, 2023', color: 'bg-teal-100 text-teal-700' },
-  { id: '5', name: 'Charlie Brown', initials: 'CB', role: 'Landlord', status: 'Suspended', joined: 'Sep 15, 2023', color: 'bg-red-100 text-red-700' },
-];
+interface UserData {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  joined: string;
+}
 
-export default function RecentUsersTable() {
+export default function RecentUsersTable({ users = [] }: { users?: UserData[] }) {
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  };
+
+  const getRoleColor = (role: string) => {
+    switch (role?.toLowerCase()) {
+      case 'landlord': return 'bg-brand-green/20 text-brand-green';
+      case 'tenant': return 'bg-purple-100 text-purple-700';
+      case 'agent': return 'bg-blue-100 text-blue-700';
+      case 'investor': return 'bg-teal-100 text-teal-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
+  };
+
   const [filterRole, setFilterRole] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
   const [openMenuId, setOpenMenuId] = useState<string | null>(null); // State to track which user's menu is open
   const router = useRouter();
 
-  const filteredUsers = RECENT_USERS.filter(user => {
+  const filteredUsers = users.filter((user: UserData) => {
     const roleMatch = filterRole === 'All' || user.role === filterRole;
     const statusMatch = filterStatus === 'All' || user.status === filterStatus;
     return roleMatch && statusMatch;
@@ -89,12 +104,12 @@ export default function RecentUsersTable() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {filteredUsers.map((user) => (
+            {filteredUsers.map((user: UserData) => (
               <tr key={user.id} className="hover:bg-gray-50/50 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-xs mr-3 ${user.color}`}>
-                      {user.initials}
+                    <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-xs mr-3 ${getRoleColor(user.role)}`}>
+                      {getInitials(user.name)}
                     </div>
                     <div className="text-sm font-medium text-gray-900">{user.name}</div>
                   </div>

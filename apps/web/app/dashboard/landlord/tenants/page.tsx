@@ -13,7 +13,7 @@ import {
     HiOutlineDocumentText,
     HiOutlineTrash
 } from 'react-icons/hi2';
-import { Tenant } from '@/lib/mockLandlordData';
+import { Tenant } from '@/types/dashboard';
 import { toast } from 'react-toastify';
 
 export default function TenantsPage() {

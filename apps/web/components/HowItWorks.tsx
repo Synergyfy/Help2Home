@@ -34,9 +34,9 @@ export default function HowItWorks() {
                 <FadeIn direction="up">
                     <div className="text-center max-w-2xl mx-auto mb-16">
                         <h2 className="text-3xl font-bold text-gray-900 mb-4">How it works</h2>
-                        <p className="text-gray-600 flex items-center justify-center gap-2">
+                        <div className="text-gray-600 flex items-center justify-center gap-2">
                             Your journey to a new home is simple and secure with <Logo width={24} height={24} textClassName="text-base font-bold text-brand-green" />
-                        </p>
+                        </div>
                     </div>
                 </FadeIn>
 

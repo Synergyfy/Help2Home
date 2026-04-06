@@ -7,7 +7,7 @@ import {
     HiOutlineXMark,
     HiOutlineTrash
 } from 'react-icons/hi2';
-import { Tenant } from '@/lib/mockLandlordData';
+import { Tenant } from '@/types/dashboard';
 import { toast } from 'react-toastify';
 
 interface TerminateLeaseModalProps {
@@ -83,3 +83,4 @@ export default function TerminateLeaseModal({ isOpen, onClose, tenant, onConfirm
         </AnimatePresence>
     );
 }
+

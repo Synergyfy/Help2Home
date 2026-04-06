@@ -22,7 +22,7 @@ export const marketplaceKeys = {
     [...BASE_KEY, 'properties', { ...filters }, page] as const,
   featured: (propertyType?: string) => 
     [...BASE_KEY, 'featured', propertyType] as const,
-  property: (id: number) => [...BASE_KEY, 'property', id] as const,
+  property: (id: number | string) => [...BASE_KEY, 'property', id] as const,
   priceStats: (location: string) => 
     [...BASE_KEY, 'priceStats', location] as const,
 };
@@ -48,20 +48,21 @@ export function useSearchProperties(filters: SearchFilters, page: number = 1) {
 }
 
 export function useFeaturedProperties(
-  propertyType?: 'rent' | 'buy' | 'service-apartment' | 'rent-to-own',
+  propertyType?: 'rent' | 'buy' | 'service-apartment' | 'rent-to-own' | 'invest',
   limit: number = 3 // Provide a default
 ) {
   return useQuery<Property[]>({
     queryKey: marketplaceKeys.featured(propertyType),
-    queryFn: () => fetchFeaturedProperties(limit), 
+    queryFn: () => fetchFeaturedProperties(limit, propertyType), 
     staleTime: 10 * 60 * 1000,
   });
 }
 
-export function useProperty(id: number) {
+export function useProperty(id?: number | string | null) {
   return useQuery<Property | null>({
-    queryKey: marketplaceKeys.property(id),
-    queryFn: () => fetchPropertyById(id),
+    queryKey: marketplaceKeys.property(id!),
+    queryFn: () => fetchPropertyById(id!),
+    enabled: !!id,
     staleTime: 5 * 60 * 1000,
   });
 }

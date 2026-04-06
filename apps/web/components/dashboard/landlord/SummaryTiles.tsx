@@ -6,11 +6,14 @@ import { SummaryTileData } from '@/types/dashboard';
 export default function SummaryTiles({ tiles }: { tiles: SummaryTileData[] }) {
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-            {tiles.map((tile) => (
-                <Link
+            {tiles.map((tile) => {
+                const isLink = Boolean(tile.link);
+                const Wrapper = isLink ? Link : 'div';
+                return (
+                <Wrapper
                     key={tile.id}
-                    href={tile.link}
-                    className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative group"
+                    href={tile.link as string}
+                    className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative group block"
                 >
                     {tile.status === 'critical' && (
                         <span className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
@@ -28,8 +31,9 @@ export default function SummaryTiles({ tiles }: { tiles: SummaryTileData[] }) {
                         </div>
                         <p className="text-xs text-gray-500 mt-3">{tile.subtitle}</p>
                     </div>
-                </Link>
-            ))}
+                </Wrapper>
+                );
+            })}
         </div>
     );
 }

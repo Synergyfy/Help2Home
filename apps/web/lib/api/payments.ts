@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { useUserStore } from '@/store/userStore';
+import apiClient from './apiClient';
 import { addMonths, format } from 'date-fns';
 
 export interface PaymentTransaction {
@@ -79,17 +78,8 @@ export interface PayoutTransaction {
     }[];
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-
-const getAuthHeader = () => {
-    const token = useUserStore.getState().token;
-    return { Authorization: `Bearer ${token}` };
-};
-
 export const getPaymentData = async () => {
-    const { data } = await axios.get(`${API_URL}/dashboard/tenant/payments`, {
-        headers: getAuthHeader()
-    });
+    const { data } = await apiClient.get(`/dashboard/tenant/payments`);
     
     // Map backend transactions to frontend history format
     const history = data.map((t: any) => ({
@@ -142,9 +132,7 @@ export const getPaymentData = async () => {
 export const landlordPaymentsApi = {
     getPayments: async (): Promise<PaymentTransaction[]> => {
         try {
-            const { data } = await axios.get(`${API_URL}/dashboard/landlord/payments`, {
-                headers: getAuthHeader()
-            });
+            const { data } = await apiClient.get(`/dashboard/landlord/payments`);
             // Ensure status mapping if backend uses different terms
             return data.map((p: any) => ({
                 ...p,
@@ -158,9 +146,7 @@ export const landlordPaymentsApi = {
 
     getPayouts: async (): Promise<PayoutTransaction[]> => {
         try {
-            const { data } = await axios.get(`${API_URL}/dashboard/landlord/payments/payouts`, {
-                headers: getAuthHeader()
-            });
+            const { data } = await apiClient.get(`/dashboard/landlord/payments/payouts`);
             return data;
         } catch (error) {
             console.error('Error fetching landlord payouts:', error);

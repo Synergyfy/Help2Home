@@ -1,4 +1,7 @@
+import apiClient from './apiClient';
+
 export type ContractStatus = 'Draft' | 'Pending Signatures' | 'Partially Signed' | 'Signed' | 'Declined' | 'Expired';
+
 
 export interface Signer {
     id: string;
@@ -47,56 +50,34 @@ export interface ContractTemplate {
     content: string;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-
 export const landlordContractsApi = {
     getContracts: async (): Promise<Contract[]> => {
-        const response = await fetch(`${API_URL}/dashboard/landlord/contracts`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-        });
-        if (!response.ok) throw new Error('Failed to fetch contracts');
-        return response.json();
+        try {
+            const { data } = await apiClient.get(`/dashboard/landlord/contracts`);
+            return data;
+        } catch (error) {
+            console.error('Failed to fetch contracts:', error);
+            throw error;
+        }
     },
 
     getContractDetails: async (id: string): Promise<Contract> => {
-        const response = await fetch(`${API_URL}/dashboard/landlord/contracts/${id}`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-        });
-        if (!response.ok) throw new Error('Failed to fetch contract details');
-        return response.json();
+        const { data } = await apiClient.get(`/dashboard/landlord/contracts/${id}`);
+        return data;
     },
 
     getTemplates: async (): Promise<ContractTemplate[]> => {
-        const response = await fetch(`${API_URL}/dashboard/landlord/contracts/templates`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-        });
-        if (!response.ok) throw new Error('Failed to fetch contract templates');
-        return response.json();
+        const { data } = await apiClient.get(`/dashboard/landlord/contracts/templates`);
+        return data;
     },
 
-    createContract: async (data: Partial<Contract>): Promise<Contract> => {
-        const response = await fetch(`${API_URL}/dashboard/landlord/contracts`, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-            },
-            body: JSON.stringify(data)
-        });
-        if (!response.ok) throw new Error('Failed to create contract');
-        return response.json();
+    createContract: async (contractData: Partial<Contract>): Promise<Contract> => {
+        const { data } = await apiClient.post(`/dashboard/landlord/contracts`, contractData);
+        return data;
     },
 
     updateStatus: async (id: string, status: string): Promise<Contract> => {
-        const response = await fetch(`${API_URL}/dashboard/landlord/contracts/${id}/status`, {
-            method: 'PUT',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-            },
-            body: JSON.stringify({ status })
-        });
-        if (!response.ok) throw new Error('Failed to update contract status');
-        return response.json();
+        const { data } = await apiClient.put(`/dashboard/landlord/contracts/${id}/status`, { status });
+        return data;
     }
 };

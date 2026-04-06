@@ -1,37 +1,29 @@
 // app/dashboard/admin/profile/_components/ActivityLog.tsx
 import { HiOutlineLogin, HiOutlinePencilAlt, HiOutlineKey } from 'react-icons/hi';
 
-const activities = [
-  {
-    id: 1,
-    action: 'Successful Login',
-    date: 'Oct 24, 2023, 09:41 AM',
-    ip: '192.168.1.105',
-    device: 'Chrome on MacOS',
-    icon: HiOutlineLogin,
-    color: 'text-blue-600 bg-blue-50',
-  },
-  {
-    id: 2,
-    action: 'Updated Profile Info',
-    date: 'Oct 23, 2023, 02:15 PM',
-    ip: '192.168.1.105',
-    device: 'Chrome on MacOS',
-    icon: HiOutlinePencilAlt,
-    color: 'text-emerald-600 bg-emerald-50',
-  },
-  {
-    id: 3,
-    action: 'Password Changed',
-    date: 'Sep 15, 2023, 10:30 AM',
-    ip: '192.168.1.105',
-    device: 'Chrome on MacOS',
-    icon: HiOutlineKey,
-    color: 'text-purple-600 bg-purple-50',
-  },
-];
+import { useQuery } from '@tanstack/react-query';
+import { fetchProfileActivity } from '@/lib/api/profile';
 
 export function ActivityLog() {
+  const { data: logs, isLoading } = useQuery({
+    queryKey: ['profile-activity'],
+    queryFn: fetchProfileActivity,
+  });
+
+  const getLogIcon = (action: string) => {
+    if (action.includes('LOGIN')) return HiOutlineLogin;
+    if (action.includes('UPDATE')) return HiOutlinePencilAlt;
+    if (action.includes('PASSWORD')) return HiOutlineKey;
+    return HiOutlinePencilAlt;
+  };
+
+  const getLogColor = (action: string) => {
+    if (action.includes('LOGIN')) return 'text-blue-600 bg-blue-50';
+    if (action.includes('UPDATE')) return 'text-emerald-600 bg-emerald-50';
+    if (action.includes('PASSWORD')) return 'text-purple-600 bg-purple-50';
+    return 'text-gray-600 bg-gray-50';
+  };
+
   return (
     <div className="bg-white rounded-2xl border border-brand-green-100 shadow-sm overflow-hidden">
       {/* Header - Matches the Table Toolbar spacing */}
@@ -57,29 +49,50 @@ export function ActivityLog() {
             </tr>
           </thead>
           <tbody className="divide-y divide-brand-green-50">
-            {activities.map((item) => (
-              <tr key={item.id} className="hover:bg-brand-green-50/50 transition-colors group">
-                <td className="px-6 py-5 whitespace-nowrap">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-xl ${item.color}`}>
-                      <item.icon size={20} />
-                    </div>
-                    <span className="text-sm font-bold text-brand-green-900">{item.action}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-5 whitespace-nowrap text-sm font-semibold text-brand-green-900">
-                  {item.date}
-                </td>
-                <td className="px-6 py-5 whitespace-nowrap">
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-brand-green-100 text-brand-green-500 font-bold uppercase tracking-tight">
-                    {item.ip}
-                  </span>
-                </td>
-                <td className="px-6 py-5 whitespace-nowrap text-right">
-                  <span className="text-sm font-medium text-brand-green-600">{item.device}</span>
+            {isLoading ? (
+              <tr>
+                <td colSpan={4} className="px-6 py-10 text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-green mx-auto"></div>
                 </td>
               </tr>
-            ))}
+            ) : !logs || logs.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="px-6 py-10 text-center text-brand-green-400 font-bold">
+                  No recent activity found.
+                </td>
+              </tr>
+            ) : (
+              logs.map((item: any) => {
+                const Icon = getLogIcon(item.action);
+                return (
+                  <tr key={item.id} className="hover:bg-brand-green-50/50 transition-colors group">
+                    <td className="px-6 py-5 whitespace-nowrap">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-xl ${getLogColor(item.action)}`}>
+                          <Icon size={20} />
+                        </div>
+                        <span className="text-sm font-bold text-brand-green-900 text-capitalize">
+                          {item.action.replace(/_/g, ' ').toLowerCase()}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5 whitespace-nowrap text-sm font-semibold text-brand-green-900">
+                      {new Date(item.createdAt).toLocaleString()}
+                    </td>
+                    <td className="px-6 py-5 whitespace-nowrap">
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-brand-green-100 text-brand-green-500 font-bold uppercase tracking-tight">
+                        {item.ipAddress || 'Internal'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-5 whitespace-nowrap text-right">
+                      <span className="text-sm font-medium text-brand-green-600">
+                        {item.meta?.device || 'Web Browser'}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>

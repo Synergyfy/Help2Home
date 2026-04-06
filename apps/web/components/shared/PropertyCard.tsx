@@ -124,6 +124,12 @@ export default function PropertyCard({ property, index, showTotalUpfront = true,
                                 <span>Installments</span>
                             </div>
                         )}
+                        {/* AVAILABILITY BADGE */}
+                        {property.terms?.availabilityStatus && (
+                            <div className="flex items-center gap-1.5 text-blue-600 font-bold text-[9px] bg-blue-50 px-2.5 py-1.5 rounded-xl border border-blue-100/50 uppercase tracking-widest">
+                                <span>{property.terms.availabilityStatus === 'Now' ? 'Available Now' : `From ${new Date(property.terms.availableFrom).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`}</span>
+                            </div>
+                        )}
                     </div>
 
                     {/* Pricing */}

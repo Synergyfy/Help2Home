@@ -51,3 +51,8 @@ export const registerUser = async (data: {
 
   return response.data;
 };
+
+export const verifyUser = async (): Promise<{ success: boolean; message: string }> => {
+  const response = await apiClient.post('/users/verify');
+  return response.data;
+};

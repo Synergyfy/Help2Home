@@ -64,7 +64,7 @@ export default function SignUp() {
           </div>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {/* Tenant Card */}
           <FadeIn direction="up">
             <button
@@ -81,7 +81,7 @@ export default function SignUp() {
             </button>
           </FadeIn>
 
-          {/* Landlord/Management Card */}
+          {/* Landlord Card */}
           <FadeIn direction="up">
             <button
               onClick={() => handleRoleSelection(['landlord'], 'propertyManagement')}
@@ -90,9 +90,41 @@ export default function SignUp() {
               <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
                 <MdApartment size={32} />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Property Management</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Landlord</h3>
               <p className="text-gray-500 text-sm leading-relaxed">
-                For Landlords, Agents, and Caretakers. List properties and manage your real estate portfolio.
+                List your properties, manage tenants, and automate your rent collection effortlessly.
+              </p>
+            </button>
+          </FadeIn>
+
+          {/* Caretaker Card */}
+          <FadeIn direction="up">
+            <button
+              onClick={() => handleRoleSelection(['caretaker'], 'propertyManagement')}
+              className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
+            >
+              <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
+                <MdApartment size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Caretaker</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                Manage properties on behalf of landlords, handle maintenance, and track tasks.
+              </p>
+            </button>
+          </FadeIn>
+
+          {/* Agent Card */}
+          <FadeIn direction="up">
+            <button
+              onClick={() => handleRoleSelection(['agent'], 'propertyManagement')}
+              className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
+            >
+              <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
+                <MdApartment size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Real Estate Agent</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                List properties for your clients, manage leads, and close deals faster.
               </p>
             </button>
           </FadeIn>
@@ -124,7 +156,7 @@ export default function SignUp() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">Developer</h3>
               <p className="text-gray-500 text-sm leading-relaxed">
-               Find reliable investors for your properties 
+               Find reliable investors for your properties and list your new projects.
               </p>
             </button>
           </FadeIn>
