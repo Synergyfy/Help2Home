@@ -8,7 +8,7 @@ const getAuthHeader = () => {
     return { Authorization: `Bearer ${token}` };
 };
 
-export type NotificationType = 'payment' | 'message' | 'verification' | 'system' | 'alert' | 'update';
+export type NotificationType = 'application' | 'payment' | 'contract' | 'maintenance' | 'document' | 'message' | 'verification' | 'system' | 'alert' | 'update';
 
 export interface Notification {
     id: string;

@@ -16,7 +16,7 @@ export default function ConversationList({ conversations, selectedId, onSelect }
 
     const filteredConversations = conversations.filter(conv => {
         const matchesSearch = conv.participants.some(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-            conv.lastMessage.text.toLowerCase().includes(searchQuery.toLowerCase());
+            conv.lastMessage.content.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesFilter = filter === 'All' || (filter === 'Unread' && conv.unreadCount > 0);
         return matchesSearch && matchesFilter;
     });
@@ -60,7 +60,7 @@ export default function ConversationList({ conversations, selectedId, onSelect }
             <div className="flex-1 overflow-y-auto custom-scrollbar">
                 {filteredConversations.length > 0 ? (
                     filteredConversations.map(conv => {
-                        const otherParticipant = conv.participants.find(p => p.role !== 'agent') || conv.participants[0];
+                        const otherParticipant = conv.participants.find(p => p.role !== 'Agent') || conv.participants[0];
                         return (
                             <div
                                 key={conv.id}
@@ -73,13 +73,13 @@ export default function ConversationList({ conversations, selectedId, onSelect }
                                         {otherParticipant.name}
                                     </h3>
                                     <span className="text-xs text-gray-400 whitespace-nowrap">
-                                        {formatDistanceToNow(new Date(conv.lastMessage.createdAt), { addSuffix: false })}
+                                        {formatDistanceToNow(new Date(conv.lastMessage.timestamp), { addSuffix: false })}
                                     </span>
                                 </div>
 
                                 <p className={`text-sm line-clamp-1 mb-2 ${conv.unreadCount > 0 ? 'text-gray-800 font-medium' : 'text-gray-500'}`}>
                                     {conv.lastMessage.senderId === 'user_1' && 'You: '}
-                                    {conv.lastMessage.text}
+                                    {conv.lastMessage.content}
                                 </p>
 
                                 <div className="flex items-center justify-between">
@@ -89,7 +89,7 @@ export default function ConversationList({ conversations, selectedId, onSelect }
                                                 {conv.linkedObject.type}
                                             </span>
                                         )}
-                                        {conv.labels.map(label => (
+                                        {(conv.labels || []).map(label => (
                                             <span key={label} className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600">
                                                 {label}
                                             </span>

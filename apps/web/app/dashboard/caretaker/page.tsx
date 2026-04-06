@@ -132,7 +132,7 @@ export default function CaretakerDashboardPage() {
 
                         {assignedTasks.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {assignedTasks.slice(0, 4).map(task => (
+                                {assignedTasks.slice(0, 4).map((task: any) => (
                                     <TaskCard
                                         key={task.id}
                                         task={task}

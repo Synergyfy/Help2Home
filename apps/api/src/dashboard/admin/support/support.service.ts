@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { SupportTicket } from './entities/support-ticket.entity';
 import { SupportMessage } from './entities/support-message.entity';
 import { FAQ } from './entities/faq.entity';
-import { User } from '../../../../users/entities/user.entity';
+import { User } from '../../../users/entities/user.entity';
 
 @Injectable()
 export class AdminSupportService {

@@ -26,7 +26,7 @@ const groupNotificationsByDate = (notifications: (Notification & { isRead: boole
     };
 
     notifications.forEach((notification) => {
-        const date = new Date(notification.createdAt);
+        const date = new Date(notification.timestamp);
 
         if (date >= today) {
             groups.today.push(notification);
@@ -49,8 +49,8 @@ export default function NotificationDropdown({ isOpen, onClose }: NotificationDr
     if (!isOpen) return null;
 
     const handleNotificationClick = (notification: Notification) => {
-        if (notification.actionUrl && notification.actionUrl !== '#') {
-            router.push(notification.actionUrl);
+        if (notification.actionLink && notification.actionLink !== '#') {
+            router.push(notification.actionLink);
             onClose();
         }
     };

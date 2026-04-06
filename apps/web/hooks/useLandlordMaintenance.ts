@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { landlordMaintenanceApi } from '../lib/api/maintenance';
-import { MaintenanceStatus } from '../lib/mockMaintenanceData';
+import { MaintenanceStatus } from '../lib/api/maintenance';
 import { toast } from 'react-toastify';
 
 export const useLandlordMaintenance = () => {

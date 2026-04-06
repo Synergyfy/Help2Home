@@ -4,10 +4,10 @@ import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer as RechartsResponsiveContainer, Legend } from 'recharts';
 
 const ResponsiveContainer = RechartsResponsiveContainer as any;
-import { IncomeData } from '@/lib/mockAnalyticsData';
+import { ChartDataPoint } from '@/lib/api/analytics';
 
 interface IncomeChartProps {
-    data: IncomeData[];
+    data: ChartDataPoint[];
 }
 
 export default function IncomeChart({ data }: IncomeChartProps) {
@@ -43,7 +43,7 @@ export default function IncomeChart({ data }: IncomeChartProps) {
                             <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                         </linearGradient>
                     </defs>
-                    <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} dy={10} />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} dy={10} />
                     <YAxis tickFormatter={formatCurrency} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                     <Tooltip
@@ -56,8 +56,8 @@ export default function IncomeChart({ data }: IncomeChartProps) {
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
                     />
                     <Legend verticalAlign="top" height={36} iconType="circle" />
-                    <Area type="monotone" dataKey="gross" name="Gross Income" stroke="#00853E" fillOpacity={1} fill="url(#colorGross)" strokeWidth={2} />
-                    <Area type="monotone" dataKey="net" name="Net Income" stroke="#10B981" fillOpacity={1} fill="url(#colorNet)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="total" name="Gross Income" stroke="#00853E" fillOpacity={1} fill="url(#colorGross)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="value" name="Net Income" stroke="#10B981" fillOpacity={1} fill="url(#colorNet)" strokeWidth={2} />
                 </AreaChart>
             </ResponsiveContainer>
         </div>

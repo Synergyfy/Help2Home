@@ -65,10 +65,18 @@ export const sendMessage = async (ticketId: string, content: string) => {
     return data;
 };
 
+export const updateStatus = async (ticketId: string, status: string) => {
+    const { data } = await axios.patch(`${API_URL}/dashboard/tenant/support/tickets/${ticketId}`, { status }, {
+        headers: getAuthHeader()
+    });
+    return data;
+};
+
 export const landlordSupportApi = {
     getTickets,
     getFAQs,
     createTicket,
     getTicketMessages,
-    sendMessage
+    sendMessage,
+    updateStatus
 };

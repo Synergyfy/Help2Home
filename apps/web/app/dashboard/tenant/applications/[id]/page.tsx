@@ -48,7 +48,7 @@ export default function ApplicationStatusPage() {
                     id: found.contracts?.[0]?.id || `c_${found.id}`,
                     applicationId: found.id,
                     name: found.contracts?.[0]?.name || 'Tenancy Agreement',
-                    parties: [found.tenantName, found.landlord?.name || 'Landlord'],
+                    parties: [found.tenantName, found.landlordId || 'Landlord'],
                     rentAmount: found.contracts?.[0]?.rentAmount || 0,
                     tenure: found.contracts?.[0]?.tenure || `${found.financing?.repaymentDuration || 12} Months`,
                     monthlyPayment: found.contracts?.[0]?.monthlyPayment || 0,
@@ -68,7 +68,8 @@ export default function ApplicationStatusPage() {
                 repayment: {
                     nextAmount: found.calculations?.monthlyRent || 0,
                     nextDueDate: 'Coming Soon',
-                    status: 'Pending'
+                    status: 'Upcoming',
+                    totalPaid: 0
                 }
             });
         }

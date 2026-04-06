@@ -6,15 +6,15 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 import { CaretakerTask } from '@/types/caretaker';
 import { MaintenanceStatus } from '@/lib/api/maintenance';
-import { useCaretakerDashboard } from '@/hooks/useCaretakerDashboard';
+import { useCaretakerTasks } from '@/hooks/useCaretakerDashboard';
 import PhotoUploader from '@/components/dashboard/caretaker/PhotoUploader';
 
 export default function TaskDetailPage() {
     const params = useParams();
     const router = useRouter();
     const taskId = params.id as string;
-    const { tasks, isLoading } = useCaretakerDashboard();
-    const task = tasks.find(t => t.id === taskId);
+    const { data: tasks, isLoading } = useCaretakerTasks();
+    const task = (tasks || []).find((t: any) => t.id === taskId);
 
     const [status, setStatus] = useState<MaintenanceStatus | 'Accepted' | 'Assigned'>(task?.status || 'Assigned');
     const [notes, setNotes] = useState('');
@@ -30,7 +30,7 @@ export default function TaskDetailPage() {
         );
     }
 
-    const handleStatusChange = (newStatus: TaskStatus) => {
+    const handleStatusChange = (newStatus: MaintenanceStatus | 'Accepted' | 'Assigned') => {
         setStatus(newStatus);
         // In a real app, this would call an API
     };
@@ -154,7 +154,7 @@ export default function TaskDetailPage() {
             <div className="space-y-4">
                 <h3 className="font-semibold text-gray-900">Activity Timeline</h3>
                 <div className="space-y-4 pl-4 border-l-2 border-gray-200">
-                    {task.timeline.map((event, index) => (
+                    {task.timeline?.map((event: any, index: number) => (
                         <div key={event.id} className="relative pl-4">
                             <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-gray-300 border-2 border-white"></div>
                             <p className="text-sm text-gray-900">{event.content}</p>

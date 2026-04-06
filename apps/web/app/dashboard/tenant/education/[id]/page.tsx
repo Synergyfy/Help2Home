@@ -22,7 +22,7 @@ export default function ContentDetailPage() {
                     setContent(detail);
                     // Fetch related content based on IDs or category
                     const allContent = await getContentList();
-                    const relatedItems = allContent.filter(c =>
+                    const relatedItems = allContent.filter((c: EducationContent) =>
                         detail.relatedContentIds?.includes(c.id) ||
                         (c.category === detail.category && c.id !== detail.id)
                     ).slice(0, 2);

@@ -4,10 +4,10 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer as RechartsResponsiveContainer, Cell } from 'recharts';
 
 const ResponsiveContainer = RechartsResponsiveContainer as any;
-import { OccupancyData } from '@/lib/mockAnalyticsData';
+import { ChartDataPoint } from '@/lib/api/analytics';
 
 interface OccupancyChartProps {
-    data: OccupancyData[];
+    data: ChartDataPoint[];
 }
 
 export default function OccupancyChart({ data }: OccupancyChartProps) {
@@ -25,7 +25,7 @@ export default function OccupancyChart({ data }: OccupancyChartProps) {
                 <BarChart layout="vertical" data={data} margin={{ top: 0, right: 30, left: 40, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#E5E7EB" />
                     <XAxis type="number" domain={[0, 100]} hide />
-                    <YAxis dataKey="property" type="category" width={100} tick={{ fontSize: 12, fill: '#374151', fontWeight: 500 }} axisLine={false} tickLine={false} />
+                    <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12, fill: '#374151', fontWeight: 500 }} axisLine={false} tickLine={false} />
                     <Tooltip
                         cursor={{ fill: '#F3F4F6' }}
                         formatter={(value: any) => {
@@ -36,10 +36,11 @@ export default function OccupancyChart({ data }: OccupancyChartProps) {
                         }}
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
                     />
-                    <Bar dataKey="occupancy" radius={[0, 4, 4, 0]} barSize={32}>
-                        {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.occupancy >= 90 ? '#00853E' : entry.occupancy >= 70 ? '#FBBF24' : '#EF4444'} />
-                        ))}
+                    <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={32}>
+                        {data.map((entry, index) => {
+                            const val = entry.value || 0;
+                            return <Cell key={`cell-${index}`} fill={val >= 90 ? '#00853E' : val >= 70 ? '#FBBF24' : '#EF4444'} />;
+                        })}
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>

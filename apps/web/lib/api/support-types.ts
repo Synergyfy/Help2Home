@@ -13,6 +13,12 @@ export interface Ticket {
     tenantId: string;
     propertyId?: string;
     slaDeadline: string;
+    assignedTo?: string;
+    relatedObject?: {
+        type: string;
+        id: string;
+        title: string;
+    };
 }
 
 export interface Template {
@@ -58,6 +64,12 @@ export interface Conversation {
     unreadCount: number;
     updatedAt: string;
     status: 'Open' | 'Closed' | 'Archived';
+    linkedObject?: {
+        type: string;
+        id: string;
+        title: string;
+    };
+    labels?: string[];
 }
 
 export const MOCK_CONVERSATIONS: Conversation[] = [];

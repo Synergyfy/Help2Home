@@ -34,7 +34,7 @@ export default function ChatPane({ conversation, messages, onSendMessage }: Chat
         );
     }
 
-    const otherParticipant = conversation.participants.find(p => p.role !== 'landlord') || conversation.participants[0];
+    const otherParticipant = conversation.participants.find(p => p.role !== 'Landlord') || conversation.participants[0];
 
     const handleSend = () => {
         if (!newMessage.trim()) return;
@@ -65,7 +65,7 @@ export default function ChatPane({ conversation, messages, onSendMessage }: Chat
         // Simple placeholder replacement logic (mock)
         let content = template.content;
         content = content.replace('{applicantName}', otherParticipant.name);
-        content = content.replace('{propertyTitle}', conversation.linkedObject?.title || 'the property');
+        content = content.replace('{propertyTitle}', conversation.subject || 'the property');
 
         // Remove the trigger character if it's there
         const textWithoutSlash = newMessage.endsWith('/') ? newMessage.slice(0, -1) : newMessage;
@@ -88,10 +88,10 @@ export default function ChatPane({ conversation, messages, onSendMessage }: Chat
                 </div>
 
                 <div className="flex items-center gap-4">
-                    {conversation.linkedObject && (
+                    {conversation.subject && (
                         <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-200">
-                            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">{conversation.linkedObject.type}:</span>
-                            <span className="text-sm font-medium text-gray-900">{conversation.linkedObject.title}</span>
+                            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Subject:</span>
+                            <span className="text-sm font-medium text-gray-900">{conversation.subject}</span>
                         </div>
                     )}
                     <button className="text-gray-400 hover:text-gray-600">
@@ -121,7 +121,7 @@ export default function ChatPane({ conversation, messages, onSendMessage }: Chat
                                         ? 'bg-[#00853E] text-white rounded-br-none'
                                         : 'bg-white text-gray-800 border border-gray-100 rounded-bl-none'
                                     }`}>
-                                    {msg.text}
+                                    {msg.content}
 
                                     {msg.attachments && msg.attachments.length > 0 && (
                                         <div className="mt-3 space-y-2">
@@ -134,7 +134,7 @@ export default function ChatPane({ conversation, messages, onSendMessage }: Chat
                                                     </div>
                                                     <div className="flex-1 min-w-0">
                                                         <p className="text-xs font-medium truncate">{att.filename}</p>
-                                                        <p className={`text-[10px] ${isMe ? 'text-green-100' : 'text-gray-400'}`}>{att.size}</p>
+                                                        <p className={`text-[10px] ${isMe ? 'text-green-100' : 'text-gray-400'}`}>{att.fileSize}</p>
                                                     </div>
                                                 </div>
                                             ))}
@@ -142,7 +142,7 @@ export default function ChatPane({ conversation, messages, onSendMessage }: Chat
                                     )}
                                 </div>
                                 <span className="text-[10px] text-gray-400 mt-1 px-1">
-                                    {formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true })}
+                                    {formatDistanceToNow(new Date(msg.timestamp), { addSuffix: true })}
                                 </span>
                             </div>
                         </div>
