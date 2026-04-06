@@ -6,6 +6,7 @@ import { useDashboardStore } from '@/store/dashboardStore';
 import { useDashboardData } from '@/hooks/UseDashboardData';
 import { useApplications } from '@/hooks/useApplications';
 import { Application } from '@/store/applicationStore';
+import { SummaryTileData } from '@/types/dashboard';
 
 // UI Components
 import SummaryTiles from './SummaryTiles';
@@ -42,16 +43,16 @@ export default function LandlordDashboard() {
 
   const pendingAppsCount = applications.filter((a: Application) => a.status === 'Pending' || a.status === 'Under Review').length;
 
-  const enrichedSummary = [
+  const enrichedSummary: SummaryTileData[] = [
     ...(data?.summary || []),
     {
       id: 'applications-stat',
       label: 'Pending Applications',
       value: pendingAppsCount.toString(),
       subtitle: pendingAppsCount > 0 ? 'Needs review' : 'All caught up',
-      trend: pendingAppsCount > 0 ? 'up' : 'neutral',
+      trend: (pendingAppsCount > 0 ? 'up' : 'neutral') as 'up' | 'neutral',
       trendValue: pendingAppsCount > 0 ? 'New' : '',
-      status: pendingAppsCount > 0 ? 'warning' : 'neutral',
+      status: (pendingAppsCount > 0 ? 'warning' : 'neutral') as 'warning' | 'neutral',
       link: '/dashboard/landlord/applications'
     }
   ];

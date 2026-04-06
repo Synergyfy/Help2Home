@@ -113,7 +113,7 @@ export default function TenantDetailsModal({ isOpen, onClose, tenant }: TenantDe
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pt-6 border-t border-gray-200/50">
                                         <div>
                                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Monthly Rent</p>
-                                            <p className="text-lg font-black text-brand-green">₦{formatNumber(tenant.rentAmount)}</p>
+                                            <p className="text-lg font-black text-brand-green">₦{formatNumber(tenant.rentAmount || tenant.monthlyRentAmount)}</p>
                                         </div>
                                         <div>
                                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Lease Start</p>
@@ -192,8 +192,8 @@ export default function TenantDetailsModal({ isOpen, onClose, tenant }: TenantDe
     );
 }
 
-const formatNumber = (val: number | string) => {
-  if (!val) return "0";
+const formatNumber = (val: number | string | undefined) => {
+  if (val === undefined || val === null || val === '') return "0";
   const number = parseFloat(val.toString().replace(/,/g, ""));
   if (isNaN(number)) return "0";
   return new Intl.NumberFormat("en-US").format(number);

@@ -34,7 +34,8 @@ export default function TemplateManager({ templates, onSave, onDelete }: Templat
             id: editingId === 'new' ? `tpl_${Date.now()}` : editingId!,
             title: formData.title!,
             content: formData.content!,
-            category: formData.category || 'General'
+            category: (formData.category || 'General') as any,
+            usageCount: formData.usageCount || 0
         });
 
         setEditingId(null);
@@ -84,7 +85,7 @@ export default function TemplateManager({ templates, onSave, onDelete }: Templat
                                     <label className="block text-xs font-medium text-gray-700 mb-1">Category</label>
                                     <select
                                         value={formData.category || 'General'}
-                                        onChange={e => setFormData({ ...formData, category: e.target.value })}
+                                        onChange={e => setFormData({ ...formData, category: e.target.value as any })}
                                         className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#00853E] focus:border-transparent"
                                     >
                                         <option value="General">General</option>
@@ -131,7 +132,7 @@ export default function TemplateManager({ templates, onSave, onDelete }: Templat
                                         <label className="block text-xs font-medium text-gray-700 mb-1">Category</label>
                                         <select
                                             value={formData.category || 'General'}
-                                            onChange={e => setFormData({ ...formData, category: e.target.value })}
+                                            onChange={e => setFormData({ ...formData, category: e.target.value as any })}
                                             className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#00853E] focus:border-transparent"
                                         >
                                             <option value="General">General</option>

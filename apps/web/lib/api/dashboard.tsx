@@ -1,12 +1,20 @@
 import apiClient from './apiClient';
+import { 
+  SummaryTileData, 
+  ActivityItem, 
+  TaskItem, 
+  PaymentItem, 
+  VerificationItem, 
+  PerformanceData 
+} from '@/types/dashboard';
 
 export interface DashboardData {
-  summary: any[];
-  activities: any[];
-  tasks: any[];
-  payments: any[];
-  verification: any[];
-  performance?: any;
+  summary: SummaryTileData[];
+  activities: ActivityItem[];
+  tasks: TaskItem[];
+  payments: PaymentItem[];
+  verification: VerificationItem[];
+  performance?: PerformanceData;
 }
 
 export const fetchDashboardData = async (

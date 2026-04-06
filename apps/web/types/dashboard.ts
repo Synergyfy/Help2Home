@@ -31,10 +31,10 @@ export interface TaskItem {
 export interface PaymentItem {
     id: string;
     date: string;
-    property: string;
-    tenant: string;
+    propertyTitle: string;
+    tenantName: string;
     amount: number;
-    status: 'Cleared' | 'Pending' | 'Failed';
+    status: 'Completed' | 'Pending' | 'Failed';
 }
 
 export interface VerificationItem {
@@ -107,7 +107,9 @@ export interface Tenant {
     propertyName: string;
     status: 'Active' | 'Delinquent' | 'Pending' | 'Past' | 'Evicted';
     monthlyRentAmount: number;
+    rentAmount?: number; // Aliased for compatibility
     dateLeaseStart: string;
+    leaseStart?: string; // Aliased for compatibility
     leaseEnd?: string;
     paymentStatus: 'Up to date' | 'Late' | 'Pending';
     onTimePaymentRate?: number;
@@ -131,4 +133,13 @@ export interface Tenant {
         notes?: string;
     };
     profileImage?: string;
+}
+
+export interface PerformanceData {
+    occupancyRate: number;
+    unitsOccupied: number;
+    totalUnits: number;
+    monthlyIncome: number;
+    incomeTrend: number;
+    avgTimeToRent: number | string;
 }

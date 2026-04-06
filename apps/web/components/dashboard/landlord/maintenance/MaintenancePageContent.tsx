@@ -17,16 +17,16 @@ import {
     HiOutlineBanknotes,
     HiOutlineUserGroup // New import for assigned artisan icon
 } from 'react-icons/hi2';
-import { MaintenanceRequest, MaintenanceStatus } from '@/lib/mockMaintenanceData';
+import { MaintenanceRequest, MaintenanceStatus } from '@/lib/api/maintenance';
 import { toast } from 'react-toastify';
 import { formatCurrency } from '@/utils/helpers';
-import { useLandlordMaintenance } from '@/hooks/useLandlordMaintenance';
+import { useMaintenance } from '@/hooks/useMaintenance';
 import RejectionReasonModal from '@/components/dashboard/landlord/maintenance/RejectionReasonModal';
 import FindArtisanModal from '@/components/dashboard/landlord/maintenance/FindArtisanModal'; 
 import { MOCK_ARTISANS } from '@/lib/mockArtisanData'; 
 
 export default function MaintenancePageContent() {
-    const { requests, isLoading, isError, updateStatus: updateStatusMutation, isUpdating } = useLandlordMaintenance();
+    const { requests, isLoading, isError, error, updateStatus: updateStatusMutation, isUpdating } = useMaintenance();
     const [filter, setFilter] = useState<'All' | MaintenanceStatus>('All');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null);
@@ -38,9 +38,9 @@ export default function MaintenancePageContent() {
 
     const filteredRequests = requests.filter(req => {
         const matchesFilter = filter === 'All' || req.status === filter;
-        const matchesSearch = req.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            req.property.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            req.tenant.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = req.issueTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            req.propertyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            req.tenantName.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesFilter && matchesSearch;
     });
 
@@ -83,17 +83,17 @@ export default function MaintenancePageContent() {
     const getStatusColor = (status: MaintenanceStatus) => {
         switch (status) {
             case 'Pending': return 'bg-amber-50 text-amber-600 border-amber-100';
-            case 'Approved': return 'bg-blue-50 text-blue-600 border-blue-100';
             case 'In Progress': return 'bg-purple-50 text-purple-600 border-purple-100';
-            case 'Completed': return 'bg-green-50 text-green-600 border-green-100';
+            case 'Resolved': return 'bg-green-50 text-green-600 border-green-100';
             case 'Rejected': return 'bg-red-50 text-red-600 border-red-100';
+            case 'Cancelled': return 'bg-gray-50 text-gray-600 border-gray-100';
             default: return 'bg-gray-50 text-gray-600 border-gray-100';
         }
     };
 
     const getPriorityColor = (priority: string) => {
         switch (priority) {
-            case 'Emergency': return 'bg-red-500 text-white';
+            case 'Critical': return 'bg-red-500 text-white';
             case 'High': return 'bg-orange-500 text-white';
             case 'Medium': return 'bg-amber-500 text-white';
             case 'Low': return 'bg-blue-500 text-white';
@@ -125,7 +125,7 @@ export default function MaintenancePageContent() {
                     { label: 'Total', count: requests.length, icon: HiOutlineWrenchScrewdriver, color: 'text-gray-600', bg: 'bg-gray-50' },
                     { label: 'Pending', count: requests.filter(r => r.status === 'Pending').length, icon: HiOutlineClock, color: 'text-amber-600', bg: 'bg-amber-50' },
                     { label: 'In Progress', count: requests.filter(r => r.status === 'In Progress').length, icon: HiOutlineWrenchScrewdriver, color: 'text-purple-600', bg: 'bg-purple-50' },
-                    { label: 'Emergency', count: requests.filter(r => r.priority === 'Emergency').length, icon: HiOutlineExclamationTriangle, color: 'text-red-600', bg: 'bg-red-50' },
+                    { label: 'Critical', count: requests.filter(r => r.priority === 'Critical').length, icon: HiOutlineExclamationTriangle, color: 'text-red-600', bg: 'bg-red-50' },
                 ].map((stat, i) => (
                     <div key={i} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
                         <div className={`size-10 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center`}>
@@ -159,10 +159,10 @@ export default function MaintenancePageContent() {
                     >
                         <option value="All">All Status</option>
                         <option value="Pending">Pending</option>
-                        <option value="Approved">Approved</option>
                         <option value="In Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
+                        <option value="Resolved">Resolved</option>
                         <option value="Rejected">Rejected</option>
+                        <option value="Cancelled">Cancelled</option>
                     </select>
                 </div>
             </div>
@@ -187,7 +187,7 @@ export default function MaintenancePageContent() {
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-3 mb-1">
-                                            <h3 className="font-bold text-gray-900 text-lg">{req.title}</h3>
+                                            <h3 className="font-bold text-gray-900 text-lg">{req.issueTitle}</h3>
                                             <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest border ${getStatusColor(req.status)}`}>
                                                 {req.status}
                                             </span>
@@ -195,11 +195,11 @@ export default function MaintenancePageContent() {
                                         <div className="flex flex-wrap gap-4 text-sm text-gray-500">
                                             <div className="flex items-center gap-1.5">
                                                 <HiOutlineMapPin size={16} />
-                                                <span>{req.property} • {req.unit}</span>
+                                                <span>{req.propertyName}</span>
                                             </div>
                                             <div className="flex items-center gap-1.5">
                                                 <HiOutlineUser size={16} />
-                                                <span>{req.tenant}</span>
+                                                <span>{req.tenantName}</span>
                                             </div>
                                             <div className="flex items-center gap-1.5">
                                                 <HiOutlineCalendarDays size={16} />
@@ -216,10 +216,10 @@ export default function MaintenancePageContent() {
                                 </div>
 
                                 <div className="flex items-center gap-6">
-                                    {req.estimatedCost && (
+                                    {req.cost && (
                                         <div className="text-right hidden sm:block">
                                             <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Est. Cost</div>
-                                            <div className="font-bold text-gray-900">{formatCurrency(req.estimatedCost)}</div>
+                                            <div className="font-bold text-gray-900">{formatCurrency(req.cost)}</div>
                                         </div>
                                     )}
                                     <HiOutlineChevronRight size={24} className="text-gray-300 group-hover:text-brand-green group-hover:translate-x-1 transition-all" />
@@ -264,7 +264,7 @@ export default function MaintenancePageContent() {
                                         ID: {selectedRequest.id}
                                     </span>
                                 </div>
-                                <h2 className="text-3xl font-black text-white leading-tight">{selectedRequest.title}</h2>
+                                <h2 className="text-3xl font-black text-white leading-tight">{selectedRequest.issueTitle}</h2>
                                 {selectedRequest.status === 'Rejected' && selectedRequest.rejectionReason && (
                                     <p className="text-sm text-white/80 mt-2">
                                         Reason for rejection: <span className="font-medium">{selectedRequest.rejectionReason}</span>
@@ -282,13 +282,13 @@ export default function MaintenancePageContent() {
                                 {/* Info Grid */}
                                 <div className="grid grid-cols-2 gap-6">
                                     <div className="p-4 bg-gray-50 rounded-2xl">
-                                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Property & Unit</div>
-                                        <div className="font-bold text-gray-900">{selectedRequest.property}</div>
-                                        <div className="text-sm text-gray-500">{selectedRequest.unit}</div>
+                                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Property</div>
+                                        <div className="font-bold text-gray-900">{selectedRequest.propertyName}</div>
+                                        <div className="text-sm text-gray-500">{selectedRequest.propertyAddress}</div>
                                     </div>
                                     <div className="p-4 bg-gray-50 rounded-2xl">
                                         <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Tenant</div>
-                                        <div className="font-bold text-gray-900">{selectedRequest.tenant}</div>
+                                        <div className="font-bold text-gray-900">{selectedRequest.tenantName}</div>
                                         <div className="text-sm text-gray-500">Occupant</div>
                                     </div>
                                     <div className="p-4 bg-gray-50 rounded-2xl">
@@ -298,7 +298,7 @@ export default function MaintenancePageContent() {
                                     </div>
                                     <div className="p-4 bg-gray-50 rounded-2xl border-2 border-brand-green/10">
                                         <div className="text-[10px] font-black text-brand-green uppercase tracking-widest mb-1">Estimated Cost</div>
-                                        <div className="text-2xl font-bold text-gray-900">{formatCurrency(selectedRequest.estimatedCost || 0)}</div>
+                                        <div className="text-2xl font-bold text-gray-900">{formatCurrency(selectedRequest.cost || 0)}</div>
                                     </div>
                                 </div>
 
@@ -306,7 +306,7 @@ export default function MaintenancePageContent() {
                                 <div>
                                     <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Description</div>
                                     <p className="text-gray-600 leading-relaxed bg-gray-50 p-6 rounded-3xl font-medium border border-gray-100">
-                                        {selectedRequest.description}
+                                        {selectedRequest.issueDescription}
                                     </p>
                                 </div>
 
@@ -344,7 +344,7 @@ export default function MaintenancePageContent() {
                                             Find Artisan
                                         </button>
                                         <button
-                                            onClick={() => handleUpdateStatus(selectedRequest.id, 'Approved')}
+                                            onClick={() => handleUpdateStatus(selectedRequest.id, 'In Progress')}
                                             className="flex-[2] py-4 px-6 bg-brand-green text-white font-black rounded-2xl hover:bg-green-700 transition-all shadow-xl shadow-green-900/20 flex items-center justify-center gap-2"
                                         >
                                             <HiOutlineCheckCircle size={20} />
@@ -396,7 +396,7 @@ export default function MaintenancePageContent() {
                     }}
                     onHireArtisan={handleHireArtisan}
                     isLoading={isUpdating}
-                    currentMaintenanceRequestSpecialization={currentRequestForArtisan?.title.includes('Faucet') ? 'Plumbing' : undefined} // Example specialization based on title
+                    currentMaintenanceRequestSpecialization={currentRequestForArtisan?.issueTitle.includes('Faucet') ? 'Plumbing' : undefined} // Example specialization based on title
                 />
             )}
         </div>
