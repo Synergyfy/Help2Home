@@ -60,7 +60,7 @@ export class AdminEducationService {
   }
 
   async create(authorId: string, data: Partial<Education>) {
-    const item = this.educationRepository.create({ ...data, author: authorId });
+    const item = this.educationRepository.create({ ...data, authorId });
     return this.educationRepository.save(item);
   }
 

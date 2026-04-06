@@ -7,6 +7,7 @@ import { BankAccount } from './entities/bank-account.entity';
 import { PaymentMethod } from './entities/payment-method.entity';
 import { NotificationPreference } from './entities/notification-preference.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { AuditLog } from '../dashboard/admin/audit/entities/audit-log.entity';
 
 @Injectable()
 export class ProfileService {
@@ -21,6 +22,8 @@ export class ProfileService {
     private readonly paymentMethodRepository: Repository<PaymentMethod>,
     @InjectRepository(NotificationPreference)
     private readonly notificationPreferenceRepository: Repository<NotificationPreference>,
+    @InjectRepository(AuditLog)
+    private readonly auditLogRepository: Repository<AuditLog>,
   ) {}
 
   async getMyProfile(userId: string) {
@@ -45,6 +48,14 @@ export class ProfileService {
     };
   }
 
+  async getMyActivityLogs(userId: string) {
+    return this.auditLogRepository.find({
+      where: { performedBy: userId },
+      order: { createdAt: 'DESC' },
+      take: 20
+    });
+  }
+
   async updateMyProfile(userId: string, dto: UpdateProfileDto) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');
@@ -67,6 +78,9 @@ export class ProfileService {
     if (dto.state !== undefined) profile.state = dto.state;
     if (dto.country !== undefined) profile.country = dto.country;
     if (dto.occupation !== undefined) profile.occupation = dto.occupation;
+    if (dto.businessName !== undefined) profile.businessName = dto.businessName;
+    if (dto.payoutFrequency !== undefined) profile.payoutFrequency = dto.payoutFrequency;
+    if (dto.currency !== undefined) profile.currency = dto.currency;
 
     await this.userRepository.save(user);
     await this.profileRepository.save(profile);
@@ -116,6 +130,9 @@ export class ProfileService {
         state: profile.state || '',
         country: profile.country || '',
         occupation: profile.occupation || '',
+        businessName: profile.businessName || '',
+        payoutFrequency: profile.payoutFrequency || 'Monthly',
+        currency: profile.currency || 'NGN',
       },
     };
   }

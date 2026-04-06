@@ -97,18 +97,23 @@ export class PropertyService {
     return { properties, total };
   }
 
-  async findFeatured(limit: number = 6) {
+  async findFeatured(limit: number = 6, propertyType?: string) {
+    const where: any = {};
+    if (propertyType && propertyType !== 'all') {
+      where.propertyType = propertyType;
+    }
+    
     return this.propertyRepository.find({
-      where: { featured: true },
       take: limit,
-      order: { createdAt: 'DESC' },
+      where,
+      order: { featured: 'DESC', createdAt: 'DESC' },
     });
   }
 
   async getLocations() {
     const results = await this.propertyRepository
       .createQueryBuilder('property')
-      .select('DISTINCT property.city', 'city')
+      .select('property.city', 'city')
       .addSelect('property.location', 'location')
       .addSelect('COUNT(property.id)', 'count')
       .groupBy('property.city')
@@ -155,6 +160,7 @@ export class PropertyService {
   async findById(id: string) {
     const property = await this.propertyRepository.findOne({
       where: { id },
+      relations: ['owner'],
     });
     if (!property) {
       throw new NotFoundException('Property not found');
@@ -201,6 +207,12 @@ export class PropertyService {
       throw new NotFoundException('Property not found or access denied');
     }
     Object.assign(property, data);
+    return this.propertyRepository.save(property);
+  }
+
+  async updateStatusAsAdmin(id: string, updateData: any) {
+    const property = await this.findById(id);
+    Object.assign(property, updateData);
     return this.propertyRepository.save(property);
   }
 

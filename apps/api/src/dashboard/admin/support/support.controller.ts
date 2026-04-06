@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Param, Query, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Query, Body, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AccessTokenGuard } from '../../../auth/guards/accessToken.guard';
 import { RolesGuard } from '../../../common/guards/roles.guard';
@@ -24,6 +24,18 @@ export class AdminSupportController {
   @ApiOperation({ summary: 'Get a single support ticket by ID' })
   findOne(@Param('id') id: string) {
     return this.supportService.findById(id);
+  }
+
+  @Get(':id/messages')
+  @ApiOperation({ summary: 'Get messages for a specific Support ticket' })
+  findMessages(@Param('id') id: string) {
+    return this.supportService.findMessages(id);
+  }
+
+  @Post(':id/messages')
+  @ApiOperation({ summary: 'Add a message to a support ticket' })
+  addMessage(@Param('id') id: string, @Body() data: any) {
+    return this.supportService.addMessage(id, data);
   }
 
   @Patch(':id/status')

@@ -70,4 +70,9 @@ export class UsersService {
       },
     };
   }
+
+  async verifyUser(userId: string) {
+    await this.userRepository.update(userId, { verified: true });
+    return { success: true, message: 'User verified successfully' };
+  }
 }

@@ -48,6 +48,15 @@ export class Tenant extends BaseEntity {
   paymentStatus: string; // 'Up to date', 'Late', 'Pending'
 
   @Column({ nullable: true })
+  tenantId: string;
+
+  @Column({ type: 'numeric', nullable: true, transformer: { to: (v) => v, from: (v) => parseFloat(v) } })
+  monthlyRentAmount: number;
+
+  @Column({ nullable: true })
+  dateLeaseStart: string;
+
+  @Column({ nullable: true })
   leaseEnd: string;
 
   @Column({ type: 'jsonb', nullable: true })

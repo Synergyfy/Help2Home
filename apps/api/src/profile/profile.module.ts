@@ -7,6 +7,7 @@ import { User } from '../users/entities/user.entity';
 import { BankAccount } from './entities/bank-account.entity';
 import { PaymentMethod } from './entities/payment-method.entity';
 import { NotificationPreference } from './entities/notification-preference.entity';
+import { AuditLog } from '../dashboard/admin/audit/entities/audit-log.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -14,7 +15,8 @@ import { NotificationPreference } from './entities/notification-preference.entit
     User,
     BankAccount,
     PaymentMethod,
-    NotificationPreference
+    NotificationPreference,
+    AuditLog,
   ])],
   controllers: [ProfileController],
   providers: [ProfileService],

@@ -1,5 +1,6 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from '../../../../common/entities/base.entity';
+import { User } from '../../../../users/entities/user.entity';
 
 @Entity('education_content')
 export class Education extends BaseEntity {
@@ -12,14 +13,15 @@ export class Education extends BaseEntity {
   @Column({ nullable: true })
   category: string; // e.g. Guides, Tips, FAQs
 
-  @Column({ nullable: true })
-  targetRole: string; // tenant | landlord | agent | all
+  @Column({ type: 'simple-json', nullable: true })
+  targetAudience: string[]; // ['tenant', 'landlord', ...]
 
-  @Column({ default: 'draft' })
-  status: string; // draft | published
+  @ManyToOne(() => User, { nullable: true, eager: true })
+  @JoinColumn({ name: 'authorId' })
+  author: User;
 
   @Column({ nullable: true })
-  author: string; // admin userId
+  authorId: string;
 
   @Column({ nullable: true })
   slug: string;

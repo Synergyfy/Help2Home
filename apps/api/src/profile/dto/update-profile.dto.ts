@@ -61,4 +61,19 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsString()
   occupation?: string;
+
+  @ApiPropertyOptional({ example: 'Lagos Properties Ltd' })
+  @IsOptional()
+  @IsString()
+  businessName?: string;
+
+  @ApiPropertyOptional({ example: 'Monthly' })
+  @IsOptional()
+  @IsString()
+  payoutFrequency?: string;
+
+  @ApiPropertyOptional({ example: 'NGN' })
+  @IsOptional()
+  @IsString()
+  currency?: string;
 }

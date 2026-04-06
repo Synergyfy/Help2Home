@@ -112,9 +112,18 @@ export class TenantService {
     const educationItems = await this.educationService.findAll();
     const latestEducation = educationItems[0] || null;
 
-    // 6. Simplified Repayments (since installment engine is generic for now)
+    // 6. Simplified Repayments
+    const rentAmount = tenant.property?.price || Number((tenant as any).rentAmount) || 0;
+    
+    let progress = 0;
+    if (tenant.paymentStatus === 'Up to date' || rentAmount === 0) {
+      progress = 100;
+    } else if (tenant.paymentStatus === 'Pending') {
+      progress = 50;
+    }
+
     const nextRepayment = {
-      amount: tenant.property?.monthlyPrice || 0,
+      amount: rentAmount,
       dueDate: tenant.leaseEnd || 'Flexible',
     };
 
@@ -129,7 +138,7 @@ export class TenantService {
       unreadMessages,
       latestEducation,
       nextRepayment,
-      repaymentProgress: 0, // Logic deferred until installment module
+      repaymentProgress: progress,
     };
   }
 }

@@ -43,6 +43,29 @@ export class LandlordService {
       maximumFractionDigits: 0
     }).format(revenueThisMonth);
 
+    // Calculate Performance Metrics
+    const revenueLastMonth = payments
+      .filter(p => p.status === 'Cleared' && new Date(p.date) >= new Date(now.getFullYear(), now.getMonth() - 1, 1) && new Date(p.date) < startOfMonth)
+      .reduce((sum, p) => sum + Number(p.amount), 0);
+      
+    let incomeTrend = 0;
+    if (revenueLastMonth > 0) {
+      incomeTrend = Math.round(((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100);
+    } else if (revenueThisMonth > 0) {
+      incomeTrend = 100;
+    }
+
+    const occupancyRate = propertiesCount > 0 ? Math.round((tenantsCount / propertiesCount) * 100) : 0;
+
+    const performance = {
+      occupancyRate,
+      unitsOccupied: tenantsCount,
+      totalUnits: propertiesCount,
+      monthlyIncome: revenueThisMonth,
+      incomeTrend,
+      avgTimeToRent: null // Requires future Application-to-Contract historical tracking
+    };
+
     // Aggregate Tasks
     const tasks = [
       ...maintenanceRequests
@@ -150,6 +173,7 @@ export class LandlordService {
       })),
       verification,
       activities: activities.slice(0, 5),
+      performance
     };
   }
 

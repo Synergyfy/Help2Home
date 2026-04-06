@@ -27,6 +27,12 @@ export class AdminListingController {
     return this.propertyService.findPending();
   }
 
+  @Get(':id')
+  @ApiOperation({ summary: 'Get a specific property for moderation' })
+  getOne(@Param('id') id: string) {
+    return this.propertyService.findById(id);
+  }
+
   @Patch(':id/approve')
   @ApiOperation({ summary: 'Approve a property submission' })
   approve(@Param('id') id: string) {
@@ -37,5 +43,11 @@ export class AdminListingController {
   @ApiOperation({ summary: 'Reject a property submission' })
   reject(@Param('id') id: string) {
     return this.propertyService.reject(id);
+  }
+
+  @Patch(':id/request-info')
+  @ApiOperation({ summary: 'Request more information for a property submission' })
+  requestInfo(@Param('id') id: string) {
+    return this.propertyService.updateStatusAsAdmin(id, { status: 'Info Requested' });
   }
 }

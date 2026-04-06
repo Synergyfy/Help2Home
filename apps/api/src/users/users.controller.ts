@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AccessTokenGuard } from '../auth/guards/accessToken.guard';
 import { UsersService } from './users.service';
@@ -15,5 +15,11 @@ export class UsersController {
   @ApiOperation({ summary: 'Get current user profile' })
   getProfile(@GetCurrentUser('sub') userId: string) {
     return this.usersService.getProfile(userId);
+  }
+
+  @Post('verify')
+  @ApiOperation({ summary: 'Verify current user' })
+  verify(@GetCurrentUser('sub') userId: string) {
+    return this.usersService.verifyUser(userId);
   }
 }

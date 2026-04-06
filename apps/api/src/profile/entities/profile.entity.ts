@@ -37,4 +37,13 @@ export class Profile extends BaseEntity {
 
   @Column({ nullable: true })
   occupation: string;
+
+  @Column({ nullable: true })
+  businessName: string;
+
+  @Column({ nullable: true })
+  payoutFrequency: string;
+
+  @Column({ nullable: true })
+  currency: string;
 }

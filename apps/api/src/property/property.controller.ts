@@ -21,8 +21,8 @@ export class PropertyController {
   @Get('featured')
   @ApiOperation({ summary: 'Get featured properties' })
   @ApiResponse({ status: 200, type: [PropertyResponseDto] })
-  findFeatured(@Query('limit') limit?: number) {
-    return this.propertyService.findFeatured(limit);
+  findFeatured(@Query('limit') limit?: number, @Query('type') type?: string) {
+    return this.propertyService.findFeatured(limit, type);
   }
 
   @Get('locations')

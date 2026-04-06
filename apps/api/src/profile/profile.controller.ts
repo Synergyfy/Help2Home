@@ -19,6 +19,12 @@ export class ProfileController {
     return this.profileService.getMyProfile(userId);
   }
 
+  @Get('activity')
+  @ApiOperation({ summary: 'Get the current user activity logs' })
+  getMyActivity(@GetCurrentUser('sub') userId: string) {
+    return this.profileService.getMyActivityLogs(userId);
+  }
+
   @Patch('me')
   @ApiOperation({ summary: 'Update the current authenticated user profile' })
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })

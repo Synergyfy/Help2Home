@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsEmail, IsOptional } from 'class-validator';
+import { IsString, IsEmail, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateTenantDto {
   @ApiProperty({ example: 'John Doe' })
@@ -14,6 +14,11 @@ export class CreateTenantDto {
   @IsString()
   @IsOptional()
   phone?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  tenantId?: string;
 
   @ApiProperty({ example: 'Sunset Villa' })
   @IsString()
@@ -32,6 +37,16 @@ export class CreateTenantDto {
   @IsString()
   @IsOptional()
   paymentStatus?: string;
+
+  @ApiPropertyOptional()
+  @IsNumber()
+  @IsOptional()
+  monthlyRentAmount?: number;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  dateLeaseStart?: string;
 
   @ApiPropertyOptional({ example: '2026-01-01' })
   @IsString()
@@ -87,6 +102,21 @@ export class UpdateTenantDto {
   @ApiPropertyOptional()
   @IsOptional()
   details?: any;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  tenantId?: string;
+
+  @ApiPropertyOptional()
+  @IsNumber()
+  @IsOptional()
+  monthlyRentAmount?: number;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  dateLeaseStart?: string;
 }
 
 export class TenantResponseDto {

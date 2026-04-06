@@ -5,7 +5,7 @@ import { RolesGuard } from '../../../common/guards/roles.guard';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { Role } from '../../../common/enums/role.enum';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Education } from '../../admin/education/entities/education.entity';
 
 @ApiTags('agent/education')
@@ -23,10 +23,15 @@ export class AgentEducationController {
   @ApiOperation({ summary: 'Get educational resources for agents' })
   @ApiResponse({ status: 200, description: 'List of resources' })
   async findAll() {
-    return this.educationRepository.find({
-      where: { targetRole: In([Role.AGENT, 'all']) },
-      order: { createdAt: 'DESC' },
-    });
+    return this.educationRepository
+      .createQueryBuilder('education')
+      .where(`education.targetAudience::text LIKE :agent OR education.targetAudience::text LIKE :all`, {
+        agent: `%"${Role.AGENT}"%`,
+        all: `%"all"%`,
+      })
+      .andWhere('education.status = :status', { status: 'published' })
+      .orderBy('education.createdAt', 'DESC')
+      .getMany();
   }
 
   @Get(':id')
