@@ -43,7 +43,7 @@ function TicketsContent() {
     if (isLoading) return <div className="p-12 text-center text-gray-500 font-bold animate-pulse">Loading tickets...</div>;
     if (isError) return <div className="p-12 text-center text-red-500 font-bold">Failed to load support tickets.</div>;
 
-    const selectedTicket = tickets.find(t => t.id === selectedTicketId);
+    const selectedTicket = (tickets || []).find((t: Ticket) => t.id === selectedTicketId);
 
     return (
         <div className="pb-20 h-[calc(100vh-6rem)] flex flex-col">

@@ -59,8 +59,8 @@ export default function ActivityFeed() {
         if (!notification.isRead) {
             markAsRead(notification.id);
         }
-        if (notification.actionUrl && notification.actionUrl !== '#') {
-            router.push(notification.actionUrl);
+        if (notification.actionLink && notification.actionLink !== '#') {
+            router.push(notification.actionLink);
         }
     };
 

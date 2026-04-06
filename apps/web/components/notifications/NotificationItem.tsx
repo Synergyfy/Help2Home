@@ -67,7 +67,7 @@ export default function NotificationItem({
         onDismiss(notification.id);
     };
 
-    const timeAgo = formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true });
+    const timeAgo = formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true });
 
     return (
         <motion.div

@@ -111,12 +111,12 @@ export default function TeamPage() {
             <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
                 <div className="divide-y divide-gray-50">
                     {filteredPartners.length > 0 ? (
-                        filteredPartners.map((partner) => (
+                        filteredPartners.map((partner: any) => (
                             <div key={partner.id} className="p-6 hover:bg-gray-50/50 transition-colors">
                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                     <div className="flex items-center gap-4">
                                         <div className="size-14 rounded-2xl bg-brand-green/10 flex items-center justify-center text-brand-green font-semibold text-lg">
-                                            {partner.name.split(' ').map(n => n[0]).join('')}
+                                            {partner.name.split(' ').map((n: string) => n[0]).join('')}
                                         </div>
                                         <div>
                                             <h3 className="font-semibold text-gray-900">{partner.name}</h3>

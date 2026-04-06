@@ -41,8 +41,8 @@ export default function TasksPage() {
     }
 
     const assignedCount = stats?.activeTasks || 0;
-    const inProgressCount = tasks.filter(t => t.status === 'In Progress').length;
-    const completedCount = tasks.filter(t => t.status === 'Completed').length;
+    const inProgressCount = tasks.filter((t: any) => t.status === 'In Progress').length;
+    const completedCount = tasks.filter((t: any) => t.status === 'Completed').length;
     const highPriorityCount = stats?.highPriority || 0;
 
     return (
@@ -106,7 +106,7 @@ export default function TasksPage() {
             {/* Tasks Grid */}
             {tasks.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {tasks.map(task => (
+                    {tasks.map((task: any) => (
                         <TaskCard
                             key={task.id}
                             task={task}

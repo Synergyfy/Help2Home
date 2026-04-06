@@ -78,7 +78,7 @@ export default function TeamPage() {
                     <div className="size-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-4">
                         <HiOutlineCheckCircle size={24} />
                     </div>
-                    <div className="text-2xl font-semibold text-gray-900">{partners.reduce((acc, p) => acc + p.properties, 0)}</div>
+                    <div className="text-2xl font-semibold text-gray-900">{partners.reduce((acc, p) => acc + (typeof p.properties === 'number' ? p.properties : (Array.isArray(p.properties) ? p.properties.length : 0)), 0)}</div>
                     <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Managed Properties</div>
                 </div>
             </div>
@@ -144,7 +144,7 @@ export default function TeamPage() {
                                         </div>
 
                                         <div className="text-right">
-                                            <div className="text-sm font-semibold text-gray-900">{partner.properties} Properties</div>
+                                            <div className="text-sm font-semibold text-gray-900">{typeof partner.properties === 'number' ? partner.properties : (Array.isArray(partner.properties) ? partner.properties.length : 0)} Properties</div>
                                             <div className="text-xs text-gray-400 mt-1">Joined {new Date(partner.joinedDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</div>
                                         </div>
 

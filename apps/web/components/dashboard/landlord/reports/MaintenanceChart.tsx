@@ -4,10 +4,10 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer as RechartsResponsiveContainer, Cell } from 'recharts';
 
 const ResponsiveContainer = RechartsResponsiveContainer as any;
-import { MaintenanceData } from '@/lib/mockAnalyticsData';
+import { ChartDataPoint } from '@/lib/api/analytics';
 
 interface MaintenanceChartProps {
-    data: MaintenanceData[];
+    data: ChartDataPoint[];
 }
 
 export default function MaintenanceChart({ data }: MaintenanceChartProps) {
@@ -33,7 +33,7 @@ export default function MaintenanceChart({ data }: MaintenanceChartProps) {
             <ResponsiveContainer width="100%" height="85%">
                 <BarChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                    <XAxis dataKey="category" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} dy={10} />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} dy={10} />
                     <YAxis tickFormatter={formatCurrency} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
                     <Tooltip
                         formatter={(value: any) => {
@@ -44,7 +44,7 @@ export default function MaintenanceChart({ data }: MaintenanceChartProps) {
                         }}
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
                     />
-                    <Bar dataKey="spend" radius={[4, 4, 0, 0]} fill="#3B82F6" barSize={40} />
+                    <Bar dataKey="value" radius={[4, 4, 0, 0]} fill="#3B82F6" barSize={40} />
                 </BarChart>
             </ResponsiveContainer>
         </div>

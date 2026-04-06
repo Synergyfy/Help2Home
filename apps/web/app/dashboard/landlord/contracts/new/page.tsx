@@ -13,6 +13,7 @@ import { useContractStore } from '@/store/contractStore';
 import { Contract, ContractFields } from '@/lib/api/contracts';
 import { useContractTemplates } from '@/hooks/useContractTemplates';
 
+
 import ContractContentEditor from '@/components/dashboard/landlord/contracts/ContractContentEditor';
 
 export default function NewContractPage() {
@@ -47,7 +48,7 @@ export default function NewContractPage() {
             return '# CUSTOM TENANCY AGREEMENT\n\n[Start typing your custom agreement here...]';
         }
 
-        const template = MOCK_TEMPLATES.find(t => t.id === templateId);
+        const template = (templates || []).find(t => t.id === templateId);
         if (!template) return '';
 
         let content = template.content;
@@ -176,7 +177,7 @@ export default function NewContractPage() {
                         </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {MOCK_TEMPLATES.map(template => (
+                        {(templates || []).map(template => (
                             <button
                                 key={template.id}
                                 onClick={() => {
@@ -264,7 +265,7 @@ export default function NewContractPage() {
             {step === 'content' && (
                 <div className="animate-in fade-in slide-in-from-right-4 duration-500">
                     <ContractContentEditor
-                        title={selectedTemplate === 'custom' ? 'Custom Contract' : MOCK_TEMPLATES.find(t => t.id === selectedTemplate)?.name || 'Legal Agreement'}
+                        title={selectedTemplate === 'custom' ? 'Custom Contract' : (templates || []).find(t => t.id === selectedTemplate)?.name || 'Legal Agreement'}
                         content={generatedContent}
                         onSave={handleSave}
                         onBack={() => setStep('details')}

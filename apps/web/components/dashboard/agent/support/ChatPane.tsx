@@ -35,7 +35,7 @@ export default function ChatPane({ conversation, messages, onSendMessage }: Chat
         );
     }
 
-    const otherParticipant = conversation.participants.find(p => p.role !== 'agent') || conversation.participants[0];
+    const otherParticipant = conversation.participants.find(p => p.role !== 'Agent') || conversation.participants[0];
 
     const handleSend = () => {
         if (!newMessage.trim()) return;
@@ -64,7 +64,7 @@ export default function ChatPane({ conversation, messages, onSendMessage }: Chat
     const insertTemplate = (template: Template) => {
         let content = template.content;
         content = content.replace('{applicantName}', otherParticipant.name);
-        content = content.replace('{propertyTitle}', conversation.linkedObject?.title || 'the property');
+        content = content.replace('{propertyTitle}', conversation.subject || 'the property');
 
         const textWithoutSlash = newMessage.endsWith('/') ? newMessage.slice(0, -1) : newMessage;
         setNewMessage(textWithoutSlash + content);
@@ -86,10 +86,10 @@ export default function ChatPane({ conversation, messages, onSendMessage }: Chat
                 </div>
 
                 <div className="flex items-center gap-4">
-                    {conversation.linkedObject && (
+                    {conversation.subject && (
                         <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-xl border border-gray-100">
-                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{conversation.linkedObject.type}:</span>
-                            <span className="text-sm font-black text-gray-900 italic">{conversation.linkedObject.title}</span>
+                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Subject:</span>
+                            <span className="text-sm font-black text-gray-900 italic">{conversation.subject}</span>
                         </div>
                     )}
                 </div>
@@ -114,10 +114,10 @@ export default function ChatPane({ conversation, messages, onSendMessage }: Chat
                                         ? 'bg-brand-green text-white rounded-br-none'
                                         : 'bg-white text-gray-800 border border-gray-100 rounded-bl-none'
                                     }`}>
-                                    {msg.text}
+                                    {msg.content}
                                 </div>
                                 <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-2 px-1">
-                                    {formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true })}
+                                    {formatDistanceToNow(new Date(msg.timestamp), { addSuffix: true })}
                                 </span>
                             </div>
                         </div>

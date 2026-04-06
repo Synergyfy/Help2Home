@@ -27,7 +27,7 @@ export const useNotifications = () => {
   // Fetch notifications with TanStack Query
   const query = useQuery({
     queryKey: ['notifications', userId, activeRole],
-    queryFn: () => fetchNotifications(userId, activeRole),
+    queryFn: () => fetchNotifications(userId ?? undefined, activeRole ?? undefined),
     enabled: userHydrated && notificationHydrated && !!userId && !!activeRole,
     staleTime: 1000 * 60 * 2, // 2 minutes
     refetchInterval: preferences.pollInterval * 1000, // Convert to milliseconds
@@ -45,8 +45,8 @@ export const useNotifications = () => {
 
   // Filter out dismissed notifications and add read status
   const notifications: (Notification & { isRead: boolean })[] = (query.data || [])
-    .filter((n) => !dismissedNotifications.has(n.id))
-    .map((n) => ({
+    .filter((n: Notification) => !dismissedNotifications.has(n.id))
+    .map((n: Notification) => ({
       ...n,
       isRead: readNotifications.has(n.id) || n.read,
     }));
