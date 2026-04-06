@@ -8,6 +8,9 @@ export class Maintenance extends BaseEntity {
   @Column()
   category: string; // Plumbing | Electrical | Carpentry | Cleaning | General
 
+  @Column({ nullable: true })
+  title: string;
+
   @Column({ type: 'text' })
   description: string;
 

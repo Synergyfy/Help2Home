@@ -23,6 +23,27 @@ export interface SearchFilters {
   status?: string;
   sortBy?: 'featured' | 'price-low' | 'price-high' | 'newest';
   keywords?: string;
+  newBuild?: string | boolean;
+  sharedOwnership?: string | boolean;
+  retirementHomes?: string | boolean;
+  auctions?: string | boolean;
+  offPlan?: string | boolean;
+  verified?: boolean;
+  garden?: boolean;
+  parking?: boolean;
+  balcony?: boolean;
+  serviced?: boolean;
+  electricity?: boolean;
+  waterSupply?: boolean;
+  security?: boolean;
+  gym?: boolean;
+  pool?: boolean;
+  furnished?: boolean;
+  chainFree?: boolean;
+  reducedPrice?: boolean;
+  underOffer?: boolean;
+  ownership?: string;
+  addedToZoopla?: string;
 }
 
 export interface PropertySearchResult {

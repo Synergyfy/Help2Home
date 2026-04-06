@@ -1,70 +1,71 @@
-export type MaintenanceStatus = 'Pending' | 'Approved' | 'In Progress' | 'Completed' | 'Rejected';
-export type MaintenancePriority = 'Low' | 'Medium' | 'High' | 'Emergency';
+export type MaintenanceStatus = 'Pending' | 'In Progress' | 'Resolved' | 'Cancelled' | 'Rejected';
+export type MaintenancePriority = 'Low' | 'Medium' | 'High' | 'Critical';
 
 export interface MaintenanceRequest {
     id: string;
-    title: string;
-    description: string;
-    property: string;
-    unit: string;
-    tenant: string;
+    issueTitle: string;
+    issueDescription: string;
+    propertyName: string;
+    propertyAddress?: string;
+    tenantName: string;
     priority: MaintenancePriority;
     status: MaintenanceStatus;
     createdAt: string;
-    estimatedCost?: number;
+    cost?: number;
     images?: string[];
     rejectionReason?: string;
-    assignedArtisanId?: string; // New field to store the ID of the assigned artisan
+    assignedArtisanId?: string;
+    updatedAt?: string;
 }
 
 export const MOCK_MAINTENANCE_REQUESTS: MaintenanceRequest[] = [
     {
         id: 'MR-001',
-        title: 'Leaky Faucet in Kitchen',
-        description: 'The kitchen faucet is dripping constantly, causing water waste and annoying noise.',
-        property: 'Lekki Phase 1',
-        unit: 'Apt 4B',
-        tenant: 'Jane Doe',
+        issueTitle: 'Leaky Faucet in Kitchen',
+        issueDescription: 'The kitchen faucet is dripping constantly, causing water waste and annoying noise.',
+        propertyName: 'Lekki Phase 1',
+        propertyAddress: 'Apt 4B',
+        tenantName: 'Jane Doe',
         priority: 'Medium',
         status: 'Pending',
         createdAt: '2026-02-14T10:00:00Z',
-        estimatedCost: 15000,
+        cost: 15000,
         images: ['https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=200']
     },
     {
         id: 'MR-002',
-        title: 'AC Not Cooling',
-        description: 'The AC in the master bedroom is blowing warm air even at the lowest temperature setting.',
-        property: 'Yaba Heights',
-        unit: 'Unit 12',
-        tenant: 'John Smith',
+        issueTitle: 'AC Not Cooling',
+        issueDescription: 'The AC in the master bedroom is blowing warm air even at the lowest temperature setting.',
+        propertyName: 'Yaba Heights',
+        propertyAddress: 'Unit 12',
+        tenantName: 'John Smith',
         priority: 'High',
         status: 'In Progress',
         createdAt: '2026-02-15T08:30:00Z',
-        estimatedCost: 45000
+        cost: 45000
     },
     {
         id: 'MR-003',
-        title: 'Broken Light Switch',
-        description: "The light switch in the hallway is loose and doesn't turn on the lights.",
-        property: 'Lekki Phase 1',
-        unit: 'Apt 2A',
-        tenant: 'Robert Fox',
+        issueTitle: 'Broken Light Switch',
+        issueDescription: "The light switch in the hallway is loose and doesn't turn on the lights.",
+        propertyName: 'Lekki Phase 1',
+        propertyAddress: 'Apt 2A',
+        tenantName: 'Robert Fox',
         priority: 'Low',
-        status: 'Completed',
+        status: 'Resolved',
         createdAt: '2026-02-10T14:20:00Z',
-        estimatedCost: 5000
+        cost: 5000
     },
     {
         id: 'MR-004',
-        title: 'Water Heater Malfunction',
-        description: 'No hot water in the entire apartment since this morning.',
-        property: 'Ikeja GRA',
-        unit: 'Flat 3',
-        tenant: 'Alice Johnson',
-        priority: 'Emergency',
+        issueTitle: 'Water Heater Malfunction',
+        issueDescription: 'No hot water in the entire apartment since this morning.',
+        propertyName: 'Ikeja GRA',
+        propertyAddress: 'Flat 3',
+        tenantName: 'Alice Johnson',
+        priority: 'Critical',
         status: 'Pending',
         createdAt: '2026-02-16T07:00:00Z',
-        estimatedCost: 35000
+        cost: 35000
     }
 ];

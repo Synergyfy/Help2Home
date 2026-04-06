@@ -38,7 +38,7 @@ export default function TicketDetail({ ticket, onClose, onUpdateStatus }: Ticket
     const insertTemplate = (template: Template) => {
         let content = template.content;
         // Basic placeholder logic
-        content = content.replace('{applicantName}', ticket.createdBy.name);
+        content = content.replace('{applicantName}', ticket.createdBy?.name || 'Applicant');
         content = content.replace('{propertyTitle}', ticket.relatedObject?.title || 'the property');
 
         const textWithoutSlash = note.endsWith('/') ? note.slice(0, -1) : note;
@@ -96,7 +96,7 @@ export default function TicketDetail({ ticket, onClose, onUpdateStatus }: Ticket
                                         <span className="text-gray-500 mx-2">•</span>
                                         <span className="text-gray-400 font-medium">{format(new Date(ticket.createdAt), 'MMM d, yyyy h:mm a')}</span>
                                     </div>
-                                    <p className="text-sm text-gray-600 mt-1">Ticket created by {ticket.createdBy.name}</p>
+                                    <p className="text-sm text-gray-600 mt-1">Ticket created by {ticket.createdBy?.name || 'Unknown'}</p>
                                 </div>
 
                                 {ticket.status !== 'Open' && (

@@ -14,6 +14,11 @@ export interface Ticket {
     propertyId?: string;
     slaDeadline: string;
     assignedTo?: string;
+    createdBy?: {
+        id: string;
+        name: string;
+        avatar?: string;
+    };
     relatedObject?: {
         type: string;
         id: string;
@@ -26,7 +31,7 @@ export interface Template {
     name?: string; // Sometimes components use name instead of title
     title: string;
     content: string;
-    category: 'General' | 'Maintenance' | 'Payment' | 'Lease';
+    category: 'General' | 'Maintenance' | 'Payment' | 'Lease' | 'Application' | 'Viewing';
     usageCount: number;
 }
 
