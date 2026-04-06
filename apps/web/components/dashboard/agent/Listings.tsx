@@ -5,23 +5,28 @@ import { MdSearch, MdFilterList, MdLocationOn } from 'react-icons/md';
 import { HiOutlinePlus, HiOutlineHome, HiOutlineEye } from 'react-icons/hi2';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-
-const properties = [
-    { id: 1, title: 'Luxury 4-Bed Penthouse', loc: 'Ikoyi, Lagos', price: '₦450M', status: 'Active', views: 1240, image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=400' },
-    { id: 2, title: 'Modern Studio Apartment', loc: 'Lekki Phase 1', price: '₦85M', status: 'Sold', views: 856, image: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=400' },
-];
+import { useAgentProperties, useAgentDashboard } from '@/hooks/useAgentDashboard';
 
 export default function MyListingsPage() {
     const router = useRouter();
+    const { properties, isLoading: isListLoading } = useAgentProperties();
+    const { stats, isLoading: isDashboardLoading } = useAgentDashboard();
 
     const handleAddListing = () => {
         router.push('/dashboard/agent/properties/add');
     };
 
-    const handleManage = (id: number, title: string) => {
-        toast.info(`Opening management for ${title}...`);
+    const handleManage = (id: string, title: string) => {
         router.push(`/dashboard/agent/properties/${id}`);
     };
+
+    if (isListLoading || isDashboardLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -59,70 +64,77 @@ export default function MyListingsPage() {
                     <div className="size-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 mb-4">
                         <HiOutlineHome size={24} />
                     </div>
-                    <div className="text-2xl font-semibold text-gray-900">{properties.filter(p => p.status === 'Active').length}</div>
+                    <div className="text-2xl font-semibold text-gray-900">{stats?.activeListingsCount || '0'}</div>
                     <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Active Listings</div>
                 </div>
                 <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
                     <div className="size-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-500 mb-4">
                         <HiOutlineHome size={24} />
                     </div>
-                    <div className="text-2xl font-semibold text-gray-900">{properties.filter(p => p.status === 'Sold').length}</div>
+                    <div className="text-2xl font-semibold text-gray-900">{stats?.propertiesSold || '0'}</div>
                     <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Sold/Let</div>
                 </div>
                 <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
                     <div className="size-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-4">
                         <HiOutlineEye size={24} />
                     </div>
-                    <div className="text-2xl font-semibold text-gray-900">{properties.reduce((acc, p) => acc + (p.views || 0), 0).toLocaleString()}</div>
+                    <div className="text-2xl font-semibold text-gray-900">
+                        {properties.reduce((acc, p) => acc + (p.views || 0), 0).toLocaleString()}
+                    </div>
                     <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Views</div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {properties.map((prop) => (
-                    <div key={prop.id} className="bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-                        <div className="relative h-56">
-                            <img src={prop.image} alt={prop.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                            <div className="absolute top-4 left-4">
-                                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.1em] border backdrop-blur-md ${prop.status === 'Active'
-                                        ? 'bg-green-500/90 text-white border-green-400'
-                                        : 'bg-gray-500/90 text-white border-gray-400'
-                                    }`}>
-                                    {prop.status}
-                                </span>
-                            </div>
-                        </div>
-                        <div className="p-6">
-                            <h3 className="font-semibold text-gray-900 truncate text-lg group-hover:text-brand-green transition-colors">{prop.title}</h3>
-                            <div className="flex items-center gap-1.5 text-gray-500 text-xs font-medium mt-2">
-                                <MdLocationOn size={16} className="text-brand-green" /> {prop.loc}
-                            </div>
-                            
-                            <div className="flex items-center justify-between pt-5 mt-6 border-t border-gray-50">
-                                <div>
-                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Price</p>
-                                    <p className="text-lg font-semibold text-gray-900">{prop.price}</p>
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Views</p>
-                                    <p className="text-lg font-semibold text-gray-900">{prop.views.toLocaleString()}</p>
+            {properties.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {properties.map((prop) => (
+                        <div key={prop.id} className="bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                            <div className="relative h-56">
+                                <img 
+                                    src={prop.images?.[0] || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800'} 
+                                    alt={prop.title} 
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                                />
+                                <div className="absolute top-4 left-4">
+                                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.1em] border backdrop-blur-md ${
+                                            prop.status === 'available' || prop.status === 'Active'
+                                            ? 'bg-green-500/90 text-white border-green-400'
+                                            : 'bg-gray-500/90 text-white border-gray-400'
+                                        }`}>
+                                        {prop.status}
+                                    </span>
                                 </div>
                             </div>
+                            <div className="p-6">
+                                <h3 className="font-semibold text-gray-900 truncate text-lg group-hover:text-brand-green transition-colors">{prop.title}</h3>
+                                <div className="flex items-center gap-1.5 text-gray-500 text-xs font-medium mt-2">
+                                    <MdLocationOn size={16} className="text-brand-green" /> {prop.address}
+                                </div>
+                                
+                                <div className="flex items-center justify-between pt-5 mt-6 border-t border-gray-50">
+                                    <div>
+                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Price</p>
+                                        <p className="text-lg font-semibold text-gray-900">₦{Number(prop.price).toLocaleString()}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Views</p>
+                                        <p className="text-lg font-semibold text-gray-900">{prop.views.toLocaleString()}</p>
+                                    </div>
+                                </div>
 
-                            <div className="mt-4 pt-4 border-t border-gray-50 flex justify-end">
-                                <button
-                                    onClick={() => handleManage(prop.id, prop.title)}
-                                    className="text-[10px] font-black text-gray-400 hover:text-brand-green uppercase tracking-[0.2em] transition-colors"
-                                >
-                                    Manage Details
-                                </button>
+                                <div className="mt-4 pt-4 border-t border-gray-50 flex justify-end">
+                                    <button
+                                        onClick={() => handleManage(prop.id, prop.title)}
+                                        className="text-[10px] font-black text-gray-400 hover:text-brand-green uppercase tracking-[0.2em] transition-colors"
+                                    >
+                                        Manage Details
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
-            </div>
-
-            {properties.length === 0 && (
+                    ))}
+                </div>
+            ) : (
                 <div className="bg-white rounded-3xl border border-dashed border-gray-200 p-20 text-center">
                     <div className="size-20 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-6 text-gray-300">
                         <HiOutlineHome size={40} />
@@ -140,3 +152,4 @@ export default function MyListingsPage() {
         </div>
     );
 }
+

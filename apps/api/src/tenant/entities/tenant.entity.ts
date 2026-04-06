@@ -31,14 +31,30 @@ export class Tenant extends BaseEntity {
   @JoinColumn({ name: 'landlordId' })
   landlord: User;
 
-  @Column()
+  @Column({ nullable: true })
   landlordId: string;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'userId' })
+  user: User;
+
+  @Column({ nullable: true })
+  userId: string;
 
   @Column({ default: 'Active' })
   status: string; // 'Active', 'Past', 'Evicted'
 
   @Column({ default: 'Pending' })
   paymentStatus: string; // 'Up to date', 'Late', 'Pending'
+
+  @Column({ nullable: true })
+  tenantId: string;
+
+  @Column({ type: 'numeric', nullable: true, transformer: { to: (v) => v, from: (v) => parseFloat(v) } })
+  monthlyRentAmount: number;
+
+  @Column({ nullable: true })
+  dateLeaseStart: string;
 
   @Column({ nullable: true })
   leaseEnd: string;

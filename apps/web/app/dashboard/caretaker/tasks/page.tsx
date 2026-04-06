@@ -1,40 +1,49 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MOCK_TASKS } from '@/lib/mockCaretakerData';
 import TaskCard from '@/components/dashboard/caretaker/TaskCard';
+import { useCaretakerTasks, useCaretakerDashboard } from '@/hooks/useCaretakerDashboard';
 import {
     HiOutlineWrenchScrewdriver,
-    HiOutlineFunnel,
     HiOutlineBellAlert,
     HiOutlineCheckCircle,
     HiOutlineClock
 } from 'react-icons/hi2';
 
 export default function TasksPage() {
-    const [tasks, setTasks] = useState(MOCK_TASKS);
-    const [filter, setFilter] = useState<'All' | 'Assigned' | 'In Progress' | 'Completed'>('All');
+    const [filter, setFilter] = useState<'All' | 'Assigned' | 'In Progress' | 'Completed' | 'Accepted'>('All');
+    const { stats, isLoading: statsLoading } = useCaretakerDashboard();
+    const { data: rawTasks, isLoading: tasksLoading } = useCaretakerTasks(filter === 'All' ? undefined : filter);
 
-    const handleAcceptTask = (taskId: string) => {
-        setTasks(prev => prev.map(task =>
-            task.id === taskId ? { ...task, status: 'Accepted' } : task
-        ));
-    };
+    const tasks = (rawTasks || []).map((t: any) => ({
+        id: t.id,
+        title: t.category,
+        priority: t.priority,
+        status: t.status,
+        propertyTitle: t.property?.title || 'Unknown Property',
+        unit: '',
+        dueDate: t.createdAt,
+        description: t.description
+    }));
 
-    const handleStartTask = (taskId: string) => {
-        setTasks(prev => prev.map(task =>
-            task.id === taskId ? { ...task, status: 'In Progress' } : task
-        ));
-    };
+    if (statsLoading || tasksLoading) {
+        return (
+            <div className="space-y-8 animate-pulse">
+                <div className="h-10 bg-gray-200 rounded-xl w-1/4"></div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-gray-200 rounded-4xl"></div>)}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                    {[...Array(6)].map((_, i) => <div key={i} className="h-64 bg-gray-200 rounded-xl"></div>)}
+                </div>
+            </div>
+        );
+    }
 
-    const filteredTasks = filter === 'All'
-        ? tasks
-        : tasks.filter(t => t.status === filter);
-
-    const assignedCount = tasks.filter(t => t.status === 'Assigned').length;
+    const assignedCount = stats?.activeTasks || 0;
     const inProgressCount = tasks.filter(t => t.status === 'In Progress').length;
     const completedCount = tasks.filter(t => t.status === 'Completed').length;
-    const highPriorityCount = tasks.filter(t => t.priority === 'High' || t.priority === 'Critical').length;
+    const highPriorityCount = stats?.highPriority || 0;
 
     return (
         <div className="space-y-8 pb-12">
@@ -53,7 +62,7 @@ export default function TasksPage() {
                         <HiOutlineClock size={24} />
                     </div>
                     <div className="text-2xl font-semibold text-gray-900">{assignedCount}</div>
-                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Assigned</div>
+                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Active Stats</div>
                 </div>
                 <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
                     <div className="size-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-4">
@@ -80,7 +89,7 @@ export default function TasksPage() {
 
             {/* Filter Tabs */}
             <div className="flex gap-2 border-b border-gray-100">
-                {(['All', 'Assigned', 'In Progress', 'Completed'] as const).map((tab) => (
+                {(['All', 'Assigned', 'Accepted', 'In Progress', 'Completed'] as const).map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setFilter(tab)}
@@ -95,14 +104,12 @@ export default function TasksPage() {
             </div>
 
             {/* Tasks Grid */}
-            {filteredTasks.length > 0 ? (
+            {tasks.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredTasks.map(task => (
+                    {tasks.map(task => (
                         <TaskCard
                             key={task.id}
                             task={task}
-                            onAccept={handleAcceptTask}
-                            onStart={handleStartTask}
                         />
                     ))}
                 </div>

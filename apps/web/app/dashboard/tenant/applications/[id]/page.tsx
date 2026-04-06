@@ -13,9 +13,7 @@ import PropertyQuickCard from '@/components/dashboard/application/PropertyQuickC
 import { ApplicationDetails, ApplicationDocument } from '@/components/dashboard/application/types';
 import { useApplications } from '@/hooks/useApplications';
 import { Application } from '@/store/applicationStore';
-import BankRedirectModal from '@/components/dashboard/bank/BankRedirectModal';
-import BankInterstitial from '@/components/dashboard/bank/BankInterstitial';
-import { initiateBankRedirect, checkBankStatus, manualConfirmBank } from '@/utils/mockBankApi';
+
 
 export default function ApplicationStatusPage() {
     const params = useParams();
@@ -31,45 +29,46 @@ export default function ApplicationStatusPage() {
                 id: found.id,
                 propertyId: found.propertyId,
                 propertyName: found.propertyTitle,
-                propertyAddress: found.propertyAddress,
+                propertyAddress: found.propertyAddress || found.propertyTitle,
                 propertyImage: found.propertyImage,
-                landlordName: 'Lekki Gardens Ltd', 
+                landlordName: found.landlordId || 'Landlord', // using ID as fallback since name is not in model
                 currentStatus: found.status as any,
-                progressPercent: found.progress,
+                progressPercent: found.progress || 0,
                 lastUpdated: found.submittedAt ? new Date(found.submittedAt).toLocaleString() : 'Just now',
                 timeline: [
                     { id: '1', title: 'Application Submitted', status: 'Completed', responsibleParty: 'Tenant', timestamp: found.submittedAt ? new Date(found.submittedAt).toLocaleDateString() : '' },
-                    { id: '2', title: 'Under Review', status: found.status === 'Under Review' || found.status === 'Approved' ? 'Completed' : 'In Progress', responsibleParty: 'Help2Home', timestamp: found.status === 'Under Review' ? 'Today' : '' },
-                    { id: '3', title: 'Bank Approval', status: found.status === 'Approved' ? 'In Progress' : 'Pending', responsibleParty: 'Bank' },
-                    { id: '4', title: 'Funded', status: 'Pending', responsibleParty: 'Bank' },
+                    { id: '2', title: 'Under Review', status: found.status === 'Under Review' || found.status === 'Approved' ? 'Completed' : 'In Progress', responsibleParty: 'Help2Home', timestamp: found.status === 'Under Review' ? new Date().toLocaleDateString() : '' },
+                    { id: '3', title: 'Bank Approval (Coming Soon)', status: 'Pending', responsibleParty: 'Bank', notes: 'This feature will be available once bank integrations are live.' },
+                    { id: '4', title: 'Funded (Coming Soon)', status: 'Pending', responsibleParty: 'Bank', notes: 'Automated funding is currently in development.' },
                     { id: '5', title: 'Active', status: 'Pending', responsibleParty: 'Tenant' },
                     { id: '6', title: 'Completed', status: 'Pending', responsibleParty: 'Tenant' },
                 ],
-                documents: [
-                    { id: '1', type: 'ID', name: 'Government ID', status: 'Verified', fileUrl: '#', size: '2.4 MB' },
-                    { id: '2', type: 'Income', name: '3 Months Bank Statement', status: 'In Review', fileUrl: '#', size: '1.8 MB' },
-                    { id: '3', type: 'Statement', name: '3 Months Bank Statement', status: 'Rejected', rejectionReason: 'Image too blurry', size: '5.2 MB' },
-                ],
+                documents: found.documents || [],
                 contract: {
-                    id: 'c_123',
+                    id: found.contracts?.[0]?.id || `c_${found.id}`,
                     applicationId: found.id,
-                    name: 'Tenancy Agreement',
-                    parties: [found.tenantName, 'Lekki Gardens Ltd'],
-                    rentAmount: found.financing.repaymentDuration * 291666, // Mock calc
-                    tenure: `${found.financing.repaymentDuration} Months`,
-                    monthlyPayment: 291666,
-                    isSigned: false,
-                    pdfUrl: '#'
+                    name: found.contracts?.[0]?.name || 'Tenancy Agreement',
+                    parties: [found.tenantName, found.landlord?.name || 'Landlord'],
+                    rentAmount: found.contracts?.[0]?.rentAmount || 0,
+                    tenure: found.contracts?.[0]?.tenure || `${found.financing?.repaymentDuration || 12} Months`,
+                    monthlyPayment: found.contracts?.[0]?.monthlyPayment || 0,
+                    isSigned: found.contracts?.[0]?.isSigned || false,
+                    pdfUrl: found.contracts?.[0]?.pdfUrl || '#'
                 },
-                activityLog: [
-                    { id: '1', event: 'Application submitted', actor: found.tenantName, timestamp: found.submittedAt, type: 'status' },
-                    { id: '2', event: `Status changed to ${found.status}`, actor: 'System', timestamp: 'Today', type: 'status' },
+                activityLog: found.activityLogs?.length ? found.activityLogs : [
+                    { id: '1', event: 'Application submitted', actor: found.tenantName, timestamp: found.submittedAt || '', type: 'status' as const },
+                    { id: '2', event: `Status updated to ${found.status}`, actor: 'System', timestamp: new Date().toLocaleDateString(), type: 'status' as const },
                 ],
                 financials: {
-                    downPayment: found.financing.downPaymentPercent * 35000, // Mock calc
-                    duration: found.financing.repaymentDuration,
-                    monthlyPayment: 291666,
-                    totalPayable: 3943750
+                    downPayment: found.calculations?.downPayment || 0,
+                    duration: found.calculations?.repaymentDuration || 12,
+                    monthlyPayment: found.calculations?.monthlyRent || 0,
+                    totalPayable: found.calculations?.propertyPrice || 0
+                },
+                repayment: {
+                    nextAmount: found.calculations?.monthlyRent || 0,
+                    nextDueDate: 'Coming Soon',
+                    status: 'Pending'
                 }
             });
         }
@@ -80,7 +79,6 @@ export default function ApplicationStatusPage() {
     // --- Handlers ---
     const handleUpload = (id: string) => {
         alert(`Upload flow triggered for document ID: ${id}`);
-        // Mock update
         if (application) {
             const updatedDocs = application.documents.map(doc =>
                 doc.id === id ? { ...doc, status: 'In Review' as const, rejectionReason: undefined } : doc
@@ -90,99 +88,15 @@ export default function ApplicationStatusPage() {
     };
 
     const handleSignContract = () => {
-        alert("Opening e-sign flow...");
-        // Mock sign
-        if (application && application.contract) {
-            setApplication({
-                ...application,
-                contract: { ...application.contract, isSigned: true }
-            });
-        }
+        // Contract signing is Coming Soon — navigates to the coming soon page
+        window.location.href = `/dashboard/tenant/applications/${applicationId}/contract/coming-soon`;
     };
 
     const handleContactSupport = () => {
         alert("Opening support chat...");
     };
 
-    // --- Bank Portal Flow ---
-    const [bankFlowState, setBankFlowState] = useState<'idle' | 'confirming' | 'waiting' | 'success' | 'error'>('idle');
-    const [bankRedirectUrl, setBankRedirectUrl] = useState<string | null>(null);
-
-    // Poll for bank status
-    useEffect(() => {
-        let pollInterval: NodeJS.Timeout;
-
-        if (bankFlowState === 'waiting') {
-            pollInterval = setInterval(async () => {
-                try {
-                    const { status } = await checkBankStatus(applicationId);
-                    if (status === 'success') {
-                        setBankFlowState('success');
-                        // Update application status
-                        if (application) {
-                            setApplication(prev => prev ? ({
-                                ...prev,
-                                currentStatus: 'Active',
-                                timeline: prev.timeline.map(t =>
-                                    t.title === 'Bank Approval' ? { ...t, status: 'Completed', timestamp: new Date().toLocaleDateString() } :
-                                        t.title === 'Funded' ? { ...t, status: 'Completed', timestamp: new Date().toLocaleDateString() } :
-                                            t.title === 'Active' ? { ...t, status: 'In Progress' } : t
-                                )
-                            }) : null);
-                        }
-                    } else if (status === 'failed') {
-                        setBankFlowState('error');
-                    }
-                } catch (error) {
-                    console.error("Polling error:", error);
-                }
-            }, 3000); // Poll every 3 seconds
-        }
-
-        return () => clearInterval(pollInterval);
-    }, [bankFlowState, applicationId, application]);
-
-    const handleActivateLoan = () => {
-        setBankFlowState('confirming');
-    };
-
-    const handleConfirmRedirect = async () => {
-        try {
-            const { redirectUrl } = await initiateBankRedirect(applicationId);
-            setBankRedirectUrl(redirectUrl);
-            window.open(redirectUrl, '_blank', 'noopener,noreferrer');
-            setBankFlowState('waiting');
-        } catch (error) {
-            console.error("Redirect error:", error);
-            alert("Failed to initiate bank session. Please try again.");
-        }
-    };
-
-    const handleManualCheck = async () => {
-        try {
-            const { status } = await manualConfirmBank(applicationId);
-            if (status === 'success') {
-                setBankFlowState('success');
-                // Update application status
-                if (application) {
-                    setApplication(prev => prev ? ({
-                        ...prev,
-                        currentStatus: 'Active',
-                        timeline: prev.timeline.map(t =>
-                            t.title === 'Bank Approval' ? { ...t, status: 'Completed', timestamp: new Date().toLocaleDateString() } :
-                                t.title === 'Funded' ? { ...t, status: 'Completed', timestamp: new Date().toLocaleDateString() } :
-                                    t.title === 'Active' ? { ...t, status: 'In Progress' } : t
-                        )
-                    }) : null);
-                }
-            } else {
-                alert("Bank confirmation not received yet. Please try again in a moment.");
-            }
-        } catch (error) {
-            console.error("Manual check error:", error);
-            alert("Error checking status.");
-        }
-    };
+    // Bank portal flow is Coming Soon — no mock needed
 
     if (isLoading) {
         return <div className="min-h-screen flex items-center justify-center">Loading application details...</div>;
@@ -201,68 +115,30 @@ export default function ApplicationStatusPage() {
                     propertyAddress={application.propertyAddress}
                 />
 
-                {/* Bank Flow Components */}
-                <BankRedirectModal
-                    isOpen={bankFlowState === 'confirming'}
-                    onClose={() => setBankFlowState('idle')}
-                    onConfirm={handleConfirmRedirect}
-                    bankName="Access Bank"
-                />
-
-                {bankFlowState === 'waiting' && (
-                    <BankInterstitial
-                        bankName="Access Bank"
-                        onManualCheck={handleManualCheck}
-                        onReopenBank={() => bankRedirectUrl && window.open(bankRedirectUrl, '_blank', 'noopener,noreferrer')}
-                        onContactSupport={handleContactSupport}
-                    />
-                )}
-
-                {bankFlowState === 'success' && (
-                    <div className="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg animate-fade-in flex items-center gap-3">
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        <div>
-                            <p className="font-bold">Loan Activated!</p>
-                            <p className="text-sm text-green-100">Your application is now active.</p>
-                        </div>
-                        <button onClick={() => setBankFlowState('idle')} className="ml-4 hover:bg-green-600 p-1 rounded">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-                )}
+                {/* Bank Portal — Coming Soon Banner */}
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Column - Main Content */}
                     <div className="lg:col-span-2">
                         <StatusTimeline timeline={application.timeline} />
 
-                        {/* Bank Activation CTA - Show only if Bank Approval is pending */}
+                        {/* Bank Activation — Coming Soon */}
                         {application.timeline.find(t => t.title === 'Bank Approval' && t.status === 'Pending') && (
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+                            <div className="bg-purple-50 border border-purple-200 rounded-xl p-6 mb-8">
                                 <div className="flex items-start gap-4">
                                     <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
-                                        <svg className="w-6 h-6 text-brand-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                                         </svg>
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="text-lg font-bold text-gray-900 mb-1">Activate your loan</h3>
-                                        <p className="text-gray-600 mb-4">
-                                            Your application is approved! Connect with our partner bank to activate your loan and finalize the process.
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <h3 className="text-lg font-bold text-gray-900">Bank Portal</h3>
+                                            <span className="text-xs font-semibold text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-full">Coming Soon</span>
+                                        </div>
+                                        <p className="text-gray-600 text-sm">
+                                            Our bank integration portal is under development. You will be able to connect directly with our partner banks to activate your loan right here.
                                         </p>
-                                        <button
-                                            onClick={handleActivateLoan}
-                                            className="px-6 py-3 bg-[#6D28D9] text-white font-bold rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
-                                        >
-                                            Open bank portal
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                            </svg>
-                                        </button>
                                     </div>
                                 </div>
                             </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Conversation, Message, Template, MOCK_TEMPLATES } from '@/lib/mockSupportData';
+import { Conversation, Message, Template, MOCK_TEMPLATES } from '@/lib/api/support-types';
 import { formatDistanceToNow } from 'date-fns';
 
 interface ChatPaneProps {

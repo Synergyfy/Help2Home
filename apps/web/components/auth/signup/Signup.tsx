@@ -9,66 +9,49 @@ import { useOnboardingStore } from '@/store/onboardingStore';
 import { Role } from '@/store/userStore';
 import Logo from '@/components/shared/Logo';
 
+import SignUpForm from './SignUpForm';
+import { registerUser } from '@/lib/api/auth';
+import { useMutation } from '@tanstack/react-query';
+import { useAuth } from '@/hooks/useAuth';
+
 export default function SignUp() {
   const router = useRouter();
+  const { signUp } = useAuth();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect');
   const { setRoles, goToStep, setSignupPath } = useOnboardingStore();
 
+  const [step, setStep] = useState<'role' | 'register'>('role');
+  const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [activeMessage, setActiveMessage] = useState("");
 
-  const triggerCreativeRedirect = (roles: Role[]) => {
-    // 1. Sync Roles to Store
-    setRoles(roles);
-    setIsRedirecting(true);
-
-    // 2. Set Contextual Message
-    const messages: Record<string, string> = {
-      tenant: "Finding the best verified homes for you...",
-      investor: "Preparing your investment dashboard...",
-      landlord: "Setting up your property management suite...",
-      agent: "Configuring your agency tools...",
-      developer: "Scaning for investements",
-      caretaker: "Initializing maintenance management..."
-    };
-
-    setActiveMessage(messages[roles[0]] || "Customizing your experience...");
-
-    // 3. Navigate after transition effect
-    setTimeout(() => {
-      goToStep(0);
-      const target = redirect ? `/onboarding?redirect=${encodeURIComponent(redirect)}` : '/onboarding';
-      router.push(target);
-    }, 2000);
+  const handleRoleSelection = (roles: Role[], path: any) => {
+    setSignupPath(path);
+    setSelectedRoles(roles);
+    setStep('register');
   };
+
+  const handleSignUpSubmit = async (data: any) => {
+    // This will be handled by the useAuth mutation
+    signUp({ ...data, roles: selectedRoles });
+  };
+
+  if (step === 'register') {
+    return (
+      <main className="min-h-screen bg-white flex flex-col justify-center py-20 relative">
+        <SignUpForm 
+          roles={selectedRoles} 
+          onBack={() => setStep('role')} 
+          onSubmit={handleSignUpSubmit}
+          isLoading={isRedirecting}
+        />
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 flex flex-col justify-center py-20 relative">
-      {/* Creative Overlay */}
-      <AnimatePresence>
-        {isRedirecting && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-100 bg-white flex flex-col items-center justify-center"
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="text-center"
-            >
-              <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 border-4 border-brand-green/20 border-t-brand-green rounded-full animate-spin" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Excellent Choice.</h2>
-              <p className="text-brand-green font-medium animate-pulse">{activeMessage}</p>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <div className="container mx-auto px-6">
         <FadeIn direction="up">
           <div className="text-center max-w-3xl mx-auto mb-16 flex flex-col items-center">
@@ -81,14 +64,11 @@ export default function SignUp() {
           </div>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {/* Tenant Card */}
           <FadeIn direction="up">
             <button
-              onClick={() => {
-                setSignupPath('tenant');
-                triggerCreativeRedirect(['tenant']);
-              }}
+              onClick={() => handleRoleSelection(['tenant'], 'tenant')}
               className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
             >
               <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
@@ -101,21 +81,50 @@ export default function SignUp() {
             </button>
           </FadeIn>
 
-          {/* Landlord/Management Card */}
+          {/* Landlord Card */}
           <FadeIn direction="up">
             <button
-              onClick={() => {
-                setSignupPath('propertyManagement');
-                triggerCreativeRedirect([]);
-              }}
+              onClick={() => handleRoleSelection(['landlord'], 'propertyManagement')}
               className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
             >
               <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
                 <MdApartment size={32} />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Property Management</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Landlord</h3>
               <p className="text-gray-500 text-sm leading-relaxed">
-                For Landlords, Agents, and Caretakers. List properties and manage your real estate portfolio.
+                List your properties, manage tenants, and automate your rent collection effortlessly.
+              </p>
+            </button>
+          </FadeIn>
+
+          {/* Caretaker Card */}
+          <FadeIn direction="up">
+            <button
+              onClick={() => handleRoleSelection(['caretaker'], 'propertyManagement')}
+              className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
+            >
+              <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
+                <MdApartment size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Caretaker</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                Manage properties on behalf of landlords, handle maintenance, and track tasks.
+              </p>
+            </button>
+          </FadeIn>
+
+          {/* Agent Card */}
+          <FadeIn direction="up">
+            <button
+              onClick={() => handleRoleSelection(['agent'], 'propertyManagement')}
+              className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
+            >
+              <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
+                <MdApartment size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Real Estate Agent</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                List properties for your clients, manage leads, and close deals faster.
               </p>
             </button>
           </FadeIn>
@@ -123,10 +132,7 @@ export default function SignUp() {
           {/* Investor Card */}
           <FadeIn direction="up">
             <button
-              onClick={() => {
-                setSignupPath('investor');
-                triggerCreativeRedirect(['investor']);
-              }}
+              onClick={() => handleRoleSelection(['investor'], 'investor')}
               className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
             >
               <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
@@ -142,10 +148,7 @@ export default function SignUp() {
           {/* Developer Card */}
           <FadeIn direction="up">
             <button
-              onClick={() => {
-                setSignupPath('developer');
-                triggerCreativeRedirect(['developer']);
-              }}
+              onClick={() => handleRoleSelection(['developer'], 'developer')}
               className="w-full bg-white p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-green/30 transition-all flex flex-col items-start h-full group text-left"
             >
               <div className="mb-6 p-4 bg-brand-green/10 text-brand-green rounded-xl group-hover:bg-brand-green group-hover:text-white transition-all duration-300">
@@ -153,7 +156,7 @@ export default function SignUp() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">Developer</h3>
               <p className="text-gray-500 text-sm leading-relaxed">
-               Find reliable investors for your properties 
+               Find reliable investors for your properties and list your new projects.
               </p>
             </button>
           </FadeIn>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
-import { CaretakerTask } from '@/lib/mockCaretakerData';
+import { CaretakerTask } from '@/types/caretaker';
 import Link from 'next/link';
 import ArtisanSearchModal from '../shared/ArtisanSearchModal';
 import { HiOutlineWrench } from 'react-icons/hi2';
@@ -74,7 +74,7 @@ export default function TaskCard({ task, onAccept, onStart }: TaskCardProps) {
                         Details
                     </Link>
 
-                    {task.status !== 'Completed' && task.status !== 'Cancelled' && (
+                    {task.status !== 'Resolved' && task.status !== 'Cancelled' && (
                         <button
                             onClick={() => setIsArtisanModalOpen(true)}
                             className="flex-1 py-2.5 flex items-center justify-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-brand-green bg-green-50 rounded-xl hover:bg-green-100 transition-colors border border-green-100"

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Template } from '@/lib/mockSupportData';
+import { Template } from '@/lib/api/support-types';
 
 interface TemplateManagerProps {
     templates: Template[];

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { MdPhone } from 'react-icons/md';
 import {
     HiOutlineChatBubbleLeftRight,
@@ -8,42 +8,32 @@ import {
 } from 'react-icons/hi2';
 import { useRouter } from 'next/navigation';
 import LeadProfileModal, { Lead } from './LeadProfileModal';
-
-const leadsData: Lead[] = [
-    { 
-        id: 'lead_1', 
-        name: 'Olawale Johnson', 
-        interest: 'Investor', 
-        budget: '₦200M+', 
-        status: 'Hot', 
-        joined: '2 hrs ago',
-        email: 'olawale.j@example.com',
-        phone: '+234 803 123 4567',
-        location: 'Victoria Island, Lagos',
-        occupation: 'Senior Portfolio Manager',
-        verified: true,
-        notes: 'Interested in luxury apartments in Ikoyi and V.I. Prefers high ROI projects.'
-    },
-    { 
-        id: 'lead_2', 
-        name: 'Chidi Okafor', 
-        interest: 'Buyer', 
-        budget: '₦50M - ₦80M', 
-        status: 'Warm', 
-        joined: 'Yesterday',
-        email: 'chidi.okafor@gmail.com',
-        phone: '+234 812 987 6543',
-        location: 'Lekki Phase 1, Lagos',
-        occupation: 'Software Architect',
-        verified: false,
-        notes: 'Looking for a 3-bedroom duplex for personal use. Schools nearby are a priority.'
-    },
-];
+import { useAgentDashboard } from '@/hooks/useAgentDashboard';
+import { formatDistanceToNow } from 'date-fns';
 
 const Leads = () => {
     const router = useRouter();
+    const { leads, isLoading } = useAgentDashboard();
     const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
+    // Map Application entities to Lead UI format
+    const mappedLeads = useMemo(() => {
+        return (leads || []).map((app: any): Lead => ({
+            id: app.id,
+            name: app.tenantName || 'Unknown Applicant',
+            interest: app.propertyTitle || 'General Interest',
+            budget: app.financing?.downPaymentPercent ? `${app.financing.downPaymentPercent}% Down` : 'Not Specified',
+            status: app.status === 'Approved' ? 'Hot' : 'Warm',
+            joined: app.createdAt ? formatDistanceToNow(new Date(app.createdAt), { addSuffix: true }) : 'Recently',
+            email: app.tenantEmail || '',
+            phone: app.tenantPhone || '',
+            location: app.propertyAddress || 'Lagos, Nigeria',
+            occupation: app.details?.employmentStatus || 'Professional',
+            notes: `Interested in ${app.propertyTitle}. Status: ${app.status}`,
+            verified: true
+        }));
+    }, [leads]);
 
     const handleChat = (lead: Lead) => {
         router.push(`/dashboard/agent/support/inbox?leadId=${lead.id}`);
@@ -53,6 +43,14 @@ const Leads = () => {
         setSelectedLead(lead);
         setIsProfileModalOpen(true);
     };
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-10 pb-12">
@@ -66,17 +64,22 @@ const Leads = () => {
 
                 <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
                     <div className="divide-y divide-gray-50">
-                        {leadsData.map((lead) => (
+                        {mappedLeads.length === 0 ? (
+                            <div className="p-20 text-center text-gray-400 italic">
+                                No leads found in your pipeline.
+                            </div>
+                        ) : mappedLeads.map((lead) => (
                             <div key={lead.id} className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:bg-gray-50/50 transition-all group">
                                 <div className="flex items-center gap-4">
-                                    <div className="size-14 rounded-2xl bg-brand-green/10 flex items-center justify-center font-semibold text-brand-green text-lg">
+                                    <div className="size-14 rounded-2xl bg-brand-green/10 flex items-center justify-center font-semibold text-brand-green text-lg uppercase">
                                         {lead.name.split(' ').map(n => n[0]).join('')}
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-gray-900 group-hover:text-brand-green transition-colors">{lead.name}</h3>
                                         <div className="flex gap-2 mt-1">
-                                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-widest ${lead.status === 'Hot' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-orange-50 text-orange-600 border border-orange-100'
-                                                }`}>
+                                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-widest ${
+                                                lead.status === 'Hot' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-orange-50 text-orange-600 border border-orange-100'
+                                            }`}>
                                                 {lead.status}
                                             </span>
                                             <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">{lead.interest} • {lead.joined}</span>
@@ -85,7 +88,7 @@ const Leads = () => {
                                 </div>
                                 <div className="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-0 pt-4 sm:pt-0">
                                     <div className="text-right mr-6 hidden lg:block">
-                                        <div className="text-[10px] text-gray-400 font-semibold uppercase tracking-[0.2em] mb-1">Budget Range</div>
+                                        <div className="text-[10px] text-gray-400 font-semibold uppercase tracking-[0.2em] mb-1">Financial State</div>
                                         <div className="text-sm font-semibold text-gray-900">{lead.budget}</div>
                                     </div>
                                     <div className="flex gap-2">

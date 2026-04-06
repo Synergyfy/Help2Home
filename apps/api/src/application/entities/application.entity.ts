@@ -2,8 +2,12 @@ import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from '../../common/entities/base.entity';
 import { User } from '../../users/entities/user.entity';
 import { Property } from '../../property/entities/property.entity';
+import { OneToMany } from 'typeorm';
+import { ApplicationDocument } from './application-document.entity';
+import { ApplicationContract } from './application-contract.entity';
+import { ApplicationActivityLog } from './application-activity-log.entity';
 
-@Entity()
+@Entity('applications')
 export class Application extends BaseEntity {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'tenantId' })
@@ -31,6 +35,15 @@ export class Application extends BaseEntity {
 
   @Column()
   tenantEmail: string;
+
+  @Column({ nullable: true })
+  landlordPhone: string;
+
+  @Column({ type: 'int', default: 0 })
+  progress: number;
+
+  @Column({ nullable: true })
+  propertyAddress: string;
 
   @Column({ nullable: true })
   tenantPhone: string;
@@ -61,4 +74,13 @@ export class Application extends BaseEntity {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   submittedAt: Date;
+
+  @OneToMany(() => ApplicationDocument, document => document.application)
+  documents: ApplicationDocument[];
+
+  @OneToMany(() => ApplicationContract, contract => contract.application)
+  contracts: ApplicationContract[];
+
+  @OneToMany(() => ApplicationActivityLog, log => log.application)
+  activityLogs: ApplicationActivityLog[];
 }

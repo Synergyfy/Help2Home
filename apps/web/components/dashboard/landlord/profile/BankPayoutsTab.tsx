@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { BankAccount } from '@/lib/mockLandlordData';
+import { BankAccount } from '@/types/dashboard';
 import AddBankAccountModal from './AddBankAccountModal';
 import { HiOutlinePlus, HiOutlineStar, HiOutlineBanknotes, HiOutlineTrash } from 'react-icons/hi2';
 
@@ -124,3 +124,4 @@ export default function BankPayoutsTab({ accounts: initialAccounts }: { accounts
         </div>
     );
 }
+

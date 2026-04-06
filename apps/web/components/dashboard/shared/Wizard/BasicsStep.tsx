@@ -65,20 +65,24 @@ export default function BasicsStep({ role, navigation }: BasicsStepProps = {}) {
         const title = getValues('title');
         const type = getValues('propertyType');
         const category = getValues('propertyCategory');
+        const listingType = getValues('listingType');
 
         if (!title || title.length < 5) {
-            // Primitive alert since we don't have toast imported here yet, usually handled higher up
-            alert("Please enter a valid property title first.");
+            alert("Please enter a descriptive property title first (min 5 chars).");
             return;
         }
 
         setIsGeneratingAi(true);
-        // Simulate AI delay
+        // Simulate AI delay - In production this would call an LLM API
         setTimeout(() => {
-            const desc = `Experience luxury living in this stunning ${type || 'property'} located in a prime area. This ${category || 'exclusive'} residence, titled "${title}", offers a perfect blend of comfort and style. Ideal for those seeking a premium lifestyle with easy access to local amenities. Don't miss this opportunity to secure your dream space.`;
+            const rolePrefix = activeRole === 'developer' ? "This exclusive development project" :
+                               activeRole === 'agent' ? "Listed by our premier agency" : "Straight from the owner";
+
+            const desc = `${rolePrefix}, "${title}" is a remarkable ${type || 'property'} for ${listingType?.toLowerCase() || 'rent'}. This ${category?.replace(/-/g, ' ') || 'stunning'} space is designed for modern comfort and style. Whether you're looking for a peaceful home or a strategic investment, this property offers unparalleled potential in a highly sought-after location. Features meticulously crafted interiors and easy access to local essentials. Take the next step in your property journey today!`;
+            
             setValue('description.long', desc, { shouldDirty: true, shouldValidate: true });
             setIsGeneratingAi(false);
-        }, 1500);
+        }, 1200);
     };
 
     const inputClasses = "w-full h-12 px-4 rounded-xl border border-gray-200 bg-white text-[#111811] focus:border-brand-green focus:ring-1 focus:ring-[brand-green] outline-none transition-all placeholder:text-gray-400 shadow-sm";

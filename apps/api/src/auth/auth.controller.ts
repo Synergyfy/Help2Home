@@ -11,7 +11,7 @@ import { GetCurrentUser } from '../common/decorators/get-current-user.decorator'
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @Post('signup')
   @ApiOperation({ summary: 'Register a new user' })
@@ -54,6 +54,28 @@ export class AuthController {
   ) {
     return this.authService.refreshTokens(userId, refreshToken);
   }
+
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @Post('change-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Change the current user password' })
+  changePassword(
+    @GetCurrentUser('sub') userId: string,
+    @Body() body: { current: string; newPass: string },
+  ) {
+    return this.authService.changePassword(userId, body.current, body.newPass);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @Post('mfa/toggle')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Toggle MFA on or off for current user' })
+  toggleMfa(
+    @GetCurrentUser('sub') userId: string,
+    @Body() body: { enabled: boolean },
+  ) {
+    return this.authService.toggleMfa(userId, body.enabled);
+  }
 }
-
-

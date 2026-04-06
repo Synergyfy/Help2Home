@@ -5,7 +5,7 @@ import { useProfile } from '@/hooks/useProfile';
 import InvestorStrategyTab from './InvestorStrategyTab';
 import VerificationTab from '@/components/dashboard/landlord/profile/VerificationTab';
 import PrivacySecurityTab from '@/components/dashboard/landlord/profile/PrivacySecurityTab'; // Sharing is caring
-import { MOCK_DOCUMENTS } from '@/lib/mockLandlordData'; // Reusing for now
+import { MOCK_DOCUMENTS } from '@/types/dashboard'; // Reusing for now
 import ProfileSummaryCard from '@/components/dashboard/landlord/profile/ProfileSummaryCard';
 
 export default function InvestorProfile() {
@@ -70,3 +70,4 @@ export default function InvestorProfile() {
         </div>
     );
 }
+

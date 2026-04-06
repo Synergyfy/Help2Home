@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { VerificationDocument, MOCK_DOCUMENTS_LANDLORD, MOCK_DOCUMENTS_DEVELOPER, MOCK_DOCUMENTS_INVESTOR, MOCK_DOCUMENTS_AGENT, MOCK_DOCUMENTS_TENANT, MOCK_DOCUMENTS_CARETAKER } from '@/lib/mockLandlordData';
+import { VerificationDocument } from '@/types/dashboard';
 import { useUserStore, Role } from '@/store/userStore';
 import { useUpdateProfile } from '@/hooks/useProfile';
 import { IoCheckmarkCircle, IoInformationCircleOutline } from 'react-icons/io5';
@@ -88,15 +88,17 @@ export default function VerificationTab({ role: activeRole = 'tenant' }: { role?
         }, 1500);
     };
 
-    const getDocsByRole = () => {
+    const getDocsByRole = (): VerificationDocument[] => {
+        // Mock data removed as per cleanup request. In a real environment, 
+        // these should be fetched from the API.
         switch (activeRole) {
-            case 'landlord': return MOCK_DOCUMENTS_LANDLORD;
-            case 'developer': return MOCK_DOCUMENTS_DEVELOPER;
-            case 'investor': return MOCK_DOCUMENTS_INVESTOR;
-            case 'agent': return MOCK_DOCUMENTS_AGENT;
-            case 'tenant': return MOCK_DOCUMENTS_TENANT;
-            case 'caretaker': return MOCK_DOCUMENTS_CARETAKER;
-            default: return MOCK_DOCUMENTS_LANDLORD;
+            case 'landlord': return [];
+            case 'developer': return [];
+            case 'investor': return [];
+            case 'agent': return [];
+            case 'tenant': return [];
+            case 'caretaker': return [];
+            default: return [];
         }
     };
 
@@ -314,7 +316,7 @@ export default function VerificationTab({ role: activeRole = 'tenant' }: { role?
                 </div>
 
                 <div className="divide-y divide-gray-100">
-                    {documents.map((doc) => (
+                    {documents.map((doc: VerificationDocument) => (
                         <div key={doc.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div className="flex items-start gap-4">
                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${doc.status === 'approved' ? 'bg-green-100 text-green-600' :
@@ -383,4 +385,5 @@ export default function VerificationTab({ role: activeRole = 'tenant' }: { role?
         </div>
     );
 }
+
 

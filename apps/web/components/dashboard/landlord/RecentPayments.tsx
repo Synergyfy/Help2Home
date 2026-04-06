@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { PaymentItem } from '@/lib/mockLandlordData';
+import { PaymentItem } from '@/types/dashboard';
 
 export default function RecentPayments({ payments }: { payments: PaymentItem[] }) {
     const formatCurrency = (amount: number) => {
@@ -37,17 +37,17 @@ export default function RecentPayments({ payments }: { payments: PaymentItem[] }
                             {payments.map((payment) => (
                                 <tr key={payment.id} className="hover:bg-gray-50 transition-colors cursor-pointer">
                                     <td className="py-4 pr-4 text-gray-600">{payment.date}</td>
-                                    <td className="py-4 pr-4 text-gray-900 font-medium">{payment.property}</td>
-                                    <td className="py-4 pr-4 text-gray-600">{payment.tenant}</td>
+                                    <td className="py-4 pr-4 text-gray-900 font-medium">{payment.propertyTitle}</td>
+                                    <td className="py-4 pr-4 text-gray-600">{payment.tenantName}</td>
                                     <td className="py-4 pr-4 text-gray-900">{formatCurrency(payment.amount)}</td>
                                     <td className="py-4">
                                         <span className={`flex items-center gap-1.5 text-xs font-medium ${
-                                            payment.status === 'Cleared' ? 'text-green-700' :
+                                            payment.status === 'Completed' ? 'text-green-700' :
                                             payment.status === 'Pending' ? 'text-amber-700' :
                                             'text-red-700'
                                         }`}>
                                             <span className={`w-1.5 h-1.5 rounded-full ${
-                                                payment.status === 'Cleared' ? 'bg-green-500' :
+                                                payment.status === 'Completed' ? 'bg-green-500' :
                                                 payment.status === 'Pending' ? 'bg-amber-500' :
                                                 'bg-red-500'
                                             }`}></span>

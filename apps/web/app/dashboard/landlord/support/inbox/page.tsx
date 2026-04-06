@@ -4,7 +4,8 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ConversationList from '@/components/dashboard/landlord/support/ConversationList';
 import ChatPane from '@/components/dashboard/landlord/support/ChatPane';
-import { MOCK_CONVERSATIONS, MOCK_MESSAGES, Message } from '@/lib/mockSupportData';
+import { Conversation, Message } from '@/lib/api/support-types';
+import { useLandlordInbox } from '@/hooks/useLandlordInbox';
 
 function InboxContent() {
     const searchParams = useSearchParams();
@@ -12,8 +13,9 @@ function InboxContent() {
 
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [prevTenantId, setPrevTenantId] = useState(tenantId);
-    const [conversations, setConversations] = useState(MOCK_CONVERSATIONS);
-    const [messages, setMessages] = useState<Record<string, Message[]>>(MOCK_MESSAGES);
+    
+    // Using the hook
+    const { conversations, messages, isLoading, sendMessage, markAsRead } = useLandlordInbox(selectedId);
 
     if (tenantId !== prevTenantId || (!selectedId && conversations.length > 0)) {
         setPrevTenantId(tenantId);
@@ -44,44 +46,18 @@ function InboxContent() {
 
     const handleSelectConversation = (id: string) => {
         setSelectedId(id);
-        // Mark as read logic (mock)
-        setConversations(prev => prev.map(c =>
-            c.id === id ? { ...c, unreadCount: 0 } : c
-        ));
+        markAsRead(id);
     };
 
     const handleSendMessage = (text: string, _attachments?: File[]) => {
         if (!selectedId) return;
-
-        const newMessage: Message = {
-            id: `msg_${Date.now()}`,
-            conversationId: selectedId,
-            senderId: 'user_1',
-            senderName: 'You',
-            role: 'landlord',
-            text: text,
-            type: 'text',
-            createdAt: new Date().toISOString(),
-            isRead: true
-        };
-
-        setMessages(prev => ({
-            ...prev,
-            [selectedId]: [...(prev[selectedId] || []), newMessage]
-        }));
-
-        // Update last message in conversation list
-        setConversations(prev => prev.map(c =>
-            c.id === selectedId ? {
-                ...c,
-                lastMessage: newMessage,
-                updatedAt: newMessage.createdAt
-            } : c
-        ));
+        sendMessage({ conversationId: selectedId, text });
     };
 
-    const selectedConversation = conversations.find(c => c.id === selectedId) || null;
-    const currentMessages = selectedId ? (messages[selectedId] || []) : [];
+    if (isLoading && conversations.length === 0) return <div className="p-12 text-center text-gray-500 font-bold animate-pulse">Loading Inbox...</div>;
+
+    const selectedConversation = conversations.find((c: Conversation) => c.id === selectedId) || null;
+    const currentMessages = messages || [];
 
     return (
         <div className="flex h-[calc(100vh-6rem)] -m-6 md:-m-8 bg-white overflow-hidden">

@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { MOCK_TENANTS, Tenant } from '@/lib/mockLandlordData';
+import { Tenant } from '@/types/dashboard';
 
 interface TenantState {
   tenants: Tenant[];
   hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
+  setTenants: (tenants: Tenant[]) => void;
   addTenant: (tenant: Tenant) => void;
   updateTenant: (id: string, data: Partial<Tenant>) => void;
   deleteTenant: (id: string) => void;
@@ -14,9 +15,10 @@ interface TenantState {
 export const useTenantStore = create<TenantState>()(
   persist(
     (set) => ({
-      tenants: MOCK_TENANTS,
+      tenants: [],
       hasHydrated: false,
       setHasHydrated: (state) => set({ hasHydrated: state }),
+      setTenants: (tenants) => set({ tenants }),
       addTenant: (tenant) => set((state) => ({ 
         tenants: [tenant, ...state.tenants] 
       })),

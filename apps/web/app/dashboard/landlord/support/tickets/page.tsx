@@ -6,13 +6,14 @@ import { useSearchParams } from 'next/navigation';
 import TicketList from '@/components/dashboard/landlord/support/TicketList';
 import TicketDetail from '@/components/dashboard/landlord/support/TicketDetail';
 import CreateTicketModal from '@/components/dashboard/landlord/support/CreateTicketModal';
-import { MOCK_TICKETS, Ticket } from '@/lib/mockSupportData';
+import { Ticket } from '@/lib/api/support-types';
+import { useLandlordSupport } from '@/hooks/useLandlordSupport';
 
 function TicketsContent() {
     const searchParams = useSearchParams();
     const action = searchParams.get('action');
     
-    const [tickets, setTickets] = useState<Ticket[]>(MOCK_TICKETS);
+    const { tickets, isLoading, isError, createTicket, updateStatus } = useLandlordSupport();
     const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
@@ -32,15 +33,15 @@ function TicketsContent() {
 
     const handleUpdateStatus = (status: string) => {
         if (!selectedTicketId) return;
-
-        setTickets(prev => prev.map(t =>
-            t.id === selectedTicketId ? { ...t, status: status as any, updatedAt: new Date().toISOString() } : t
-        ));
+        updateStatus({ id: selectedTicketId, status });
     };
 
     const handleCreateTicket = (newTicket: Ticket) => {
-        setTickets(prev => [newTicket, ...prev]);
+        createTicket(newTicket);
     };
+
+    if (isLoading) return <div className="p-12 text-center text-gray-500 font-bold animate-pulse">Loading tickets...</div>;
+    if (isError) return <div className="p-12 text-center text-red-500 font-bold">Failed to load support tickets.</div>;
 
     const selectedTicket = tickets.find(t => t.id === selectedTicketId);
 

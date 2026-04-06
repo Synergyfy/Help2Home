@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { ProfileData } from '@/lib/mockLandlordData';
+import { ProfileData } from '@/types/dashboard';
 import { useUpdateProfile } from '@/hooks/useProfile';
 import { FiEdit2, FiSave, FiX } from 'react-icons/fi';
 
@@ -9,11 +9,20 @@ export default function BasicInfoTab({ profile: initialProfile }: { profile: Pro
     const { mutate: updateProfile, isPending } = useUpdateProfile('landlord');
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm({
-        defaultValues: initialProfile
+        values: initialProfile
     });
 
     const onSubmit = (data: any) => {
-        updateProfile(data, {
+        const payload = {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            phone: data.phone,
+            address: data.address,
+            businessName: data.businessName,
+            payoutFrequency: data.payoutFrequency,
+            currency: data.currency,
+        };
+        updateProfile(payload, {
             onSuccess: () => setIsEditing(false)
         });
     };

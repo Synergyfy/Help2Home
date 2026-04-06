@@ -282,10 +282,21 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
                     </div>
                 </section>
 
-                {/* Installment Configuration */}
+                {/* Installment Configuration (COMING SOON) */}
                 {(listingType === 'Rent' || listingType === 'Rent-to-Own') && propertyPrice > 0 && (
-                    <section className={sectionClasses}>
-                        <div className="flex items-center justify-between mb-8">
+                    <section className={`${sectionClasses} relative overflow-hidden group/installment`}>
+                        {/* COMING SOON OVERLAY */}
+                        <div className="absolute inset-0 z-20 bg-white/60 backdrop-blur-md flex flex-col items-center justify-center p-8 transition-all duration-500 opacity-100">
+                             <div className="size-16 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green mb-4 animate-bounce">
+                                <HiOutlineClock size={32} />
+                             </div>
+                             <h3 className="text-3xl font-black text-gray-900 tracking-tight text-center">Installments Coming Soon</h3>
+                             <p className="text-sm text-gray-500 text-center mt-2 max-w-xs font-medium">
+                                We are actively working on a secure installment payment system for our platform. Stay tuned!
+                             </p>
+                        </div>
+
+                        <div className="flex items-center justify-between mb-8 grayscale opacity-40">
                             <div className="flex items-center gap-4">
                                 <div className="size-12 rounded-2xl bg-green-50 flex items-center justify-center text-brand-green">
                                     <HiOutlineCalculator size={28} />
@@ -295,170 +306,16 @@ export default function FinancialsStep({ role, navigation }: FinancialsStepProps
                                     <p className="text-sm text-gray-500">Flexible payment options for tenants.</p>
                                 </div>
                             </div>
-                            <label className="relative inline-flex items-center cursor-pointer scale-110">
+                            <label className="relative inline-flex items-center cursor-not-allowed scale-110">
                                 <input
                                     type="checkbox"
-                                    checked={installments?.enabled || false}
-                                    onChange={toggleInstallments}
+                                    checked={false}
+                                    disabled
                                     className="sr-only peer"
                                 />
-                                <div className="w-12 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-green shadow-inner"></div>
+                                <div className="w-12 h-6 bg-gray-200 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all shadow-inner"></div>
                             </label>
                         </div>
-
-                        {installments?.enabled && (
-                            <div className="space-y-8 pt-8 border-t border-gray-100 animate-in fade-in slide-in-from-top-4 duration-500">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="p-6 rounded-3xl border-2 border-brand-green/10 bg-brand-green/5">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest flex items-center gap-1">
-                                                Downpayment / Deposit (Optional)
-                                                <HiOutlineInformationCircle
-                                                    data-tooltip-id="deposit-tooltip"
-                                                    data-tooltip-content="Initial amount paid upfront. Reduces monthly repayments."
-                                                    className="text-gray-400 cursor-help"
-                                                />
-                                            </label>
-                                            <div className="flex bg-white rounded-lg p-1 border border-gray-100 shadow-sm">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => switchDepositType('percentage')}
-                                                    className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${depositType === 'percentage' ? 'bg-brand-green text-white' : 'text-gray-400 hover:text-gray-600'}`}
-                                                >
-                                                    Percent
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => switchDepositType('fixed')}
-                                                    className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${depositType === 'fixed' ? 'bg-brand-green text-white' : 'text-gray-400 hover:text-gray-600'}`}
-                                                >
-                                                    Fixed
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center gap-3">
-                                            {depositType === 'fixed' && <span className="text-xl font-bold text-brand-green">₦</span>}
-                                            <input
-                                                type="text"
-                                                value={depositValue ? formatNumber(depositValue) : ''}
-                                                onChange={(e) => handleDepositValueChange(e.target.value)}
-                                                className={`w-full h-14 px-4 rounded-xl border-2 ${errors.installments?.depositValue ? 'border-red-500 ring-red-500' : 'border-white'} bg-white text-2xl font-black text-brand-green focus:border-brand-green outline-none shadow-sm`}
-                                                placeholder="0"
-                                            />
-                                            {depositType === 'percentage' && <span className="text-xl font-bold text-brand-green">%</span>}
-                                        </div>
-                                        {errors.installments?.depositValue && <p className="text-xs text-red-500 mt-2 font-medium">{errors.installments.depositValue.message}</p>}
-                                        {depositError && <p className="text-xs text-red-500 mt-2 font-bold animate-pulse">{depositError}</p>}
-                                        {/* Validation Hints */}
-                                        <p className="text-[10px] text-gray-400 mt-2 text-right">Max: {depositType === 'percentage' ? '90%' : `₦${formatNumber(propertyPrice * 0.9)}`}</p>
-
-                                        {/* Real-time conversion container */}
-                                        <div className="mt-4 p-3 bg-white/50 rounded-xl border border-dashed border-brand-green/20">
-                                            <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">
-                                                <span>Conversion</span>
-                                                <HiOutlineCalculator className="text-brand-green" />
-                                            </div>
-                                            {depositType === 'percentage' ? (
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-xs text-gray-500 font-medium">Fixed Amount</span>
-                                                    <span className="text-sm font-black text-brand-green">₦{formatNumber(upfrontDeposit)}</span>
-                                                </div>
-                                            ) : (
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-xs text-gray-500 font-medium">Percentage of Rent</span>
-                                                    <span className="text-sm font-black text-brand-green">{propertyPrice > 0 ? ((depositValue / propertyPrice) * 100).toFixed(1) : 0}%</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-3">
-                                            <label className={labelClasses + " mb-0 flex items-center gap-1"}>
-                                                Repayment Duration
-                                                <HiOutlineInformationCircle
-                                                    data-tooltip-id="duration-tooltip"
-                                                    data-tooltip-content="Time to repay the remaining balance in monthly installments."
-                                                    className="text-gray-400 cursor-help"
-                                                />
-                                            </label>
-                                        </div>
-
-                                        {/* SLIDER COMPONENT */}
-                                        <div className="bg-white p-6 rounded-2xl border border-gray-100 mb-2">
-                                            <div className="flex justify-between items-end mb-6">
-                                                <span className="text-xs font-bold text-gray-400">Duration</span>
-                                                <div className="text-right">
-                                                    <span className="text-3xl font-black text-brand-green">{selectedTenure}</span>
-                                                    <span className="text-xs font-bold text-gray-500 ml-1">Months</span>
-                                                </div>
-                                            </div>
-                                            <input
-                                                type="range"
-                                                min="1"
-                                                max={maxSliderValue}
-                                                step="1"
-                                                value={selectedTenure}
-                                                onChange={(e) => handleTenureChange(Number(e.target.value))}
-                                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-green"
-                                            />
-                                            <div className="flex justify-between mt-2 text-[10px] font-bold text-gray-300 uppercase">
-                                                <span>1 Month</span>
-                                                <span>{maxSliderValue} Months</span>
-                                            </div>
-                                        </div>
-
-                                        <div className="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-3">
-                                            {/* Remaining Balance Breakdown */}
-                                            <div className="flex justify-between items-start">
-                                                <div className="flex flex-col">
-                                                    <span className="text-xs font-bold text-gray-500">Remaining Principal</span>
-                                                    <span className="text-[10px] text-gray-400">Before interest</span>
-                                                </div>
-                                                <span className="text-sm font-bold text-gray-900">₦{formatNumber(principal)}</span>
-                                            </div>
-
-                                            <div className="flex justify-between items-start">
-                                                <div className="flex flex-col">
-                                                    <span className="text-xs font-bold text-gray-500 flex items-center gap-1">
-                                                        Total Interest
-                                                        <HiOutlineInformationCircle
-                                                            data-tooltip-id="interest-tooltip"
-                                                            data-tooltip-content={`Calculated at ${ADMIN_MONTHLY_INTEREST}% per month for ${selectedTenure} months`}
-                                                            className="text-gray-300"
-                                                        />
-                                                    </span>
-                                                    <span className="text-[10px] text-gray-400">{ADMIN_MONTHLY_INTEREST}% x {selectedTenure} mos</span>
-                                                </div>
-                                                <span className="text-sm font-bold text-orange-600">+ ₦{formatNumber(totalInterest)}</span>
-                                            </div>
-
-                                            <div className="pt-3 border-t border-gray-200 dashed flex justify-between items-center">
-                                                <span className="text-xs font-black uppercase text-gray-400 tracking-wider">Net Balance</span>
-                                                <span className="text-base font-black text-gray-900">₦{formatNumber(totalRepayable)}</span>
-                                            </div>
-
-                                            <div className="pt-3 border-t-2 border-brand-green/10 flex justify-between items-center bg-brand-green/5 -mx-4 -mb-4 p-4 rounded-b-2xl">
-                                                <div>
-                                                    <span className="block text-[10px] font-bold text-brand-green uppercase tracking-wide">Monthly Payment</span>
-                                                    <span className="text-[10px] text-brand-green/60 font-medium">Principal + Interest</span>
-                                                </div>
-                                                <span className="text-xl font-black text-brand-green">₦{formatNumber(monthlyRepayment)}<span className="text-xs text-brand-green/60 font-medium">/mo</span></span>
-                                            </div>
-                                        </div>
-
-                                        <p className="mt-6 text-[10px] text-orange-600 font-bold bg-orange-50 p-4 rounded-2xl border border-orange-100 leading-relaxed shadow-sm">
-                                            <span className="flex items-center gap-1.5 mb-2 text-orange-700">
-                                                <HiOutlineShieldCheck className="size-3.5" />
-                                                Lister-Handled Installments
-                                            </span>
-                                            By enabling this, you (the lister) agree to receive payments directly from the tenant over time. External financing partners will be hidden for this property. Interest set above will be added to the total repayable amount.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
                     </section>
                 )}
 

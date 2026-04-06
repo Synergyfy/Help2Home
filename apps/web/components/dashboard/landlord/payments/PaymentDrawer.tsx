@@ -1,7 +1,5 @@
-'use client';
-
 import React from 'react';
-import { PaymentTransaction } from '@/lib/mockPaymentData';
+import { PaymentTransaction } from '@/lib/api/payments';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { 
@@ -27,15 +25,18 @@ export default function PaymentDrawer({ isOpen, onClose, payment }: PaymentDrawe
         return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(amount);
     };
 
-    const formatDate = (dateStr: string) => {
+    const formatDate = (dateStr: string | Date) => {
         return new Date(dateStr).toLocaleString('en-NG', {
             weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
         });
     };
 
+    const tenantName = payment.tenant ? `${payment.tenant.firstName} ${payment.tenant.lastName}` : (payment.tenantName || 'Unknown Tenant');
+    const tenantEmail = payment.tenant?.email || '';
+
     const handleMessageTenant = () => {
-        toast.info(`Opening conversation with ${payment.tenant.name}...`);
-        router.push(`/dashboard/landlord/support/inbox?tenantId=${payment.tenant.email}`);
+        toast.info(`Opening conversation with ${tenantName}...`);
+        router.push(`/dashboard/landlord/support/inbox?tenantId=${tenantEmail}`);
     };
 
     const handleDownloadReceipt = () => {
@@ -104,7 +105,7 @@ export default function PaymentDrawer({ isOpen, onClose, payment }: PaymentDrawe
                         )}
                         <p className="text-sm text-gray-500 mb-1">Total Paid</p>
                         <div className="text-3xl font-black text-gray-900 mb-2">{formatCurrency(payment.amount)}</div>
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${payment.status === 'Cleared' ? 'bg-green-100 text-green-800' :
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${payment.status === 'Completed' || payment.status === 'Cleared' ? 'bg-green-100 text-green-800' :
                                 payment.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
                                     'bg-red-100 text-red-800'
                             }`}>
@@ -151,13 +152,13 @@ export default function PaymentDrawer({ isOpen, onClose, payment }: PaymentDrawe
                         <div className="flex justify-between py-2 border-b border-gray-50">
                             <span className="text-sm font-medium text-gray-500">Tenant</span>
                             <div className="text-right">
-                                <div className="text-sm font-bold text-gray-900">{payment.tenant.name}</div>
-                                <div className="text-xs font-medium text-gray-400">{payment.tenant.email}</div>
+                                <div className="text-sm font-bold text-gray-900">{tenantName}</div>
+                                <div className="text-xs font-medium text-gray-400">{tenantEmail}</div>
                             </div>
                         </div>
                         <div className="flex justify-between py-2 border-b border-gray-50">
                             <span className="text-sm font-medium text-gray-500">Property</span>
-                            <span className="text-sm font-bold text-gray-900 text-right max-w-[200px] truncate">{payment.property.name}</span>
+                            <span className="text-sm font-bold text-gray-900 text-right max-w-[200px] truncate">{payment.property?.title || 'Unknown Property'}</span>
                         </div>
                     </div>
 
@@ -170,23 +171,31 @@ export default function PaymentDrawer({ isOpen, onClose, payment }: PaymentDrawe
                                 <span className="text-gray-500 font-medium">Gross Amount</span>
                                 <span className="text-gray-900 font-bold">{formatCurrency(payment.amount)}</span>
                             </div>
-                            <div className="flex justify-between text-sm text-red-600">
-                                <span className="font-medium">Platform Fee</span>
-                                <span className="font-bold">-{formatCurrency(payment.fees.platformFee)}</span>
-                            </div>
-                            <div className="flex justify-between text-sm text-red-600">
-                                <span className="font-medium">Processing Fee</span>
-                                <span className="font-bold">-{formatCurrency(payment.fees.processingFee)}</span>
-                            </div>
-                            {payment.fees.commission && (
-                                <div className="flex justify-between text-sm text-red-600">
-                                    <span className="font-medium">Commission</span>
-                                    <span className="font-bold">-{formatCurrency(payment.fees.commission)}</span>
-                                </div>
+                            {payment.fees && (
+                                <>
+                                    {payment.fees.platformFee && (
+                                        <div className="flex justify-between text-sm text-red-600">
+                                            <span className="font-medium">Platform Fee</span>
+                                            <span className="font-bold">-{formatCurrency(payment.fees.platformFee)}</span>
+                                        </div>
+                                    )}
+                                    {payment.fees.processingFee && (
+                                        <div className="flex justify-between text-sm text-red-600">
+                                            <span className="font-medium">Processing Fee</span>
+                                            <span className="font-bold">-{formatCurrency(payment.fees.processingFee)}</span>
+                                        </div>
+                                    )}
+                                    {payment.fees.commission && (
+                                        <div className="flex justify-between text-sm text-red-600">
+                                            <span className="font-medium">Commission</span>
+                                            <span className="font-bold">-{formatCurrency(payment.fees.commission)}</span>
+                                        </div>
+                                    )}
+                                </>
                             )}
                             <div className="pt-4 mt-1 border-t border-gray-200 flex justify-between items-center">
                                 <span className="text-gray-900 font-black uppercase text-[10px] tracking-widest">Net Payout</span>
-                                <span className="text-[#00853E] font-black text-xl">{formatCurrency(payment.netAmount)}</span>
+                                <span className="text-[#00853E] font-black text-xl">{formatCurrency(payment.netAmount || payment.amount)}</span>
                             </div>
                         </div>
 
@@ -198,24 +207,28 @@ export default function PaymentDrawer({ isOpen, onClose, payment }: PaymentDrawe
                             </div>
                             <div>
                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Payout Schedule</p>
-                                <p className="text-sm font-bold text-blue-700">{payment.payoutStatus}</p>
+                                <p className="text-sm font-bold text-blue-700">{payment.payoutStatus || 'Processing'}</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Contract Link */}
-                    <div>
-                        <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Associated Contract</h3>
-                        <div className="group border-2 border-gray-100 rounded-2xl p-4 flex justify-between items-center hover:border-brand-green/30 hover:bg-green-50/10 cursor-pointer transition-all">
-                            <div>
-                                <div className="font-bold text-gray-900 group-hover:text-brand-green transition-colors">{payment.contract.name}</div>
-                                <div className="text-xs font-medium text-gray-400">{payment.contract.startDate} — {payment.contract.endDate}</div>
+                    {payment.contract && (
+                        <div>
+                            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Associated Contract</h3>
+                            <div className="group border-2 border-gray-100 rounded-2xl p-4 flex justify-between items-center hover:border-brand-green/30 hover:bg-green-50/10 cursor-pointer transition-all">
+                                <div>
+                                    <div className="font-bold text-gray-900 group-hover:text-brand-green transition-colors">{payment.contract.name || 'Lease Agreement'}</div>
+                                    <div className="text-xs font-medium text-gray-400">
+                                        {payment.contract.startDate ? new Date(payment.contract.startDate).toLocaleDateString() : 'N/A'} — {payment.contract.endDate ? new Date(payment.contract.endDate).toLocaleDateString() : 'N/A'}
+                                    </div>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
                         </div>
-                    </div>
+                    )}
                 </div>
 
                 {/* Footer Actions */}

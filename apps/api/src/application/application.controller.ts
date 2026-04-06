@@ -48,4 +48,11 @@ export class ApplicationController {
   create(@GetCurrentUser('sub') userId: string, @Body() data: any) {
     return this.applicationService.create({ ...data, tenantId: userId });
   }
+
+  @Post(':id/documents')
+  @ApiOperation({ summary: 'Upload a document for an application' })
+  @ApiResponse({ status: 201 })
+  addDocument(@Param('id') id: string, @Body() data: any) {
+    return this.applicationService.addDocument(id, data);
+  }
 }

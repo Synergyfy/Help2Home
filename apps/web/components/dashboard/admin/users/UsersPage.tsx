@@ -5,7 +5,8 @@ import { useState, useEffect } from 'react';
 import { useAdminStore } from '@/store/adminStore';
 import AdminUserTable from '@/components/dashboard/admin/superrole/AdminUserTable';
 import { FiUsers, FiHome, FiTrendingUp, FiActivity, FiShield, FiPlus } from 'react-icons/fi';
-import AddUserModal from '@/components/dashboard/admin/users/AddUserModal'; // Import the new modal
+import AddUserModal from '@/components/dashboard/admin/users/AddUserModal';
+import { useAdminUsers } from '@/hooks/useAdminUsers';
 
 export default function AdminUsersPage() {
     const searchParams = useSearchParams();
@@ -13,8 +14,10 @@ export default function AdminUsersPage() {
 
     const [activeTab, setActiveTab] = useState<'ecosystem' | 'tenants' | 'investors' | 'landlords' | 'agents' | 'caretakers'>('ecosystem');
     const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
-    const { users, addUser } = useAdminStore();
+    const { users, isLoading } = useAdminUsers(searchQuery);
+    const { addUser } = useAdminStore();
 
     useEffect(() => {
         if (queryTab) {
@@ -38,9 +41,9 @@ export default function AdminUsersPage() {
     // Stats calculations
     const stats = [
         { label: 'Total Members', value: users.length, icon: FiUsers, trend: '+12%', color: 'bg-emerald-500' },
-        { label: 'Network Partners', value: users.filter(u => ['Landlord', 'Agent', 'Caretaker'].includes(u.role)).length, icon: FiShield, trend: '+5%', color: 'bg-blue-500' },
-        { label: 'Residents', value: users.filter(u => u.role === 'Tenant').length, icon: FiHome, trend: '+8%', color: 'bg-amber-500' },
-        { label: 'Investors', value: users.filter(u => u.role === 'Investor').length, icon: FiTrendingUp, trend: '+2%', color: 'bg-purple-500' },
+        { label: 'Network Partners', value: users.filter((u: any) => ['landlord', 'agent', 'caretaker'].includes(u.roles[0])).length, icon: FiShield, trend: '+5%', color: 'bg-blue-500' },
+        { label: 'Residents', value: users.filter((u: any) => u.roles[0] === 'tenant').length, icon: FiHome, trend: '+8%', color: 'bg-amber-500' },
+        { label: 'Investors', value: users.filter((u: any) => u.roles[0] === 'investor').length, icon: FiTrendingUp, trend: '+2%', color: 'bg-purple-500' },
     ];
 
     return (
@@ -146,29 +149,58 @@ export default function AdminUsersPage() {
                 <div className="flex-1 p-4 lg:p-8">
                     {/* Table Containers */}
                     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        {/* Dynamic Rendering Based on Selection */}
-                        {(activeTab === 'ecosystem' || isEcosystemActive) && (activeTab !== 'tenants' && activeTab !== 'investors') && (
-                            <AdminUserTable
-                                title={activeTab === 'ecosystem' ? "All Service Network Partners" : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} List`}
-                                users={users.filter(u => {
-                                    if (activeTab === 'ecosystem') return ['Landlord', 'Agent', 'Caretaker'].includes(u.role);
-                                    return u.role.toLowerCase() === activeTab.slice(0, -1);
-                                }).map(u => ({ ...u, role: u.role as any }))}
-                            />
-                        )}
+                        {isLoading ? (
+                          <div className="flex justify-center p-20">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green"></div>
+                          </div>
+                        ) : (
+                          <>
+                            {/* Dynamic Rendering Based on Selection */}
+                            {(activeTab === 'ecosystem' || isEcosystemActive) && (activeTab !== 'tenants' && activeTab !== 'investors') && (
+                                <AdminUserTable
+                                    title={activeTab === 'ecosystem' ? "All Service Network Partners" : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} List`}
+                                    users={users.filter((u: any) => {
+                                        if (activeTab === 'ecosystem') return ['landlord', 'agent', 'caretaker'].includes(u.roles[0]);
+                                        return u.roles[0] === activeTab.slice(0, -1);
+                                    }).map((u: any) => ({ 
+                                      id: u.id,
+                                      name: `${u.firstName} ${u.lastName}`,
+                                      email: u.email,
+                                      role: u.roles[0].charAt(0).toUpperCase() + u.roles[0].slice(1) as any,
+                                      status: u.isActive ? 'Active' : 'Suspended',
+                                      joinedAt: u.createdAt
+                                    }))}
+                                />
+                            )}
 
-                        {activeTab === 'tenants' && (
-                            <AdminUserTable
-                                title="Resident Tenants"
-                                users={users.filter(u => u.role === 'Tenant')}
-                            />
-                        )}
+                            {activeTab === 'tenants' && (
+                                <AdminUserTable
+                                    title="Resident Tenants"
+                                    users={users.filter((u: any) => u.roles[0] === 'tenant').map((u: any) => ({
+                                      id: u.id,
+                                      name: `${u.firstName} ${u.lastName}`,
+                                      email: u.email,
+                                      role: 'Tenant' as any,
+                                      status: u.isActive ? 'Active' : 'Suspended',
+                                      joinedAt: u.createdAt
+                                    }))}
+                                />
+                            )}
 
-                        {activeTab === 'investors' && (
-                            <AdminUserTable
-                                title="Venture Investors"
-                                users={users.filter(u => u.role === 'Investor')}
-                            />
+                            {activeTab === 'investors' && (
+                                <AdminUserTable
+                                    title="Venture Investors"
+                                    users={users.filter((u: any) => u.roles[0] === 'investor').map((u: any) => ({
+                                      id: u.id,
+                                      name: `${u.firstName} ${u.lastName}`,
+                                      email: u.email,
+                                      role: 'Investor' as any,
+                                      status: u.isActive ? 'Active' : 'Suspended',
+                                      joinedAt: u.createdAt
+                                    }))}
+                                />
+                            )}
+                          </>
                         )}
                     </div>
                 </div>

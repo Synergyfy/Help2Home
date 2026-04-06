@@ -6,20 +6,23 @@ import PaymentsTable from '@/components/dashboard/landlord/payments/PaymentsTabl
 import PaymentsFilterBar from '@/components/dashboard/landlord/payments/PaymentsFilterBar';
 import PaymentDrawer from '@/components/dashboard/landlord/payments/PaymentDrawer';
 import PaymentsSummaryCards from '@/components/dashboard/landlord/payments/PaymentsSummaryCards';
-import { MOCK_PAYMENTS, PaymentTransaction } from '@/lib/mockPaymentData';
+import { PaymentTransaction } from '@/lib/api/payments';
+import { useLandlordPayments } from '@/hooks/useLandlordPayments';
 
 export default function PaymentsPage() {
     const [statusFilter, setStatusFilter] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedPayment, setSelectedPayment] = useState<PaymentTransaction | null>(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    
+    const { payments, isLoadingPayments, isErrorPayments } = useLandlordPayments();
 
-    const filteredPayments = MOCK_PAYMENTS.filter(payment => {
+    const filteredPayments = payments.filter(payment => {
         const matchesStatus = statusFilter === 'All' || payment.status === statusFilter;
         const matchesSearch =
-            payment.tenant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            payment.property.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            payment.referenceId.toLowerCase().includes(searchQuery.toLowerCase());
+            (payment.tenantName?.toLowerCase().includes(searchQuery.toLowerCase()) || '') ||
+            (payment.propertyName?.toLowerCase().includes(searchQuery.toLowerCase()) || '') ||
+            (payment.transactionId?.toLowerCase().includes(searchQuery.toLowerCase()) || '');
         return matchesStatus && matchesSearch;
     });
 
@@ -51,7 +54,7 @@ export default function PaymentsPage() {
                 </div>
             </div>
 
-            <PaymentsSummaryCards />
+            <PaymentsSummaryCards payments={payments} />
 
             <PaymentsFilterBar
                 statusFilter={statusFilter}
@@ -60,10 +63,16 @@ export default function PaymentsPage() {
                 onSearchQueryChange={setSearchQuery}
             />
 
-            <PaymentsTable
-                payments={filteredPayments}
-                onPaymentClick={handlePaymentClick}
-            />
+            {isLoadingPayments ? (
+                <div className="p-12 text-center text-gray-500 font-bold animate-pulse">Loading payments...</div>
+            ) : isErrorPayments ? (
+                <div className="p-12 text-center text-red-500 font-bold">Failed to load payments.</div>
+            ) : (
+                <PaymentsTable
+                    payments={filteredPayments}
+                    onPaymentClick={handlePaymentClick}
+                />
+            )}
 
             <PaymentDrawer
                 isOpen={isDrawerOpen}

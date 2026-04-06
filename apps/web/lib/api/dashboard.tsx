@@ -1,7 +1,4 @@
-import { 
-  MOCK_SUMMARY_TILES, MOCK_ACTIVITY, MOCK_TASKS, 
-  MOCK_PAYMENTS, MOCK_VERIFICATION 
-} from '@/lib/mockLandlordData';
+import apiClient from './apiClient';
 
 export interface DashboardData {
   summary: any[];
@@ -9,6 +6,7 @@ export interface DashboardData {
   tasks: any[];
   payments: any[];
   verification: any[];
+  performance?: any;
 }
 
 export const fetchDashboardData = async (
@@ -17,26 +15,45 @@ export const fetchDashboardData = async (
 ): Promise<DashboardData> => {
   if (!role) throw new Error("No active role selected");
 
-  // Simulate API Network Latency
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  try {
+    // Determine the base path based on role
+    let basePath = '';
+    switch (role) {
+      case 'landlord':
+        basePath = 'landlord-dashboard';
+        break;
+      case 'agent':
+        basePath = 'agent-dashboard';
+        break;
+      case 'caretaker':
+        basePath = 'caretaker-dashboard';
+        break;
+      case 'admin':
+        basePath = 'admin-dashboard';
+        break;
+      default:
+        // Default to tenant dashboard (or separate logic if needed)
+        const { data } = await apiClient.get(`/dashboard/tenant/stats`);
+        return data;
+    }
 
-  // Switch logic to return different mock sets based on the perspective
-  // In production: return (await axios.get(`/api/${role}/stats`)).data;
-  switch (role) {
-    case 'landlord':
-    case 'agent':
-    case 'caretaker':
-      // Currently using landlord mocks for all three as placeholders
-      return {
-        summary: MOCK_SUMMARY_TILES,
-        activities: MOCK_ACTIVITY,
-        tasks: MOCK_TASKS,
-        payments: MOCK_PAYMENTS,
-        verification: MOCK_VERIFICATION
-      };
-    default:
-      return {
-        summary: [], activities: [], tasks: [], payments: [], verification: []
-      };
+    const { data } = await apiClient.get(`/${basePath}/stats`, {
+      params: {
+        range: filters.range,
+        propertyId: filters.property !== 'all' ? filters.property : undefined
+      }
+    });
+
+    return data;
+  } catch (error) {
+    console.error(`Error fetching ${role} dashboard data:`, error);
+    // Fallback to empty data on error to prevent total breakage
+    return {
+      summary: [],
+      activities: [],
+      tasks: [],
+      payments: [],
+      verification: []
+    };
   }
 };

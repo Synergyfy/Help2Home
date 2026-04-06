@@ -3,11 +3,14 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import PayoutDrawer from '@/components/dashboard/landlord/payments/PayoutDrawer';
-import { MOCK_PAYOUTS, PayoutTransaction } from '@/lib/mockPaymentData';
+import { PayoutTransaction } from '@/lib/api/payments';
+import { useLandlordPayments } from '@/hooks/useLandlordPayments';
 
 export default function PayoutHistoryPage() {
     const [selectedPayout, setSelectedPayout] = useState<PayoutTransaction | null>(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    
+    const { payouts, isLoadingPayouts, isErrorPayouts } = useLandlordPayments();
 
     const handlePayoutClick = (payout: PayoutTransaction) => {
         setSelectedPayout(payout);
@@ -18,7 +21,7 @@ export default function PayoutHistoryPage() {
         return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(amount);
     };
 
-    const formatDate = (dateStr: string) => {
+    const formatDate = (dateStr: string | Date) => {
         return new Date(dateStr).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' });
     };
 
@@ -46,33 +49,44 @@ export default function PayoutHistoryPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
                     <div className="text-sm text-gray-500 mb-1">Total Payouts (YTD)</div>
-                    <div className="text-2xl font-bold text-gray-900">₦4,250,000</div>
+                    <div className="text-2xl font-bold text-gray-900">
+                        {formatCurrency(payouts.reduce((acc, p) => acc + Number(p.amount), 0))}
+                    </div>
                     <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 8.586 14.586 5H12z" clipRule="evenodd" />
                         </svg>
-                        +12% vs last year
+                        Calculated from records
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
                     <div className="text-sm text-gray-500 mb-1">Last Payout</div>
-                    <div className="text-2xl font-bold text-gray-900">₦850,000</div>
-                    <div className="text-xs text-gray-400 mt-1">Processed on Oct 28, 2024</div>
+                    <div className="text-2xl font-bold text-gray-900">
+                        {payouts.length > 0 ? formatCurrency(payouts[0].amount) : '₦0'}
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                        {payouts.length > 0 ? `Processed on ${formatDate(payouts[0].date)}` : 'No records yet'}
+                    </div>
                 </div>
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                    <div className="text-sm text-gray-500 mb-1">Next Scheduled</div>
-                    <div className="text-2xl font-bold text-gray-900">Nov 04, 2024</div>
-                    <div className="text-xs text-gray-400 mt-1">Weekly Schedule</div>
+                    <div className="text-sm text-gray-500 mb-1">Status</div>
+                    <div className="text-2xl font-bold text-gray-900">Active</div>
+                    <div className="text-xs text-gray-400 mt-1">Standard Payout Schedule</div>
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            {isLoadingPayouts ? (
+                <div className="p-12 text-center text-gray-500 font-bold animate-pulse mt-8">Loading payouts...</div>
+            ) : isErrorPayouts ? (
+                <div className="p-12 text-center text-red-500 font-bold mt-8">Failed to load payouts.</div>
+            ) : (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
                         <thead className="bg-gray-50/50 border-b border-gray-100">
                             <tr>
                                 <th className="px-6 py-5 font-semibold text-gray-600 uppercase tracking-wider text-xs">Date Initiated</th>
-                                <th className="px-6 py-5 font-semibold text-gray-600 uppercase tracking-wider text-xs">Reference ID</th>
+                                <th className="px-6 py-5 font-semibold text-gray-600 uppercase tracking-wider text-xs">Reference</th>
                                 <th className="px-6 py-5 font-semibold text-gray-600 uppercase tracking-wider text-xs">Amount</th>
                                 <th className="px-6 py-5 font-semibold text-gray-600 uppercase tracking-wider text-xs">Destination</th>
                                 <th className="px-6 py-5 font-semibold text-gray-600 uppercase tracking-wider text-xs">Status</th>
@@ -80,7 +94,7 @@ export default function PayoutHistoryPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
-                            {MOCK_PAYOUTS.map((payout) => (
+                            {payouts.map((payout) => (
                                 <tr
                                     key={payout.id}
                                     onClick={() => handlePayoutClick(payout)}
@@ -91,7 +105,7 @@ export default function PayoutHistoryPage() {
                                         <div className="text-xs text-gray-400 mt-0.5">{new Date(payout.date).toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit' })}</div>
                                     </td>
                                     <td className="px-6 py-5 font-mono text-xs text-gray-500">
-                                        {payout.referenceId}
+                                        {payout.reference || payout.referenceId}
                                     </td>
                                     <td className="px-6 py-5 font-bold text-gray-900">
                                         {formatCurrency(payout.amount)}
@@ -99,20 +113,22 @@ export default function PayoutHistoryPage() {
                                     <td className="px-6 py-5">
                                         <div className="flex items-center gap-2">
                                             <div className="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600">
-                                                {payout.destinationAccount.bankName.charAt(0)}
+                                                {payout.destinationAccount?.bankName?.charAt(0) || 'B'}
                                             </div>
                                             <div>
-                                                <div className="font-medium text-gray-900">{payout.destinationAccount.bankName}</div>
-                                                <div className="text-xs text-gray-400">•••• {payout.destinationAccount.accountNumber.slice(-4)}</div>
+                                                <div className="font-medium text-gray-900">{payout.destinationAccount?.bankName || payout.bankAccount || 'Bank Account'}</div>
+                                                <div className="text-xs text-gray-400">
+                                                    {payout.destinationAccount?.accountNumber ? `•••• ${payout.destinationAccount.accountNumber.slice(-4)}` : 'Verified Account'}
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-5">
-                                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${payout.status === 'Success' ? 'bg-green-50 text-green-700 border-green-100' :
+                                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${payout.status === 'Success' || payout.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-100' :
                                                 payout.status === 'Processing' ? 'bg-blue-50 text-blue-700 border-blue-100' :
                                                     'bg-red-50 text-red-700 border-red-100'
                                             }`}>
-                                            <span className={`w-1.5 h-1.5 rounded-full mr-2 ${payout.status === 'Success' ? 'bg-green-500' :
+                                            <span className={`w-1.5 h-1.5 rounded-full mr-2 ${payout.status === 'Success' || payout.status === 'Completed' ? 'bg-green-500' :
                                                     payout.status === 'Processing' ? 'bg-blue-500' :
                                                         'bg-red-500'
                                                 }`}></span>
@@ -130,15 +146,16 @@ export default function PayoutHistoryPage() {
                     </table>
                 </div>
 
-                {/* Pagination Mock */}
+                {/* Pagination */}
                 <div className="px-6 py-4 border-t border-gray-100 flex justify-between items-center bg-gray-50/50">
-                    <span className="text-sm text-gray-500">Showing <span className="font-medium text-gray-900">{MOCK_PAYOUTS.length}</span> results</span>
+                    <span className="text-sm text-gray-500">Showing <span className="font-medium text-gray-900">{payouts.length}</span> results</span>
                     <div className="flex gap-2">
                         <button className="px-4 py-2 border border-gray-200 bg-white rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors shadow-sm" disabled>Previous</button>
                         <button className="px-4 py-2 border border-gray-200 bg-white rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors shadow-sm" disabled>Next</button>
                     </div>
                 </div>
             </div>
+            )}
 
             <PayoutDrawer
                 isOpen={isDrawerOpen}

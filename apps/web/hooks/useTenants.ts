@@ -1,19 +1,21 @@
+import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useUserStore } from '@/store/userStore';
 import { useTenantStore } from '@/store/tenantStore';
-import { Tenant } from '@/lib/mockLandlordData';
 import { 
   fetchTenantsByLandlord, 
   addTenantApi, 
   updateTenantApi, 
-  deleteTenantApi 
+  deleteTenantApi,
 } from '@/lib/api/tenants';
+import { Tenant } from '@/types/dashboard';
 import { toast } from 'react-toastify';
 
 export const useTenants = () => {
   const queryClient = useQueryClient();
   const { id: landlordId, hasHydrated: userHydrated } = useUserStore();
   const { 
+    setTenants,
     addTenant: addToStore, 
     updateTenant: updateInStore,
     deleteTenant: deleteFromStore,
@@ -28,6 +30,13 @@ export const useTenants = () => {
     enabled: userHydrated && tenantsHydrated && !!landlordId,
     staleTime: 1000 * 60 * 10, // 10 minutes
   });
+
+  // Keep store in sync
+  React.useEffect(() => {
+    if (query.data && tenantsHydrated) {
+        setTenants(query.data);
+    }
+  }, [query.data, tenantsHydrated, setTenants]);
 
   const addMutation = useMutation({
     mutationFn: addTenantApi,

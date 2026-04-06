@@ -169,4 +169,27 @@ export class Property extends BaseEntity {
 
   @Column({ default: false })
   isUnderOffer: boolean;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'agentId' })
+  agent: User;
+
+  @Column({ nullable: true })
+  agentId: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'caretakerId' })
+  caretaker: User;
+
+  @Column({ nullable: true })
+  caretakerId: string;
+
+  @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  targetAmount: number;
+
+  @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  raisedAmount: number;
+
+  @Column({ default: 0 })
+  investorCount: number;
 }

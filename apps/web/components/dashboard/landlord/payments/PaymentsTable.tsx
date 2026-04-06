@@ -1,7 +1,5 @@
-'use client';
-
 import React from 'react';
-import { PaymentTransaction } from '@/lib/mockPaymentData';
+import { PaymentTransaction } from '@/lib/api/payments';
 
 interface PaymentsTableProps {
     payments: PaymentTransaction[];
@@ -13,7 +11,7 @@ export default function PaymentsTable({ payments, onPaymentClick }: PaymentsTabl
         return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(amount);
     };
 
-    const formatDate = (dateStr: string) => {
+    const formatDate = (dateStr: string | Date) => {
         return new Date(dateStr).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' });
     };
 
@@ -45,17 +43,19 @@ export default function PaymentsTable({ payments, onPaymentClick }: PaymentsTabl
                                         <div className="text-xs text-gray-400 mt-0.5">{new Date(payment.date).toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit' })}</div>
                                     </td>
                                     <td className="px-6 py-5">
-                                        <div className="font-medium text-gray-900">{payment.property.name}</div>
-                                        <div className="text-xs text-gray-500 truncate max-w-[180px] mt-0.5">{payment.property.address}</div>
+                                        <div className="font-medium text-gray-900">{payment.property?.title || 'Unknown Property'}</div>
+                                        <div className="text-xs text-gray-500 truncate max-w-[180px] mt-0.5">{payment.property?.address || 'N/A'}</div>
                                     </td>
                                     <td className="px-6 py-5">
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-xs font-bold text-gray-600 border border-gray-200 shadow-sm">
-                                                {payment.tenant.name.charAt(0)}
+                                                {payment.tenant?.firstName?.charAt(0) || payment.tenantName?.charAt(0) || '?'}
                                             </div>
                                             <div>
-                                                <div className="font-medium text-gray-900">{payment.tenant.name}</div>
-                                                <div className="text-xs text-gray-400">{payment.tenant.email}</div>
+                                                <div className="font-medium text-gray-900">
+                                                    {payment.tenant ? `${payment.tenant.firstName} ${payment.tenant.lastName}` : (payment.tenantName || 'Unknown Tenant')}
+                                                </div>
+                                                <div className="text-xs text-gray-400">{payment.tenant?.email}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -78,11 +78,11 @@ export default function PaymentsTable({ payments, onPaymentClick }: PaymentsTabl
                                         </div>
                                     </td>
                                     <td className="px-6 py-5">
-                                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${payment.status === 'Cleared' ? 'bg-green-50 text-green-700 border-green-100' :
+                                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${payment.status === 'Completed' || payment.status === 'Cleared' ? 'bg-green-50 text-green-700 border-green-100' :
                                                 payment.status === 'Pending' ? 'bg-yellow-50 text-yellow-700 border-yellow-100' :
                                                     'bg-red-50 text-red-700 border-red-100'
                                             }`}>
-                                            <span className={`w-1.5 h-1.5 rounded-full mr-2 ${payment.status === 'Cleared' ? 'bg-green-500' :
+                                            <span className={`w-1.5 h-1.5 rounded-full mr-2 ${payment.status === 'Completed' || payment.status === 'Cleared' ? 'bg-green-500' :
                                                     payment.status === 'Pending' ? 'bg-yellow-500' :
                                                         'bg-red-500'
                                                 }`}></span>

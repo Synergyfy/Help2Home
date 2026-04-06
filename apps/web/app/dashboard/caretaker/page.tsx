@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import { MOCK_TASKS } from '@/lib/mockCaretakerData';
-import TaskCard from '@/components/dashboard/caretaker/TaskCard';
+import React from 'react';
 import Link from 'next/link';
-
-import { getMockProperties } from '@/utils/properties';
+import { useUserStore } from '@/store/userStore';
+import { useCaretakerDashboard, useCaretakerTasks } from '@/hooks/useCaretakerDashboard';
+import TaskCard from '@/components/dashboard/caretaker/TaskCard';
 import CaretakerManagedProperties from '@/components/dashboard/caretaker/CaretakerManagedProperties';
 import {
     HiOutlineHome,
@@ -18,23 +17,64 @@ import {
 } from 'react-icons/hi2';
 
 export default function CaretakerDashboardPage() {
-    const [tasks, setTasks] = useState(MOCK_TASKS);
-    const properties = getMockProperties().slice(0, 5); // Mock properties for the caretaker
+    const { profile } = useUserStore();
+    const { stats, properties, activity, isLoading } = useCaretakerDashboard();
+    const { data: liveTasks, isLoading: tasksLoading } = useCaretakerTasks('Assigned');
 
-    const handleAcceptTask = (taskId: string) => {
-        setTasks(prev => prev.map(task =>
-            task.id === taskId ? { ...task, status: 'Accepted' } : task
-        ));
-    };
+    const statsConfig = [
+        {
+            label: "Properties",
+            value: stats?.properties || 0,
+            icon: <HiOutlineHome size={24} />,
+            color: "green" as const,
+        },
+        {
+            label: "Active Tasks",
+            value: stats?.activeTasks || 0,
+            icon: <HiOutlineWrenchScrewdriver size={24} />,
+            color: "blue" as const,
+        },
+        {
+            label: "High Priority",
+            value: stats?.highPriority || 0,
+            icon: <HiOutlineBellAlert size={24} />,
+            color: "red" as const,
+        },
+        {
+            label: "Messages",
+            value: stats?.messages || 0,
+            icon: <HiOutlineChatBubbleLeftRight size={24} />,
+            color: "orange" as const,
+        },
+    ];
 
-    const handleStartTask = (taskId: string) => {
-        setTasks(prev => prev.map(task =>
-            task.id === taskId ? { ...task, status: 'In Progress' } : task
-        ));
-    };
+    if (isLoading || tasksLoading) {
+        return (
+            <div className="space-y-8 animate-pulse">
+                <div className="h-12 bg-gray-200 rounded-2xl w-1/4"></div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {[...Array(4)].map((_, i) => (
+                        <div key={i} className="h-32 bg-gray-200 rounded-4xl"></div>
+                    ))}
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2 h-96 bg-gray-200 rounded-[2.5rem]"></div>
+                    <div className="h-96 bg-gray-200 rounded-[2.5rem]"></div>
+                </div>
+            </div>
+        );
+    }
 
-    const assignedTasks = tasks.filter(t => t.status !== 'Completed' && t.status !== 'Cancelled');
-    const highPriorityTasks = assignedTasks.filter(t => t.priority === 'High' || t.priority === 'Critical');
+    const assignedTasks = (liveTasks || []).map((t: any) => ({
+        id: t.id,
+        title: t.category,
+        priority: t.priority,
+        status: t.status,
+        propertyTitle: t.property?.title || 'Unknown Property',
+        unit: '', // Could be added to maintenance entity if needed
+        dueDate: t.createdAt, // Fallback
+        description: t.description
+    }));
 
     return (
         <div className="pb-20 space-y-8">
@@ -44,7 +84,9 @@ export default function CaretakerDashboardPage() {
                     <h1 className="text-3xl font-semibold text-gray-900 leading-tight">
                         Caretaker <span className="text-brand-green">Hub</span>
                     </h1>
-                    <p className="text-gray-500 font-medium">Welcome back, John. Here&apos;s what&apos;s happening today.</p>
+                    <p className="text-gray-500 font-medium font-outfit uppercase tracking-widest text-xs">
+                        Welcome back, {profile?.firstName || 'Caretaker'}. Here&apos;s your daily overview.
+                    </p>
                 </div>
                 <div className="flex gap-3 w-full md:w-auto">
                     <Link
@@ -66,30 +108,9 @@ export default function CaretakerDashboardPage() {
 
             {/* Quick Stats Dashboard */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard
-                    label="Properties"
-                    value={properties.length}
-                    icon={<HiOutlineHome size={24} />}
-                    color="green"
-                />
-                <StatCard
-                    label="Active Tasks"
-                    value={assignedTasks.length}
-                    icon={<HiOutlineWrenchScrewdriver size={24} />}
-                    color="blue"
-                />
-                <StatCard
-                    label="High Priority"
-                    value={highPriorityTasks.length}
-                    icon={<HiOutlineBellAlert size={24} />}
-                    color="red"
-                />
-                <StatCard
-                    label="Messages"
-                    value={2}
-                    icon={<HiOutlineChatBubbleLeftRight size={24} />}
-                    color="orange"
-                />
+                {statsConfig.map((stat, i) => (
+                    <StatCard key={i} {...stat} />
+                ))}
             </div>
 
             <div className="grid grid-cols-1 lg:col-span-3 gap-8">
@@ -115,8 +136,6 @@ export default function CaretakerDashboardPage() {
                                     <TaskCard
                                         key={task.id}
                                         task={task}
-                                        onAccept={handleAcceptTask}
-                                        onStart={handleStartTask}
                                     />
                                 ))}
                             </div>
@@ -144,30 +163,25 @@ export default function CaretakerDashboardPage() {
                     </div>
 
                     {/* Alerts / Activity Feed */}
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                         <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                             <HiOutlineBellAlert size={20} className="text-orange-500" />
                             Recent Activity
                         </h3>
                         <div className="space-y-4">
-                            <ActivityItem
-                                title="Tenant Inquiry"
-                                description="New message regarding Home Sweet Home"
-                                time="2h ago"
-                                icon={<HiOutlineChatBubbleLeftRight />}
-                            />
-                            <ActivityItem
-                                title="Maintenance Done"
-                                description="Leaking Tap fixed at Luxury Suite"
-                                time="5h ago"
-                                icon={<HiOutlineWrenchScrewdriver />}
-                            />
-                            <ActivityItem
-                                title="New Property"
-                                description="Modern Apartment added to your list"
-                                time="1d ago"
-                                icon={<HiOutlineHome />}
-                            />
+                            {activity.length > 0 ? (
+                                activity.map((item: any) => (
+                                    <ActivityItem
+                                        key={item.id}
+                                        title={item.title}
+                                        description={item.description}
+                                        time={new Date(item.time).toLocaleDateString()}
+                                        icon={item.type === 'maintenance' ? <HiOutlineWrenchScrewdriver /> : <HiOutlineHome />}
+                                    />
+                                ))
+                            ) : (
+                                <p className="text-xs text-gray-500 text-center py-4">No recent activity found.</p>
+                            )}
                         </div>
                     </div>
                 </div>

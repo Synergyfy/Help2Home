@@ -5,13 +5,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { HiOutlineArrowRight } from 'react-icons/hi2';
-import { getMockProperties } from '@/utils/properties';
+import { useFeaturedProperties } from '@/hooks/useMarketplaceQueries';
 import PropertyCard from '@/components/shared/PropertyCard';
 
 export default function FeaturedListings() {
-    // Get real properties and filter for featured
-    const properties = getMockProperties();
-    const featuredProperties = properties.filter(p => p.featured).slice(0, 3);
+    const { data, isLoading } = useFeaturedProperties(undefined, 3);
+    const featuredProperties = data || [];
 
     return (
         <section className="py-24 bg-white relative overflow-hidden">
@@ -40,13 +39,19 @@ export default function FeaturedListings() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-                    {featuredProperties.map((property, index) => (
-                        <PropertyCard
-                            key={property.id}
-                            property={property}
-                            index={index}
-                        />
-                    ))}
+                    {isLoading ? (
+                        [...Array(3)].map((_, i) => (
+                            <div key={i} className="bg-gray-100 animate-pulse rounded-2xl h-96 w-full"></div>
+                        ))
+                    ) : (
+                        featuredProperties.map((property: any, index: number) => (
+                            <PropertyCard
+                                key={property.id}
+                                property={property}
+                                index={index}
+                            />
+                        ))
+                    )}
                 </div>
             </div>
         </section>

@@ -262,6 +262,10 @@ export default function DashboardSidebar({ isOpen = false, onClose }: { isOpen?:
     const handleLogout = () => {
         resetUser();
         useOnboardingStore.getState().resetOnboarding();
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('help2home_access_token');
+            localStorage.removeItem('help2home_refresh_token');
+        }
         toast.success('Signed out successfully');
         router.replace('/signin');
     };

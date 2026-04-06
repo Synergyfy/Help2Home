@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import ContentGrid from '@/components/dashboard/education/ContentGrid';
 import FeaturedCarousel from '@/components/dashboard/education/FeaturedCarousel';
 import { EducationContent, ContentCategory } from '@/components/dashboard/education/types';
-import { getContentList, getFeaturedContent, toggleSaveContent } from '@/utils/mockEducationApi';
+import { getContentList, getFeaturedContent, toggleSaveContent } from '@/lib/api/education';
 
 const CATEGORIES: (ContentCategory | 'All')[] = ['All', 'Beginner', 'Credit', 'Savings', 'Rent Management', 'Legal', 'Tenant Rights', 'Budgeting'];
 

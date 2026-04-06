@@ -141,6 +141,8 @@ export interface CaretakerProfileData {
 interface UserState {
   id: string;
   email: string;
+  firstName: string;
+  lastName: string;
   fullName: string;
   phone: string;
   roles: Role[];       
@@ -182,6 +184,8 @@ export const useUserStore = create<UserState>()(
     (set) => ({
       id: '',
       email: '',
+      firstName: '',
+      lastName: '',
       fullName: '',
       phone: '',
       roles: [],
@@ -232,7 +236,7 @@ export const useUserStore = create<UserState>()(
       setPhoneVerified: (verified) => set({ verified }),
       setHasHydrated: (hasHydrated) => set({ hasHydrated }),
       resetUser: () => set({ 
-       id: '', email: '', roles: [], activeRole: null, verified: false, fullName: '', phone: '',token: null,
+       id: '', email: '', firstName: '', lastName: '', roles: [], activeRole: null, verified: false, fullName: '', phone: '',token: null,
         onboardingCompleted: false,
         roleOnboardingCompleted: {},
         profile: { firstName: '', lastName: '', dob: '', gender: '', maritalStatus: '', address: '', state: '', image: '/assets/dashboard/profile-placeholder.png' },

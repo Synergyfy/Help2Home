@@ -7,7 +7,7 @@ import TicketList from '@/components/dashboard/support/TicketList';
 import TicketThread from '@/components/dashboard/support/TicketThread';
 import FAQSection from '@/components/dashboard/support/FAQSection';
 import { Ticket, CreateTicketData, FAQItem } from '@/components/dashboard/support/types';
-import { getTickets, getFAQs, createTicket, sendMessage } from '@/utils/mockSupportApi';
+import { getTickets, getFAQs, createTicket, sendMessage, getTicketMessages } from '@/lib/api/support';
 
 function SupportContent() {
     const searchParams = useSearchParams();
@@ -45,10 +45,14 @@ function SupportContent() {
     useEffect(() => {
         let interval: NodeJS.Timeout;
         if (view === 'thread' && selectedTicketId) {
-            interval = setInterval(async () => {
-                const updatedTickets = await getTickets();
-                setTickets(updatedTickets);
-            }, 3000);
+            const fetchMessages = async () => {
+                const updatedMessages = await getTicketMessages(selectedTicketId);
+                setTickets(prev => prev.map(t => 
+                    t.id === selectedTicketId ? { ...t, messages: updatedMessages } : t
+                ));
+            };
+            fetchMessages(); // Initial fetch
+            interval = setInterval(fetchMessages, 3000);
         }
         return () => clearInterval(interval);
     }, [view, selectedTicketId]);

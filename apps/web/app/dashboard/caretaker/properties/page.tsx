@@ -1,12 +1,29 @@
 'use client';
 
-import { getMockProperties } from '@/utils/properties';
-import CaretakerManagedProperties from '@/components/dashboard/caretaker/CaretakerManagedProperties';
+import React from 'react';
 import Link from 'next/link';
 import { HiOutlinePlus, HiOutlineHome } from 'react-icons/hi2';
+import { useCaretakerDashboard } from '@/hooks/useCaretakerDashboard';
+import CaretakerManagedProperties from '@/components/dashboard/caretaker/CaretakerManagedProperties';
 
 export default function CaretakerPropertiesPage() {
-    const properties = getMockProperties();
+    const { properties, isLoading } = useCaretakerDashboard();
+
+    if (isLoading) {
+        return (
+            <div className="space-y-8 animate-pulse">
+                <div className="h-10 bg-gray-200 rounded-xl w-1/4"></div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-gray-200 rounded-4xl"></div>)}
+                </div>
+                <div className="h-96 bg-gray-200 rounded-[2.5rem] mt-8"></div>
+            </div>
+        );
+    }
+
+    const availableCount = properties.filter((p: any) => p.status === 'available').length;
+    const occupiedCount = properties.filter((p: any) => p.status === 'let-agreed' || p.status === 'rented').length;
+    const totalViews = properties.reduce((acc: number, p: any) => acc + (p.views || 0), 0);
 
     return (
         <div className="space-y-8 pb-12">
@@ -38,21 +55,21 @@ export default function CaretakerPropertiesPage() {
                     <div className="size-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 mb-4">
                         <HiOutlineHome size={24} />
                     </div>
-                    <div className="text-2xl font-semibold text-gray-900">{properties.filter(p => p.status === 'available').length}</div>
+                    <div className="text-2xl font-semibold text-gray-900">{availableCount}</div>
                     <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Available</div>
                 </div>
                 <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
                     <div className="size-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-500 mb-4">
                         <HiOutlineHome size={24} />
                     </div>
-                    <div className="text-2xl font-semibold text-gray-900">{properties.filter(p => p.status === 'let-agreed').length}</div>
+                    <div className="text-2xl font-semibold text-gray-900">{occupiedCount}</div>
                     <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Occupied</div>
                 </div>
                 <div className="bg-white p-6 rounded-4xl border border-gray-100 shadow-sm">
                     <div className="size-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-4">
                         <HiOutlineHome size={24} />
                     </div>
-                    <div className="text-2xl font-semibold text-gray-900">{properties.reduce((acc, p) => acc + (p.views || 0), 0)}</div>
+                    <div className="text-2xl font-semibold text-gray-900">{totalViews}</div>
                     <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Total Views</div>
                 </div>
             </div>

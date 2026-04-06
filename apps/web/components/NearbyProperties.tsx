@@ -3,27 +3,24 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { mockProperties } from '@/utils/properties';
+import { useSearchProperties } from '@/hooks/useMarketplaceQueries';
 
 interface NearbyPropertiesProps {
-    currentPropertyId?: number;
+    currentPropertyId?: string | number;
     location?: string;
 }
 
 export default function NearbyProperties({ currentPropertyId, location }: NearbyPropertiesProps) {
+    const { data: searchResults, isLoading } = useSearchProperties({ 
+        location: location || '', 
+        status: 'available' 
+    }, 1);
 
-    const nearby = mockProperties
-        .filter(p =>
-            p.location === location && // Match location
-            p.id !== currentPropertyId   // Exclude current
-        )
-        .slice(0, 5); // Limit to top 5 results
+    const nearby = searchResults?.properties
+        ?.filter(p => String(p.id) !== String(currentPropertyId))
+        .slice(0, 5) || [];
 
-    // Fallback: If no properties are in the exact same location, 
-    // show any other featured properties so the sidebar isn't empty.
-    const displayProperties = nearby.length > 0
-        ? nearby
-        : mockProperties.filter(p => p.id !== currentPropertyId).slice(0, 5);
+    const displayProperties = nearby.length > 0 ? nearby : [];
 
     return (
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
@@ -48,11 +45,10 @@ export default function NearbyProperties({ currentPropertyId, location }: Nearby
                                 {property.title}
                             </h4>
                             <p className="text-xs text-brand-green font-black mb-2">
-                                {property.price.toLocaleString('en-NG', {
-                                    style: 'currency',
-                                    currency: 'NGN',
-                                    maximumFractionDigits: 0
-                                })}
+                                {typeof property.price === 'string' || typeof property.price === 'number' 
+                                    ? parseFloat(String(property.price)).toLocaleString('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }) 
+                                    : (property.price as any)?.amount?.toLocaleString('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }) || 'Price on Request'
+                                }
                             </p>
                             <Link
                                 href={`/marketplace/${property.id}`}

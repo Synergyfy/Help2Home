@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { TaskItem } from '@/lib/mockLandlordData';
+import { TaskItem } from '@/types/dashboard';
 
 export default function OpenTasks({ tasks }: { tasks: TaskItem[] }) {
     return (

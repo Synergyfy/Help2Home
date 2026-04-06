@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Contract, ContractFields, MOCK_TEMPLATES } from '@/lib/mockContractData';
 import { toast } from 'react-toastify';
 import ContractEditor from '@/components/dashboard/landlord/contracts/ContractEditor';
 import PropertySelectModal from '@/components/dashboard/landlord/contracts/PropertySelectModal';
@@ -11,12 +10,15 @@ import { addDays } from 'date-fns';
 import { HiOutlineHome, HiOutlineDocumentDuplicate, HiOutlineChevronRight, HiOutlineDocumentText } from 'react-icons/hi2';
 import { Property } from '@/utils/properties';
 import { useContractStore } from '@/store/contractStore';
+import { Contract, ContractFields } from '@/lib/api/contracts';
+import { useContractTemplates } from '@/hooks/useContractTemplates';
 
 import ContractContentEditor from '@/components/dashboard/landlord/contracts/ContractContentEditor';
 
 export default function NewContractPage() {
     const router = useRouter();
     const { addContract } = useContractStore();
+    const { templates, isLoading } = useContractTemplates();
     const [step, setStep] = useState<'property' | 'template' | 'details' | 'content'>('property');
     const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
     const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);

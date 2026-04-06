@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Param, Patch, Delete, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AccessTokenGuard } from '../auth/guards/accessToken.guard';
 import { PropertyService } from './property.service';
@@ -14,8 +14,29 @@ export class PropertyController {
   @Get()
   @ApiOperation({ summary: 'Get all properties' })
   @ApiResponse({ status: 200, type: [PropertyResponseDto] })
-  findAll() {
-    return this.propertyService.findAll();
+  findAll(@Query() query: any) {
+    return this.propertyService.findAll(query);
+  }
+
+  @Get('featured')
+  @ApiOperation({ summary: 'Get featured properties' })
+  @ApiResponse({ status: 200, type: [PropertyResponseDto] })
+  findFeatured(@Query('limit') limit?: number, @Query('type') type?: string) {
+    return this.propertyService.findFeatured(limit, type);
+  }
+
+  @Get('locations')
+  @ApiOperation({ summary: 'Get property locations' })
+  @ApiResponse({ status: 200 })
+  getLocations() {
+    return this.propertyService.getLocations();
+  }
+
+  @Get('stats/price')
+  @ApiOperation({ summary: 'Get property price statistics' })
+  @ApiResponse({ status: 200 })
+  getPriceStats(@Query('location') location: string) {
+    return this.propertyService.getPriceStats(location);
   }
 
   @Get(':id')

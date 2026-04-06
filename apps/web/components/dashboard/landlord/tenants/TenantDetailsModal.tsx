@@ -13,7 +13,7 @@ import {
     HiOutlineDocumentText,
     HiOutlineShieldCheck
 } from 'react-icons/hi2';
-import { Tenant } from '@/lib/mockLandlordData';
+import { Tenant } from '@/types/dashboard';
 import { formatCurrency } from '@/utils/helpers';
 
 interface TenantDetailsModalProps {
@@ -198,3 +198,4 @@ const formatNumber = (val: number | string) => {
   if (isNaN(number)) return "0";
   return new Intl.NumberFormat("en-US").format(number);
 };
+

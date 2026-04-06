@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTenants } from '@/hooks/useTenants';
 import { useLandlordProperties } from '@/hooks/useLandlordQueries';
-import { Tenant } from '@/lib/mockLandlordData';
 import { Property } from '@/utils/properties';
+import { Tenant } from '@/types/dashboard';
 import { FiX, FiUser, FiHome, FiCalendar, FiArrowRight, FiArrowLeft, FiCheck } from 'react-icons/fi';
 import { HiOutlineBanknotes } from 'react-icons/hi2';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,6 +17,8 @@ export interface AddTenantInitialData extends Omit<Partial<Tenant>, 'status' | '
     monthlySalary?: string | number;
     status?: string;
     rentAmount?: string | number;
+    leaseStart?: string;
+    leaseEnd?: string;
 }
 
 interface AddTenantModalProps {
@@ -66,8 +68,8 @@ export default function AddTenantModal({ isOpen, onClose, initialData }: AddTena
                 phone: initialData.phone || '',
                 propertyId: initialData.propertyId || '',
                 propertyName: initialData.propertyName || '',
-                rentAmount: initialData.rentAmount?.toString() || '',
-                leaseStart: initialData.leaseStart || '',
+                rentAmount: initialData.rentAmount?.toString() || initialData.monthlyRentAmount?.toString() || '',
+                leaseStart: initialData.leaseStart || initialData.dateLeaseStart || '',
                 leaseEnd: initialData.leaseEnd || '',
                 employmentStatus: initialData.details?.employmentStatus || initialData.employmentStatus || 'Employed',
                 employerName: initialData.details?.employerName || initialData.employerName || '',
@@ -115,16 +117,20 @@ export default function AddTenantModal({ isOpen, onClose, initialData }: AddTena
         e.preventDefault();
         const newTenant: Tenant = {
             id: initialData?.id || `T-${Math.floor(Math.random() * 900000) + 100000}`,
+            tenantId: (initialData as any)?.tenantId || undefined,
             name: `${formData.firstName} ${formData.lastName}`,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
             email: formData.email,
             phone: formData.phone,
             propertyId: formData.propertyId || 'manual',
             propertyName: formData.propertyName,
-            status: (initialData?.status as Tenant['status']) || 'Active',
-            rentAmount: Number(formData.rentAmount.toString().replace(/,/g, '')),
-            leaseStart: formData.leaseStart,
+            status: (initialData?.status as any) || 'Active',
+            monthlyRentAmount: Number(formData.rentAmount.toString().replace(/,/g, '')),
+            dateLeaseStart: formData.leaseStart,
             leaseEnd: formData.leaseEnd,
-            paymentStatus: initialData?.paymentStatus || 'Up to date',
+            paymentStatus: (initialData as any)?.paymentStatus || 'Up to date',
+            onTimePaymentRate: (initialData as any)?.onTimePaymentRate || 0,
             details: {
                 employmentStatus: formData.employmentStatus,
                 employerName: formData.employerName,

@@ -89,7 +89,8 @@ interface RepaymentProgressProps {
 }
 
 export function RepaymentProgress({ percentage, nextDueDate, nextAmount }: RepaymentProgressProps) {
-    const isLowProgress = percentage < 30;
+    const numericAmount = parseFloat(nextAmount.replace(/[^0-9.-]+/g,"")) || 0;
+    const isLowProgress = percentage < 30 && numericAmount > 0;
 
     return (
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">

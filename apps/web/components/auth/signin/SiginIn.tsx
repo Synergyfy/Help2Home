@@ -41,15 +41,21 @@ export default function SignInPage() {
         resolver: zodResolver(signInSchema),
     });
 
-    const handleQuickLogin = (email: string, isSSO?: boolean) => {
+    const handleQuickLogin = async (email: string, isSSO?: boolean) => {
         if (isSSO) {
             window.location.href = '/bank-portal/sso/launch?sso_token=mock_handshake_token';
             return;
         }
+        // In a real app, demo accounts would have a known demo password in the DB
         const demoPassword = 'password123';
         setValue('email', email, { shouldValidate: true });
         setValue('password', demoPassword, { shouldValidate: true });
-        signIn(email, demoPassword);
+        
+        try {
+            await signIn(email, demoPassword);
+        } catch (err) {
+            console.error("Quick login failed. Ensure demo users exist in the DB.", err);
+        }
     };
 
     return (

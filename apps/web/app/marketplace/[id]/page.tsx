@@ -12,7 +12,7 @@ import ChatDrawer from '@/components/marketplace/ChatDrawer';
 import ListerProfileModal from '@/components/marketplace/ListerProfileModal';
 import FinancingPartnerModal from '@/components/marketplace/FinancingPartnerModal';
 import InvestmentDetailsModal from '@/components/dashboard/investor/InvestmentDetailsModal';
-import { mockProperties } from '@/utils/properties';
+import { useProperty } from '@/hooks/useMarketplaceQueries';
 import { FaShower, FaHome } from "react-icons/fa";
 import { formatNumber } from '@/utils/helpers';
 import { toast } from 'react-toastify';
@@ -37,12 +37,10 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
     const { activeRole, followedListers, toggleFollowLister, wishlist, toggleWishlist } = useUserStore();
     const { addNotification } = useNotificationStore();
 
-    // Ensure params.id is a string, not an array
     const idString = Array.isArray(id) ? id[0] : id;
-    const propertyId = idString ? parseInt(idString, 10) : null;
     const isFavorite = wishlist.includes(idString);
 
-    const property = mockProperties.find(p => p.id === propertyId);
+    const { data: property, isLoading } = useProperty(idString);
 
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
@@ -52,10 +50,23 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
     const [isFinancingModalOpen, setIsFinancingModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(0);
 
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center space-y-4">
+                <div className="animate-spin h-10 w-10 border-4 border-brand-green border-t-transparent rounded-full mx-auto" />
+                <p className="text-gray-500 font-medium animate-pulse">Loading property details...</p>
+            </div>
+        );
+    }
+
     if (!property) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <p className="text-gray-700 text-lg">Property not found.</p>
+            <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+                <h2 className="text-xl font-bold text-gray-900 mb-2">Property Not Found</h2>
+                <p className="text-gray-500 mb-6">This listing might have been removed or is no longer available.</p>
+                <Link href="/marketplace" className="px-6 py-3 bg-brand-green text-white rounded-xl font-bold shadow-lg hover:bg-green-700 transition">
+                    Browse Marketplace
+                </Link>
             </div>
         );
     }
@@ -88,8 +99,15 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
     // Financial Calculations - handle both number and object formats
     const propertyPrice = typeof property.price === 'number'
         ? property.price
-        : (property.price as any)?.amount || 0;
-    const serviceCharge = property.serviceCharge || 0;
+        : typeof property.price === 'string'
+            ? parseFloat(property.price)
+            : (property.price as any)?.amount || 0;
+            
+    const serviceCharge = typeof property.serviceCharge === 'number'
+        ? property.serviceCharge
+        : typeof property.serviceCharge === 'string'
+            ? parseFloat(property.serviceCharge)
+            : 0;
 
     // Process Amenities (handle both string and object formats)
     const processedAmenities = (property.amenities || []).map(amenity => {
@@ -438,26 +456,26 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                                     <div className="flex items-center gap-3">
                                         <div className="relative size-12 rounded-xl bg-gray-50 border-2 border-white shadow-sm overflow-hidden group-hover:scale-105 transition-transform">
                                             {property.listerImage ? (
-                                                <Image src={property.listerImage} alt={property.listerName || 'Lister'} fill className="object-cover" />
+                                                <Image src={property.listerImage} alt={(property as any).owner?.firstName || 'Lister'} fill className="object-cover" />
                                             ) : (
                                                 <div className="size-full flex items-center justify-center text-brand-green bg-brand-green/5">
                                                     <MdOutlineVilla size={24} />
                                                 </div>
                                             )}
-                                            {property.listerVerified && (
+                                            {((property as any).owner?.verified || property.listerVerified) && (
                                                 <div className="absolute -bottom-1 -right-1 size-5 rounded-full bg-white flex items-center justify-center shadow-md">
                                                     <HiOutlineShieldCheck className="text-brand-green" size={14} />
                                                 </div>
                                             )}
                                         </div>
                                         <div>
-                                            <Link href={`/marketplace/listers/${encodeURIComponent(property.listerName || 'Verified User')}`}>
+                                            <Link href={`/marketplace/listers/${encodeURIComponent(((property as any).owner?.firstName && (property as any).owner?.lastName) ? `${(property as any).owner.firstName} ${(property as any).owner.lastName}` : (property.listerName || 'Verified User'))}`}>
                                                 <h4 className="font-bold text-sm text-gray-900 leading-tight hover:text-brand-green transition-colors">
-                                                    {property.listerName || (property.posterRole === 'agent' ? property.agency : 'Verified User')}
+                                                    {((property as any).owner?.firstName && (property as any).owner?.lastName) ? `${(property as any).owner.firstName} ${(property as any).owner.lastName}` : (property.posterRole === 'agent' ? property.agency : 'Verified User')}
                                                 </h4>
                                             </Link>
                                             <p className="text-[10px] font-medium text-brand-green bg-brand-green/5 px-2 py-0.5 rounded-full inline-block capitalize mt-0.5">
-                                                {property.posterRole}
+                                                {property.posterRole || 'Landlord'}
                                             </p>
                                         </div>
                                     </div>
@@ -469,21 +487,26 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                                         <p className="text-[8px] uppercase tracking-wider text-gray-400 font-black mb-1">Trust Score</p>
                                         <div className="flex items-center gap-1.5">
                                             <div className="h-1 flex-1 bg-gray-200 rounded-full overflow-hidden">
-                                                <div className="h-full bg-brand-green w-[92%] rounded-full shadow-[0_0_8px_rgba(0,133,62,0.4)]" />
+                                                <div className="h-full bg-brand-green rounded-full shadow-[0_0_8px_rgba(0,133,62,0.4)]" style={{ width: ((property as any).owner?.verified || property.listerVerified) ? '95%' : '65%' }} />
                                             </div>
-                                            <span className="text-[10px] font-black text-gray-700">92%</span>
+                                            <span className="text-[10px] font-black text-gray-700">{((property as any).owner?.verified || property.listerVerified) ? '95%' : '65%'}</span>
                                         </div>
                                     </div>
                                     <div className="p-2.5 bg-gray-50 rounded-xl text-center">
                                         <p className="text-[8px] uppercase tracking-wider text-gray-400 font-black mb-1">Verified Since</p>
-                                        <p className="text-[10px] font-black text-gray-700">Jan 2023</p>
+                                        <p className="text-[10px] font-black text-gray-700">
+                                            {((property as any).owner?.createdAt) 
+                                                ? new Date((property as any).owner.createdAt).toLocaleString('default', { month: 'short', year: 'numeric' })
+                                                : 'Recently'
+                                            }
+                                        </p>
                                     </div>
                                 </div>
 
                                 <div className="flex flex-col gap-3">
                                     <button
                                         onClick={() => {
-                                            const listerId = property.listerName || 'Verified Lister';
+                                            const listerId = ((property as any).owner?.firstName && (property as any).owner?.lastName) ? `${(property as any).owner.firstName} ${(property as any).owner.lastName}` : (property.listerName || 'Verified Lister');
                                             toggleFollowLister(listerId);
                                             const isFollowing = !followedListers.includes(listerId);
 
@@ -499,7 +522,7 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                                                 toast.success(`You are now a top user for ${listerId}!`);
                                             }
                                         }}
-                                        className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-xs transition-all border-2 ${followedListers.includes(property.listerName || 'Verified Lister')
+                                        className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-xs transition-all border-2 ${followedListers.includes(((property as any).owner?.firstName && (property as any).owner?.lastName) ? `${(property as any).owner.firstName} ${(property as any).owner.lastName}` : (property.listerName || 'Verified Lister'))
                                             ? 'bg-white border-brand-green text-brand-green hover:bg-green-50'
                                             : 'bg-white border-gray-100 text-gray-700 hover:border-brand-green hover:text-brand-green shadow-sm'
                                             }`}
@@ -507,7 +530,7 @@ export default function PropertyDetailsPage({ params }: { params: Promise<{ id: 
                                         <svg xmlns="http://www.w3.org/2000/svg" className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                                         </svg>
-                                        {followedListers.includes(property.listerName || 'Verified Lister') ? 'Connected (Priority)' : 'Connect with Lister'}
+                                        {followedListers.includes(((property as any).owner?.firstName && (property as any).owner?.lastName) ? `${(property as any).owner.firstName} ${(property as any).owner.lastName}` : (property.listerName || 'Verified Lister')) ? 'Connected (Priority)' : 'Connect with Lister'}
                                     </button>
 
                                     <button onClick={handleChatClick} className="w-full flex items-center justify-center gap-2 py-3 bg-brand-green text-white rounded-xl font-bold text-xs hover:bg-green-700 transition-all shadow-lg">

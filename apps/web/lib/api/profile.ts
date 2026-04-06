@@ -1,7 +1,5 @@
+import apiClient from './apiClient';
 import { Role, useUserStore } from '@/store/userStore';
-
-// Simulate API delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export interface UserProfileResponse {
   role: Role;
@@ -9,44 +7,30 @@ export interface UserProfileResponse {
 }
 
 export const fetchProfile = async (role: Role): Promise<UserProfileResponse> => {
-  await delay(800); // Simulate network latency
-
-  // In a real app, this would be an API call like: axios.get(`/api/profile/${role}`)
-  // Here we read from the persist store to simulate "server" state that matches client state
-  const state = useUserStore.getState();
-  
-  // Merge common profile with role-specific data
-  const common = state.profile;
-  const roleSpecific = state.roleData[role as keyof typeof state.roleData] || {};
-
-  return {
-    role,
-    data: {
-      ...common,
-      ...roleSpecific
-    }
-  };
+    const { data } = await apiClient.get(`/profile/me`);
+    return {
+      role,
+      data
+    };
 };
 
-export const updateProfile = async (role: Role, data: any): Promise<UserProfileResponse> => {
-  await delay(1200); // Simulate saving delay
+export const fetchProfileActivity = async (): Promise<any[]> => {
+    const { data } = await apiClient.get(`/profile/activity`);
+    return data;
+};
 
-  const state = useUserStore.getState();
-  
-  // Separate common fields from role-specific fields
-  const { firstName, lastName, dob, gender, maritalStatus, address, state: userState, image, ...roleData } = data;
-  
-  const commonData = { firstName, lastName, dob, gender, maritalStatus, address, state: userState, image };
-  
-  // Update Store (Optimistic / Post-request sync)
-  state.updateProfile(commonData);
-  state.updateRoleProfileData(role, roleData);
-  
-  return {
-    role,
-    data: {
-      ...state.profile,
-      ...state.roleData[role as keyof typeof state.roleData]
-    }
-  };
+export const updateProfile = async (role: Role, updateData: any): Promise<UserProfileResponse> => {
+    const { data } = await apiClient.patch(`/profile/me`, updateData);
+    
+    // Optimistic store sync
+    const state = useUserStore.getState();
+    const { firstName, lastName, dob, gender, maritalStatus, address, state: userState, image, ...roleData } = updateData;
+    const commonData = { firstName, lastName, dob, gender, maritalStatus, address, state: userState, image };
+    state.updateProfile(commonData);
+    state.updateRoleProfileData(role, roleData);
+    
+    return {
+      role,
+      data
+    };
 };

@@ -16,7 +16,9 @@ import {
     HiOutlineCalendarDays,
     HiOutlineArchiveBox
 } from 'react-icons/hi2';
-import InspectionDetailsModal, { Inspection } from './InspectionDetailsModal';
+import InspectionDetailsModal from './InspectionDetailsModal';
+import { useAgentDashboard } from '@/hooks/useAgentDashboard';
+import { format } from 'date-fns';
 
 interface StatCardProps {
     label: string;
@@ -33,7 +35,7 @@ const StatCard = ({ label, value, trend, icon: Icon, color }: StatCardProps) => 
             <div className={`p-3 rounded-xl ${color} bg-opacity-10 text-xl`}>
                 <Icon className={color.replace('bg-', 'text-')} />
             </div>
-            {trend && (
+            {trend && trend !== '+0%' && (
                 <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-lg">
                     {trend}
                 </span>
@@ -47,36 +49,29 @@ const StatCard = ({ label, value, trend, icon: Icon, color }: StatCardProps) => 
 );
 
 export default function AgentDashboard() {
-
     const router = useRouter();
+    const { stats, listings, leads, inspections, isLoading } = useAgentDashboard();
+    
     const [isComingSoonOpen, setIsComingSoonOpen] = React.useState(false);
     const [activeLeadMenuId, setActiveLeadMenuId] = React.useState<string | null>(null);
-    const [selectedInspection, setSelectedInspection] = React.useState<Inspection | null>(null);
-    const [leads, setLeads] = React.useState([
-        { id: 'lead_1', name: 'Sarah Jenkins', type: 'Buyer', time: '2m ago' },
-        { id: 'lead_2', name: 'David Chen', type: 'Tenant', time: '1h ago' },
-        { id: 'lead_3', name: 'Musa Ibrahim', type: 'Investor', time: '4h ago' },
-    ]);
+    const [selectedInspection, setSelectedInspection] = React.useState<any | null>(null);
 
     const handleAddProperty = () => {
         router.push('/dashboard/agent/properties/add')
     }
 
     const handleArchiveLead = (id: string, name: string) => {
-        setLeads(prev => prev.filter(l => l.id !== id));
+        toast.info("Archiving is not yet implemented in the backend.");
         setActiveLeadMenuId(null);
-        toast.success(`Lead "${name}" archived successfully`);
     };
 
     const handleAction = (action: string, leadName: string) => {
         setActiveLeadMenuId(null);
         switch (action) {
             case 'profile':
-                toast.info(`Opening ${leadName}'s profile...`);
                 router.push('/dashboard/agent/leads');
                 break;
             case 'message':
-                toast.success(`Starting chat with ${leadName}...`);
                 router.push('/dashboard/agent/leads');
                 break;
             case 'schedule':
@@ -84,6 +79,14 @@ export default function AgentDashboard() {
                 break;
         }
     };
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6 pb-12">
@@ -136,10 +139,32 @@ export default function AgentDashboard() {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard label="Total Commission" value="₦4.2M" trend="+12.5%" icon={MdTrendingUp} color="bg-green-600" />
-                <StatCard label="Active Leads" value="84" trend="+5 new" icon={MdPeople} color="bg-blue-600" />
-                <StatCard label="Properties Sold" value="18" icon={MdHome} color="bg-purple-600" />
-                <StatCard label="Pending Closings" value="3" icon={MdVpnKey} color="bg-orange-600" />
+                <StatCard 
+                    label="Total Commission" 
+                    value={stats?.totalCommission || '₦0'} 
+                    trend={stats?.totalCommissionTrend} 
+                    icon={MdTrendingUp} 
+                    color="bg-green-600" 
+                />
+                <StatCard 
+                    label="Active Leads" 
+                    value={stats?.activeLeads || '0'} 
+                    trend={stats?.activeLeadsTrend} 
+                    icon={MdPeople} 
+                    color="bg-blue-600" 
+                />
+                <StatCard 
+                    label="Properties Sold" 
+                    value={stats?.propertiesSold || '0'} 
+                    icon={MdHome} 
+                    color="bg-purple-600" 
+                />
+                <StatCard 
+                    label="Pending Closings" 
+                    value={stats?.pendingClosings || '0'} 
+                    icon={MdVpnKey} 
+                    color="bg-orange-600" 
+                />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -166,24 +191,33 @@ export default function AgentDashboard() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-50">
-                                    {[
-                                        { name: 'Skyline Terrace', loc: 'Ikoyi', status: 'Active', views: '1.2k', price: '₦150M' },
-                                        { name: 'Palm Grove Villa', loc: 'Lekki Phase 1', status: 'Pending', views: '850', price: '₦85M' },
-                                        { name: 'The Penthouse', loc: 'Victoria Island', status: 'Active', views: '2.4k', price: '₦320M' },
-                                    ].map((item, idx) => (
+                                    {listings.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={4} className="px-6 py-10 text-center text-gray-400 text-sm italic">
+                                                No properties found.
+                                            </td>
+                                        </tr>
+                                    ) : listings.map((item: any, idx: number) => (
                                         <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
                                             <td className="px-6 py-4">
-                                                <div className="font-semibold text-gray-900 text-sm">{item.name}</div>
-                                                <div className="text-xs text-gray-500">{item.loc}</div>
+                                                <div className="font-semibold text-gray-900 text-sm">{item.title}</div>
+                                                <div className="text-xs text-gray-500">{item.location}</div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={`px-2 py-1 rounded-md text-[10px] font-semibold uppercase ${item.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
-                                                    }`}>
+                                                <span className={`px-2 py-1 rounded-md text-[10px] font-semibold uppercase ${
+                                                    item.status === 'available' || item.status === 'Active' 
+                                                        ? 'bg-green-100 text-green-700' 
+                                                        : 'bg-orange-100 text-orange-700'
+                                                }`}>
                                                     {item.status}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 text-sm text-gray-600 font-medium">{item.views}</td>
-                                            <td className="px-6 py-4 text-sm font-semibold text-gray-900">{item.price}</td>
+                                            <td className="px-6 py-4 text-sm text-gray-600 font-medium">
+                                                {item.views > 999 ? `${(item.views / 1000).toFixed(1)}k` : item.views}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm font-semibold text-gray-900">
+                                                ₦{Number(item.price).toLocaleString()}
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -197,36 +231,46 @@ export default function AgentDashboard() {
                             <MdSchedule className="text-brand-green" /> Scheduled Inspections
                         </h2>
                         <div className="space-y-4">
-                            {[
-                                { id: 1, name: 'Mr. Adebayo', prop: 'Skyline Terrace', time: '10:30 AM', day: '28', month: 'Dec', type: 'Initial Viewing' },
-                                { id: 2, name: 'Grace Emmanuel', prop: 'Palm Grove Villa', time: '02:00 PM', day: '30', month: 'Dec', type: 'Final Inspection' },
-                            ].map((visit) => (
-                                <div
-                                    key={visit.id}
-                                    onClick={() => setSelectedInspection(visit)}
-                                    className="flex items-center justify-between p-4 rounded-xl border border-gray-50 bg-gray-50/30 group hover:bg-white hover:shadow-md transition-all cursor-pointer"
-                                >
-                                    <div className="flex gap-4 items-center">
-                                        <div className="text-center bg-white p-2 rounded-lg border border-gray-100 min-w-[60px] group-hover:border-brand-green/30 transition-colors">
-                                            <div className="text-xs text-gray-400 font-semibold uppercase">{visit.month}</div>
-                                            <div className="text-lg font-semibold text-gray-900">{visit.day}</div>
-                                        </div>
-                                        <div>
-                                            <div className="font-semibold text-sm text-gray-900">{visit.name} - Inspection</div>
-                                            <div className="text-xs text-gray-500">{visit.prop} • {visit.time}</div>
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            router.push('/dashboard/agent/schedule');
-                                        }}
-                                        className="p-2 hover:bg-brand-green hover:text-white rounded-full transition-all text-gray-400"
-                                    >
-                                        <MdArrowForward size={20} />
-                                    </button>
+                            {inspections.length === 0 ? (
+                                <div className="text-center py-8 text-gray-400 text-sm italic border border-dashed border-gray-100 rounded-xl">
+                                    No inspections scheduled.
                                 </div>
-                            ))}
+                            ) : inspections.map((visit: any) => {
+                                const visitDate = new Date(visit.date);
+                                return (
+                                    <div
+                                        key={visit.id}
+                                        onClick={() => setSelectedInspection(visit)}
+                                        className="flex items-center justify-between p-4 rounded-xl border border-gray-50 bg-gray-50/30 group hover:bg-white hover:shadow-md transition-all cursor-pointer"
+                                    >
+                                        <div className="flex gap-4 items-center">
+                                            <div className="text-center bg-white p-2 rounded-lg border border-gray-100 min-w-[60px] group-hover:border-brand-green/30 transition-colors">
+                                                <div className="text-xs text-gray-400 font-semibold uppercase">
+                                                    {format(visitDate, 'MMM')}
+                                                </div>
+                                                <div className="text-lg font-semibold text-gray-900">
+                                                    {format(visitDate, 'dd')}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className="font-semibold text-sm text-gray-900">{visit.tenantName} - {visit.type}</div>
+                                                <div className="text-xs text-gray-500">
+                                                    {visit.property?.title || 'Property'} • {visit.time}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                router.push('/dashboard/agent/schedule');
+                                            }}
+                                            className="p-2 hover:bg-brand-green hover:text-white rounded-full transition-all text-gray-400"
+                                        >
+                                            <MdArrowForward size={20} />
+                                        </button>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
@@ -253,15 +297,21 @@ export default function AgentDashboard() {
                     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                         <h2 className="font-semibold text-gray-900 mb-4">Recent Leads</h2>
                         <div className="space-y-5">
-                            {leads.map((lead, idx) => (
+                            {leads.length === 0 ? (
+                                <div className="text-center py-6 text-gray-400 text-xs italic">
+                                    No recent leads.
+                                </div>
+                            ) : leads.map((lead: any, idx: number) => (
                                 <div key={idx} className="flex items-center justify-between relative">
                                     <div className="flex items-center gap-3">
                                         <div className="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center font-semibold text-xs text-gray-600">
-                                            {lead.name?.[0] || '?'}
+                                            {lead.tenantName?.[0] || '?'}
                                         </div>
                                         <div>
-                                            <div className="text-sm font-semibold text-gray-900">{lead.name}</div>
-                                            <div className="text-[10px] text-gray-400 font-medium">{lead.type} • {lead.time}</div>
+                                            <div className="text-sm font-semibold text-gray-900">{lead.tenantName}</div>
+                                            <div className="text-[10px] text-gray-400 font-medium">
+                                                {lead.propertyTitle || 'Lead'} • {format(new Date(lead.createdAt), 'MMM d')}
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="relative">
@@ -280,21 +330,21 @@ export default function AgentDashboard() {
                                                 />
                                                 <div className="absolute right-0 top-8 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-20 animate-in fade-in zoom-in-95 duration-200">
                                                     <button
-                                                        onClick={() => handleAction('profile', lead.name)}
+                                                        onClick={() => handleAction('profile', lead.tenantName)}
                                                         className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
                                                     >
                                                         <HiOutlineEye size={16} className="text-gray-400" />
                                                         View Profile
                                                     </button>
                                                     <button
-                                                        onClick={() => handleAction('message', lead.name)}
+                                                        onClick={() => handleAction('message', lead.tenantName)}
                                                         className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
                                                     >
                                                         <HiOutlineChatBubbleLeftRight size={16} className="text-gray-400" />
                                                         Send Message
                                                     </button>
                                                     <button
-                                                        onClick={() => handleAction('schedule', lead.name)}
+                                                        onClick={() => handleAction('schedule', lead.tenantName)}
                                                         className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
                                                     >
                                                         <HiOutlineCalendarDays size={16} className="text-gray-400" />
@@ -302,7 +352,7 @@ export default function AgentDashboard() {
                                                     </button>
                                                     <div className="h-px bg-gray-100 my-1 mx-2" />
                                                     <button
-                                                        onClick={() => handleArchiveLead(lead.id, lead.name)}
+                                                        onClick={() => handleArchiveLead(lead.id, lead.tenantName)}
                                                         className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
                                                     >
                                                         <HiOutlineArchiveBox size={16} className="text-red-400" />
@@ -333,3 +383,4 @@ export default function AgentDashboard() {
         </div>
     );
 }
+

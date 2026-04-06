@@ -16,7 +16,7 @@ import { useApplications } from '@/hooks/useApplications';
 import { useUserStore } from '@/store/userStore';
 import { useNotificationStore } from '@/store/notificationStore';
 import { Application } from '@/store/applicationStore';
-import { mockProperties } from '@/utils/properties';
+import { useProperty } from '@/hooks/useMarketplaceQueries';
 
 export default function Apply() {
     const router = useRouter();
@@ -29,17 +29,18 @@ export default function Apply() {
     const { addNotification } = useNotificationStore();
     const { submitApplication, isSubmitting } = useApplications();
 
-    // Find property from mock data
-    const selectedProperty = mockProperties.find(p => p.id.toString() === propertyIdParam);
+    const { data: remoteProperty, isLoading: isPropertyLoading } = useProperty(propertyIdParam);
+
+    const selectedProperty = remoteProperty || null;
 
     const property: PropertyDetails = selectedProperty ? {
         id: selectedProperty.id.toString(),
         name: selectedProperty.title,
         location: selectedProperty.location,
-        rentPrice: selectedProperty.price,
+        rentPrice: typeof selectedProperty.price === 'number' ? selectedProperty.price : parseFloat((selectedProperty as any).price?.amount || selectedProperty.price || 0),
         paymentOption: (selectedProperty.propertyType === 'rent' || selectedProperty.propertyType === 'service-apartment') ? 'Installment' : 'Outright',
-        landlordName: 'Authorized Owner',
-        image: (selectedProperty.images && selectedProperty.images.length > 0) ? selectedProperty.images[0] : '/assets/marketplace assets/home1.png'
+        landlordName: (selectedProperty as any).owner?.firstName ? `${(selectedProperty as any).owner.firstName} ${(selectedProperty as any).owner.lastName}` : (selectedProperty.listerName || 'Authorized Owner'),
+        image: (selectedProperty.images && selectedProperty.images.length > 0) ? (typeof selectedProperty.images[0] === 'string' ? selectedProperty.images[0] : (selectedProperty.images[0] as any).url) : '/assets/marketplace assets/home1.png'
     } : {
         id: 'manual',
         name: 'Custom Application',
@@ -456,6 +457,11 @@ export default function Apply() {
                 isOpen={isVerificationModalOpen}
                 onClose={() => setIsVerificationModalOpen(false)}
             />
+            {isPropertyLoading && (
+                <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green"></div>
+                </div>
+            )}
         </div>
     );
 }

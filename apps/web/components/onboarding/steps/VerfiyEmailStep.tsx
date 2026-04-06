@@ -45,15 +45,20 @@ const VerifyEmailStep = () => {
     }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const otpString = otp.join("");
     if (otpString.length !== 6) {
       setError("Please enter the complete 6-digit code");
       return;
     }
     setIsVerifying(true);
-    setTimeout(() => {
+    
+    try {
       if (otpString === DEMO_OTP) {
+        // Persist to backend
+        const { verifyUser } = await import("@/lib/api/auth");
+        await verifyUser();
+
         if (isEmail) {
           setEmailVerified(true);
         } else {
@@ -64,7 +69,10 @@ const VerifyEmailStep = () => {
         setError("Invalid verification code. Use 123456 for demo.");
         setIsVerifying(false);
       }
-    }, 1000);
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Verification failed. Please try again.");
+      setIsVerifying(false);
+    }
   };
 
   return (

@@ -37,7 +37,7 @@ export class AuthService {
     });
 
     await this.userRepository.save(user);
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.roles);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
 
     const { password: _, refreshToken: __, ...result } = user;
@@ -55,7 +55,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.roles);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
 
     const { password: _, ...result } = user;
@@ -69,7 +69,7 @@ export class AuthService {
   async refreshTokens(userId: string, refreshToken: string) {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      select: ['id', 'email', 'refreshToken'],
+      select: ['id', 'email', 'refreshToken', 'roles'],
     });
 
     if (!user || !user.refreshToken) {
@@ -81,7 +81,7 @@ export class AuthService {
       throw new ForbiddenException('Access Denied');
     }
 
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.roles);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }
@@ -93,23 +93,18 @@ export class AuthService {
     });
   }
 
-  async getTokens(userId: string, email: string) {
+  async getTokens(userId: string, email: string, roles: string[] = []) {
+    const userRoles = roles || [];
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
-        {
-          sub: userId,
-          email,
-        },
+        { sub: userId, email, roles: userRoles },
         {
           secret: this.configService.get<string>('JWT_SECRET'),
           expiresIn: '15m',
         },
       ),
       this.jwtService.signAsync(
-        {
-          sub: userId,
-          email,
-        },
+        { sub: userId, email, roles: userRoles },
         {
           secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
           expiresIn: '7d',
@@ -117,9 +112,26 @@ export class AuthService {
       ),
     ]);
 
-    return {
-      accessToken,
-      refreshToken,
-    };
+    return { accessToken, refreshToken };
+  }
+
+  async changePassword(userId: string, current: string, newPass: string) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: ['id', 'password'],
+    });
+
+    if (!user || !(await bcrypt.compare(current, user.password))) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPass, 10);
+    await this.userRepository.update(userId, { password: hashedPassword });
+    return { message: 'Password changed successfully' };
+  }
+
+  async toggleMfa(userId: string, enabled: boolean) {
+    await this.userRepository.update(userId, { twoFactorEnabled: enabled });
+    return { twoFactorEnabled: enabled };
   }
 }

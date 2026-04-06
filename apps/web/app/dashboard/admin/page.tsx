@@ -15,76 +15,49 @@ import {
   HiOutlineReceiptTax,
   HiOutlineCog
 } from '@/components/shared/Icons';
+import { useAdminDashboard } from '@/hooks/useAdminDashboard';
 
 export default function AdminOverview() {
   const [selectedRange, setSelectedRange] = useState('7D');
-  const [stats, setStats] = useState({
-    totalUsers: '12,450',
-    totalUsersTrend: '+12%',
-    activeListings: '854',
-    activeListingsTrend: '+3.2%',
-    pendingApps: '42',
-    pendingAppsTrend: 'Action Required',
-    ytdRevenue: '₦4.2M',
-    ytdRevenueTrend: '+15%',
-  });
+  const { data, isLoading, isError, error } = useAdminDashboard(selectedRange);
+
+  const stats = data?.stats || {
+    totalUsers: '0',
+    totalUsersTrend: '0%',
+    activeListings: '0',
+    activeListingsTrend: '0%',
+    pendingApps: '0',
+    pendingAppsTrend: '0',
+    ytdRevenue: '₦0',
+    ytdRevenueTrend: '0%',
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green"></div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center min-h-screen gap-4">
+        <div className="text-red-500 text-5xl">⚠️</div>
+        <h2 className="text-xl font-bold text-gray-800">Failed to load dashboard data</h2>
+        <p className="text-gray-500 text-sm">{(error as any)?.message || 'Please check your connection or try again.'}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-2 px-6 py-2.5 bg-brand-green text-white rounded-xl font-bold text-sm hover:bg-brand-green/90 transition-all"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   const handleRangeChange = (range: string) => {
     setSelectedRange(range);
-    // In a real application, you would fetch new data here based on the selected range
-    // For now, let's simulate a change in stats
-    switch (range) {
-      case '7D':
-        setStats({
-          totalUsers: '12,450',
-          totalUsersTrend: '+12%',
-          activeListings: '854',
-          activeListingsTrend: '+3.2%',
-          pendingApps: '42',
-          pendingAppsTrend: 'Action Required',
-          ytdRevenue: '₦4.2M',
-          ytdRevenueTrend: '+15%',
-        });
-        break;
-      case '30D':
-        setStats({
-          totalUsers: '50,123',
-          totalUsersTrend: '+8%',
-          activeListings: '1200',
-          activeListingsTrend: '+5%',
-          pendingApps: '60',
-          pendingAppsTrend: 'Action Required',
-          ytdRevenue: '₦15.5M',
-          ytdRevenueTrend: '+10%',
-        });
-        break;
-      case '3M':
-        setStats({
-          totalUsers: '150,000',
-          totalUsersTrend: '+25%',
-          activeListings: '3500',
-          activeListingsTrend: '+10%',
-          pendingApps: '100',
-          pendingAppsTrend: 'Review Needed',
-          ytdRevenue: '₦45M',
-          ytdRevenueTrend: '+20%',
-        });
-        break;
-      case 'YTD':
-        setStats({
-          totalUsers: '200,000',
-          totalUsersTrend: '+30%',
-          activeListings: '5000',
-          activeListingsTrend: '+12%',
-          pendingApps: '150',
-          pendingAppsTrend: 'High Priority',
-          ytdRevenue: '₦60M',
-          ytdRevenueTrend: '+25%',
-        });
-        break;
-      default:
-        break;
-    }
   };
 
   return (
@@ -128,10 +101,10 @@ export default function AdminOverview() {
 
         {/* LEFT COLUMN: Extended Content Area */}
         <div className="col-span-12 xl:col-span-8 flex flex-col gap-8">
-          <ModerationQueue />
-          <RecentUsersTable />
+          <ModerationQueue items={data?.moderationQueue} />
+          <RecentUsersTable users={data?.recentUsers} />
           {/* Moved to the bottom of the main col to fill space vertically */}
-          <ActivityLog />
+          <ActivityLog logs={data?.activityLogs} />
         </div>
 
         {/* RIGHT COLUMN: Sidebar Utilities */}
@@ -157,7 +130,7 @@ export default function AdminOverview() {
           </section>
 
           {/* New Support Tracker */}
-          <SupportTracker />
+          <SupportTracker tickets={data?.supportTracker} />
 
           {/* System Health */}
           <section className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 sticky top-8">

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Contract, ContractFields } from '@/lib/mockContractData';
+import { Contract, ContractFields } from '@/lib/api/contracts';
 
 interface ContractEditorProps {
     initialData: Contract;

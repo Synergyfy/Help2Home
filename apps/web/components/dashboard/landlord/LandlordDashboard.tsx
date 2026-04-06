@@ -86,7 +86,7 @@ export default function LandlordDashboard() {
         <div className="space-y-6">
           <QuickActions />
           <VerificationStatus items={data.verification} />
-          <PerformanceSnapshot />
+          <PerformanceSnapshot data={data.performance} />
           <HelpSupport />
         </div>
       </div>
