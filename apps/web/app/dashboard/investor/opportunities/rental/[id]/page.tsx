@@ -19,7 +19,11 @@ import {
     HiOutlineUserGroup,
     HiOutlineClock
 } from 'react-icons/hi2';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer as RC_, AreaChart as AC_, Area } from 'recharts';
+
+// Recharts v2 type incompatibility with React 19 — must cast at variable level
+const RC = RC_ as any;
+const AC = AC_ as any;
 
 // Mock Data
 const RENTAL_OPPORTUNITIES = [
@@ -113,7 +117,7 @@ export default function RentalOpportunityDetailPage() {
                         </div>
                     </div>
                     <div className="flex gap-4">
-                        <Link 
+                        <Link
                             href={`/dashboard/investor/opportunities/rental/${opportunity.id}/invest`}
                             className="px-8 py-4 bg-blue-600 text-white font-semibold rounded-2xl text-sm  hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-600/20 transition-all"
                         >
@@ -143,10 +147,10 @@ export default function RentalOpportunityDetailPage() {
 
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-                    
+
                     {/* Left Column: Property & Tenant Details */}
                     <div className="lg:col-span-2 space-y-10">
-                        
+
                         {/* 1. Property Summary */}
                         <section className="bg-white rounded-[2.5rem] border border-gray-100 overflow-hidden shadow-sm">
                             <div className="h-96 relative">
@@ -296,19 +300,19 @@ export default function RentalOpportunityDetailPage() {
 
                     {/* Right Column: Risk & Terms */}
                     <div className="space-y-10">
-                        
+
                         {/* 4. Default Risk & Repayment Projection */}
                         <section className="bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-sm">
                             <h2 className="text-xl font-semibold text-gray-900 mb-8">Risk Projection</h2>
-                            
+
                             {/* Gauge (Simplified) */}
                             <div className="flex flex-col items-center justify-center py-6">
                                 <div className="relative w-48 h-48">
                                     <svg className="w-full h-full" viewBox="0 0 100 100">
                                         <circle cx="50" cy="50" r="40" fill="none" stroke="#F3F4F6" strokeWidth="12" />
-                                        <circle cx="50" cy="50" r="40" fill="none" stroke="#2563EB" strokeWidth="12" 
-                                                strokeDasharray="251.2" strokeDashoffset={251.2 - (251.2 * opportunity.defaultRisk.probabilityOfFullRepayment / 100)} 
-                                                strokeLinecap="round" transform="rotate(-90 50 50)" />
+                                        <circle cx="50" cy="50" r="40" fill="none" stroke="#2563EB" strokeWidth="12"
+                                            strokeDasharray="251.2" strokeDashoffset={251.2 - (251.2 * opportunity.defaultRisk.probabilityOfFullRepayment / 100)}
+                                            strokeLinecap="round" transform="rotate(-90 50 50)" />
                                     </svg>
                                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                                         <span className="text-3xl font-semibold text-gray-900">{opportunity.defaultRisk.probabilityOfFullRepayment}%</span>
@@ -322,30 +326,29 @@ export default function RentalOpportunityDetailPage() {
                                     <span className="text-xs font-semibold text-gray-500 uppercase tracking-tight">Prob. of Default</span>
                                     <span className="text-sm font-semibold text-red-600 ">{opportunity.defaultRisk.probabilityOfDefault}%</span>
                                 </div>
-                                
+
                                 <div className="h-40 w-full mt-4">
                                     <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-4">Repayment vs Default Projection</p>
                                     {/* @ts-ignore - Recharts v2 type incompatibility with React 19 */}
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        {/* @ts-ignore */}
-                                        <AreaChart data={opportunity.defaultRisk.projectionData}>
+                                    <RC width="100%" height="100%">
+                                        <AC data={opportunity.defaultRisk.projectionData}>
                                             <defs>
                                                 <linearGradient id="colorRepayment" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.1}/>
-                                                    <stop offset="95%" stopColor="#2563EB" stopOpacity={0}/>
+                                                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.1} />
+                                                    <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
                                                 </linearGradient>
                                             </defs>
                                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
                                             <XAxis dataKey="month" hide />
                                             <YAxis hide domain={[0, 100]} />
-                                            <Tooltip 
+                                            <Tooltip
                                                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                                                 labelStyle={{ fontWeight: '900', fontSize: '10px', textTransform: 'uppercase' }}
                                             />
                                             <Area type="monotone" dataKey="repayment" stroke="#2563EB" fillOpacity={1} fill="url(#colorRepayment)" strokeWidth={3} />
                                             <Area type="monotone" dataKey="default" stroke="#EF4444" fill="transparent" strokeWidth={2} strokeDasharray="5 5" />
-                                        </AreaChart>
-                                    </ResponsiveContainer>
+                                        </AC>
+                                    </RC>
                                 </div>
 
                                 <div className="space-y-2 pt-4">
