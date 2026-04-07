@@ -325,27 +325,27 @@ export default function RentalOpportunityDetailPage() {
                                 
                                 <div className="h-40 w-full mt-4">
                                     <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-4">Repayment vs Default Projection</p>
-                                    {(ResponsiveContainer as any) && (
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <AreaChart data={opportunity.defaultRisk.projectionData}>
-                                                <defs>
-                                                    <linearGradient id="colorRepayment" x1="0" y1="0" x2="0" y2="1">
-                                                        <stop offset="5%" stopColor="#2563EB" stopOpacity={0.1}/>
-                                                        <stop offset="95%" stopColor="#2563EB" stopOpacity={0}/>
-                                                    </linearGradient>
-                                                </defs>
-                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
-                                                <XAxis dataKey="month" hide />
-                                                <YAxis hide domain={[0, 100]} />
-                                                <Tooltip 
-                                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                                                    labelStyle={{ fontWeight: '900', fontSize: '10px', textTransform: 'uppercase' }}
-                                                />
-                                                <Area type="monotone" dataKey="repayment" stroke="#2563EB" fillOpacity={1} fill="url(#colorRepayment)" strokeWidth={3} />
-                                                <Area type="monotone" dataKey="default" stroke="#EF4444" fill="transparent" strokeWidth={2} strokeDasharray="5 5" />
-                                            </AreaChart>
-                                        </ResponsiveContainer>
-                                    )}
+                                    {/* @ts-ignore - Recharts v2 type incompatibility with React 19 */}
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        {/* @ts-ignore */}
+                                        <AreaChart data={opportunity.defaultRisk.projectionData}>
+                                            <defs>
+                                                <linearGradient id="colorRepayment" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.1}/>
+                                                    <stop offset="95%" stopColor="#2563EB" stopOpacity={0}/>
+                                                </linearGradient>
+                                            </defs>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
+                                            <XAxis dataKey="month" hide />
+                                            <YAxis hide domain={[0, 100]} />
+                                            <Tooltip 
+                                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                                                labelStyle={{ fontWeight: '900', fontSize: '10px', textTransform: 'uppercase' }}
+                                            />
+                                            <Area type="monotone" dataKey="repayment" stroke="#2563EB" fillOpacity={1} fill="url(#colorRepayment)" strokeWidth={3} />
+                                            <Area type="monotone" dataKey="default" stroke="#EF4444" fill="transparent" strokeWidth={2} strokeDasharray="5 5" />
+                                        </AreaChart>
+                                    </ResponsiveContainer>
                                 </div>
 
                                 <div className="space-y-2 pt-4">
